@@ -1,0 +1,7 @@
+"ssbase"
+{
+	"title"		"SSBase"
+	"base"		"base"
+	"maps"		""
+	"menusystem"	"1"
+}

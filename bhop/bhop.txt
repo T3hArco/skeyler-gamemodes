@@ -1,0 +1,7 @@
+"bhop"
+{
+	"title"		"Bunny Hop"
+	"base"		"ssbase"
+	"maps"		"^bhop_|^bh_"
+	"menusystem"	"1"
+}
