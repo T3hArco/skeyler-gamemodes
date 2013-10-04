@@ -11,12 +11,14 @@ AddCSLuaFile("sh_levels.lua")
 include("shared.lua")
 include("sh_levels.lua") 
 include("sh_maps.lua") 
+include("player_class/player_bhop.lua")
 
 RunConsoleCommand("sv_stopspeed", "75")
-RunConsoleCommand("sv_friction", "6")
-RunConsoleCommand("sv_accelerate", "8")
+RunConsoleCommand("sv_friction", "4")
+RunConsoleCommand("sv_accelerate", "5")
 RunConsoleCommand("sv_airaccelerate", "150")
 RunConsoleCommand("sv_gravity", "800")
+RunConsoleCommand("sv_sticktoground", "1")
 -- GM:SetMaxVisiblePlayers(20) 
 
 /* Setup the bhop spawn and finish */
@@ -52,30 +54,26 @@ function GM:PlayerSpawn(ply)
 	if ply:IsBot() then ply:SetTeam(TEAM_BHOP) end -- always spawn bots
 
 	if ply:Team() == TEAM_BHOP then  
-		ply:UnSpectate() 
-		-- ply:SetJumpPower(205) 
-		ply:SetJumpPower( math.sqrt(2 * 800 * 64) )
+		player_manager.SetPlayerClass( ply, "player_bhop" )
+	
+		self.BaseClass:PlayerSpawn( ply )
+		
+		ply:UnSpectate()
 		ply:SetHull( Vector( -16, -16, 0 ), Vector( 16, 16, 62 ) )
 		ply:SetHullDuck( Vector( -16, -16, 0 ), Vector( 16, 16, 45 ) )
-		ply:SetWalkSpeed(250) 
-		ply:SetRunSpeed(250) 
-		ply:SetMaxSpeed(250) 
 		hook.Call( "PlayerSetModel", GAMEMODE, ply )
-		ply:SetNoCollideWithTeammates(true) 
-		ply:Give("weapon_crowbar") 
-		ply:Give("weapon_pistol")
-		ply:Give("weapon_smg1") 
-		ply:Give("weapon_fists") 
-		ply:GiveAmmo(200, "Pistol", true) 
-		ply:GiveAmmo(400, "Smg1", true) 
 
 		if ply:IsSuperAdmin() then 
 			ply:Give("ss_mapeditor") 
 		end 
 
 		if ply:IsVIP() then 
-			ply:SetHealth(200) 
+			ply:SetHealth(200) --dont get this, absolutely no benefit o.o
 		end 
+		
+		if !ply.LevelData then
+			self:LevelSetup(ply,2) --default level
+		end
 			
 		if ply:HasTimer() and self.Positions[ply:SteamID()] then 
 			ply.AreaIgnore = true 
@@ -127,121 +125,61 @@ end
 
 function GM:PlayerShouldTakeDamage(ply, attacker) 
 	return false 
-end 
-
-function GM:InBetweenNumber(Value, Min, Max)
-	if(Value < Min or Value > Max) then
-		return false
-	end
-	return true
-end
-
-function GM:FindTeleporter(Pos)
-	for k,v in pairs(self.Teleporters) do
-		if(self:InBetweenNumber(Pos.x, v.Mins.x, v.Maxs.x) and self:InBetweenNumber(Pos.y, v.Mins.y, v.Maxs.y) and self:InBetweenNumber(Pos.z, v.Mins.z, v.Maxs.z)) then
-			return k
-		end
-	end
-	return false
 end
 
 /* Setup the teleports, platforms, spawns, and finish lines */
 function GM:InitPostEntity() 
-	self.Teleporters = {}
-	for k,v in pairs(ents.FindByClass("trigger_teleport")) do 
-		self.Teleporters[v] = {Mins=v:LocalToWorld(v:OBBMins()), Maxs=v:LocalToWorld(v:OBBMaxs())} 
-		if !self.MapList[game.GetMap()] then 
-			local KeyValues = v:GetKeyValues() 
-			local Target = false 
-			if KeyValues.target then 
-				Target = ents.FindByName(KeyValues.target) 
-				if Target[1] and Target[1]:IsValid() then 
-					Target = {Target[1]:GetPos(), Target[1]:GetAngles()} 
-				else 
-					Target = false 
-				end 
-			end 
-			if istable(Target) then 
-				v.TelePos = Target[1] 
-				v.TeleAng = Target[2] 
-			else 
-				v.TelePos = false 
-				v.TeleAng = false 
-			end 
-		end 
-	end 
-
-	for k,v in pairs(ents.FindByClass("func_door")) do
-		v.Block = true 
-
-		local Tries = 0  
-		local Origin = v:GetPos() 
-		while(!v.Teleporter and Tries < 300) do 
-			Origin = Origin+Vector(0, 0, -1) 
-			v.Teleporter = self:FindTeleporter(Origin)  
-			v.TeleOrigin = Origin-Vector(0, 0, 2)
-			Tries = Tries+1
-		end 
-		v.TeleOrigin = v.TeleOrigin-Vector(0,0,5) 
-	end 
+	if !self.MapList[game.GetMap()].ignoredoors then
+		for k,v in pairs(ents.FindByClass("func_door")) do
+			if(!v.IsP) then continue end
+			local mins = v:OBBMins()
+			local maxs = v:OBBMaxs()
+			local h = maxs.z - mins.z
+			if(h > 80 && game.GetMap() != "bhop_monster_jam") then continue end
+			local tab = ents.FindInBox( v:LocalToWorld(mins)-Vector(0,0,10), v:LocalToWorld(maxs)+Vector(0,0,5) )
+			if(tab) then
+				for _,v2 in pairs(tab) do if(v2 && v2:IsValid() && v2:GetClass() == "trigger_teleport") then tele = v2 end end
+				if(tele) then
+					v:Fire("Lock")
+					v:SetKeyValue("spawnflags","1024")
+					v:SetKeyValue("speed","0")
+					v:SetRenderMode(RENDERMODE_TRANSALPHA)
+					if(v.BHS) then
+						v:SetKeyValue("locked_sound",v.BHS)
+					else
+						v:SetKeyValue("locked_sound","DoorSound.DefaultMove")
+					end
+					v:SetNWInt("Platform",1)
+				end
+			end
+		end
+	
+		for k,v in pairs(ents.FindByClass("func_button")) do
+			if(!v.IsP) then continue end
+			if(v.SpawnFlags == "256") then 
+				local mins = v:OBBMins()
+				local maxs = v:OBBMaxs()
+				local tab = ents.FindInBox( v:LocalToWorld(mins)-Vector(0,0,10), v:LocalToWorld(maxs)+Vector(0,0,5) )
+				if(tab) then
+					for _,v2 in pairs(tab) do if(v2 && v2:IsValid() && v2:GetClass() == "trigger_teleport") then tele = v2 end end
+					if(tele) then
+						v:Fire("Lock")
+						v:SetKeyValue("spawnflags","257")
+						v:SetKeyValue("speed","0")
+						v:SetRenderMode(RENDERMODE_TRANSALPHA)
+						if(v.BHS) then
+							v:SetKeyValue("locked_sound",v.BHS)
+						else
+							v:SetKeyValue("locked_sound","None (Silent)")
+						end
+						v:SetNWInt("Platform",1)
+					end
+				end
+			end
+		end
+	end
+	
 	self:AreaSetup()
-end 
-
-GM.Positions = {} 
-local GroundEnt, NextGroundEnt, LastBlock = false, false, false 
-function GM:Move(ply, data) 
-	if ply:Alive() then 
-		GroundEnt = ply.GroundEnt or false 
-		NextGroundEnt = ply:GetGroundEntity() 
-		LastBlock = ply.LastBlock or false 
-		ply.GroundTime = ply.GroundTime or CurTime() 
-
-		if NextGroundEnt and NextGroundEnt:IsValid() then 
-			if NextGroundEnt.Block then 
-				local Teleport = false 
-				if ply.LastBlock and ply.LastBlock == NextGroundEnt then 
-					Teleport = true 
-				elseif GroundEnt == NextGroundEnt then 
-					if CurTime()-(ply.GroundTime or CurTime()) >= ply.StayTime then 
-						Teleport = true 
-					end 
-				else 
-					ply.GroundTime = CurTime() 
-				end 
-
-				if Teleport and GroundEnt and GroundEnt:IsValid() then 
-					if ply.LevelData.kill then 
-						ply:Kill() 
-						return 
-					end 
-
-					data:SetOrigin(GroundEnt.TeleOrigin) 
-					ply:SetVelocity(Vector(0, 0, 0)) 
-					ply.GroundEnt = false 
-					ply.LastBlock = false 
-					ply.GroundTime = CurTime()
-					NextGroundEnt = false 
-
-					if !GAMEMODE.MapList[game.GetMap()] and ply:IsAdmin() then 
-						local Pos = GroundEnt.Teleporter.TelePos
-						local Ang = GroundEnt.Teleporter.TeleAng
-						ply:ChatPrint("TelePos:  Vector("..Pos.x..", "..Pos.y..", "..Pos.z.."), Angle("..Ang.p..", "..Ang.y..", "..Ang.r..")")
-					end 
-				end 
-			end 
-		elseif GroundEnt and GroundEnt:IsValid() and GroundEnt.Block then 
-			ply.LastBlock = GroundEnt 
-		end 
-
-		if NextGroundEnt == game.GetWorld() and !ply.InSpawn then 
-			self.Positions[ply:SteamID()] = {LastPos=ply:GetPos(), LastAng=ply:GetAngles(), Level=ply.Level} 
-			ply.LastBlock = false 
-			GroundEnt = false 
-			ply.GroundTime = false 
-		end 
-
-		ply.GroundEnt = NextGroundEnt 
-	end 
 end 
 
 function GM:PlayerWon(ply) 

@@ -10,6 +10,7 @@ GM.Website 		= "aaron113.pw"
 GM.TeamBased 	= false 
 
 DeriveGamemode("ssbase")
+DEFINE_BASECLASS("gamemode_ssbase") --for self.BaseClass
 
 GM.VIPBonusHP = false 
 GM.HUDShowVel = true 
@@ -19,10 +20,131 @@ TEAM_BHOP = 1
 team.SetUp(TEAM_BHOP, "Hoppers", Color(87, 198, 255), false) 
 
 function GM:EntityKeyValue(ent, key, val) 
-	if ent:GetClass() == "func_door" then 
-		if key == "spawnflags" then return "2048" end 
-	end  
+	if(ent:GetClass() == "func_door") then
+		if(string.find(string.lower(key),"movedir")) then
+			if(value == "90 0 0") then
+				ent.IsP = true
+			end
+		end
+		if(string.find(string.lower(key),"noise1")) then
+			ent.BHS = value
+		end
+		if(string.find(string.lower(key),"speed")) then
+			if(tonumber(value) > 100) then
+				ent.IsP = true
+			end
+			ent.BHSp = tonumber(value)
+		end
+	end
+	if(ent:GetClass() == "func_button") then
+		if(string.find(string.lower(key),"movedir")) then
+			if(value == "90 0 0") then
+				ent.IsP = true
+			end
+		end
+		if(key == "spawnflags") then ent.SpawnFlags = value end
+		if(string.find(string.lower(key),"sounds")) then
+			ent.BHS = value
+		end
+		if(string.find(string.lower(key),"speed")) then
+			if(tonumber(value) > 100) then
+				ent.IsP = true
+			end
+			ent.BHSp = tonumber(value)
+		end
+	end
 end 
+
+function GM:Move(pl, movedata)
+	if(!pl or !pl:IsValid()) then return end
+	if pl:IsOnGround() or !pl:Alive() or pl:WaterLevel() > 0 then return end
+	
+	local aim = movedata:GetMoveAngles()
+	local forward, right = aim:Forward(), aim:Right()
+	local fmove = movedata:GetForwardSpeed()
+	local smove = movedata:GetSideSpeed()
+	
+	if pl:KeyDown( IN_MOVERIGHT ) then
+		smove = (smove * 10) + 500
+	elseif pl:KeyDown( IN_MOVELEFT ) then
+		smove = (smove * 10) - 500
+	end --this is just to ensure that lj is fine
+	
+	forward.z, right.z = 0,0
+	forward:Normalize()
+	right:Normalize()
+
+	local wishvel = forward * fmove + right * smove
+	wishvel.z = 0
+
+	local wishspeed = wishvel:Length()
+
+	if(wishspeed > movedata:GetMaxSpeed()) then
+		wishvel = wishvel * (movedata:GetMaxSpeed()/wishspeed)
+		wishspeed = movedata:GetMaxSpeed()
+	end
+
+	local wishspd = wishspeed
+	wishspd = math.Clamp(wishspd, 0, 30)
+
+	local wishdir = wishvel:GetNormal()
+	local current = movedata:GetVelocity():Dot(wishdir)
+
+	local addspeed = wishspd - current
+
+	if(addspeed <= 0) then return end
+
+	local accelspeed = (120) * wishspeed * FrameTime()
+
+	if(accelspeed > addspeed) then
+		accelspeed = addspeed
+	end
+
+	local vel = movedata:GetVelocity()
+	vel = vel + (wishdir * accelspeed)
+	movedata:SetVelocity(vel)
+	
+	if(self.BaseClass && self.BaseClass.Move) then
+		return self.BaseClass:Move(pl, movedata)
+	else
+		return false
+	end
+end
+
+function GM:OnPlayerHitGround(ply)
+	
+	-- this is my simple implementation of the jump boost, possible conditioning in future: jump height should only increase IF the player pressed jump key, any hitgrounds after the jump key should call this until finished jumping. (complex to do and unneccessary but would make certain kz maps easier in a way (and close to where they are on css))
+	ply:SetJumpPower(268.4)
+	timer.Simple(0.3,function () ply:SetJumpPower(280) end)
+	
+	local leveldata = {}
+	if CLIENT then
+		leveldata = GAMEMODE.CurrentLevel
+	else
+		leveldata = ply.LevelData
+	end
+	
+	--mpbhop stuff
+	local ent = ply:GetGroundEntity()
+	if(tonumber(ent:GetNWInt("Platform",0)) == 0) then return end
+    if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && ent.BHSp && ent.BHSp > 100 then
+		ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.8 ) )
+	elseif ent:GetClass() == "func_door" || ent:GetClass() == "func_button" then
+		timer.Simple( 0.04, function()
+			-- setting owner stops collision between two entities
+			ent:SetOwner(ply)
+			if(CLIENT)then
+				ent:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
+			end
+		end)
+		timer.Simple( 0.7, function()  ent:SetOwner(nil) end)
+		timer.Simple( 0.7, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
+	end
+	
+	if(self.BaseClass && self.BaseClass.OnPlayerHitGround) then
+		self.BaseClass:OnPlayerHitGround(ply)
+	end
+end
 
 /* Spawn Velocity Cap */
 function GM:SetupMove(ply, Data) 

@@ -3,6 +3,8 @@
 -- Created by xAaron113x --
 ---------------------------
 
+GM.CurrentLevel = GM.Levels[2] --default normal level can be changed later to suit loading/saving
+
 surface.CreateFont("DiffMenu", {font="Arvil Sans", size=32, weight=300, blursize=0.4})
 surface.CreateFont("CloseFont", {font="Arial", size=16, 500}) 
 
@@ -22,7 +24,8 @@ function PANEL:Init()
 		Button:NoClipping(true) 
 		Button.Text = string.upper(v.name) 
 		function Button.OnMouseReleased() 
-			RunConsoleCommand("level_select", k) 
+			RunConsoleCommand("level_select", k)
+			GAMEMODE.CurrentLevel = GAMEMODE.Level[k]
 			GAMEMODE:SetGUIBlur(false) 
 			gui.EnableScreenClicker(false)
 			self:SetVisible(false) 

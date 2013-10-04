@@ -10,6 +10,7 @@ GM.Website 		= "aaron113.pw"
 GM.TeamBased 	= false 
 
 DeriveGamemode("base") 
+DEFINE_BASECLASS("gamemode_base")
 
 GM.VIPBonusHP = false 
 GM.HUDShowVel = false 

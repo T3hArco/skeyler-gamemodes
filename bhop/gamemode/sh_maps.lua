@@ -8,8 +8,8 @@ SS.MapFile = "ss/maplist.txt"
 if !file.IsDir("ss", "DATA") then file.CreateDir("ss") end  
 
 GM.MapList = {} 
-function GM:AddMap(name, payout, spawnpos, spawnang, spawnareamin, spawnareamax, finishareamin, finishareamax) 
-	self.MapList[name] = {name=name, payout=payout, spawnpos=spawnpos, spawnang=spawnang, spawnarea={min=spawnareamin, max=spawnareamax}, finisharea={pos=finishareapos, min=finishareamin, max=finishareamax}}
+function GM:AddMap(name, payout, spawnpos, spawnang, spawnareamin, spawnareamax, finishareamin, finishareamax, ignoredoors) 
+	self.MapList[name] = {name=name, payout=payout, spawnpos=spawnpos, spawnang=spawnang, spawnarea={min=spawnareamin, max=spawnareamax}, finisharea={pos=finishareapos, min=finishareamin, max=finishareamax}, ignoredoors}
 	self:SaveMaps() 
 end 
 
