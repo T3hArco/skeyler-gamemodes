@@ -9,7 +9,7 @@ if !file.IsDir("ss", "DATA") then file.CreateDir("ss") end
 
 GM.MapList = {} 
 function GM:AddMap(name, payout, spawnpos, spawnang, spawnareamin, spawnareamax, finishareamin, finishareamax, ignoredoors) 
-	self.MapList[name] = {name=name, payout=payout, spawnpos=spawnpos, spawnang=spawnang, spawnarea={min=spawnareamin, max=spawnareamax}, finisharea={pos=finishareapos, min=finishareamin, max=finishareamax}, ignoredoors}
+	self.MapList[name] = {name=name, payout=payout, spawnpos=spawnpos, spawnang=spawnang, spawnarea={min=spawnareamin, max=spawnareamax}, finisharea={pos=finishareapos, min=finishareamin, max=finishareamax}, ignoredoors=ignoredoors}
 	self:SaveMaps() 
 end 
 
@@ -32,6 +32,6 @@ function GM:SaveMaps()
 end 
 
 
--- GM:AddMap("bhop_cobblestone_gm", 200, Vector(68, 433, 192.88), Angle(0, -180, 0),
---  Vector(-192, 194, 129), Vector(285, 670, 130),
---  Vector(133, 2724, 129), Vector(360, 2870, 130))
+GM:AddMap("bhop_cobblestone", 200, Vector(68, 433, 192.88), Angle(0, -180, 0),
+ Vector(-192, 194, 129), Vector(285, 670, 130),
+ Vector(133, 2724, 129), Vector(360, 2870, 130))

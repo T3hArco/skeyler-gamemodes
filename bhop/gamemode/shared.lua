@@ -19,7 +19,7 @@ GM.HUDShowTimer = true
 TEAM_BHOP = 1  
 team.SetUp(TEAM_BHOP, "Hoppers", Color(87, 198, 255), false) 
 
-function GM:EntityKeyValue(ent, key, val) 
+function GM:EntityKeyValue(ent, key, value) 
 	if(ent:GetClass() == "func_door") then
 		if(string.find(string.lower(key),"movedir")) then
 			if(value == "90 0 0") then
@@ -130,15 +130,32 @@ function GM:OnPlayerHitGround(ply)
     if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && ent.BHSp && ent.BHSp > 100 then
 		ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.8 ) )
 	elseif ent:GetClass() == "func_door" || ent:GetClass() == "func_button" then
-		timer.Simple( 0.04, function()
-			-- setting owner stops collision between two entities
-			ent:SetOwner(ply)
-			if(CLIENT)then
-				ent:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
+		if(leveldata.id != 1) then
+			timer.Simple( leveldata.staytime, function()
+				-- setting owner stops collision between two entities
+				ent:SetOwner(ply)
+				if(CLIENT)then
+					ent:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
+				end
+			end)
+			timer.Simple( leveldata.respawntime, function()  ent:SetOwner(nil) end)
+			timer.Simple( leveldata.respawntime, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
+		else
+			ply.cblock = ent
+			if(timer.Exists("BlockTimer")) then
+				timer.Destroy("BlockTimer")
 			end
-		end)
-		timer.Simple( 0.7, function()  ent:SetOwner(nil) end)
-		timer.Simple( 0.7, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
+			timer.Create("BlockTimer",0.5,1,function()
+				if(ply && ply:IsValid() && ply.cblock && ply.cblock:IsValid() && ply:GetGroundEntity() == ply.cblock) then
+					ply.cblock:SetOwner(ply)
+					if(CLIENT)then
+						ply.cblock:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
+					end
+					timer.Simple( 0.5, function()  ent:SetOwner(nil) end)
+					timer.Simple( 0.5, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
+				end
+			end)
+		end
 	end
 	
 	if(self.BaseClass && self.BaseClass.OnPlayerHitGround) then

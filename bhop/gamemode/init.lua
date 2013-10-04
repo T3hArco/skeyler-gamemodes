@@ -8,9 +8,11 @@ AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_difficulty_menu.lua") 
 AddCSLuaFile("sh_levels.lua") 
+AddCSLuaFile("sh_viewoffsets.lua") 
 include("shared.lua")
 include("sh_levels.lua") 
 include("sh_maps.lua") 
+include("sh_viewoffsets.lua") 
 include("player_class/player_bhop.lua")
 
 RunConsoleCommand("sv_stopspeed", "75")
@@ -19,7 +21,9 @@ RunConsoleCommand("sv_accelerate", "5")
 RunConsoleCommand("sv_airaccelerate", "150")
 RunConsoleCommand("sv_gravity", "800")
 RunConsoleCommand("sv_sticktoground", "1")
--- GM:SetMaxVisiblePlayers(20) 
+-- GM:SetMaxVisiblePlayers(20)
+
+GM.Positions = {} 
 
 /* Setup the bhop spawn and finish */
 function GM:AreaSetup() 
@@ -54,14 +58,17 @@ function GM:PlayerSpawn(ply)
 	if ply:IsBot() then ply:SetTeam(TEAM_BHOP) end -- always spawn bots
 
 	if ply:Team() == TEAM_BHOP then  
+		ply:UnSpectate()
+		
 		player_manager.SetPlayerClass( ply, "player_bhop" )
 	
 		self.BaseClass:PlayerSpawn( ply )
 		
-		ply:UnSpectate()
-		ply:SetHull( Vector( -16, -16, 0 ), Vector( 16, 16, 62 ) )
-		ply:SetHullDuck( Vector( -16, -16, 0 ), Vector( 16, 16, 45 ) )
 		hook.Call( "PlayerSetModel", GAMEMODE, ply )
+		
+		ply:SetHull(Vector(-16, -16, 0), Vector(16, 16, 62))
+		ply:SetHullDuck(Vector(-16, -16, 0), Vector(16, 16, 45))
+		
 
 		if ply:IsSuperAdmin() then 
 			ply:Give("ss_mapeditor") 
@@ -130,6 +137,7 @@ end
 /* Setup the teleports, platforms, spawns, and finish lines */
 function GM:InitPostEntity() 
 	if !self.MapList[game.GetMap()].ignoredoors then
+		print('hi')
 		for k,v in pairs(ents.FindByClass("func_door")) do
 			if(!v.IsP) then continue end
 			local mins = v:OBBMins()

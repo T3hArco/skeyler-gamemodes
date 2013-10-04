@@ -25,7 +25,7 @@ function PANEL:Init()
 		Button.Text = string.upper(v.name) 
 		function Button.OnMouseReleased() 
 			RunConsoleCommand("level_select", k)
-			GAMEMODE.CurrentLevel = GAMEMODE.Level[k]
+			GAMEMODE.CurrentLevel = GAMEMODE.Levels[k]
 			GAMEMODE:SetGUIBlur(false) 
 			gui.EnableScreenClicker(false)
 			self:SetVisible(false) 

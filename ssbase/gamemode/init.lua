@@ -20,6 +20,7 @@ function GM:PlayerInitialSpawn(ply)
 end 
 
 function GM:PlayerSpawn(ply)
+	self.BaseClass:PlayerSpawn(ply)
 end 
 
 function GM:ShowHelp(ply) 
