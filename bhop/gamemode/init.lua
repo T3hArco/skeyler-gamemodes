@@ -21,7 +21,7 @@ GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 
 /* Setup the bhop spawn and finish */
 function GM:AreaSetup() 
-	local MapData = self.MapList[game.GetMap()] 
+	local MapData = SS.MapList[game.GetMap()] 
 	if MapData then -- We will assume the rest is valid
 		self.MapSpawn = ents.Create("bhop_area")
 		self.MapSpawn:SetPos(MapData.spawnarea.max-(MapData.spawnarea.max-MapData.spawnarea.min)/2) 
@@ -50,7 +50,8 @@ function GM:LevelSetup(ply, Level)
 
 	ply:SetGravity(ply.LevelData.gravity) 
 	ply.StayTime = ply.LevelData.staytime 
-	-- ply.Payout = self.MapList[game.GetMap()].payout or 100
+	print(game.GetMap())
+	ply.Payout = SS.MapList[game.GetMap()].payout or 100
 
 	ply:ChatPrint("Your difficulty is ".. ply.LevelData.name ..".") 
 
@@ -80,6 +81,9 @@ function GM:PlayerSpawn(ply)
 		player_manager.SetPlayerClass( ply, "player_bhop" )
 	
 		self.BaseClass:PlayerSpawn( ply )
+
+		player_manager.OnPlayerSpawn( ply )
+		player_manager.RunClass( ply, "Spawn" )
 		
 		hook.Call( "PlayerSetModel", GAMEMODE, ply )
 		
@@ -105,6 +109,33 @@ function GM:PlayerSpawn(ply)
 		elseif !ply.InSpawn then 
 			ply:StartTimer() 
 		end 
+
+		local oldhands = ply:GetHands()
+		if ( IsValid( oldhands ) ) then oldhands:Remove() end
+
+		local hands = ents.Create( "gmod_hands" )
+		if ( IsValid( hands ) ) then
+			ply:SetHands( hands )
+			hands:SetOwner( ply )
+
+			-- Which hands should we use?
+			local cl_playermodel = ply:GetInfo( "cl_playermodel" )
+			local info = player_manager.TranslatePlayerHands( cl_playermodel )
+			if ( info ) then
+				hands:SetModel( info.model )
+				hands:SetSkin( info.skin )
+				hands:SetBodyGroups( info.body )
+			end
+
+			-- Attach them to the viewmodel
+			local vm = ply:GetViewModel( 0 )
+			hands:AttachToViewmodel( vm )
+
+			vm:DeleteOnRemove( hands )
+			ply:DeleteOnRemove( hands )
+
+			hands:Spawn()
+		end
 	else 
 		ply:SetTeam(TEAM_SPECTATOR)
 		ply:Spectate(OBS_MODE_ROAMING)
@@ -125,7 +156,7 @@ end
 
 /* Setup the teleports, platforms, spawns, and finish lines */
 function GM:InitPostEntity() 
-	if !self.MapList[game.GetMap()] or !self.MapList[game.GetMap()].ignoredoors then
+	if !SS.MapList[game.GetMap()] or !SS.MapList[game.GetMap()].ignoredoors then
 		for k,v in pairs(ents.FindByClass("func_door")) do
 			if(!v.IsP) then continue end
 			local mins = v:OBBMins()
