@@ -1,7 +1,7 @@
 
 
 concommand.Add("rs", function(ply) 
-	if !ply:IsSuperAdmin() then return end 
+	if ply:IsValid() and !ply:IsSuperAdmin() then return end 
 	RunConsoleCommand("changelevel", game.GetMap()) 
 end ) 
 

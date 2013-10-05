@@ -119,7 +119,7 @@ function GM:OnPlayerHitGround(ply)
 	
 	local leveldata = {}
 	if CLIENT then
-		leveldata = GAMEMODE.CurrentLevel
+		leveldata = self.Levels[ply:GetNetworkedInt("ssbhop_level", 0)]
 	else
 		leveldata = ply.LevelData
 	end

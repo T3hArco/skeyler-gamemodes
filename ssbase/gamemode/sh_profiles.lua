@@ -92,11 +92,13 @@ end
 
 PLAYER_META.IsAdmin2 = PLAYER_META.IsAdmin
 function PLAYER_META:IsAdmin() 
+	if !self:IsValid() then return true end 
 	return self:GetRank() >= 100 
 end 
 
 PLAYER_META.IsSuperAdmin2 = PLAYER_META.IsSuperAdmin 
 function PLAYER_META:IsSuperAdmin() 
+	if !self:IsValid() then return true end 
 	return self:GetRank() >= 1000 
 end 
 

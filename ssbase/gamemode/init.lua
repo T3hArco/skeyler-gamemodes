@@ -36,10 +36,10 @@ function GM:ShowSpare2(ply)
 end 
 
 function GM:PlayerNoClip(ply) 
-	return true 
+	return ply:IsSuperAdmin() 
 end 
 
-/* Setup the teleports, platforms, spawns, and finish lines */
+/* Get a list of SpawnPoints */
 hook.Add("InitPostEntity", "SpawnPoints", function() 
 	local self = GAMEMODE
 	if ( !IsTableOfEntitiesValid( self.SpawnPoints ) ) then

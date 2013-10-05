@@ -4,33 +4,27 @@
 ---------------------------
 
 
-AddCSLuaFile("shared.lua")
-AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("cl_difficulty_menu.lua") 
-AddCSLuaFile("sh_levels.lua") 
-AddCSLuaFile("sh_viewoffsets.lua") 
 include("shared.lua")
+include("sv_config.lua")
 include("sh_levels.lua") 
 include("sh_maps.lua") 
 include("sh_viewoffsets.lua") 
 include("player_class/player_bhop.lua")
 
-RunConsoleCommand("sv_stopspeed", "75")
-RunConsoleCommand("sv_friction", "4")
-RunConsoleCommand("sv_accelerate", "5")
-RunConsoleCommand("sv_airaccelerate", "150")
-RunConsoleCommand("sv_gravity", "800")
-RunConsoleCommand("sv_sticktoground", "1")
--- GM:SetMaxVisiblePlayers(20)
+AddCSLuaFile("shared.lua")
+AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("cl_difficulty_menu.lua") 
+AddCSLuaFile("sh_levels.lua") 
+AddCSLuaFile("sh_viewoffsets.lua") 
 
-GM.Positions = {} 
+GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 
 /* Setup the bhop spawn and finish */
 function GM:AreaSetup() 
 	local MapData = self.MapList[game.GetMap()] 
 	if MapData then -- We will assume the rest is valid
 		self.MapSpawn = ents.Create("bhop_area")
-		self.MapSpawn:SetPos(MapData.spawnarea.max-(MapData.spawnarea.max-MapData.spawnarea.min)/2)          --MapData.SpawnArea.Min+(MapData.SpawnArea.Max-MapData.SpawnArea.Min)/2) 
+		self.MapSpawn:SetPos(MapData.spawnarea.max-(MapData.spawnarea.max-MapData.spawnarea.min)/2) 
 		self.MapSpawn:Setup(MapData.spawnarea.min, MapData.spawnarea.max, true) 
 		self.MapSpawn:Spawn()
 
@@ -46,9 +40,33 @@ function GM:AreaSetup()
 	end 
 end 
 
+function GM:LevelSetup(ply, Level)
+print(Level)  
+	if !Level or !isnumber(Level) or !self.Levels[Level] then return end 
+
+	ply:SetNetworkedInt("ssbhop_level", Level) 
+	ply.LevelData = self.Levels[Level] 
+
+	if !ply.LevelData then return end 
+
+	ply:SetGravity(ply.LevelData.gravity) 
+	ply.StayTime = ply.LevelData.staytime 
+	ply.award = ply.LevelData.award 
+
+	ply:ChatPrint("Your difficulty is ".. ply.LevelData.name ..".") 
+
+	if ply:Team() == TEAM_BHOP then 
+		ply:ResetTimer() 
+		ply.Winner = false 
+	end  
+	ply:SetTeam(TEAM_BHOP) 
+	ply:Spawn() 
+end 
+concommand.Add("level_select", function(ply, cmd, args) GAMEMODE:LevelSetup(ply, tonumber(args[1])) end)
+
 function GM:ShowTeam(ply) 
 	if ply:Team() != TEAM_BHOP and ply:HasTimer() then -- Just resume if they already played.
-		self:LevelSetup(ply, self.Positions[ply:SteamID()].Level)
+		self:LevelSetup(ply, self.PSaveData[ply:SteamID()].Level)
 	else 
 		ply:ConCommand("open_difficulties") 
 	end 
@@ -74,19 +92,15 @@ function GM:PlayerSpawn(ply)
 			ply:Give("ss_mapeditor") 
 		end 
 
-		if ply:IsVIP() then 
-			ply:SetHealth(200) --dont get this, absolutely no benefit o.o
-		end 
-		
 		if !ply.LevelData then
 			self:LevelSetup(ply,2) --default level
 		end
 			
-		if ply:HasTimer() and self.Positions[ply:SteamID()] then 
+		if ply:HasTimer() and self.PSaveData[ply:SteamID()] then 
 			ply.AreaIgnore = true 
-			local PosInfo = self.Positions[ply:SteamID()] 
-			ply:SetPos(PosInfo.LastPos) 
-			ply:SetEyeAngles(PosInfo.LastAng) 
+			local PosInfo = self.PSaveData[ply:SteamID()] 
+			ply:SetPos(PosInfo.LastPosition) 
+			ply:SetEyeAngles(PosInfo.LastAngle) 
 			ply:StartTimer() 
 			ply.AreaIgnore = false
 		elseif !ply.InSpawn then 
@@ -98,41 +112,17 @@ function GM:PlayerSpawn(ply)
 	end 
 end 
 
-function GM:LevelSetup(ply, Level) 
-	if !Level then return end 
-
-	ply.Level = Level 
-	ply.LevelData = self.Levels[Level] 
-
-	if !ply.LevelData then return end 
-
-	ply:SetGravity(ply.LevelData.gravity) 
-	ply.StayTime = ply.LevelData.staytime 
-	ply.award = ply.LevelData.award 
-	ply.GroundEnt = false 
-	ply.LastBlock = false 
-
-	ply:ChatPrint("Your difficulty is ".. ply.LevelData.name ..".") 
-
-	if ply:Team() == TEAM_BHOP then 
-		ply:ResetTimer() 
-		ply.Winner = false 
-	end  
-
-	if !ply:HasTimer() then self.Positions[ply:SteamID()] = false end 
-
-	ply:SetTeam(TEAM_BHOP) 
-	ply:Spawn() 
-end 
-concommand.Add("level_select", function(ply, cmd, args) GAMEMODE:LevelSetup(ply, tonumber(args[1])) end)
-
 function GM:PlayerDisconnected(ply) 
 	ply:PauseTimer() 
 end 
 
 function GM:PlayerShouldTakeDamage(ply, attacker) 
 	return false 
-end
+end 
+
+function GM:IsSpawnpointSuitable() -- Overwrite so we don't run into death problems
+	return true 
+end 
 
 /* Setup the teleports, platforms, spawns, and finish lines */
 function GM:InitPostEntity() 
@@ -189,6 +179,15 @@ function GM:InitPostEntity()
 	
 	self:AreaSetup()
 end 
+
+function GM:PlayerFootstep(ply)
+	if ply:Alive() then -- If alive, assume we save positions
+		if !self.PSaveData[ply:SteamID()] then self.PSaveData[ply:SteamID()] = {} end 
+		self.PSaveData[ply:SteamID()].LastPosition = ply:GetPos() 
+		self.PSaveData[ply:SteamID()].LastAngle = ply:GetAngles() 
+		self.PSaveData[ply:SteamID()].Level = ply:GetNetworkedInt("ssbhop_level", 0) 
+	end 
+end
 
 function GM:PlayerWon(ply) 
 
