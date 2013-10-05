@@ -28,7 +28,7 @@ function PLAYER_META:ProfileLoad()
 	self:SetRank(1000)
 	self:SetMoney(18576) 
 	-- self:SetLevel(1) 
-	self:SetExp(10000) 
+	self:SetExp(1) 
 	self:ChatPrint("Your profile has been loaded") 
 end 
 
@@ -103,6 +103,7 @@ function PLAYER_META:IsSuperAdmin()
 end 
 
 function PLAYER_META:IsVIP() 
+	if !self:IsValid() then return true end 
 	return self:GetRank() >= 5 
 end 
 

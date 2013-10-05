@@ -9,6 +9,8 @@ GM.AllowedList["STEAM_0:1:19940367"]=true -- Ntag
 GM.AllowedList["STEAM_0:1:9346397"]=true -- Snoipa 
 GM.AllowedList["STEAM_0:0:43691646"]=true -- knoxed
 GM.AllowedList["STEAM_0:1:20059628"]=true -- George
+GM.AllowedList["STEAM_0:0:17219175"]=true -- Knoxed main
+GM.AllowedList["STEAM_0:0:8398971"]=true -- Giggles
 
 GM.AllowedList[""]=true
 

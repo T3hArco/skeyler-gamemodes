@@ -41,7 +41,6 @@ function GM:AreaSetup()
 end 
 
 function GM:LevelSetup(ply, Level)
-print(Level)  
 	if !Level or !isnumber(Level) or !self.Levels[Level] then return end 
 
 	ply:SetNetworkedInt("ssbhop_level", Level) 
@@ -51,7 +50,7 @@ print(Level)
 
 	ply:SetGravity(ply.LevelData.gravity) 
 	ply.StayTime = ply.LevelData.staytime 
-	ply.award = ply.LevelData.award 
+	-- ply.Payout = self.MapList[game.GetMap()].payout or 100
 
 	ply:ChatPrint("Your difficulty is ".. ply.LevelData.name ..".") 
 
@@ -126,8 +125,7 @@ end
 
 /* Setup the teleports, platforms, spawns, and finish lines */
 function GM:InitPostEntity() 
-	if !self.MapList[game.GetMap()].ignoredoors then
-		print('hi')
+	if !self.MapList[game.GetMap()] or !self.MapList[game.GetMap()].ignoredoors then
 		for k,v in pairs(ents.FindByClass("func_door")) do
 			if(!v.IsP) then continue end
 			local mins = v:OBBMins()
@@ -192,6 +190,7 @@ end
 function GM:PlayerWon(ply) 
 	ply:EndTimer()
 	ply.Winner = true 
-	ply:ChatPrintAll("You have won in ".. FormatTime(ply:GetTotalTime(true)))
-	ply:GiveMoney(ply.award)
+	ply:ChatPrintAll(ply:Name().." has won in ".. FormatTime(ply:GetTotalTime(true)))
+	print(ply.Payout) 
+	ply:GiveMoney(ply.Payout)
 end 
