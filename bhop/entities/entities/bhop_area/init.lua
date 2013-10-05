@@ -12,13 +12,13 @@ function ENT:Initialize()
 end
 
 function ENT:IsSpawn() 
-	return (self.b_isSpawn and self.b_isSpawn == true)
+	return (self.isSpawn and self.isSpawn == true)
 end 
 
 function ENT:Setup(Min, Max, IsSpawn)
 	Max.z = Max.z+200
 
-	self.b_isSpawn = IsSpawn
+	self.isSpawn = IsSpawn
 	self:SetMoveType(MOVETYPE_NONE)
 	
 	self:SetModel("models/Combine_Helicopter/helicopter_bomb01.mdl")
@@ -47,10 +47,7 @@ function ENT:StartTouch(ply)
 			ply.InSpawn = true
 			ply:ResetTimer()  
 		else
-			ply.Winner = true 
-			ply:EndTimer()
-
-			ply:ChatPrint("You have won in ".. FormatTime(ply:GetTotalTime(true))) 
+			hook.Call("PlayerWon", GAMEMODE, ply)  
 		end  
 	end 
 end 

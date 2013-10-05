@@ -190,5 +190,8 @@ function GM:PlayerFootstep(ply)
 end
 
 function GM:PlayerWon(ply) 
-
+	ply:EndTimer()
+	ply.Winner = true 
+	ply:ChatPrintAll("You have won in ".. FormatTime(ply:GetTotalTime(true)))
+	ply:GiveMoney(ply.award)
 end 
