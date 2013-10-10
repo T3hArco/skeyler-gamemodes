@@ -252,7 +252,7 @@ function GM:HUDPaint()
 	end 
 
 	surface.SetFont("HUD_CENTER") 
-	surface.SetTextColor(35, 35, 35, 255) 
+	surface.SetTextColor(35, 35, 35, self.HudAlpha) 
 	tw, th = surface.GetTextSize(Text) 
 	surface.SetTextPos(w-95-tw/2, h-60-th/2) 
 	surface.DrawText(Text) 
