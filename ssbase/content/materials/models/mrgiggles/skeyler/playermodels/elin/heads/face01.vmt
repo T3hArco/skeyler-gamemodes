@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\elin\heads\face01"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\elin\heads\face01_norm"
+	"$halflambert" "1"
+
+	"$phong" "1"
+	"$phongexponent" "1"
+	"$phongboost"	"1"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

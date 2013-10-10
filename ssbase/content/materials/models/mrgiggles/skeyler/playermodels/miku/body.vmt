@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\miku\body"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\miku\normal"
+	"$halflambert" "1"
+
+	"$lightwarptexture" "models\mrgiggles\skeyler\playermodels\miku\basewarp"
+
+	"$phong" "1"
+	"$phongboost"	"0"
+	"$phongexponent" "0"
+	"$phongfresnelranges"	"[0 0 0]"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "4"
+	"$rimlightboost"          "4"
+}

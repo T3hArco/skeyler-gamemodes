@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\hats\heartband\heartband_red"
+	"$bumpmap" "models\mrgiggles\skeyler\hats\heartband\heartband_norm"
+	"$alphatest" "1"
+	"$nocull" "1"
+
+	"$phong" "1"
+	"$phongexponent" "6"
+	"$phongboost"	"12"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

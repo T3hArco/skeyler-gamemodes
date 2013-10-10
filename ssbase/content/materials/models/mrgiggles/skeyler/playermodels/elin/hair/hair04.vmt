@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\elin\hair\hair04"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\elin\hair\hair04_norm"
+	"$halflambert" "1"
+	"$alphatest" "1"
+	"$nocull" "1"
+
+	"$phong" "1"
+	"$phongexponent" "4"
+	"$phongboost"	"2"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

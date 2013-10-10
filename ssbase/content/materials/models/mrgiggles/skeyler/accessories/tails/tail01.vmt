@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\accessories\tails\tail01"
+	"$bumpmap" "models\mrgiggles\skeyler\accessories\tails\tail01_norm"
+	"$halflambert" "1"
+
+	"$phong" "1"
+	"$phongexponent" "4"
+	"$phongboost"	"2"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

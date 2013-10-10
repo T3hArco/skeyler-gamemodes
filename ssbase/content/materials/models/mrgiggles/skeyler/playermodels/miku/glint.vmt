@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\miku\face"
+	"$translucent" "1"
+	"$model" "1"
+}

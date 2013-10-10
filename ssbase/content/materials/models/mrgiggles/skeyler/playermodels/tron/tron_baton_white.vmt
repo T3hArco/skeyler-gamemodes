@@ -1,0 +1,22 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\tron\tron_baton_white"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\tron\tron_baton_norm"
+	"$selfillum" "1"
+	"$selfillummask" "models\mrgiggles\skeyler\playermodels\tron\tron_baton_emsspwr"
+	"$halflambert" "1"
+	"$lightwarptexture" "models\mrgiggles\skeyler\playermodels\tron\metalwarp"
+
+	"$phong" "1"
+	"$phongexponenttexture" "models\mrgiggles\skeyler\playermodels\tron\tron_baton_exp"
+	"$phongboost"	"8"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[0.5 0.5 0.5]"
+
+	"$detail" "models\mrgiggles\skeyler\playermodels\tron\tron_baton_emss"
+	"$detailblendmode" "1"
+	"$detailscale" "1"
+}
