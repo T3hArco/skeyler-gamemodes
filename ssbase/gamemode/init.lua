@@ -8,6 +8,7 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
 AddCSLuaFile("cl_chatbox.lua") 
 AddCSLuaFile("sh_profiles.lua") 
+AddCSLuaFile("cl_store.lua") 
 include("shared.lua")
 include("sh_profiles.lua") 
 include("sh_maps.lua")
@@ -65,6 +66,7 @@ function GM:AllowPlayerPickup( ply, object )
 end 
 
 function GM:ShowHelp(ply) 
+	ply:ConCommand("ss_store") 
 end 
 
 function GM:ShowTeam(ply) 

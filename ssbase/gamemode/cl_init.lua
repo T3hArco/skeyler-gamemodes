@@ -7,12 +7,16 @@ include("shared.lua")
 include("sh_profiles.lua") 
 include("cl_chatbox.lua") 
 include("cl_hud.lua") 
+include("cl_store.lua") 
 
 GM:HUDAddShouldNotDraw("CHudHealth") 
 GM:HUDAddShouldNotDraw("CHudSecondaryAmmo") 
 GM:HUDAddShouldNotDraw("CHudAmmo") 
 GM:HUDAddShouldNotDraw("CHudChat") 
 -- GM:HUDAddShouldNotDraw("CHudCrosshair") 
+
+SS.ScrW = ScrW() 
+SS.ScrH = ScrH()
 
 GM.GUIBlurAmt = 0
 GM.GUIBlurOverlay = Material("skeyler/blur_overlay") 
