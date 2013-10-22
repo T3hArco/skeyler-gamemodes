@@ -1,6 +1,8 @@
 SS.STORE = {}
 
-SS.Store.Categories = {"Hats","Models","Accesories"}
+SS.STORE.Categories = {"Hats","Models","Accesories"}
+
+SS.STORE.Item = {}
 
 function SS.STORE.LoadItems()
 	for id,c in pairs(self.Categories) do
@@ -19,6 +21,8 @@ function SS.STORE.LoadItems()
 					end
 				end)
 			end
+			
+			SS.STORE.Items[ITEM.ID] = ITEM
 		end
 	end
 end

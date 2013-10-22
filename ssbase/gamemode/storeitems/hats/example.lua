@@ -1,6 +1,8 @@
 ITEM.ID = "prettyhat"							--Should be a unique string that identifies the item
 ITEM.Name = "Pretty Hat"						--The name the item should display
  
+ITEM.Price = 2000
+ 
 ITEM.Model = "folder/folder/hat.mdl"			--Model used by the item
 
 ITEM.Type = "hat"								--Also works for stuff like "mask" and such. Used for item compatibility
