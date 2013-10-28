@@ -62,7 +62,8 @@ function GetWeaponIcon(wep)
 
 end 
 
-local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0
+local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0 
+
 function GM:HUDPaint() 
 	if self.GUIBlur then 
 		self.HudAlpha = math.Approach(self.HudAlpha, 0, 5) 
@@ -166,7 +167,7 @@ function GM:HUDPaint()
 	surface.DrawText("lvl") 
 
 	/* Center HUD */
-	if self.HUDShowVel then 
+	if self.HUDShowVel and w > 800 then -- Get a better computer if you can only handle 800x600
 		surface.SetFont("HUD_CENTER") 
 		tw = surface.GetTextSize("VELOCITY") 
 		surface.SetTextPos((w/2)-99, h-115)

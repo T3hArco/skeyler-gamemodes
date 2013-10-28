@@ -1,25 +1,40 @@
 ---------------------------
 --       Bunny Hop       -- 
 -- Created by xAaron113x --
----------------------------
+--------------------------- 
+
+for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do -- Fix this later fagget  
+	print(v) 
+	-- include("ss_vgui/"..v) 
+end
 
 include("shared.lua")
 include("sh_profiles.lua") 
+include("sh_store.lua") 
 include("cl_chatbox.lua") 
 include("cl_hud.lua") 
+-- include("ss_vgui/ss_hub_store_icon.lua") 
 include("cl_store.lua") 
 
 GM:HUDAddShouldNotDraw("CHudHealth") 
 GM:HUDAddShouldNotDraw("CHudSecondaryAmmo") 
 GM:HUDAddShouldNotDraw("CHudAmmo") 
 GM:HUDAddShouldNotDraw("CHudChat") 
--- GM:HUDAddShouldNotDraw("CHudCrosshair") 
 
 SS.ScrW = ScrW() 
 SS.ScrH = ScrH()
 
 GM.GUIBlurAmt = 0
 GM.GUIBlurOverlay = Material("skeyler/blur_overlay") 
+
+function ResolutionCheck() 
+	local w = ScrW() 
+	if w <= 640 then
+		if !LocalPlayer or !LocalPlayer():IsValid() then timer.Simple(1, ResolutionCheck) return end
+		LocalPlayer():ChatPrint("** We don't support this low of a resolution.")
+		LocalPlayer():ChatPrint("** Please increase it for a better experience.") 
+	end 
+end 
 
 function GM:SetGUIBlur(bool) 
 	self.GUIBlur = bool or false 

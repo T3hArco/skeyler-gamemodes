@@ -1,14 +1,22 @@
 ---------------------------
 --       Bunny Hop       -- 
 -- Created by xAaron113x --
----------------------------
+--------------------------- 
+
+for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do  -- Fix this later fagget  
+	print(v) 
+	-- AddCSLuaFile("ss_vgui/"..v) 
+end
+
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
 AddCSLuaFile("cl_chatbox.lua") 
 AddCSLuaFile("sh_profiles.lua") 
+AddCSLuaFile("sh_store.lua") 
 AddCSLuaFile("cl_store.lua") 
+AddCSLuaFile("vgui/ss_hub_store_icon.lua") 
 include("shared.lua")
 include("sh_profiles.lua") 
 include("sh_maps.lua")
@@ -25,6 +33,8 @@ end
 
 function GM:PlayerInitialSpawn(ply) 
 	ply:ProfileLoad() 
+
+	ply:SendLua("ResolutionCheck()") 
 end 
 
 function GM:PlayerSpawn(ply)
