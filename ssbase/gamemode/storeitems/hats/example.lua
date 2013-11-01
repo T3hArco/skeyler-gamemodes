@@ -13,7 +13,7 @@ ITEM.BoneMerge = False							--May be used for certain accessories to bonemerge 
 ITEM.Colorable = False							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = True							--Used if the model is colorable, but a translation is needed to $selfillumtint
 
-ITEM.Functions {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
+ITEM.Functions = {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()
 												--e.g miku hair attach with the models Equip

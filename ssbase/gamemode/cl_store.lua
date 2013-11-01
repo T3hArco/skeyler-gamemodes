@@ -207,6 +207,7 @@ function PANEL:Init()
 		StoreCats[v] = {} 
 		local t = StoreCats[v] 
 		t.button = vgui.Create("ss_hub_store_button", self) 
+		t.button:SetCursor( "hand" )
 		t.button:SetSize(HubWidth*0.18, 40) 
 		t.button:SetPos(0, LastY) 
 		t.button:SetTitle(v) 
@@ -226,13 +227,23 @@ function PANEL:Init()
 		t.List = vgui.Create("DIconLayout", t.Panel)  
 		t.Panel:AddItem(t.List)  
 
-		for i=1, 30 do 
-			local Panel = t.List:Add("ss_hub_store_icon")  
-			Panel:SetSize(150, 150) 
-			Panel:SetModel("models/player/breen.mdl") 
-			Panel.PPanel = t.Panel 
-			Panel.Price = 1578948
+		for k2, v2 in pairs(SS.STORE.Items) do 
+			if v2.Category == k then 
+				local Panel = t.List:Add("ss_hub_store_icon") 
+				Panel:SetSize(150, 150) 
+				Panel:SetModel(v2.Model) 
+				Panel.PPanel = t.Panel 
+				Panel.Price = v2.Price 
+			end 
 		end 
+
+		-- for i=1, 30 do 
+		-- 	local Panel = t.List:Add("ss_hub_store_icon")  
+		-- 	Panel:SetSize(150, 150) 
+		-- 	Panel:SetModel("models/player/breen.mdl") 
+		-- 	Panel.PPanel = t.Panel 
+		-- 	Panel.Price = 1578948
+		-- end 
 	end 
 	self:SetCat(1) 
 
@@ -316,11 +327,13 @@ vgui.Register("ss_hub_store_button", PANEL, "DPanel")
 local PANEL = {} 
 local bgmat = Material("skeyler/store/icon_base.png") 
 function PANEL:Init() 
-	self:SetCamPos( Vector( 15, 15, 64 ) )
+	self.Ang = 45
+	self:SetCamPos( Vector( 20, 10, 64 ) )
 	self:SetLookAt( Vector( 0, 0, 64 ) )
 	self:SetFOV( 50 )
 
 	self.InfoPnl = vgui.Create("DPanel", self) 
+	-- self.InfoPnl:SetZPos(-10) 
 	self.InfoPnl.Offset = 0 
 	function self.InfoPnl:Paint(w, h) 
 		if self.Hovered or self:IsChildHovered(1) then 
@@ -328,65 +341,86 @@ function PANEL:Init()
 		else 
 			self.Offset = math.Approach(self.Offset, 0, 5) 
 		end 
-		surface.SetDrawColor(0, 0, 0, 255*0.58) 
-		surface.DrawRect(4, 4, w-8, self.Offset-5) 
-		surface.DrawRect(4, h-4-self.Offset, w-8, self.Offset) 
+		surface.SetDrawColor(0, 0, 0, 255*0.85) 
+		surface.DrawRect(0, 0, w, self.Offset) 
+		surface.DrawRect(0, h-self.Offset, w, self.Offset) 
 
-		local x, y = self:LocalToScreen(4, 4) 
-		render.SetScissorRect(x, y, x+self:GetParent():GetWide(), y+self:GetParent():GetTall(), true) 
-		surface.SetMaterial(HUD_COIN) 
-		surface.SetDrawColor(255, 255, 255, 255) 
-		surface.DrawTexturedRect(11, 5-32+self.Offset, 32, 32) 
-
+		-- render.SetScissorRect(x, y, x+self:GetParent():GetWide(), y+self:GetParent():GetTall(), true) 
+		local x, y = self:LocalToScreen(0, 0) 
 		local Text = FormatNum(self:GetParent().Price or "100") 
 		surface.SetFont("ss_hub_store_price") 
 		local tw, th = surface.GetTextSize(Text) 
-		surface.SetTextPos(11+16+8, 5+27/2-th/2-32+self.Offset) 
+		surface.SetTextPos(w/2-(tw+22)/2+22+1, -32+32/2-th/2+1+self.Offset) 
+		surface.SetTextColor(0, 0, 0, 255*0.35) 
+		surface.DrawText(Text) 
+		surface.SetTextPos(w/2-(tw+22)/2+22, -32+32/2-th/2+self.Offset) 
 		surface.SetTextColor(255, 255, 255, 255) 
 		surface.DrawText(Text) 
-		render.SetScissorRect(x, y, x+self:GetParent():GetWide(), y+self:GetParent():GetTall(), false) 
+
+		surface.SetMaterial(HUD_COIN) 
+		surface.SetDrawColor(255, 255, 255, 255) 
+		surface.DrawTexturedRect(w/2-(tw+22)/2, 4-32+self.Offset, 32, 32) 
+		-- render.SetScissorRect(x, y, x+self:GetParent():GetWide(), y+self:GetParent():GetTall(), false) 
 	end 
 
 	self.BPreview = vgui.Create("DPanel", self.InfoPnl) 
+	self.BPreview:SetCursor( "hand" )
 	self.BPreview:SetSize(62, 22) 
 	function self.BPreview:Paint(w, h) 
-		draw.RoundedBox(4, 0, 0, w, h, Color(156, 156, 156, 255*0.4)) 
+		self.Col = self.Hovered and Color(195, 195, 195, 255) or Color(156, 156, 156, 255)
+		draw.RoundedBox(4, 0, 0, w, h, self.Col) 
 
 		surface.SetFont("ss_hub_store_buttons") 
 		local tw, th = surface.GetTextSize("PREVIEW") 
+		surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
+		surface.SetTextColor(0, 0, 0, 255*0.35) 
+		surface.DrawText("PREVIEW")
 		surface.SetTextPos(w/2-tw/2, h/2-th/2) 
 		surface.SetTextColor(255, 255, 255, 255) 
 		surface.DrawText("PREVIEW")
 	end 
 
 	function self.BPreview:Think() 
-		self:SetPos(5, self:GetParent():GetTall()-4-self:GetParent().Offset+5)
+		self:SetPos(6, self:GetParent():GetTall()-self:GetParent().Offset+5)
 	end 
 
 	self.BPurchase = vgui.Create("DPanel", self.InfoPnl) 
+	self.BPurchase:SetCursor( "hand" )
 	self.BPurchase:SetSize(62, 22)
 	function self.BPurchase:Paint(w, h) 
-		
-		draw.RoundedBox(4, 0, 0, w, h, Color(221, 187, 94, 255*0.4)) 
+		self.Col = self.Hovered and Color(237, 205, 115, 255) or Color(221, 187, 94, 255)
+		draw.RoundedBox(4, 0, 0, w, h, self.Col) 
 
 		surface.SetFont("ss_hub_store_buttons") 
 		local tw, th = surface.GetTextSize("PURCHASE") 
+		surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
+		surface.SetTextColor(0, 0, 0, 255*0.35) 
+		surface.DrawText("PURCHASE")   
 		surface.SetTextPos(w/2-tw/2, h/2-th/2) 
 		surface.SetTextColor(255, 255, 255, 255) 
 		surface.DrawText("PURCHASE")  
 	end 
 
 	function self.BPurchase:Think() 
-		self:SetPos(72, self:GetParent():GetTall()-4-self:GetParent().Offset+5)
+		self:SetPos(74, self:GetParent():GetTall()-self:GetParent().Offset+5)
 	end 
 end 
 
 function PANEL:PerformLayout() 
-	self.InfoPnl:SetSize(self:GetSize()) 
+	local w, h = self:GetSize() 
+	self.InfoPnl:SetSize(w-8, h-8) 
+	self.InfoPnl:SetPos(4, 4)  
 end 
 
 function PANEL:LayoutEntity( Entity )
-	Entity:SetAngles( Angle( 0, 45,  0) )
+	if self.Ang >= 360 then self.Ang = 0 end 
+
+	if self.Hovered or self:IsChildHovered(1) then 
+		self.Ang = self.Ang + 2.5 
+	elseif self.Ang != 45 then 
+		self.Ang = self.Ang + 2.5 
+	end 
+	Entity:SetAngles( Angle( 0, self.Ang,  0) )
 end
 
 function PANEL:Paint(w, h) 
@@ -411,7 +445,7 @@ function PANEL:Paint(w, h)
 	
 	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096 ) 
 	
-	cam.IgnoreZ( true )
+	cam.IgnoreZ( false )
 	
 	render.SuppressEngineLighting( true )
 	render.SetLightingOrigin( self.Entity:GetPos() )
@@ -437,6 +471,65 @@ function PANEL:Paint(w, h)
 	self.LastPaint = RealTime()
 end
 vgui.Register("ss_hub_store_icon", PANEL, "DModelPanel") 
+
+/* Store Preview model */ 
+local PANEL = {} 
+function PANEL:Init() 
+
+end 
+
+function PANEL:SetHat(str) 
+	if ( IsValid( self.Hat ) ) then
+		self.Hat:Remove()
+		self.Hat = nil		
+	end
+	
+	if ( !ClientsideModel ) then return end
+	
+	self.Hat = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
+	if ( !IsValid(self.Hat) ) then return end
+	
+	self.Hat:SetNoDraw( true )
+end 
+
+function PANEL:Paint()
+	if ( !IsValid( self.Entity ) ) then return end
+	
+	local x, y = self:LocalToScreen( 0, 0 )
+	
+	self:LayoutEntity( self.Entity )
+	
+	local ang = self.aLookAngle
+	if ( !ang ) then
+		ang = (self.vLookatPos-self.vCamPos):Angle()
+	end
+	
+	local w, h = self:GetSize()
+	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096 )
+	cam.IgnoreZ( true )
+	
+	render.SuppressEngineLighting( true )
+	render.SetLightingOrigin( self.Entity:GetPos() )
+	render.ResetModelLighting( self.colAmbientLight.r/255, self.colAmbientLight.g/255, self.colAmbientLight.b/255 )
+	render.SetColorModulation( self.colColor.r/255, self.colColor.g/255, self.colColor.b/255 )
+	render.SetBlend( self.colColor.a/255 )
+	
+	for i=0, 6 do
+		local col = self.DirectionalLight[ i ]
+		if ( col ) then
+			render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
+		end
+	end
+		
+	self.Entity:DrawModel()
+	
+	render.SuppressEngineLighting( false )
+	cam.IgnoreZ( false )
+	cam.End3D()
+	
+	self.LastPaint = RealTime()
+end 
+vgui.Register("ss_hub_store_preview", PANEL, "DModelPanel") 
 
 -----------------------------------------------
 -----------------------------------------------
