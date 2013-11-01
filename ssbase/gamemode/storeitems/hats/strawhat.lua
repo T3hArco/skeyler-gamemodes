@@ -13,6 +13,10 @@ ITEM.BoneMerge = false							--May be used for certain accessories to bonemerge 
 ITEM.Colorable = false							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false							--Used if the model is colorable, but a translation is needed to $selfillumtint
 
+ITEM.CamPos = Vector(50, 30, 0)						-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(0, 0, 0) 							-- Used to change the angle at which the camera views the model 
+ITEM.Fov = 20 
+
 ITEM.Functions = {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()

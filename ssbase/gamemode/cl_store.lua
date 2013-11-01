@@ -200,8 +200,19 @@ end
 vgui.Register("ss_hub_container", PANEL, "DPanel")
 
 /* The HUB's store */ 
+STORE = false 
 local PANEL = {} 
 function PANEL:Init() 
+	STORE = self 
+	self.Preview = vgui.Create("ss_hub_store_preview", self)  
+	self.Preview:SetSize(HubWidth-HubWidth*0.18-HubWidth*0.367, HubWidth-HubWidth*0.18-HubWidth*0.367) 
+	self.Preview:SetPos(HubWidth*0.18+HubWidth*0.367+5, 60) 
+	-- self.Preview:SetPos(1, 1) 
+	-- self.Preview:SetModel("models/mrgiggles/skeyler/playermodels/elin.mdl") 
+	-- self.Preview:SetHat("models/mrgiggles/skeyler/hats/strawhat.mdl") 
+
+	self.Preview:NoClipping(true) 
+
 	local LastY = 55 
 	for k,v in pairs(SS.STORE.Categories) do 
 		StoreCats[v] = {} 
@@ -232,8 +243,14 @@ function PANEL:Init()
 				local Panel = t.List:Add("ss_hub_store_icon") 
 				Panel:SetSize(150, 150) 
 				Panel:SetModel(v2.Model) 
+				Panel:SetCamPos(v2.CamPos) 
+				Panel:SetLookAt(v2.LookAt) 
+				Panel:SetFOV(v2.Fov) 
+				Panel.Rotate = v2.Rotate or 45 
 				Panel.PPanel = t.Panel 
 				Panel.Price = v2.Price 
+				Panel.Info = v2 
+				if v2.Type == "model" then Panel.Model = true end 
 			end 
 		end 
 
@@ -246,8 +263,6 @@ function PANEL:Init()
 		-- end 
 	end 
 	self:SetCat(1) 
-
-
 end 
 
 function PANEL:PerformLayout() 
@@ -326,14 +341,14 @@ vgui.Register("ss_hub_store_button", PANEL, "DPanel")
 /* The store icons */ 
 local PANEL = {} 
 local bgmat = Material("skeyler/store/icon_base.png") 
+local highlight = Material("skeyler/store/icon_highlight.png")
 function PANEL:Init() 
 	self.Ang = 45
-	self:SetCamPos( Vector( 20, 10, 64 ) )
+	self:SetCamPos( Vector( 60, 30, 64 ) )
 	self:SetLookAt( Vector( 0, 0, 64 ) )
-	self:SetFOV( 50 )
+	self:SetFOV( 20 )
 
 	self.InfoPnl = vgui.Create("DPanel", self) 
-	-- self.InfoPnl:SetZPos(-10) 
 	self.InfoPnl.Offset = 0 
 	function self.InfoPnl:Paint(w, h) 
 		if self.Hovered or self:IsChildHovered(1) then 
@@ -345,7 +360,6 @@ function PANEL:Init()
 		surface.DrawRect(0, 0, w, self.Offset) 
 		surface.DrawRect(0, h-self.Offset, w, self.Offset) 
 
-		-- render.SetScissorRect(x, y, x+self:GetParent():GetWide(), y+self:GetParent():GetTall(), true) 
 		local x, y = self:LocalToScreen(0, 0) 
 		local Text = FormatNum(self:GetParent().Price or "100") 
 		surface.SetFont("ss_hub_store_price") 
@@ -360,7 +374,6 @@ function PANEL:Init()
 		surface.SetMaterial(HUD_COIN) 
 		surface.SetDrawColor(255, 255, 255, 255) 
 		surface.DrawTexturedRect(w/2-(tw+22)/2, 4-32+self.Offset, 32, 32) 
-		-- render.SetScissorRect(x, y, x+self:GetParent():GetWide(), y+self:GetParent():GetTall(), false) 
 	end 
 
 	self.BPreview = vgui.Create("DPanel", self.InfoPnl) 
@@ -382,6 +395,14 @@ function PANEL:Init()
 
 	function self.BPreview:Think() 
 		self:SetPos(6, self:GetParent():GetTall()-self:GetParent().Offset+5)
+	end 
+
+	function self.BPreview:OnMouseReleased() 
+		if self:GetParent():GetParent().Model then 
+			STORE.Preview:SetModel(self:GetParent():GetParent().Entity:GetModel(), self:GetParent():GetParent().Info) 
+		else 
+			STORE.Preview:SetHat(self:GetParent():GetParent().Entity:GetModel(), self:GetParent():GetParent().Info) 
+		end 
 	end 
 
 	self.BPurchase = vgui.Create("DPanel", self.InfoPnl) 
@@ -417,7 +438,7 @@ function PANEL:LayoutEntity( Entity )
 
 	if self.Hovered or self:IsChildHovered(1) then 
 		self.Ang = self.Ang + 2.5 
-	elseif self.Ang != 45 then 
+	elseif self.Ang != self.Rotate then 
 		self.Ang = self.Ang + 2.5 
 	end 
 	Entity:SetAngles( Angle( 0, self.Ang,  0) )
@@ -467,6 +488,10 @@ function PANEL:Paint(w, h)
 	render.SuppressEngineLighting( false )
 	cam.IgnoreZ( false )
 	cam.End3D()
+
+	-- surface.SetMaterial(highlight) 
+	-- surface.SetDrawColor(255, 255, 255, 255*0.5) 
+	-- surface.DrawTexturedRect(0, 0, 150, 150) 
 	
 	self.LastPaint = RealTime()
 end
@@ -474,29 +499,100 @@ vgui.Register("ss_hub_store_icon", PANEL, "DModelPanel")
 
 /* Store Preview model */ 
 local PANEL = {} 
-function PANEL:Init() 
+function PANEL:Init()
 
+	self.Entity = nil 
+	self.Hat = nil 
+	self.LastPaint = 0
+	self.DirectionalLight = {}
+	
+	self:SetCamPos( Vector( 50, 50, 50 ) )
+	self:SetLookAt( Vector( 0, 0, 40 ) )
+	self:SetFOV( 70 )
+	
+	self:SetText( "" )
+	self:SetAnimSpeed( 0.5 )
+	self:SetAnimated( false )
+	
+	self:SetAmbientLight( Color( 50, 50, 50 ) )
+	
+	self:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
+	self:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
+	
+	self:SetColor( Color( 255, 255, 255, 255 ) )
+
+end
+
+--[[---------------------------------------------------------
+   Name: SetDirectionalLight
+-----------------------------------------------------------]]
+function PANEL:SetDirectionalLight( iDirection, color )
+	self.DirectionalLight[iDirection] = color
+end
+
+--[[---------------------------------------------------------
+   Name: OnSelect
+-----------------------------------------------------------]]
+function PANEL:SetModel( strModelName, Table )
+
+	-- Note - there's no real need to delete the old 
+	-- entity, it will get garbage collected, but this is nicer.
+	if ( IsValid( self.Entity ) ) then
+		self.Entity:Remove()
+		self.Entity = nil		
+	end
+	
+	-- Note: Not in menu dll
+	if ( !ClientsideModel ) then return end
+	
+	self.Entity = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
+	if ( !IsValid(self.Entity) ) then return end
+	
+	self.Entity:SetNoDraw( true ) 
+
+	self.Entity.Info = Table 
+	
+	-- Try to find a nice sequence to play
+	local iSeq = self.Entity:LookupSequence( "walk_all" );
+	if (iSeq <= 0) then iSeq = self.Entity:LookupSequence( "WalkUnarmed_all" ) end
+	if (iSeq <= 0) then iSeq = self.Entity:LookupSequence( "walk_all_moderate" ) end
+	
+	if (iSeq > 0) then self.Entity:ResetSequence( iSeq ) end
+	
+	
 end 
 
-function PANEL:SetHat(str) 
+function PANEL:SetHat( strModelName, Table )
+
+	-- Note - there's no real need to delete the old 
+	-- entity, it will get garbage collected, but this is nicer.
 	if ( IsValid( self.Hat ) ) then
 		self.Hat:Remove()
 		self.Hat = nil		
 	end
 	
+	-- Note: Not in menu dll
 	if ( !ClientsideModel ) then return end
 	
 	self.Hat = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
 	if ( !IsValid(self.Hat) ) then return end
 	
-	self.Hat:SetNoDraw( true )
-end 
+	self.Hat:SetNoDraw( true ) 
 
+	self.Hat.Info = Table 
+	
+end
+
+--[[---------------------------------------------------------
+   Name: OnMousePressed
+-----------------------------------------------------------]]
 function PANEL:Paint()
+
 	if ( !IsValid( self.Entity ) ) then return end
 	
 	local x, y = self:LocalToScreen( 0, 0 )
-	
+	local w, h = self:GetSize()
+
 	self:LayoutEntity( self.Entity )
 	
 	local ang = self.aLookAngle
@@ -504,7 +600,7 @@ function PANEL:Paint()
 		ang = (self.vLookatPos-self.vCamPos):Angle()
 	end
 	
-	local w, h = self:GetSize()
+	
 	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096 )
 	cam.IgnoreZ( true )
 	
@@ -522,13 +618,69 @@ function PANEL:Paint()
 	end
 		
 	self.Entity:DrawModel()
+
+	if self.Hat then 
+		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone("ValveBiped.Bip01_Head1"))
+
+		if SS.STORE.Items[self.Hat.Info.ID].Models and SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] then 
+			local t = SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] 
+			if t.ang then Ang = Ang+t.ang end 
+			if t.pos then Pos = Pos+t.pos end 
+			if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
+		end 
+
+		self.Hat:SetAngles(Ang)
+		self.Hat:SetPos(Pos) 
+		self.Hat:SetParent(self.Entity) 
+		self.Hat:DrawModel() 
+	end 
 	
 	render.SuppressEngineLighting( false )
 	cam.IgnoreZ( false )
 	cam.End3D()
 	
 	self.LastPaint = RealTime()
-end 
+	
+end
+
+--[[---------------------------------------------------------
+   Name: RunAnimation
+-----------------------------------------------------------]]
+function PANEL:RunAnimation()
+	self.Entity:FrameAdvance( (RealTime()-self.LastPaint) * self.m_fAnimSpeed )	
+end
+
+--[[---------------------------------------------------------
+   Name: RunAnimation
+-----------------------------------------------------------]]
+function PANEL:StartScene( name )
+	
+	if ( IsValid( self.Scene ) ) then
+		self.Scene:Remove()
+	end
+	
+	self.Scene = ClientsideScene( name, self.Entity )
+	
+end
+
+
+
+--[[---------------------------------------------------------
+   Name: LayoutEntity
+-----------------------------------------------------------]]
+function PANEL:LayoutEntity( Entity )
+
+	--
+	-- This function is to be overriden
+	--
+
+	if ( self.bAnimated ) then
+		self:RunAnimation()
+	end
+	
+	Entity:SetAngles( Angle( 0, RealTime()*10,  0) )
+
+end
 vgui.Register("ss_hub_store_preview", PANEL, "DModelPanel") 
 
 -----------------------------------------------
