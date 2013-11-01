@@ -36,4 +36,4 @@ ITEM.Hooks["Think"] = function ()
 end
 
 ITEM.Models = {} 
-ITEM.Models["tron"] = {pos=Vector(0, 0, 0), ang=Angle(0, 0, 0), scale=1} 
+ITEM.Models["tron"] = {pos=Vector(0, -1.05, 2.85), ang=Angle(90, 0, -90), scale=0.95} 

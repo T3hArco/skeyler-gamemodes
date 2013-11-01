@@ -34,3 +34,8 @@ ITEM.Hooks = {}
 ITEM.Hooks["Think"] = function ()
 												--could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
 end
+
+ITEM.Models = {} 
+ITEM.Models["elin"] = {pos=Vector(0, 1.25, 4.25), ang=Angle(90, 0, -90), scale=1.1} 
+ITEM.Models["miku"] = {pos=Vector(0, 3.1, 3.75), ang=Angle(90, 0, -90), scale=1} 
+ITEM.Models["tron"] = {pos=Vector(0, 3.8, 4.1), ang=Angle(90, 0, -90), scale=1} 
