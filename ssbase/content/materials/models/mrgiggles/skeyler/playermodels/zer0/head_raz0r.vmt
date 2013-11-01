@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\zer0\head_raz0r"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\zer0\head_raz0r_norm"
+	"$selfillum" "1"
+
+	"$phong" "1"
+	//"$phongexponent" "4"
+	"$phongexponenttexture" "models\mrgiggles\skeyler\playermodels\zer0\head_raz0r_fres"
+	"$phongboost" "1.5"
+	"$phongfresnelranges" "[0.05 0.5 1]"
+}

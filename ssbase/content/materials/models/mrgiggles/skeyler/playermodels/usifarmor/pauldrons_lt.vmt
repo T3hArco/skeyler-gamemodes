@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\usifarmor\pauldrons_lt"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\usifarmor\pauldrons_lt_norm"
+
+	"$phong" "1"
+	"$phongboost"	"4"
+	"$phongexponent" "12"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

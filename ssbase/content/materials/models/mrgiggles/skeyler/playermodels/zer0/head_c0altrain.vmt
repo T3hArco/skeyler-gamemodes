@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\zer0\head_c0altrain"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\zer0\head_c0altrain_norm"
+
+	"$envmap" "env_cubemap"
+	//"$envmapsaturation" "0"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[0.05 0.05 0.05]"
+
+	"$phong" "1"
+	//"$phongexponent" "4"
+	"$phongexponenttexture" "models\mrgiggles\skeyler\playermodels\zer0\head_c0altrain_fres"
+	"$phongboost" "1.5"
+	"$phongfresnelranges" "[0.05 0.5 1]"
+}
