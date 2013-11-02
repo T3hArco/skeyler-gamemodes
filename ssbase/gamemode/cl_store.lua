@@ -207,13 +207,8 @@ local PANEL = {}
 function PANEL:Init() 
 	STORE = self 
 	self.Preview = vgui.Create("ss_hub_store_preview", self)  
-	self.Preview:SetSize(HubWidth-HubWidth*0.18-HubWidth*0.367, HubWidth-HubWidth*0.18-HubWidth*0.367) 
-	self.Preview:SetPos(HubWidth*0.18+HubWidth*0.367+5, 60) 
-	-- self.Preview:SetPos(1, 1) 
-	-- self.Preview:SetModel("models/mrgiggles/skeyler/playermodels/elin.mdl") 
-	-- self.Preview:SetHat("models/mrgiggles/skeyler/hats/strawhat.mdl") 
-
-	self.Preview:NoClipping(true) 
+	self.Preview:SetSize(HubWidth*0.367-10, HubWidth*0.367-10) --HubWidth-HubWidth*0.18-HubWidth*0.367-10
+	self.Preview:SetPos(HubWidth*0.18+(HubWidth-HubWidth*0.18-HubWidth*0.367)+5, 60) 
 
 	local LastY = 55 
 	for k,v in pairs(SS.STORE.Categories) do 
@@ -438,10 +433,10 @@ end
 function PANEL:LayoutEntity( Entity )
 	if self.Ang >= 360 then self.Ang = 0 end 
 
-	if self.Hovered or self:IsChildHovered(1) then 
-		self.Ang = self.Ang + 2.5 
+	if self.Hovered or self:IsChildHovered(5) then 
+		self.Ang = self.Ang + 1 
 	elseif self.Ang != self.Rotate then 
-		self.Ang = self.Ang + 2.5 
+		self.Ang = self.Rotate
 	end 
 	Entity:SetAngles( Angle( 0, self.Ang,  0) )
 end
@@ -507,10 +502,16 @@ function PANEL:Init()
 	self.Hat = nil 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
-	
-	self:SetCamPos( Vector( 50, 50, 50 ) )
-	self:SetLookAt( Vector( 0, 0, 40 ) )
-	self:SetFOV( 70 )
+
+	self.n_EntityYaw = 45 
+	self.n_LastYaw = Angle(0, 0, 0) 
+	self.StartX = 0 
+	self.StartY = 0
+	self.n_CamPos = 50
+
+	self:SetCamPos( Vector( self.n_CamPos, self.n_CamPos, 64 ) )
+	self:SetLookAt( Vector( 0, 0, 64 ) )
+	self:SetFOV( 20 )
 	
 	self:SetText( "" )
 	self:SetAnimSpeed( 0.5 )
@@ -525,16 +526,6 @@ function PANEL:Init()
 
 end
 
---[[---------------------------------------------------------
-   Name: SetDirectionalLight
------------------------------------------------------------]]
-function PANEL:SetDirectionalLight( iDirection, color )
-	self.DirectionalLight[iDirection] = color
-end
-
---[[---------------------------------------------------------
-   Name: OnSelect
------------------------------------------------------------]]
 function PANEL:SetModel( strModelName, Table )
 
 	-- Note - there's no real need to delete the old 
@@ -550,6 +541,8 @@ function PANEL:SetModel( strModelName, Table )
 	self.Entity = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
 	if ( !IsValid(self.Entity) ) then return end
 	
+	-- self.Entity:SetPos(self.Entity:GetPos()+Vector(0, 0, 30))
+
 	self.Entity:SetNoDraw( true ) 
 
 	self.Entity.Info = Table 
@@ -585,15 +578,12 @@ function PANEL:SetHat( strModelName, Table )
 	
 end
 
---[[---------------------------------------------------------
-   Name: OnMousePressed
------------------------------------------------------------]]
-function PANEL:Paint()
-
+function PANEL:Paint(w, h) 
 	if ( !IsValid( self.Entity ) ) then return end
 	
 	local x, y = self:LocalToScreen( 0, 0 )
-	local w, h = self:GetSize()
+	local w, h = self:GetSize() 
+	self:SetTall(self:GetParent():GetTall()-55-30-10) 
 
 	self:LayoutEntity( self.Entity )
 	
@@ -603,7 +593,7 @@ function PANEL:Paint()
 	end
 	
 	
-	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096 )
+	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, self:GetParent():GetTall()-55-30-10, 5, 4096 )
 	cam.IgnoreZ( true )
 	
 	render.SuppressEngineLighting( true )
@@ -618,7 +608,7 @@ function PANEL:Paint()
 			render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
 		end
 	end
-		
+
 	self.Entity:DrawModel()
 
 	if self.Hat then 
@@ -648,43 +638,36 @@ function PANEL:Paint()
 	
 end
 
---[[---------------------------------------------------------
-   Name: RunAnimation
------------------------------------------------------------]]
-function PANEL:RunAnimation()
-	self.Entity:FrameAdvance( (RealTime()-self.LastPaint) * self.m_fAnimSpeed )	
-end
+function PANEL:OnMousePressed() 
+	input.SetCursorPos(input.GetCursorPos()) 
+	self.n_LastYaw = self.Entity:GetAngles() 
+	self.n_LastCam = self.n_CamPos
+	self.StartX, self.StartY = input.GetCursorPos()
+	self.MouseCapt = true  
+	self:MouseCapture(true) 
+end 
 
---[[---------------------------------------------------------
-   Name: RunAnimation
------------------------------------------------------------]]
-function PANEL:StartScene( name )
-	
-	if ( IsValid( self.Scene ) ) then
-		self.Scene:Remove()
-	end
-	
-	self.Scene = ClientsideScene( name, self.Entity )
-	
-end
+function PANEL:OnMouseReleased() 
+	self.MouseCapt = false 
+	self:MouseCapture(false) 
+end 
 
+function PANEL:OnCursorMoved(x, y) 
+	if !self.MouseCapt then return end 
+	x, y = input.GetCursorPos() 
+	self.n_EntityYaw = self.n_LastYaw.y+(x-self.StartX) 
+	self.n_CamPos = math.min(200, math.max(30, self.n_LastCam+(y-self.StartY))) 
+	print(self.n_CamPos) 
+end 
 
-
---[[---------------------------------------------------------
-   Name: LayoutEntity
------------------------------------------------------------]]
 function PANEL:LayoutEntity( Entity )
-
-	--
-	-- This function is to be overriden
-	--
-
 	if ( self.bAnimated ) then
 		self:RunAnimation()
 	end
-	
-	Entity:SetAngles( Angle( 0, RealTime()*10,  0) )
-
+	local Z = 40+(30/190*((200-self.n_CamPos)-10))
+	Entity:SetAngles(Angle(0, self.n_EntityYaw or 0, 0)) 
+	self:SetCamPos(Vector(self.n_CamPos, self.n_CamPos, Z)) 
+	self:SetLookAt(Vector(0, 0, Z)) 
 end
 vgui.Register("ss_hub_store_preview", PANEL, "DModelPanel") 
 
@@ -790,7 +773,7 @@ hook.Add("Think", "STORE_Think", function()
 			for _, id in pairs(items) do
 				if SS.STORE.Items[id] then
 					ply:AddClientsideModel(id)
-	-			end
+				end
 			end
 			
 			invalidplayeritems[ply] = nil
@@ -820,13 +803,12 @@ hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
 		
 		if(SS.STORE.Items[id].Models[modelids[ply]]) then
 			local t = SS.STORE.Items[id].Models[modelids[ply]] 
-				if t.pos then
-					local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-					Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
-				end 
-				if t.ang then Ang = Ang+t.ang end 
-				if t.scale then model:SetModelScale(t.scale, 0) end 
-			end
+			if t.pos then
+				local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+				Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
+			end 
+			if t.ang then Ang = Ang+t.ang end 
+			if t.scale then model:SetModelScale(t.scale, 0) end 
 		end
 		
 		model:SetPos(Pos)
