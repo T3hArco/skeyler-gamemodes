@@ -620,11 +620,22 @@ function PANEL:Paint(w, h)
 				local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
 				Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
 			end 
-			if t.ang then Ang = Ang+t.ang end 
+			local NewAng, FinalAng = Ang, Ang
+			if t.ang then 
+				NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
+				FinalAng.p = NewAng.p 
+				NewAng = Ang 
+				NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
+				FinalAng.y = NewAng.y 
+				NewAng = Ang 
+				NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
+				FinalAng.r = NewAng.r 
+				Ang = FinalAng 
+			end 
 			if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
 		end 
 
-		self.Hat:SetAngles(Ang)
+		self.Hat:SetAngles(Ang) 
 		self.Hat:SetPos(Pos) 
 		self.Hat:SetParent(self.Entity) 
 		self.Hat:DrawModel() 
@@ -807,7 +818,18 @@ hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
 				local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
 				Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
 			end 
-			if t.ang then Ang = Ang+t.ang end 
+			local NewAng, FinalAng = Ang, Ang
+			if t.ang then 
+				NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
+				FinalAng.p = NewAng.p 
+				NewAng = Ang 
+				NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
+				FinalAng.y = NewAng.y 
+				NewAng = Ang 
+				NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
+				FinalAng.r = NewAng.r 
+				Ang = FinalAng 
+			end 
 			if t.scale then model:SetModelScale(t.scale, 0) end 
 		end
 		
