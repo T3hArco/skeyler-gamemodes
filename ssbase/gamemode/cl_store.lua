@@ -798,7 +798,7 @@ hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
 	for id, model in pairs(SS.STORE.CSModels[ply]) do
 		if not SS.STORE.Items[id] then SS.STORE.CSModels[ply][id] = nil continue end
 		
-		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone(SS.STORE.Items[id].Bone or "ValveBiped.Bip01_Head1"))
+		local Pos, Ang = ply:GetBonePosition(ply:LookupBone(SS.STORE.Items[id].Bone or "ValveBiped.Bip01_Head1"))
 		
 		if(SS.STORE.Items[id].Models[modelids[ply]]) then
 			local t = SS.STORE.Items[id].Models[modelids[ply]] 
