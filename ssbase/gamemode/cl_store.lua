@@ -3,6 +3,8 @@
 -- Created by xAaron113x --
 --------------------------- 
 
+SS.STORE.CSModels = {}
+
 local HubWidth = math.max(ScrW()*0.6, 800) 
 local HubHeight = math.max(ScrH()*0.725, 600) 
 SS.Hub = false 
@@ -620,12 +622,15 @@ function PANEL:Paint()
 	self.Entity:DrawModel()
 
 	if self.Hat then 
-		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone("ValveBiped.Bip01_Head1"))
+		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone(SS.STORE.Items[self.Hat.Info.ID].Bone or "ValveBiped.Bip01_Head1"))
 
 		if SS.STORE.Items[self.Hat.Info.ID].Models and SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] then 
 			local t = SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] 
+			if t.pos then
+				local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+				Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
+			end 
 			if t.ang then Ang = Ang+t.ang end 
-			if t.pos then Pos = Pos+t.pos end 
 			if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
 		end 
 
@@ -711,3 +716,127 @@ concommand.Add("ss_store", function()
 	end 
 	SS.Hub = vgui.Create("ss_hub")  
 end )
+
+local modelids = {}
+local invalidplayeritems = {}
+
+local p = FindMetaTable("Player")
+
+function p:AddClientsideModel(id)
+	if not SS.STORE.Items[id] then return false end
+	
+	local i = SS.STORE.Items[id]
+	
+	local mdl = ClientsideModel(i.Model, RENDERGROUP_OPAQUE)
+	mdl:SetNoDraw(true)
+	
+	if not SS.STORE.CSModels[self] then SS.STORE.CSModels[self] = {} end
+	STORE.ClientsideModels[self][id] = mdl
+end
+
+function p:RemoveClientsideModel(id)
+	if not SS.STORE.Items[id] then return false end
+	if not SS.STORE.ClientsideModels[self] then return false end
+	if not SS.STORE.ClientsideModels[self][id] then return false end
+	
+	SS.STORE.ClientsideModels[self][id] = nil
+end
+
+net.Receive("SS_NewCSModel", function(length)
+	local ply = net.ReadEntity()
+	local id = net.ReadString()
+	
+	if not IsValid(ply) then
+		if not invalidplayeritems[ply] then
+			invalidplayeritems[ply] = {}
+		end
+		
+		table.insert(invalidplayeritems[ply], id)
+		return
+	end
+	
+	ply:AddClientsideModel(id)
+end)
+
+net.Receive("SS_RemoveCSModel", function(length)
+	local ply = net.ReadEntity()
+	local id = net.ReadString()
+	
+	if not ply or not IsValid(ply) or not ply:IsPlayer() then return end
+	
+	ply:RemoveClientsideModel(id)
+end)
+
+net.Receive("SS_CSModels",function()
+	local items = net.ReadTable()
+	
+	for ply, items in pairs(items) do
+		if not IsValid(ply) then -- skip if the player isn't valid yet and add them to the table to sort out later
+			invalidplayeritems[ply] = items
+			continue
+		end
+			
+		for _, id in pairs(items) do
+			if STORE.Items[id] then
+				ply:AddClientsideModel(id)
+			end
+		end
+	end
+end)
+
+hook.Add("Think", "STORE_Think", function()
+	for ply, items in pairs(invalidplayeritems) do
+		if IsValid(ply) then
+			for _, id in pairs(items) do
+				if SS.STORE.Items[id] then
+					ply:AddClientsideModel(id)
+	-			end
+			end
+			
+			invalidplayeritems[ply] = nil
+		end
+	end
+end)
+
+net.Receive("SS_SetModelIDs",function(len)
+	modelids = net.ReadTable()
+end)
+
+net.Receive("SS_SetModelID",function(len)
+	local p = net.ReadEntity()
+	modelids[p] = net.ReadString()
+end)
+
+--half ripped from ps in part
+hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
+	if not ply:Alive() then return end
+	if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0) then return end
+	if not STORE.ClientsideModels[ply] then return end
+	
+	for id, model in pairs(STORE.ClientsideModels[ply]) do
+		if not STORE.Items[id] then STORE.ClientsideModel[ply][item_id] = nil continue end
+		
+		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone(SS.STORE.Items[id].Bone or "ValveBiped.Bip01_Head1"))
+		
+		if(SS.STORE.Items[id].Models[modelids[ply]]) then
+			local t = SS.STORE.Items[id].Models[modelids[ply]] 
+				if t.pos then
+					local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+					Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
+				end 
+				if t.ang then Ang = Ang+t.ang end 
+				if t.scale then model:SetModelScale(t.scale, 0) end 
+			end
+		end
+		
+		model:SetPos(Pos)
+		model:SetAngles(Ang)
+
+		model:SetRenderOrigin(Pos)
+		model:SetRenderAngles(Ang)
+		model:SetupBones()
+		model:DrawModel()
+		model:SetRenderOrigin()
+		model:SetRenderAngles()
+	end
+end)
