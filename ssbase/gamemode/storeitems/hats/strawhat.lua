@@ -13,6 +13,8 @@ ITEM.BoneMerge = false							--May be used for certain accessories to bonemerge 
 ITEM.Colorable = false							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false							--Used if the model is colorable, but a translation is needed to $selfillumtint
 
+ITEM.Rotate = 45
+
 ITEM.CamPos = Vector(50, 30, 0)						-- Used the modify the position of the camera on DModelPanels 
 ITEM.LookAt = Vector(0, 0, 0) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
@@ -32,3 +34,10 @@ ITEM.Hooks = {}
 ITEM.Hooks["Think"] = function ()
 												--could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
 end
+
+ITEM.Models = {} 
+ITEM.Models["elin"] = {pos=Vector(6.0, -1.0, 0), ang=Angle(85, 0, -90), scale=1.025} 
+ITEM.Models["miku"] = {pos=Vector(6.25, -1.0, 0), ang=Angle(90, 0, -90), scale=1.025} 
+ITEM.Models["tron"] = {pos=Vector(6.0, 0.7, 0), ang=Angle(90, 0, -90), scale=1} 
+ITEM.Models["usif"] = {pos=Vector(4, 1, 0), ang=Angle(90, 0, -90), scale=0.975} 
+ITEM.Models["zer0"] = {pos=Vector(5.25, -0.35, 0), ang=Angle(90, 0, -90), scale=0.95} 

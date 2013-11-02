@@ -13,7 +13,7 @@ ITEM.BoneMerge = false							--May be used for certain accessories to bonemerge 
 ITEM.Colorable = false							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false							--Used if the model is colorable, but a translation is needed to $selfillumtint 
 
-ITEM.Rotate = 90
+ITEM.Rotate = 45
 
 ITEM.CamPos = Vector(50, 30, 0)						-- Used the modify the position of the camera on DModelPanels 
 ITEM.LookAt = Vector(0, 0, 0) 							-- Used to change the angle at which the camera views the model 
@@ -36,6 +36,8 @@ ITEM.Hooks["Think"] = function ()
 end
 
 ITEM.Models = {} 
-ITEM.Models["elin"] = {pos=Vector(0, 1.25, 4.25), ang=Angle(90, 0, -90), scale=1.1} 
-ITEM.Models["miku"] = {pos=Vector(0, 3.1, 3.75), ang=Angle(90, 0, -90), scale=1} 
-ITEM.Models["tron"] = {pos=Vector(0, 3.8, 4.1), ang=Angle(90, 0, -90), scale=1} 
+ITEM.Models["elin"] = {pos=Vector(3.0, -4.5, 0), ang=Angle(90, 0, -90), scale=1.1} 
+ITEM.Models["miku"] = {pos=Vector(4.5, -4.25, 0), ang=Angle(90, 0, -90), scale=1} 
+ITEM.Models["tron"] = {pos=Vector(4.206, -2.46, 0), ang=Angle(90, 0, -90), scale=1} 
+ITEM.Models["usif"] = {pos=Vector(1.25, -2.5, 0), ang=Angle(90, 0, -90), scale=1} 
+ITEM.Models["zer0"] = {pos=Vector(3.5, -2.5, 0), ang=Angle(90, 0, -90), scale=1} 

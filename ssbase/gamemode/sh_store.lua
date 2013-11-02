@@ -1,6 +1,6 @@
 SS.STORE = {}
 
-SS.STORE.Categories = {"Hats","Models","Accesories"}
+SS.STORE.Categories = {"Hats","Models","Accessories"}
 
 SS.STORE.Items = {}
 
