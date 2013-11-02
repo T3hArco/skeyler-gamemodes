@@ -26,7 +26,7 @@ function SS.STORE:Equip(p,id)
 	elseif(i.Model) then
 		p:SetModel(i.Model)
 		SS.STORE.modelids[p] = id
-		net.Start("SS_ModelID")
+		net.Start("SS_SetModelID")
 		net.WriteEntity(p)
 		net.WriteString(id)
 		net.Broadcast()
@@ -140,7 +140,7 @@ hook.Add("PlayerInitialSpawn","SS_STORE_Spawn",function(ply)
 	net.WriteTable(SS.STORE.CSModels)
 	net.Send(ply)
 	
-	net.Start("SS_ModelIDs")
+	net.Start("SS_SetModelIDs")
 	net.WriteTable(SS.STORE.modelids)
 	net.Send(ply)
 end)
