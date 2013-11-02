@@ -75,7 +75,7 @@ end
 
 function PLAYER_META:ResumeTimer() 
 	if TIMES[self:SteamID()] then self.STimer = TIMES[self:SteamID()] end 
-	if !self:HasTimer() or self:HasFinishedTimer() then return end 
+	if !self:HasTimer() or self:HasFinishedTimer() or !self:GetEndTime() then return end 
 	self.STimer.StartTime = (CurTime()-(self:GetEndTime()-self:GetStartTime()))
 	self.STimer.EndTime = false 
 end 

@@ -16,7 +16,8 @@ net.Receive("SS_ItemEquip",function(len,p)
 end)
 
 function SS.STORE:Equip(p,id)
-	local i = self.Items[id]
+	local i = self.Items[id] 
+	if !i then return end 
 	if(i.Bone) then
 		if(i.BoneMerge) then
 			self:AddBMModel(p,i)

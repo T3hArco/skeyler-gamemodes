@@ -639,6 +639,7 @@ function PANEL:Paint(w, h)
 end
 
 function PANEL:OnMousePressed() 
+	if !self.Entity then return end 
 	input.SetCursorPos(input.GetCursorPos()) 
 	self.n_LastYaw = self.Entity:GetAngles() 
 	self.n_LastCam = self.n_CamPos
