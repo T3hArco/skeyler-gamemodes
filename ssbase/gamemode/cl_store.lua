@@ -657,7 +657,6 @@ function PANEL:OnCursorMoved(x, y)
 	x, y = input.GetCursorPos() 
 	self.n_EntityYaw = self.n_LastYaw.y+(x-self.StartX) 
 	self.n_CamPos = math.min(200, math.max(30, self.n_LastCam+(y-self.StartY))) 
-	print(self.n_CamPos) 
 end 
 
 function PANEL:LayoutEntity( Entity )
