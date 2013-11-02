@@ -713,7 +713,7 @@ function p:AddClientsideModel(id)
 	mdl:SetNoDraw(true)
 	
 	if not SS.STORE.CSModels[self] then SS.STORE.CSModels[self] = {} end
-	STORE.ClientsideModels[self][id] = mdl
+	SS.STORE.CSModels[self][id] = mdl
 end
 
 function p:RemoveClientsideModel(id)
@@ -721,7 +721,7 @@ function p:RemoveClientsideModel(id)
 	if not SS.STORE.ClientsideModels[self] then return false end
 	if not SS.STORE.ClientsideModels[self][id] then return false end
 	
-	SS.STORE.ClientsideModels[self][id] = nil
+	SS.STORE.CSModels[self][id] = nil
 end
 
 net.Receive("SS_NewCSModel", function(length)
