@@ -795,7 +795,7 @@ hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
 	if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0) then return end
 	if not SS.STORE.CSModels[ply] then return end
 	
-	for id, model in pairs(STORE.CSModels[ply]) do
+	for id, model in pairs(SS.STORE.CSModels[ply]) do
 		if not SS.STORE.Items[id] then SS.STORE.CSModels[ply][id] = nil continue end
 		
 		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone(SS.STORE.Items[id].Bone or "ValveBiped.Bip01_Head1"))
