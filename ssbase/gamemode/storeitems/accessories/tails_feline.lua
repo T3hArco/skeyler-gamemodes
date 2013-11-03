@@ -36,8 +36,8 @@ ITEM.Hooks["Think"] = function ()
 end
 
 ITEM.Models = {} 
-ITEM.Models["elin"] = {pos=Vector(0, -0.2, 0), ang=Angle(0, 180, -90), scale=1} 
-ITEM.Models["miku"] = {pos=Vector(0, -1, 0), ang=Angle(0, 180, -90), scale=1} 
-ITEM.Models["tron"] = {pos=Vector(0.2, -1, 0), ang=Angle(0, 180, -90), scale=1} 
-ITEM.Models["usif"] = {pos=Vector(1.5, 1.75, 0), ang=Angle(0, 180, -90), scale=1} 
-ITEM.Models["zer0"] = {pos=Vector(0.35, -2.65, 0), ang=Angle(0, 180, -90), scale=1} 
+ITEM.Models["elin"] = {pos=Vector(0, -2.6, 0), ang=Angle(0, 180, -90), scale=2.0774} 
+ITEM.Models["miku"] = {pos=Vector(0, -3.4, 0), ang=Angle(0, 180, -90), scale=2.0774} 
+ITEM.Models["tron"] = {pos=Vector(0.2, -3.5, 0), ang=Angle(0, 180, -90), scale=2.0774} 
+ITEM.Models["usif"] = {pos=Vector(1.5, -0.75, 0), ang=Angle(0, 180, -90), scale=2.0774} 
+ITEM.Models["zer0"] = {pos=Vector(0.35, -5.25, 0), ang=Angle(0, 180, -90), scale=2.0774} 
