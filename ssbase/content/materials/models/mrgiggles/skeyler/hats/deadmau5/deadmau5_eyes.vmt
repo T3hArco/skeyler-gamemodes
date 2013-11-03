@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\hats\deadmau5\deadmau5_eyes"
+	"$selfillum" "1"
+	//"$blendtintbybasealpha" "1" 
+}

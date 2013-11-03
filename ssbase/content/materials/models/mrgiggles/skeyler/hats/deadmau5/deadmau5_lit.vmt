@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\hats\deadmau5\deadmau5_lit"
+	"$selfillum" "1"
+	//"$blendtintbybasealpha" "1"
+
+	"$detail" "models\mrgiggles\skeyler\hats\deadmau5\deadmau5_lit_emss"
+	"$detailblendmode" "1"
+	"$detailscale" "1"
+}
