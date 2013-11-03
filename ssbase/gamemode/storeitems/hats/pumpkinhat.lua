@@ -1,18 +1,18 @@
-ITEM.ID = "santahat"										-- Should be a unique string that identifies the item
-ITEM.Name = "Santa Hat"										-- The name the item should display
+ITEM.ID = "pumpkinhat"										-- Should be a unique string that identifies the item
+ITEM.Name = "Pumpkin Hat"									-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/hats/santa.mdl"		-- Model used by the item
+ITEM.Model = "models/mrgiggles/skeyler/hats/pumpkin.mdl"	-- Model used by the item
 
-ITEM.Type = "hat"											-- Also works for stuff like "mask" and such. Used for item compatibility
+ITEM.Type = "mask"											-- Also works for stuff like "mask" and such. Used for item compatibility
 
 ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint 
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(50, 10, 2)								-- Used the modify the position of the camera on DModelPanels 
+ITEM.CamPos = Vector(50, 30, 2)								-- Used the modify the position of the camera on DModelPanels 
 ITEM.LookAt = Vector(0, 0, 2) 								-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
@@ -34,9 +34,9 @@ ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY 
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 
 ITEM.Models = {} 
-ITEM.Models["elin"] = {pos=Vector(4.5, -1.6, 0), ang=Angle(0, -90, -90), scale=1.05} 
-ITEM.Models["miku"] = {pos=Vector(4.5, -1, 0), ang=Angle(0, -90, -90), scale=0.95} 
-ITEM.Models["tron"] = {pos=Vector(5, 0.25, 0), ang=Angle(0, -90, -90), scale=0.9} 
-ITEM.Models["usif"] = {pos=Vector(3, 0.5, 0), ang=Angle(0, -90, -90), scale=0.8} 
-ITEM.Models["zer0"] = {pos=Vector(4.75, -0.1, 0), ang=Angle(0, -90, -90), scale=0.75} 
+ITEM.Models["elin"] = {pos=Vector(0, 0, 0), ang=Angle(0, -90, -90), scale=1} 
+ITEM.Models["miku"] = {pos=Vector(0, 0, 0), ang=Angle(0, -90, -90), scale=1} 
+ITEM.Models["tron"] = {pos=Vector(0, 0, 0), ang=Angle(0, -90, -90), scale=1} 
+ITEM.Models["usif"] = {pos=Vector(0, 0, 0), ang=Angle(0, -90, -90), scale=1} 
+ITEM.Models["zer0"] = {pos=Vector(0, 0, 0), ang=Angle(0, -90, -90), scale=1} 
 /* ************* */
