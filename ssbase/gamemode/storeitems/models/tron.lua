@@ -8,7 +8,7 @@ ITEM.Model = "models/mrgiggles/skeyler/playermodels/tron.mdl"			--Model used by 
 ITEM.Type = "model"								--Also works for stuff like "mask" and such. Used for item compatibility
 
 ITEM.Colorable = false							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
-ITEM.Tintable = false							--Used if the model is colorable, but a translation is needed to $selfillumtint 
+ITEM.Tintable = true							--Used if the model is colorable, but a translation is needed to $selfillumtint 
 
 ITEM.CamPos = Vector(50, 30, 64)						-- Used the modify the position of the camera on DModelPanels 
 ITEM.LookAt = Vector(0, 0, 64) 							-- Used to change the angle at which the camera views the model 

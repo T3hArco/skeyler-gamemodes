@@ -15,8 +15,8 @@ ITEM.Tintable = false							--Used if the model is colorable, but a translation 
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(50, 30, 0)						-- Used the modify the position of the camera on DModelPanels 
-ITEM.LookAt = Vector(0, 0, 0) 							-- Used to change the angle at which the camera views the model 
+ITEM.CamPos = Vector(50, 10, 2)						-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(0, 0, 2) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
 ITEM.Functions = {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
