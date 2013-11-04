@@ -621,8 +621,8 @@ function PANEL:Paint(w, h)
 		if SS.STORE.Items[self.Hat.Info.ID].Models and SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] then 
 			for group,t in pairs(SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID]) do
 				local split = string.Explode("_",group)
-				local mg = self.Entity:GetBodygroup(tonumber(split[1])
-				local ig = self.Hat:GetBodygroup(tonumber(split[3])
+				local mg = self.Entity:GetBodygroup(tonumber(split[1]))
+				local ig = self.Hat:GetBodygroup(tonumber(split[3]))
 				if(mg == tonumber(split[2]) && ig == tonumber(split[4])) then
 					if t.pos then
 						local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
@@ -825,8 +825,8 @@ hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
 		if SS.STORE.Items[id].Models and SS.STORE.Items[id].Models[modelids[ply]] then 
 			for group,t in pairs(SS.STORE.Items[id].Models[modelids[ply]]) do
 				local split = string.Explode("_",group)
-				local mg = ply:GetBodygroup(tonumber(split[1])
-				local ig = model:GetBodygroup(tonumber(split[3])
+				local mg = ply:GetBodygroup(tonumber(split[1]))
+				local ig = model:GetBodygroup(tonumber(split[3]))
 				if(mg == tonumber(split[2]) && ig == tonumber(split[4])) then
 					if t.pos then
 						local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
