@@ -48,7 +48,13 @@ NOTE:	"modelgroup" will be the value returned for GetBodygroup() in the script. 
 
 	Ex: 
 
-ITEM.Models["zer0"] = {modelgroup=(0, 0), itemgroup=(0, 0), pos=Vector(1, 2, 0), ang=Angle(0, 0, 0), scale=1}
+--BRACKET FORMAT = ["BODYGROUPID_BODYGROUPNUM_BODYGROUPID_BODYGROUPNUM"] (for model first then item nothing changed would be 0_0_0_0	
+ITEM.Models["zer0"] = {
+	["0_0_0_0"]= {pos=Vector(1, 2, 0), ang=Angle(0, 0, 0), scale=1}
+}
+
+--ALL GIGGLES BAD FORMAT :(
+ITEM.Models["zer0"] = {modelgroup={0, 0}, itemgroup={0, 0}, pos=Vector(1, 2, 0), ang=Angle(0, 0, 0), scale=1}
 ITEM.Models["zer0"] = {modelgroup=(0, 1), itemgroup=(0, 0), pos=Vector(1.5 2.5, 0), ang=Angle(0, 0, 0), scale=1}
 ITEM.Models["zer0"] = {modelgroup=(0, 0), itemgroup=(0, 1), pos=Vector(1, 2, 0), ang=Angle(0, 0, 0), scale=1}
 ITEM.Models["zer0"] = {modelgroup=(0, 1), itemgroup=(0, 1), pos=Vector(1.5 2.5, 0), ang=Angle(0, 0, 0), scale=1}

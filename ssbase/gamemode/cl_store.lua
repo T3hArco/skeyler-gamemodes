@@ -619,24 +619,30 @@ function PANEL:Paint(w, h)
 		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone(SS.STORE.Items[self.Hat.Info.ID].Bone or "ValveBiped.Bip01_Head1"))
 
 		if SS.STORE.Items[self.Hat.Info.ID].Models and SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] then 
-			local t = SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] 
-			if t.pos then
-				local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-				Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
-			end 
-			local NewAng, FinalAng = Ang, Ang
-			if t.ang then 
-				NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
-				FinalAng.p = NewAng.p 
-				NewAng = Ang 
-				NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
-				FinalAng.y = NewAng.y 
-				NewAng = Ang 
-				NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
-				FinalAng.r = NewAng.r 
-				Ang = FinalAng 
-			end 
-			if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
+			for group,t in pairs(SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID]) do
+				local split = string.Explode("_",group)
+				local mg = self.Entity:GetBodygroup(tonumber(split[1])
+				local ig = self.Hat:GetBodygroup(tonumber(split[3])
+				if(mg == tonumber(split[2]) && ig == tonumber(split[4])) then
+					if t.pos then
+						local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+						Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
+					end 
+					local NewAng, FinalAng = Ang, Ang
+					if t.ang then 
+						NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
+						FinalAng.p = NewAng.p 
+						NewAng = Ang 
+						NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
+						FinalAng.y = NewAng.y 
+						NewAng = Ang 
+						NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
+						FinalAng.r = NewAng.r 
+						Ang = FinalAng 
+					end 
+					if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
+				end
+			end
 		end 
 
 		self.Hat:SetAngles(Ang) 
@@ -816,25 +822,31 @@ hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
 		
 		local Pos, Ang = ply:GetBonePosition(ply:LookupBone(SS.STORE.Items[id].Bone or "ValveBiped.Bip01_Head1"))
 		
-		if(SS.STORE.Items[id].Models[modelids[ply]]) then
-			local t = SS.STORE.Items[id].Models[modelids[ply]] 
-			if t.pos then
-				local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-				Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
-			end 
-			local NewAng, FinalAng = Ang, Ang
-			if t.ang then 
-				NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
-				FinalAng.p = NewAng.p 
-				NewAng = Ang 
-				NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
-				FinalAng.y = NewAng.y 
-				NewAng = Ang 
-				NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
-				FinalAng.r = NewAng.r 
-				Ang = FinalAng 
-			end 
-			if t.scale then model:SetModelScale(t.scale, 0) end 
+		if SS.STORE.Items[id].Models and SS.STORE.Items[id].Models[modelids[ply]] then 
+			for group,t in pairs(SS.STORE.Items[id].Models[modelids[ply]]) do
+				local split = string.Explode("_",group)
+				local mg = ply:GetBodygroup(tonumber(split[1])
+				local ig = model:GetBodygroup(tonumber(split[3])
+				if(mg == tonumber(split[2]) && ig == tonumber(split[4])) then
+					if t.pos then
+						local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+						Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
+					end 
+					local NewAng, FinalAng = Ang, Ang
+					if t.ang then 
+						NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
+						FinalAng.p = NewAng.p 
+						NewAng = Ang 
+						NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
+						FinalAng.y = NewAng.y 
+						NewAng = Ang 
+						NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
+						FinalAng.r = NewAng.r 
+						Ang = FinalAng 
+					end 
+					if t.scale then model:SetModelScale(t.scale, 0) end 
+				end
+			end
 		end
 		
 		model:SetPos(Pos)
