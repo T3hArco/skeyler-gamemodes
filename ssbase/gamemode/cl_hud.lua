@@ -35,7 +35,7 @@ HUD_HP = Material("skeyler/hud_bar_health.png")
 HUD_XP = Material("skeyler/hud_bar_xp.png") 
 HUD_AMMO = Material("skeyler/hud_bar_ammo.png") 
 HUD_BAR_CENTER = Material("skeyler/hud_bar_center.png") 
-HUD_COIN = Material("skeyler/skeyler_coin.png") 
+HUD_COIN = Material("skeyler/skeyler_coin02.png") 
 
 
 GM.HudAlpha = 0 
@@ -145,7 +145,7 @@ function GM:HUDPaint()
 
 	surface.SetMaterial(HUD_COIN) 
 	surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
-	surface.DrawTexturedRect(180, h-85, 32, 32) 
+	surface.DrawTexturedRect(187, h-82, 12, 17) 
 
 	Text = FormatNum(LocalPlayer():GetMoney())
 	surface.SetFont("HUD_Money") 

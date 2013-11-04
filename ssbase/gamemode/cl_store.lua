@@ -370,7 +370,7 @@ function PANEL:Init()
 
 		surface.SetMaterial(HUD_COIN) 
 		surface.SetDrawColor(255, 255, 255, 255) 
-		surface.DrawTexturedRect(w/2-(tw+22)/2, 4-32+self.Offset, 32, 32) 
+		surface.DrawTexturedRect(w/2-(tw+14)/2, 4-30+self.Offset, 12, 17) 
 	end 
 
 	self.BPreview = vgui.Create("DPanel", self.InfoPnl) 
