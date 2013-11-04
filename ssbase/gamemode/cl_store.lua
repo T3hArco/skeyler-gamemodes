@@ -496,7 +496,7 @@ vgui.Register("ss_hub_store_icon", PANEL, "DModelPanel")
 
 /* Store Preview model */ 
 local PANEL = {} 
-function PANEL:Init()
+function PANEL:Init() 
 
 	self.Entity = nil 
 	self.Hat = nil 
@@ -507,7 +507,7 @@ function PANEL:Init()
 	self.n_LastYaw = Angle(0, 0, 0) 
 	self.StartX = 0 
 	self.StartY = 0
-	self.n_CamPos = 50
+	self.n_CamPos = 150
 
 	self:SetCamPos( Vector( self.n_CamPos, self.n_CamPos, 64 ) )
 	self:SetLookAt( Vector( 0, 0, 64 ) )
@@ -576,7 +576,11 @@ function PANEL:SetHat( strModelName, Table )
 
 	self.Hat.Info = Table 
 	
-end
+end 
+
+function PANEL:OpenOptions() -- For later.
+
+end 
 
 function PANEL:Paint(w, h) 
 	if ( !IsValid( self.Entity ) ) then return end

@@ -23,6 +23,8 @@ function SS.STORE:LoadItems()
 			-- 	end)
 			-- end
 			
+			util.PrecacheModel(ITEM.Model) 
+
 			SS.STORE.Items[ITEM.ID] = ITEM
 
 			if SERVER then AddCSLuaFile("storeitems/"..string.lower(c).."/"..v) end 
