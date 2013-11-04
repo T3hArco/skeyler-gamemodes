@@ -12,8 +12,8 @@ ITEM.Tintable = false										-- Used if the model is colorable, but a translat
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(60, 40, 0)								-- Used the modify the position of the camera on DModelPanels 
-ITEM.LookAt = Vector(0, 0, 0) 								-- Used to change the angle at which the camera views the model 
+ITEM.CamPos = Vector(24, 17, -1)								-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(0, 0, -1) 								-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
@@ -36,7 +36,7 @@ ITEM.BoneMerge = false										-- May be used for certain accessories to boneme
 ITEM.Models = {} 
 ITEM.Models["elin"] = {pos=Vector(9.25, 1.25, -1.25), ang=Angle(0, -90, -90), scale=1} 
 ITEM.Models["miku"] = {pos=Vector(10, 0.55, -1.3), ang=Angle(0, -90, -90), scale=1} 
-ITEM.Models["tron"] = {pos=Vector(9.5, 1.25, -1.5), ang=Angle(0, -90, -90), scale=1} 
+ITEM.Models["tron"] = {pos=Vector(9.6, 1.25, -1.5), ang=Angle(0, -90, -90), scale=1} 
 ITEM.Models["usif"] = {pos=Vector(6.75, 2.3, -0.75), ang=Angle(-4, -90, -90), scale=1} 
 ITEM.Models["zer0"] = {pos=Vector(8.1, 1, -0.75), ang=Angle(-4, -90, -90), scale=0.9} 
 /* ************* */

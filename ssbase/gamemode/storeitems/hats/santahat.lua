@@ -37,6 +37,6 @@ ITEM.Models = {}
 ITEM.Models["elin"] = {pos=Vector(4.5, -1.6, 0), ang=Angle(0, -90, -90), scale=1.05} 
 ITEM.Models["miku"] = {pos=Vector(4.5, -1, 0), ang=Angle(0, -90, -90), scale=0.95} 
 ITEM.Models["tron"] = {pos=Vector(5, 0.25, 0), ang=Angle(0, -90, -90), scale=0.9} 
-ITEM.Models["usif"] = {pos=Vector(3, 0.5, 0), ang=Angle(0, -90, -90), scale=0.8} 
+ITEM.Models["usif"] = {pos=Vector(3, 0.5, 0.2), ang=Angle(0, -90, -90), scale=0.8} 
 ITEM.Models["zer0"] = {pos=Vector(4.75, -0.1, 0), ang=Angle(0, -90, -90), scale=0.75} 
 /* ************* */

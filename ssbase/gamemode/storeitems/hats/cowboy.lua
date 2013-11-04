@@ -1,19 +1,19 @@
-ITEM.ID = "glasses01"										-- Should be a unique string that identifies the item
-ITEM.Name = "Glasses"										-- The name the item should display
+ITEM.ID = "cowboyhat"										-- Should be a unique string that identifies the item
+ITEM.Name = "Cowboy Hat"									-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/accessories/glasses01.mdl"	-- Model used by the item
+ITEM.Model = "models/mrgiggles/skeyler/hats/cowboyhat.mdl"	-- Model used by the item
 
-ITEM.Type = "glasses"										-- Also works for stuff like "mask" and such. Used for item compatibility
+ITEM.Type = "headcoverhalf"									-- Also works for stuff like "mask" and such. Used for item compatibility
 
 ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint 
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(23, 18, 0)								-- Used the modify the position of the camera on DModelPanels 
-ITEM.LookAt = Vector(0, 0, 0) 								-- Used to change the angle at which the camera views the model 
+ITEM.CamPos = Vector(50, 30, -1)								-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(0, 0, -1) 								-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
@@ -29,14 +29,14 @@ ITEM.Hooks = {}												-- Could run some shit in think hook maybe clientside
 ITEM.Hooks["Think"] = function ()
 end
 
-/* ACCESSORY VARIABLES */
+/* HAT VARIABLES */
 ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 
 ITEM.Models = {} 
-ITEM.Models["elin"] = {pos=Vector(2.0, 1.7, 0), ang=Angle(0, -90, -72), scale=1.025} 
-ITEM.Models["miku"] = {pos=Vector(2.3, 0.075, 0), ang=Angle(0, -90, -90), scale=1} 
-ITEM.Models["tron"] = {pos=Vector(3.5, 2.5, 0), ang=Angle(0, -90, -85), scale=1.05} 
-ITEM.Models["usif"] = {pos=Vector(1.6, 2.1, 0.2), ang=Angle(0, -90, -90), scale=1} 
-ITEM.Models["zer0"] = {pos=Vector(3.5, 1.9, 0), ang=Angle(0, -90, -85), scale=0.9} 
+ITEM.Models["elin"] = {pos=Vector(7.75, -2.25, 0), ang=Angle(10, -90, -90), scale=0.98} 
+ITEM.Models["miku"] = {pos=Vector(8.1, -2, 0), ang=Angle(5, -90, -90), scale=1.01} 
+ITEM.Models["tron"] = {pos=Vector(8, -0.35, 0), ang=Angle(4, -90, -90), scale=0.925} 
+ITEM.Models["usif"] = {pos=Vector(5.15, 0.25, 0.2), ang=Angle(0, -90, -90), scale=0.85} 
+ITEM.Models["zer0"] = {pos=Vector(6.65, -0.7, 0), ang=Angle(5, -90, -90), scale=0.875} 
 /* ************* */
