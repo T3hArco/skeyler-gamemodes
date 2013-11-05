@@ -34,9 +34,12 @@ ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY 
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 
 ITEM.Models = {} 
-ITEM.Models["elin"] = {pos=Vector(2.0, 1.7, 0), ang=Angle(0, -90, -72), scale=1.025} 
-ITEM.Models["miku"] = {pos=Vector(2.3, 0.075, 0), ang=Angle(0, -90, -90), scale=1} 
-ITEM.Models["tron"] = {pos=Vector(3.5, 2.5, 0), ang=Angle(0, -90, -85), scale=1.05} 
-ITEM.Models["usif"] = {pos=Vector(1.6, 2.1, 0.2), ang=Angle(0, -90, -90), scale=1} 
-ITEM.Models["zer0"] = {pos=Vector(3.5, 1.9, 0), ang=Angle(0, -90, -85), scale=0.9} 
+ITEM.Models["elin"] = {	["0_0_0_0"]= {pos=Vector(2.0, 1.7, 0), ang=Angle(0, -90, -72), scale=1.025}}
+ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(2.3, 0.075, 0), ang=Angle(0, -90, -90), scale=1}}
+ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(3.5, 2.5, 0), ang=Angle(0, -90, -85), scale=1.05}}
+ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(1.6, 2.1, 0.2), ang=Angle(0, -90, -90), scale=1}}
+ITEM.Models["zer0"] = {
+	["0_0_0_0"]= {pos=Vector(3.5, 1.9, 0), ang=Angle(0, -90, -85), scale=0.9},
+	["0_1_0_0"]= {pos=Vector(9.5, 1.9, 0), ang=Angle(0, -90, -85), scale=0.9}
+}
 /* ************* */
