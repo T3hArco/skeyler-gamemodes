@@ -13,15 +13,15 @@ function SS.STORE:LoadItems()
 			include("storeitems/"..string.lower(c).."/"..v)
 			
 			local item = ITEM
-			-- for k,h in pairs(item.Hooks) do
-			-- 	hook.Add(k, 'Item_' .. item.Name .. '_' .. prop, function(...)
-			-- 		for _, ply in pairs(player.GetAll()) do
-			-- 			if ply:HasEquipped(item.ID) then
-			-- 				item[k](item, ply, ...)
-			-- 			end
-			-- 		end
-			-- 	end)
-			-- end
+			or k,h in pairs(item.Hooks) do
+				hook.Add(k, 'Item_' .. item.Name .. '_' .. h, function(...)
+					for _, ply in pairs(player.GetAll()) do
+						if ply:HasEquipped(item.ID) then
+							item[k](item, ply, ...)
+						end
+					end
+				end)
+			end
 			
 			util.PrecacheModel(ITEM.Model) 
 
@@ -32,3 +32,21 @@ function SS.STORE:LoadItems()
 	end
 end 
 SS.STORE:LoadItems()
+
+local p = FindMetaTable("Player")
+
+function p:HasEquipped(id)
+	if SERVER then
+		if(SS.STORE.Equipped[self] && table.HasValue(SS.STORE.Equipped[self],id) then
+			return true
+		else
+			return false
+		end
+	else
+		if(SS.STORE.Equipped && table.HasValue(SS.STORE.Equipped,id) then
+			return true
+		else
+			return false
+		end
+	end
+end

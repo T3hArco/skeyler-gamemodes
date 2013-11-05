@@ -9,6 +9,7 @@ util.AddNetworkString("SS_ItemSetColor")
 util.AddNetworkString("SS_SetModelIDs")
 util.AddNetworkString("SS_SetModelID")
 util.AddNetworkString("SS_CSModels")
+util.AddNetworkString("SS_EquipTable")
 
 net.Receive("SS_ItemEquip",function(len,p)
 	local id = net.ReadString()
@@ -38,6 +39,13 @@ function SS.STORE:Equip(p,id)
 	if(i.Functions["Equip"]) then
 		i.Functions["Equip"](p) --incase we ever need to do something special :P
 	end
+	if(!SS.STORE.Equipped[p]) then
+		SS.STORE.Equipped[p] = {}
+	end
+	table.insert(SS.STORE.Equipped[p],id)
+	net.Start("SS_EquipTable")
+	net.WriteTable(SS.STORE.Equipped[p])
+	net.Send(p) -- we arent losing much I hope since we arent broadcasting
 end
 
 function SS.STORE:AddBMModel(player,item)
@@ -83,6 +91,18 @@ function SS.STORE:Unequip(p,id)
 	end
 	if(i.Functions["Unequip"]) then
 		i.Functions["Unequip"](p)
+	end
+	local rem = nil
+	for k,v in pairs(self.Equipped[p]) do
+		if v == id then
+			rem = k
+		end
+	end
+	if rem then
+		table.remove(self.Equipped[p],rem)
+		net.Start("SS_EquipTable")
+		net.WriteTable(SS.STORE.Equipped[p])
+		net.Send(p) -- we arent losing much I hope since we arent broadcasting
 	end
 end
 
@@ -149,4 +169,9 @@ end)
 concommand.Add("equiptest",function(p,cmd,arg)
 	arg = arg[1]
 	SS.STORE:Equip(p,arg)
+end)
+
+concommand.Add("unequiptest",function(p,cmd,arg)
+	arg = arg[1]
+	SS.STORE:Unequip(p,arg)
 end)

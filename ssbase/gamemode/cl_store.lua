@@ -4,6 +4,7 @@
 --------------------------- 
 
 SS.STORE.CSModels = {}
+SS.STORE.Equipped = {}
 
 local HubWidth = math.max(ScrW()*0.6, 800) 
 local HubHeight = math.max(ScrH()*0.725, 600) 
@@ -769,6 +770,10 @@ net.Receive("SS_RemoveCSModel", function(length)
 	if not ply or not IsValid(ply) or not ply:IsPlayer() then return end
 	
 	ply:RemoveClientsideModel(id)
+end)
+
+net.Receive("SS_EquipTable",function()
+	SS.STORE.Equipped = net.ReadTable()
 end)
 
 net.Receive("SS_CSModels",function()
