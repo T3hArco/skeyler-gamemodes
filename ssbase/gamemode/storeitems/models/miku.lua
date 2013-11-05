@@ -27,5 +27,69 @@ end
 ITEM.Hooks = {}
 
 ITEM.Hooks["Think"] = function ()
-												--could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
+	if CLIENT then
+		local showhair = true
+		local hairmodel = "modelnamehere"
+		for k,v in pairs(SS.STORE.Equipped) do
+			if(!SS.STORE.Items[v]) then continue end
+			local i = SS.STORE.Items[v]
+			if(i.Type = "mask") then
+				hairmodel = "modelnamehere"
+			end
+			if(i.Type = "blegh") then
+				showhair = false
+			end
+		end
+		if(showhair) then
+			LocalPlayer().hairtoshow = hairmodel
+		else
+			LocalPlayer().hairtoshow = nil
+		end
+	end
+end
+
+ITEM.Hooks["PostPlayerDraw"] = function ()
+	if CLIENT && LocalPlayer().hairtoshow the
+		if(LocalPlayer().currenthair) then
+			if(LocalPlayer().currenthair:GetModel() == LocalPlayer().hairtoshow) then
+				LocalPlayer().currenthair:Remove()
+				LocalPlayer().currenthair = ClientsideModel(LocalPlayer().hairtoshow)
+			end
+		else
+			LocalPlayer().currenthair = ClientsideModel(LocalPlayer().hairtoshow)
+		end
+		
+		local hairpos = Vector(0,0,0)
+		local hairang = Angle(0,0,0)
+		
+		local Pos, Ang = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Head1"))
+		
+		local model = LocalPlayer().currenthair
+		
+		local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+		Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
+		
+		local NewAng, FinalAng = Ang, Ang
+		NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 
+		FinalAng.p = NewAng.p 
+		NewAng = Ang 
+		NewAng:RotateAroundAxis(Ang:Forward(), hairang.y) 
+		FinalAng.y = NewAng.y 
+		NewAng = Ang 
+		NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
+		FinalAng.r = NewAng.r 
+		Ang = FinalAng 
+		
+		model:SetModelScale(t.scale, 0) --remove this line if its not needed
+		
+		model:SetPos(Pos)
+		model:SetAngles(Ang)
+
+		model:SetRenderOrigin(Pos)
+		model:SetRenderAngles(Ang)
+		model:SetupBones()
+		model:DrawModel()
+		model:SetRenderOrigin()
+		model:SetRenderAngles()
+	end
 end
