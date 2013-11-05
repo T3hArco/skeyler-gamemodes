@@ -13,7 +13,7 @@ function SS.STORE:LoadItems()
 			include("storeitems/"..string.lower(c).."/"..v)
 			
 			local item = ITEM
-			or k,h in pairs(item.Hooks) do
+			for k,h in pairs(item.Hooks) do
 				hook.Add(k, 'Item_' .. item.Name .. '_' .. h, function(...)
 					for _, ply in pairs(player.GetAll()) do
 						if ply:HasEquipped(item.ID) then
