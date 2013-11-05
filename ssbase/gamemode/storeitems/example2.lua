@@ -47,7 +47,7 @@ NOTE:	"modelgroup" will be the value returned for GetBodygroup() in the script. 
 		"itemgroup" will be the value returned for the same thing, but that the item this file relates to uses. 
 
 	Ex: 
-
+*/
 --BRACKET FORMAT = ["BODYGROUPID_BODYGROUPNUM_BODYGROUPID_BODYGROUPNUM"] (for model first then item nothing changed would be 0_0_0_0	
 ITEM.Models["zer0"] = {
 	["0_0_0_0"]= {pos=Vector(1, 2, 0), ang=Angle(0, 0, 0), scale=1}
@@ -63,4 +63,3 @@ ITEM.Models["miku"] = {modelgroup=(0, 0), itemgroup=(0, 0), pos=Vector(0.5, 0.75
 
 ITEM.Models["tron"] = {modelgroup=(0, 0), itemgroup=(0, 0), pos=Vector(0.5, 0.75, 0), ang=Angle(0, 0, 0), scale=1}
 
-*/

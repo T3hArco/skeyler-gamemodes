@@ -4,7 +4,6 @@
 --------------------------- 
 
 SS.STORE.CSModels = {}
-SS.STORE.Equipped = {}
 
 local HubWidth = math.max(ScrW()*0.6, 800) 
 local HubHeight = math.max(ScrH()*0.725, 600) 
@@ -211,6 +210,45 @@ function PANEL:Init()
 	self.Preview:SetSize(HubWidth*0.367-10, HubWidth*0.367-10) --HubWidth-HubWidth*0.18-HubWidth*0.367-10
 	self.Preview:SetPos(HubWidth*0.18+(HubWidth-HubWidth*0.18-HubWidth*0.367)+5, 60) 
 
+	-- self.MBodyGroup = vgui.Create("DPanel", self) 
+	-- self.MBodyGroup:SetSize(100, 25) 
+
+	-- function self.MBodyGroup:Paint(w, h) 
+	-- 	surface.SetDrawColor(255, 255, 255, 255*0.20) 
+	-- 	surface.DrawRect(0, 0, w, h) 
+
+	-- 	-- surface.SetFont("ss_hub_store_buttons") 
+	-- 	-- surface.SetTextColor(255, 255, 255, 255) 
+	-- 	-- local tw, th = surface.GetTextSize("Model") 
+	-- 	-- surface.SetTextPos(5, h/2-th/2) 
+	-- 	-- surface.DrawText("Model") 
+	-- end  
+
+	-- self.MBodyGroup.BodyGroup = vgui.Create("DTextBox", self.MBodyGroup) 
+	-- self.MBodyGroup.BodyGroup:SetSize(45, 20) 
+	-- self.MBodyGroup.BodyGroup:SetNumeric(true) 
+	-- self.MBodyGroup.BodyGroup:SetEnterAllowed(false)
+
+	-- function self.MBodyGroup.BodyGroup.OnChange() 
+	-- 	local val = self.MBodyGroup.BodyGroup:GetValue() 
+	-- 	self.Preview.Entity:SetBodyGroup(val, self.MBodyGroup.Value:GetValue()) 
+	-- end 
+
+	-- self.MBodyGroup.Value = vgui.Create("DTextBox", self.MBodyGroup) 
+	-- self.MBodyGroup.Value:SetSize(45, 20) 
+	-- self.MBodyGroup.Value:SetNumeric(true) 
+	-- self.MBodyGroup.Value:SetEnterAllowed(false)
+
+	-- function self.MBodyGroup.Value.OnChange() 
+	-- 	local val = self.MBodyGroup.Value:GetValue() 
+	-- 	self.Preview.Entity:SetBodyGroup(self.MBodyGroup.BodyGroup:GetValue(), val) 
+	-- end 
+	
+
+
+
+
+
 	local LastY = 55 
 	for k,v in pairs(SS.STORE.Categories) do 
 		StoreCats[v] = {} 
@@ -265,6 +303,9 @@ end
 
 function PANEL:PerformLayout() 
 	self:SetSize(self:GetParent():GetSize()) 
+	-- self.MBodyGroup:SetPos(self:GetWide()-self.MBodyGroup:GetWide(), 55+20) 
+	-- self.MBodyGroup.BodyGroup:SetPos(2.5, 2.5) 
+	-- self.MBodyGroup.Value:SetPos(2.5+self.MBodyGroup.BodyGroup:GetWide()+2.5, 2.5) 
 
 	for k,v in pairs(StoreCats) do 
 		v.Panel:SetPos(HubWidth*0.18, 60) 
@@ -523,8 +564,7 @@ function PANEL:Init()
 	self:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
 	self:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
 	
-	self:SetColor( Color( 255, 255, 255, 255 ) )
-
+	self:SetColor( Color( 255, 255, 255, 255 ) ) 
 end
 
 function PANEL:SetModel( strModelName, Table )
@@ -577,10 +617,6 @@ function PANEL:SetHat( strModelName, Table )
 
 	self.Hat.Info = Table 
 	
-end 
-
-function PANEL:OpenOptions() -- For later.
-
 end 
 
 function PANEL:Paint(w, h) 
@@ -660,19 +696,23 @@ function PANEL:Paint(w, h)
 	
 end
 
-function PANEL:OnMousePressed() 
-	if !self.Entity then return end 
-	input.SetCursorPos(input.GetCursorPos()) 
-	self.n_LastYaw = self.Entity:GetAngles() 
-	self.n_LastCam = self.n_CamPos
-	self.StartX, self.StartY = input.GetCursorPos()
-	self.MouseCapt = true  
-	self:MouseCapture(true) 
+function PANEL:OnMousePressed(mousecode) 
+	if mousecode == MOUSE_LEFT then  
+		if !self.Entity then return end 
+		input.SetCursorPos(input.GetCursorPos()) 
+		self.n_LastYaw = self.Entity:GetAngles() 
+		self.n_LastCam = self.n_CamPos
+		self.StartX, self.StartY = input.GetCursorPos()
+		self.MouseCapt = true  
+		self:MouseCapture(true) 
+	end 
 end 
 
-function PANEL:OnMouseReleased() 
-	self.MouseCapt = false 
-	self:MouseCapture(false) 
+function PANEL:OnMouseReleased(mousecode) 
+	if mousecode == MOUSE_LEFT then  
+		self.MouseCapt = false 
+		self:MouseCapture(false) 
+	end 
 end 
 
 function PANEL:OnCursorMoved(x, y) 

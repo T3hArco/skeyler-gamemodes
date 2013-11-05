@@ -33,10 +33,10 @@ ITEM.Hooks["Think"] = function ()
 		for k,v in pairs(SS.STORE.Equipped) do
 			if(!SS.STORE.Items[v]) then continue end
 			local i = SS.STORE.Items[v]
-			if(i.Type = "mask") then
+			if(i.Type == "mask") then
 				hairmodel = "modelnamehere"
 			end
-			if(i.Type = "blegh") then
+			if(i.Type == "blegh") then
 				showhair = false
 			end
 		end
@@ -49,7 +49,7 @@ ITEM.Hooks["Think"] = function ()
 end
 
 ITEM.Hooks["PostPlayerDraw"] = function ()
-	if CLIENT && LocalPlayer().hairtoshow the
+	if CLIENT && LocalPlayer().hairtoshow then 
 		if(LocalPlayer().currenthair) then
 			if(LocalPlayer().currenthair:GetModel() == LocalPlayer().hairtoshow) then
 				LocalPlayer().currenthair:Remove()

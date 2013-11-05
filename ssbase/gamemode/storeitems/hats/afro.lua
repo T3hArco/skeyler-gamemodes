@@ -43,4 +43,9 @@ ITEM.Models["zer0"] = {
 	["0_1_0_0"]= {pos=Vector(6, 0.25, 0), ang=Angle(0, -90, -90), scale=0.85}
 }
 
+
+ITEM.Models["zer0"] = {
+ ["0_0_0_0"]= {pos=Vector(2.25, 0.25, 0), ang=Angle(0, -90, -90), scale=0.85},
+ ["0_1_0_0"]= {pos=Vector(6, 0.25, 0), ang=Angle(0, -90, -90), scale=0.85}
+}
 /* ************* */
