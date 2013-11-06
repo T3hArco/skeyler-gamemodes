@@ -53,7 +53,7 @@ hook.Add("HUDPaint", "PaintChatboxLines", function()
 				v.info.Alpha = math.Approach(v.info.Alpha, 0, 1) 
 			end 
 
-			if v.info.ply and v.info.ply:GetRank() > 0 then 
+			if v.info.ply and v.info.ply.GetRank and v.info.ply:GetRank() > 0 then 
 				local Col = v.info.ply:GetRankColor() 
 				surface.SetDrawColor(Col.r, Col.g, Col.b, v.info.Alpha) 
 				surface.SetMaterial(TAG_MAT) 
