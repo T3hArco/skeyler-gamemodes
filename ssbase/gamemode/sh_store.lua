@@ -21,7 +21,7 @@ function SS.STORE:LoadItems()
 					hook.Add(k, 'Item_' .. item.Name .. '_' .. k, function(...)
 						for _, ply in pairs(player.GetAll()) do
 							if ply:HasEquipped(item.ID) then
-								item[k](item, ply, ...)
+								item.Hooks[k](item, ply, ...)
 							end
 						end
 					end)

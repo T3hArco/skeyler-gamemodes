@@ -26,37 +26,36 @@ end
 
 ITEM.Hooks = {}
 
-ITEM.Hooks["Think"] = function ()
-	if CLIENT then
-		local showhair = true
-		local hairmodel = "modelnamehere"
-		for k,v in pairs(SS.STORE.Equipped) do
-			if(!SS.STORE.Items[v]) then continue end
-			local i = SS.STORE.Items[v]
-			if(i.Type == "mask") then
-				hairmodel = "modelnamehere"
-			end
-			if(i.Type == "blegh") then
-				showhair = false
-			end
-		end
-		if(showhair) then
-			LocalPlayer().hairtoshow = hairmodel
-		else
-			LocalPlayer().hairtoshow = nil
-		end
-	end
+ITEM.Hooks["Think"] = function (item,ply)
+        if CLIENT then
+                local showhair = true
+                local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
+                for k,v in pairs(SS.STORE.Equipped) do
+                        if(!SS.STORE.Items[v]) then continue end
+                        local i = SS.STORE.Items[v]
+                        if(i.Type == "mask") then
+                                showhair = false
+                        end
+                        if(i.Type == "headcoverfull") then
+                                hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
+                        end
+                end
+                if(showhair) then
+                        ply.hairtoshow = hairmodel
+                else
+                        ply.hairtoshow = nil
+                end
+        end
 end
-
-ITEM.Hooks["PostPlayerDraw"] = function ()
-	if CLIENT && LocalPlayer().hairtoshow then 
-		if(LocalPlayer().currenthair) then
-			if(LocalPlayer().currenthair:GetModel() == LocalPlayer().hairtoshow) then
-				LocalPlayer().currenthair:Remove()
-				LocalPlayer().currenthair = ClientsideModel(LocalPlayer().hairtoshow)
+ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
+	if CLIENT && ply.hairtoshow then 
+		if(ply.currenthair) then
+			if(ply.currenthair:GetModel() == ply.hairtoshow) then
+				ply.currenthair:Remove()
+				ply.currenthair = ClientsideModel(ply.hairtoshow)
 			end
 		else
-			LocalPlayer().currenthair = ClientsideModel(LocalPlayer().hairtoshow)
+			ply.currenthair = ClientsideModel(ply.hairtoshow)
 		end
 		
 		local hairpos = Vector(0,0,0)
@@ -64,7 +63,7 @@ ITEM.Hooks["PostPlayerDraw"] = function ()
 		
 		local Pos, Ang = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Head1"))
 		
-		local model = LocalPlayer().currenthair
+		local model = ply.currenthair
 		
 		local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
 		Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
