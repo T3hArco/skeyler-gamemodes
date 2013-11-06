@@ -1,0 +1,9 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\miku\wing"
+	"$translucent" "1"
+	"$nocull" "1"
+	"$model" "1"
+
+	"$selfillumtint" "0.05"
+}

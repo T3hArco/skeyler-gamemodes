@@ -28,6 +28,17 @@ ITEM.Hooks = {}
 
 ITEM.Hooks["Think"] = function (item,ply)
         if CLIENT then
+			if ply:GetSkin() > 0 then
+				if ply:Health() > 66 then 
+					ply:SetSkin(1)
+				elseif ply:Health() <= 66 and ply:Health() > 33 then 
+					ply:SetSkin(2)
+				elseif ply:Health() <= 33 and ply:Health() > 0 then 
+					ply:SetSkin(3)
+				else
+					ply:SetSkin(4)
+				end
+			end
                 local showhair = true
                 local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
                 for k,v in pairs(SS.STORE.Equipped) do
@@ -36,7 +47,7 @@ ITEM.Hooks["Think"] = function (item,ply)
                         if(i.Type == "mask") then
                                 showhair = false
                         end
-                        if(i.Type == "headcoverfull") then
+                        if(i.Type == "headcoverhalf") then
                                 hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
                         end
                 end
@@ -55,10 +66,11 @@ ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
 			end
 		else
 			ply.currenthair = ClientsideModel(ply.hairtoshow)
+			ply.currenthair:SetNoDraw(true)
 		end
 		
 		local hairpos = Vector(0,0,0)
-		local hairang = Angle(0,0,0)
+		local hairang = Angle(0,0,-90)
 		
 		local Pos, Ang = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Head1"))
 		
