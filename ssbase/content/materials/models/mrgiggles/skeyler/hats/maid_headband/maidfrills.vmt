@@ -2,6 +2,7 @@
 {
 	"$basetexture" "models\mrgiggles\skeyler\hats\maid_headband\maidfrills"
 	"$bumpmap" "models\mrgiggles\skeyler\hats\maid_headband\maidfrills_norm"
+	"$nocull" "1"
 
 	"$phong" "1"
 	"$phongexponent" "4"
