@@ -50,9 +50,8 @@ end
 ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
 	if CLIENT && ply.hairtoshow then 
 		if(ply.currenthair) then
-			if(ply.currenthair:GetModel() == ply.hairtoshow) then
-				ply.currenthair:Remove()
-				ply.currenthair = ClientsideModel(ply.hairtoshow)
+			if(ply.currenthair:GetModel() != ply.hairtoshow) then
+				ply.currenthair:SetModel(ply.hairtoshow)
 			end
 		else
 			ply.currenthair = ClientsideModel(ply.hairtoshow)
@@ -78,9 +77,7 @@ ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
 		NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
 		FinalAng.r = NewAng.r 
 		Ang = FinalAng 
-		
-		model:SetModelScale(t.scale, 0) --remove this line if its not needed
-		
+			
 		model:SetPos(Pos)
 		model:SetAngles(Ang)
 
