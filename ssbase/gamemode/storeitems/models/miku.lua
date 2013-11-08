@@ -73,7 +73,7 @@ ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
 		local hairang = Angle(0,0,-90)
 		
 		local p = nil
-		if(!ply:Alive() && ply:GetRagdollEntity()) then
+		if(!ply:Alive() && IsValid(ply:GetRagdollEntity())) then
 			p = ply:GetRagdollEntity()
 		else
 			p = ply
