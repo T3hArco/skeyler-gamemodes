@@ -72,7 +72,14 @@ ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
 		local hairpos = Vector(0,0,0)
 		local hairang = Angle(0,0,-90)
 		
-		local Pos, Ang = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Head1"))
+		local p = nil
+		if(!ply:Alive() && ply:GetRagdollEntity()) then
+			p = ply:GetRagdollEntity()
+		else
+			p = ply
+		end
+		
+		local Pos, Ang = p:GetBonePosition(p:LookupBone("ValveBiped.Bip01_Head1"))
 		
 		local model = ply.currenthair
 		

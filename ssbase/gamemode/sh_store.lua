@@ -41,17 +41,9 @@ SS.STORE:LoadItems()
 local p = FindMetaTable("Player")
 
 function p:HasEquipped(id)
-	if SERVER then
-		if(SS.STORE.Equipped[self] && table.HasValue(SS.STORE.Equipped[self],id)) then
-			return true
-		else
-			return false
-		end
+	if(SS.STORE.Equipped[self] && table.HasValue(SS.STORE.Equipped[self],id)) then
+		return true
 	else
-		if(SS.STORE.Equipped && table.HasValue(SS.STORE.Equipped,id)) then
-			return true
-		else
-			return false
-		end
+		return false
 	end
 end

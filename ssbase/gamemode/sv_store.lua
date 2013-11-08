@@ -44,8 +44,9 @@ function SS.STORE:Equip(p,id)
 	end
 	table.insert(SS.STORE.Equipped[p],id)
 	net.Start("SS_EquipTable")
+	net.WriteEntity(p)
 	net.WriteTable(SS.STORE.Equipped[p])
-	net.Send(p) -- we arent losing much I hope since we arent broadcasting
+	net.Broadcast() -- we arent losing much (I hope)
 end
 
 function SS.STORE:AddBMModel(player,item)
@@ -87,7 +88,7 @@ function SS.STORE:Unequip(p,id)
 		self:RemoveCSModel(p,i)
 	elseif(i.Model) then
 		p:SetModel("models/player/breen.mdl") --this should be changed
-		p:SetPlayerColor(Color(255,255,255,255))
+		p:SetPlayerColor(Vector(1,1,1)) --between 1 and 0 and stupid vector
 	end
 	if(i.Functions["Unequip"]) then
 		i.Functions["Unequip"](p)
@@ -101,8 +102,9 @@ function SS.STORE:Unequip(p,id)
 	if rem then
 		table.remove(self.Equipped[p],rem)
 		net.Start("SS_EquipTable")
+		net.WriteEntity(p)
 		net.WriteTable(SS.STORE.Equipped[p])
-		net.Send(p) -- we arent losing much I hope since we arent broadcasting
+		net.Broadcast() -- we arent losing much I hope since we arent broadcasting
 	end
 end
 
@@ -147,7 +149,7 @@ function SS.STORE:SetColor(p,id,col)
 	p.CustomColor[id] = Color(col.x,col.y,col.z)
 end
 
-hook.Add("OnPlayerDeath","SS_STORE_UnequipNonModels",function(ply)
+hook.Add("PlayerDeath","SS_STORE_UnequipNonModels",function(ply)
 	for k,v in pairs(ply.Equipped) do
 		local i = SS.STORE.Items[v.ID]
 		if(i.Category != 2) then --non models
