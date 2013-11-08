@@ -41,7 +41,7 @@ ITEM.Hooks["Think"] = function (item,ply)
 			end
                 local showhair = true
                 local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
-                for k,v in pairs(SS.STORE.Equipped) do
+                for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
                         if(!SS.STORE.Items[v]) then continue end
                         local i = SS.STORE.Items[v]
                         if(i.Type == "mask") then

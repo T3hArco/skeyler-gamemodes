@@ -813,7 +813,11 @@ net.Receive("SS_RemoveCSModel", function(length)
 end)
 
 net.Receive("SS_EquipTable",function()
-	SS.STORE.Equipped[player] = net.ReadTable()
+	local ply = net.ReadEntity()
+	if(SS.STORE.Equipped[ply]) then
+		SS.STORE.Equipped[ply] = {}
+	end
+	SS.STORE.Equipped[ply] = net.ReadTable()
 end)
 
 net.Receive("SS_CSModels",function()
