@@ -149,15 +149,6 @@ function SS.STORE:SetColor(p,id,col)
 	p.CustomColor[id] = Color(col.x,col.y,col.z)
 end
 
-hook.Add("PlayerDeath","SS_STORE_UnequipNonModels",function(ply)
-	for k,v in pairs(ply.Equipped) do
-		local i = SS.STORE.Items[v.ID]
-		if(i.Category != 2) then --non models
-			SS.STORE:Unequip(ply,v.ID)
-		end
-	end
-end)
-
 hook.Add("PlayerInitialSpawn","SS_STORE_Spawn",function(ply)
 	net.Start("SS_CSModels")
 	net.WriteTable(SS.STORE.CSModels)

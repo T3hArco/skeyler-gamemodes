@@ -58,7 +58,7 @@ ITEM.Hooks["Think"] = function (item,ply)
                 end
         end
 end
-ITEM.Hooks["PostPlayerDraw"] = function (item,ply)
+ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 	if CLIENT && ply.hairtoshow then 
 		if(ply.currenthair) then
 			if(ply.currenthair:GetModel() != ply.hairtoshow) then
