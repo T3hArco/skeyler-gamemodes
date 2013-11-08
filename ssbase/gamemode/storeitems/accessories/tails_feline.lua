@@ -26,7 +26,36 @@ end
 
 ITEM.Hooks = {}												-- Could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
 
-ITEM.Hooks["Think"] = function ()
+ITEM.Hooks["Think"] = function (item,ply)
+	if CLIENT then
+		if(SS.STORE.CSModels[ply] && SS.STORE.CSModels[ply][item]) then
+			local i = SS.STORE.CSModels[ply][item]
+			if(ply:GetWalkSpeed() == ply:GetRunSpeed()) then
+				ply.running = false
+				if(ply:Speed() == 0) then
+					ply.idle = true
+				else
+					ply.idle = false
+				end
+			elseif(ply:Speed() > ply:GetWalkSpeed()+25) then
+				ply.running = true
+				ply.idle = false
+			elseif(ply:Speed() == 0) then
+				ply.idle = true
+			else
+				ply.idle = false
+				ply.running = false
+			end
+			
+			if(ply.idle && (i:GetSequence() < 1 or i:GetSequence() > 3)) then
+				i:SetSequence(math.random(1,3))
+			elseif(!ply.running && i:GetSequence() != 5)) then
+				i:SetSequence(5)
+			elseif(ply.running && i:GetSequence != 4) then
+				i:SetSequence(4)
+			end
+		end
+	end
 end
 
 /* ACCESSORY VARIABLES */

@@ -781,8 +781,8 @@ end
 
 function p:RemoveClientsideModel(id)
 	if not SS.STORE.Items[id] then return false end
-	if not SS.STORE.ClientsideModels[self] then return false end
-	if not SS.STORE.ClientsideModels[self][id] then return false end
+	if not SS.STORE.CSModels[self] then return false end
+	if not SS.STORE.CSModels[self][id] then return false end
 	
 	SS.STORE.CSModels[self][id] = nil
 end
