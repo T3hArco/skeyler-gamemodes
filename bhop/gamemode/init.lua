@@ -51,7 +51,7 @@ function GM:LevelSetup(ply, Level)
 	ply:SetGravity(ply.LevelData.gravity) 
 	ply.StayTime = ply.LevelData.staytime 
 	print(game.GetMap())
-	ply.Payout = SS.MapList[game.GetMap()].payout or 100
+	ply.Payout = SS.MapList[game.GetMap()] and SS.MapList[game.GetMap()].payout or 100
 
 	ply:ChatPrint("Your difficulty is ".. ply.LevelData.name ..".") 
 
