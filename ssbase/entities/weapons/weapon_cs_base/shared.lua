@@ -151,7 +151,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 							if(trace.Entity && trace.Entity:IsValid()) then
 								trace.Entity:SetSaveValue("m_toggle_state",1)
 							end
-						end
+						end)
 					elseif(game.GetMap() != "bhop_infog" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnDamaged",owner)
 						trace.Entity:SetSaveValue("m_toggle_state",0)
@@ -159,7 +159,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 							if(trace.Entity && trace.Entity:IsValid()) then
 								trace.Entity:SetSaveValue("m_toggle_state",1)
 							end
-						end
+						end)
 					end
 				elseif(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_breakable") then
 					if(game.GetMap() == "kz_bhop_yonkoma" && trace.Entity.TriggerOutput) then
