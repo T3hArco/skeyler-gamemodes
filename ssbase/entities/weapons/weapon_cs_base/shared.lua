@@ -1,6 +1,3 @@
-
-local testgeorge = nil
-
 if (SERVER) then
 
 	AddCSLuaFile( "shared.lua" )
@@ -140,24 +137,14 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Damage	= dmg
 		bullet.Callback = function(a,b,c)
 			if(SERVER && b.HitPos) then
-				if(!testgeorge) then
-					 for k,v in pairs(player.GetAll()) do
-						if(v:SteamID() == "STEAM_0:1:20059628") then
-							testgeorge = v
-						end
-					end
-				end
 				local tracedata = {}
 				tracedata.start = b.StartPos
 				tracedata.endpos = b.HitPos + (b.Normal*2)
 				tracedata.filter = self.Owner
 				tracedata.mask = MASK_PLAYERSOLID
 				local trace = util.TraceLine(tracedata)
-				if(testgeorge) then testgeorge:PrintMessage(HUD_PRINTCONSOLE,"not found button") end
 				if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
-					if(testgeorge) then testgeorge:PrintMessage(HUD_PRINTCONSOLE,"found button") end
 					if(game.GetMap() == "bhop_lost_world" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
-						if(testgeorge) then testgeorge:PrintMessage(HUD_PRINTCONSOLE,"trying to press button") end
 						trace.Entity:TriggerOutput("OnPressed",owner)
 					elseif(game.GetMap() != "bhop_infog" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnDamaged",owner)

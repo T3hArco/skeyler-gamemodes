@@ -153,3 +153,32 @@ hook.Add("InitPostEntity", "SpawnPoints", function()
 
 	end
 end )
+
+function GM:EntityKeyValue( ent, key, value )
+     
+    if !GAMEMODE.BaseStoreOutput or !GAMEMODE.BaseTriggerOutput then
+     
+        local e = scripted_ents.Get( "base_entity" )
+        GAMEMODE.BaseStoreOutput = e.StoreOutput
+        GAMEMODE.BaseTriggerOutput = e.TriggerOutput
+         
+    end
+ 
+    if key:lower():sub( 1, 2 ) == "on" then
+         
+        if !ent.StoreOutput or !ent.TriggerOutput then -- probably an engine entity
+         
+            ent.StoreOutput = GAMEMODE.BaseStoreOutput
+            ent.TriggerOutput = GAMEMODE.BaseTriggerOutput
+            
+		end
+		
+        if ent.StoreOutput then
+                 
+            ent:StoreOutput( key, value )
+                 
+        end
+         
+    end
+     
+end
