@@ -136,6 +136,10 @@ function GM:PlayerSpawn(ply)
 
 			hands:Spawn()
 		end
+		
+		ply:GiveAmmo(999, "smg1", true) --this case is diff to the above
+		ply:GiveAmmo(999, "pistol", true) --same with this
+		ply:GiveAmmo(999, "buckshot", true) 
 	else 
 		ply:SetTeam(TEAM_SPECTATOR)
 		ply:Spectate(OBS_MODE_ROAMING)
