@@ -47,18 +47,18 @@ ITEM.Hooks["UpdateAnimation"] = function (item,ply)
 				ply.running = false
 			end
 			
-			local tidle = i:LookupSequence("ACT_IDLE")			-- This should eliminate the need to figure out which enumerations are what
-			--local twalk = i:LookupSequence("ACT_WALK")
-			--local trun = i:LookupSequence("ACT_RUN")
-			if ply.idle then
+			local tidle = i:LookupSequence("idle01") -- Tables also wrong names, I checked the sequence names in my modelviewer
+			local twalk = i:LookupSequence("walk_unarmed")
+			local trun = i:LookupSequence("run_unarmed")
+			if (ply.idle) then
 				i:SetSequence(tidle)
-			elseif(!ply.running && i:GetSequence() != 5) then
-				i:SetSequence(5)
-			elseif(ply.running && i:GetSequence() != 4) then
-				i:SetSequence(4)
+			elseif(!ply.running) then
+				i:SetSequence(twalk)
+			elseif(ply.running) then
+				i:SetSequence(trun)
 			end
 			if(i.lastthink) then
-				i:FrameAdvance(RealTime()-i.lastthink) --this function better fucking work I HAD TO FIND THIS IN DMODELPANEL ITS NOT EVEN DOCUMENTED!
+				i:FrameAdvance(CurTime()-i.lastthink) --this function better fucking work I HAD TO FIND THIS IN DMODELPANEL ITS NOT EVEN DOCUMENTED!
 			end
 			i.lastthink = CurTime()
 		end
