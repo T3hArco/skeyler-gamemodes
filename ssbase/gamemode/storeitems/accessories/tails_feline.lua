@@ -26,34 +26,38 @@ end
 
 ITEM.Hooks = {}												-- Could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
 
-ITEM.Hooks["Think"] = function (item,ply)
+ITEM.Hooks["UpdateAnimation"] = function (item,ply)
 	if CLIENT then
-		if(SS.STORE.CSModels[ply] && SS.STORE.CSModels[ply][item]) then
-			local i = SS.STORE.CSModels[ply][item]
+		if(SS.STORE.CSModels[ply] && SS.STORE.CSModels[ply][item.ID]) then
+			local i = SS.STORE.CSModels[ply][item.ID]
 			if(ply:GetWalkSpeed() == ply:GetRunSpeed()) then
 				ply.running = false
-				if(ply:Speed() == 0) then
+				if(ply:GetVelocity():Length() == 0) then
 					ply.idle = true
 				else
 					ply.idle = false
 				end
-			elseif(ply:Speed() > ply:GetWalkSpeed()+25) then
+			elseif(ply:GetVelocity():Length() > ply:GetWalkSpeed()+25) then
 				ply.running = true
 				ply.idle = false
 			elseif(ply:Speed() == 0) then
 				ply.idle = true
 			else
-				ply.idle = false
+				ply.idle = false 
 				ply.running = false
 			end
 			
 			if(ply.idle && (i:GetSequence() < 1 or i:GetSequence() > 3)) then
 				i:SetSequence(math.random(1,3))
-			elseif(!ply.running && i:GetSequence() != 5)) then
+			elseif(!ply.running && i:GetSequence() != 5) then
 				i:SetSequence(5)
-			elseif(ply.running && i:GetSequence != 4) then
+			elseif(ply.running && i:GetSequence() != 4) then
 				i:SetSequence(4)
 			end
+			if(i.lastthink) then
+				i:FrameAdvance(RealTime()-i.lastthink) --this function better fucking work I HAD TO FIND THIS IN DMODELPANEL ITS NOT EVEN DOCUMENTED!
+			end
+			i.lastthink = CurTime()
 		end
 	end
 end
