@@ -53,6 +53,9 @@ function GM:EntityKeyValue(ent, key, value)
 			ent.BHSp = tonumber(value)
 		end
 	end
+	if(self.BaseClass.EntityKeyValue) then
+		self.BaseClass:EntityKeyValue(ent,key,value)
+	end
 end 
 
 function GM:Move(pl, movedata)
