@@ -144,13 +144,13 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 				tracedata.filter = self.Owner
 				tracedata.mask = MASK_PLAYERSOLID
 				local trace = util.TraceLine(tracedata)
-				--[[if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
-					if(game.GetMap() == "bhop_lost_world") then
+				if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
+					if(game.GetMap() == "bhop_lost_world" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnPressed",owner)
-					elseif(game.GetMap() != "bhop_infog") then
+					elseif(game.GetMap() != "bhop_infog" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnDamaged",owner)
 					end
-				else]]if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_breakable") then
+				elseif(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_breakable") then
 					if(game.GetMap() == "kz_bhop_yonkoma" && trace.Entity.TriggerOutput) then
 						trace.Entity:TriggerOutput("OnBreak",owner)
 					end
