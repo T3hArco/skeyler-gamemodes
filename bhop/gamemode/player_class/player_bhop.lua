@@ -32,7 +32,10 @@ function PLAYER:Loadout()
 	self.Player:Give("weapon_fists") 
 	self.Player:GiveAmmo(200, "Pistol", true) 
 	self.Player:GiveAmmo(400, "Smg1", true) 
-
+	
+	self.Player:GiveAmmo(999, "smg1", true) --this case is diff to the above
+	self.Player:GiveAmmo(999, "pistol", true) --same with this
+	self.Player:GiveAmmo(999, "buckshot", true) 
 end
 
 
