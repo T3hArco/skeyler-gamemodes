@@ -50,7 +50,7 @@ ITEM.Hooks["UpdateAnimation"] = function (item,ply)
 			local tidle = i:LookupSequence("ACT_IDLE")			-- This should eliminate the need to figure out which enumerations are what
 			--local twalk = i:LookupSequence("ACT_WALK")
 			--local trun = i:LookupSequence("ACT_RUN")
-			if ply.idle then
+			if ply.idle and i:GetSequence() != tidle then
 				i:SetSequence(tidle)
 			elseif(!ply.running && i:GetSequence() != 5) then
 				i:SetSequence(5)
