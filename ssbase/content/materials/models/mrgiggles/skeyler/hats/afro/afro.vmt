@@ -5,6 +5,10 @@
 
 	"$phong" "1"
 	"$phongexponent" "2"
-	"$phongboost"	"3"
+	"$phongboost"	"1"
 	"$phongfresnelranges"	"[0.05 0.5 1]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "64"
+	"$rimlightboost" "0.05"
 }

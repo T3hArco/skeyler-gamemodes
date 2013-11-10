@@ -9,6 +9,8 @@ ITEM.Type = "hat"											-- Also works for stuff like "mask" and such. Used f
 
 ITEM.Limited = false										-- Used if the model is a limited time (such as a holiday) item. "True" displays a little effect in the store.
 ITEM.Hidden = false											-- If true, the item will not be loaded into the store. Used for "special" hats such as limited hats which are no longer purchasable or staff hats.
+ITEM.Level = 0												-- The level required before the player can purchase this item.
+ITEM.VIP = false											-- If true, the item is VIP only
 
 ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint
