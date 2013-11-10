@@ -60,6 +60,9 @@ function PLAYER_META:ProfileLoaded(res)
 		return 
 	else 
 		self.profile = {} 
+		self.profile.lastLoginIp = self:IPAddress() 
+		self.profile.lastLoginTimestamp = os.time() 
+		self.playtimeStart = os.time() 
 		self:SetRank(DB_DEVS and 100 or 0)
 		self:SetMoney(100) 
 		self:SetExp(1) 
