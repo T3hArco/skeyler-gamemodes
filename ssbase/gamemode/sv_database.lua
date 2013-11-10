@@ -10,6 +10,7 @@ DB = mysqloo.connect(DB_HOST, DB_USER, DB_PASS, "skeyler", 3306)
 
 DB.PreConnectQueries = {} 
 DB.Connected = false 
+DB.Fails = 0 
 
 local function LogQuery(Query) -- Logging all queries so we can track problems
 	local folder, File = os.date("ss/query_log/%Y/%m"), os.date("%d.txt") 
@@ -38,9 +39,11 @@ function DB:onConnected()
 end 
 
 function DB:onConnectionFailed(err) 
+	DB.Fails = DB.Fails + 1 
+	if DB.Fails > 3 then return end 
 	MsgN("[DATABASE] Connection Error:  "..err) 
-	MsgN("[DATABASE] Retrying connection in 30 seconds")
-	timer.Simple(30, function() MsgN("[DATABASE] Retrying connection") self:connect() end) 
+	MsgN("[DATABASE] Retrying connection in 60 seconds")
+	timer.Simple(60, function() MsgN("[DATABASE] Retrying connection") self:connect() end) 
 end 
 
 function DB_Query(query, SuccessFunc, FailFunc) 
