@@ -10,35 +10,19 @@ function SS.AddRank(id, name, color)
 	SS.Ranks[id] = {name=name, color=color} 
 end 
 
-SS.AddRank(1000, "Owner", Color(64, 64, 64)) 
-SS.AddRank(100, "Admin", Color(255, 72, 72)) 
-SS.AddRank(50, "Dev", Color(87, 198, 255)) 
-SS.AddRank(5, "VIP", Color(255, 216, 0)) 
+SS.AddRank(100, "Owner", Color(64, 64, 64)) 
+SS.AddRank(50, "Admin", Color(255, 72, 72)) 
+SS.AddRank(20, "Dev", Color(87, 198, 255)) 
+SS.AddRank(1, "VIP", Color(255, 216, 0)) 
 SS.AddRank(0, "Regular", Color(255, 255, 255)) 
 
-SS.Profiles = {} 
-
-/* Load the profiles before the player is fully loaded */
-function PLAYER_META:ProfilePreLoad() 
-
-end 
-
-/* Setup Profile with PreLoad data */
-function PLAYER_META:ProfileLoad() 
-	self:SetRank(1000)
-	self:SetMoney(18576) 
-	-- self:SetLevel(1) 
-	self:SetExp(1) 
-	self:ChatPrint("Your profile has been loaded") 
-end 
-
-/* Sync Profile with database */
-function PLAYER_META:ProfileSave() 
-	SS.Profiles[self:SteamID()].money = self.money 
+function PLAYER_META:IsProfileLoaded() 
+	return self:GetNetworkedBool("ss_profileloaded", false) 
 end 
 
 function PLAYER_META:SetMoney(amt) 
 	self:SetNetworkedInt("ss_money", amt) 
+	self:ProfileUpdate("money", amt) 
 end 
 
 function PLAYER_META:GetMoney() 
@@ -47,6 +31,14 @@ end
 
 function PLAYER_META:GiveMoney(amt) 
 	self:SetMoney(self:GetMoney()+amt) 
+end 
+
+function PLAYER_META:TakeMoney(amt) 
+	self:GiveMoney(-amt) 
+end 
+
+function PLAYER_META:HasMoney(amt) 
+	return self:GetMoney() >= amt 
 end 
 
 function PLAYER_META:GetRank() 
@@ -77,9 +69,9 @@ function PLAYER_META:GetNextLevel()
 	return (0*2*(self:GetLevel()+1)) 
 end 
 
-function PLAYER_META:SetExp(exp, relative) 
-  	if relative then exp = exp+self:GetExp() end 
+function PLAYER_META:SetExp(exp) 
 	self:SetNetworkedInt("ss_exp", exp) 
+	self:ProfileUpdate("exp", exp) 
 end 
 
 function PLAYER_META:GetExp() 
@@ -87,24 +79,24 @@ function PLAYER_META:GetExp()
 end 
 
 function PLAYER_META:GiveExp(exp) 
-	self:SetExp(exp, true) 
+	self:SetExp(self:GetExp()+exp) 
 end 
 
 PLAYER_META.IsAdmin2 = PLAYER_META.IsAdmin
 function PLAYER_META:IsAdmin() 
 	if !self:IsValid() then return true end 
-	return self:GetRank() >= 100 
+	return self:GetRank() >= 50 
 end 
 
 PLAYER_META.IsSuperAdmin2 = PLAYER_META.IsSuperAdmin 
 function PLAYER_META:IsSuperAdmin() 
 	if !self:IsValid() then return true end 
-	return self:GetRank() >= 1000 
+	return self:GetRank() >= 100 
 end 
 
 function PLAYER_META:IsVIP() 
 	if !self:IsValid() then return true end 
-	return self:GetRank() >= 5 
+	return self:GetRank() >= 1 
 end 
 
 function PLAYER_META:GetMaxHealth() 

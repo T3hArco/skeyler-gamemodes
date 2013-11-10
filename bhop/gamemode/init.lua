@@ -148,6 +148,7 @@ end
 
 function GM:PlayerDisconnected(ply) 
 	ply:PauseTimer() 
+	ply:ProfileSave() 
 end 
 
 function GM:PlayerShouldTakeDamage(ply, attacker) 

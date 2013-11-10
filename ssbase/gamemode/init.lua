@@ -3,11 +3,13 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do  -- Fix this later fagget  
-	print(v) 
-	-- AddCSLuaFile("ss_vgui/"..v) 
-end
+-- DB_HOST = "162.213.209.3" 
+-- DB_USER = "aaron" 
+-- DB_PASS = "" 
 
+DB_HOST = "162.213.209.3"
+DB_USER = "servers_gmod"
+DB_PASS = "wdXWciNSRsh2CA1jJ3KdtFDIT3qkvdww1wOgHGjBphYjqZV2hutRHi8znAVozha"
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
@@ -19,8 +21,10 @@ AddCSLuaFile("cl_store.lua")
 -- AddCSLuaFile("vgui/ss_hub_store_icon.lua") 
 include("shared.lua")
 include("sh_profiles.lua") 
+include("sv_database.lua") 
 include("sh_maps.lua")
 include("sh_store.lua") 
+include("sv_profiles.lua") 
 include("sv_store.lua") 
 include("sv_timer.lua")
 include("sv_commands.lua")
@@ -70,6 +74,10 @@ function GM:PlayerSpawn(ply)
 
 		hands:Spawn()
 	end
+end 
+
+function GM:PlayerDisconnected(ply) 
+	self:ProfileSave() 
 end 
 
 function GM:AllowPlayerPickup( ply, object )
