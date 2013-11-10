@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\hats\halo\flame"
+	"$model" "1"
+	"$nocull" "1"
+	"$additive" "1"
+}
