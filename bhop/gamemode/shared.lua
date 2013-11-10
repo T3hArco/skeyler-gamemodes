@@ -144,7 +144,7 @@ function GM:OnPlayerHitGround(ply)
     if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && !table.HasValue(SS.Alldoors,game.GetMap()) && ent.BHSp && ent.BHSp > 100 then
 		ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.8 ) )
 	elseif ent:GetClass() == "func_door" || ent:GetClass() == "func_button" then
-		if(leveldata.id != 1) then
+		if(leveldata and leveldata.id != 1) then
 			timer.Simple( leveldata.staytime, function()
 				-- setting owner stops collision between two entities
 				ent:SetOwner(ply)
