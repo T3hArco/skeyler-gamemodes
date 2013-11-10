@@ -29,8 +29,8 @@ function SWEP:PrimaryAttack()
 	self:ShootEffects(trace.HitPos, trace.HitNormal, trace.Entity, trace.PhysicsBone, IsFirstTimePredicted()) 
 
 	if self.First != false then 
-		self.Owner:ChatPrint("Min = Vector("..math.min(self.First.x, trace.HitPos.x)..", "..math.min(self.First.y, trace.HitPos.y)..", "..math.min(self.First.z, trace.HitPos.z)..")")
-		self.Owner:ChatPrint("Max = Vector("..math.max(self.First.x, trace.HitPos.x)..", "..math.max(self.First.y, trace.HitPos.y)..", "..math.min(self.First.z, trace.HitPos.z)..")") 
+		self.Owner:ChatPrint("Min = Vector("..math.Round(math.min(self.First.x, trace.HitPos.x))..", "..math.Round(math.min(self.First.y, trace.HitPos.y))..", "..math.Round(math.min(self.First.z, trace.HitPos.z))..")")
+		self.Owner:ChatPrint("Max = Vector("..math.Round(math.max(self.First.x, trace.HitPos.x))..", "..math.Round(math.max(self.First.y, trace.HitPos.y))..", "..math.Round(math.min(self.First.z, trace.HitPos.z))..")") 
 		self.First = false  
 	else 
 		self.First = trace.HitPos 
