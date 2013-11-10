@@ -11,6 +11,7 @@ GM.AllowedList["STEAM_0:0:43691646"]=true -- knoxed
 GM.AllowedList["STEAM_0:1:20059628"]=true -- George
 GM.AllowedList["STEAM_0:0:17219175"]=true -- Knoxed main
 GM.AllowedList["STEAM_0:0:8398971"]=true -- Giggles
+GM.AllowedList["STEAM_0:0:14340930"]=true -- Arcky
 
 GM.AllowedList[""]=true
 
