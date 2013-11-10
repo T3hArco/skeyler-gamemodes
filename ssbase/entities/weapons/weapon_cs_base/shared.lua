@@ -135,6 +135,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Tracer	= 4									// Show a tracer on every x bullets 
 	bullet.Force	= 5									// Amount of force to give to phys objects
 	bullet.Damage	= dmg
+		local owner = self.Owner
 		bullet.Callback = function(a,b,c)
 			if(SERVER && b.HitPos) then
 				local tracedata = {}
