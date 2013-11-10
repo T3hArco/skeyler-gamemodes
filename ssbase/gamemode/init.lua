@@ -10,7 +10,7 @@ DB_DEVS = false
 
 DB_HOST = "162.213.209.3"
 DB_USER = "servers_gmod"
-DB_PASS = "wdXWciNSRsh2CA1jJ3KdtFDIT3qkvdww1wOgHGjBphYjqZV2hutRHi8znAVozha"
+DB_PASS = "wdXWciNSRsh2CA1jJ3Kdt"
 
 for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do  -- Fix this later fagget  
 	print(v) 
