@@ -166,7 +166,7 @@ function GM:InitPostEntity()
 			local mins = v:OBBMins()
 			local maxs = v:OBBMaxs()
 			local h = maxs.z - mins.z
-			if(h > 80 && game.GetMap() != "bhop_monster_jam") then continue end
+			if(h > 80 && !table.HasValue(SS.Alldoors,game.GetMap())) then continue end
 			local tab = ents.FindInBox( v:LocalToWorld(mins)-Vector(0,0,10), v:LocalToWorld(maxs)+Vector(0,0,5) )
 			if(tab) then
 				for _,v2 in pairs(tab) do if(v2 && v2:IsValid() && v2:GetClass() == "trigger_teleport") then tele = v2 end end

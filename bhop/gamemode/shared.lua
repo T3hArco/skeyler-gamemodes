@@ -16,11 +16,19 @@ GM.VIPBonusHP = false
 GM.HUDShowVel = true 
 GM.HUDShowTimer = true 
 
+SS.Alldoors = {
+	"bhop_archives",
+	"bhop_monster_jam"
+}
+
 TEAM_BHOP = 1  
 team.SetUp(TEAM_BHOP, "Hoppers", Color(87, 198, 255), false) 
 
 function GM:EntityKeyValue(ent, key, value) 
 	if(ent:GetClass() == "func_door") then
+		if(table.HasValue(SS.Alldoors,game.GetMap())) then
+			ent.IsP = true
+		end
 		if(string.find(string.lower(key),"movedir")) then
 			if(value == "90 0 0") then
 				ent.IsP = true
@@ -37,6 +45,9 @@ function GM:EntityKeyValue(ent, key, value)
 		end
 	end
 	if(ent:GetClass() == "func_button") then
+		if(table.HasValue(SS.Alldoors,game.GetMap())) then
+			ent.IsP = true
+		end
 		if(string.find(string.lower(key),"movedir")) then
 			if(value == "90 0 0") then
 				ent.IsP = true
@@ -130,7 +141,7 @@ function GM:OnPlayerHitGround(ply)
 	--mpbhop stuff
 	local ent = ply:GetGroundEntity()
 	if(tonumber(ent:GetNWInt("Platform",0)) == 0) then return end
-    if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && ent.BHSp && ent.BHSp > 100 then
+    if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && !table.HasValue(SS.Alldoors,game.GetMap()) && ent.BHSp && ent.BHSp > 100 then
 		ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.8 ) )
 	elseif ent:GetClass() == "func_door" || ent:GetClass() == "func_button" then
 		if(leveldata.id != 1) then
