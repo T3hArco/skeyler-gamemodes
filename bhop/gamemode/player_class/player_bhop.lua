@@ -30,6 +30,7 @@ function PLAYER:Loadout()
 	self.Player:Give("weapon_pistol")
 	self.Player:Give("weapon_smg1") 
 	self.Player:Give("weapon_fists") 
+	if self.Player:IsSuperAdmin() then self.Player:Give("ss_mapeditor") end 
 	self.Player:GiveAmmo(200, "Pistol", true) 
 	self.Player:GiveAmmo(400, "Smg1", true) 
 	
