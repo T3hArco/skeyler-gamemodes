@@ -19,6 +19,8 @@ function PLAYER_META:ProfileLoad()
 
 	self:ChatPrint("Loading your profile") 
 
+	if DB_DEVS then self:ProfileLoaded() return end 
+
 	timer.Simple(30, function() if self and self:IsValid() and !self:IsProfileLoaded() then self:ChatPrint("Your profile seems to be having problems loading.  Our appologies.") end end) 
 
 	DB_Query("SELECT "..table.concat(selects, ", ").." FROM users WHERE steamid='"..string.sub(steamid, 7).."'", 
@@ -57,7 +59,8 @@ function PLAYER_META:ProfileLoaded(res)
 		self:CreateProfile() 
 		return 
 	else 
-		self:SetRank(0)
+		self.profile = {} 
+		self:SetRank(DB_DEVS and 100 or 0)
 		self:SetMoney(100) 
 		self:SetExp(1) 
 		self:ChatPrint("We had problems loading your profile and have created a temporary one for you.") 

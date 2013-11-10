@@ -61,4 +61,5 @@ function DB_Query(query, SuccessFunc, FailFunc)
 	Query:start()
 end 
 
+if DB_DEVS then return end 
 DB:connect() 
