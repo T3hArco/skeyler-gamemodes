@@ -71,7 +71,7 @@ ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 		end
 		
 		local hairpos = Vector(0,0,0)
-		local hairang = Angle(0,0,-90)
+		local hairang = Angle(0,0,0)
 		
 		local p = nil
 		if(!ply:Alive() && IsValid(ply:GetRagdollEntity())) then
