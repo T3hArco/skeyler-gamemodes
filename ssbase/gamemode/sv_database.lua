@@ -57,6 +57,7 @@ function DB_Query(query, SuccessFunc, FailFunc)
 
 	function Query:OnError(err, sql) 
 		if FailFunc then FailFunc() end 
+		LogQuery("[ERROR] QUERY=\""..sql.." ERROR=\""..err.."\"")
 		Error("[DATABASE] Error QUERY=\""..sql.." ERROR=\""..err.."\"")  
 	end 
 
