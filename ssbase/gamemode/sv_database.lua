@@ -57,7 +57,8 @@ function DB_Query(query, SuccessFunc, FailFunc)
 
 	function Query:OnError(err, sql) 
 		if DB:status() == mysqloo.DATABASE_NOT_CONNECTED then
-
+			DB.Connected = false
+			
 			table.insert(DB.PreConnectQueries, {query=query, SuccessFunc=SuccessFunc, FailFunc = FailFunc})
 			DB:connect()
 			return
