@@ -12,8 +12,8 @@ ITEM.Tintable = false										-- Used if the model is colorable, but a translat
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(30, 22, -3)							-- Used the modify the position of the camera on DModelPanels 
-ITEM.LookAt = Vector(-20, 0, -3) 							-- Used to change the angle at which the camera views the model 
+ITEM.CamPos = Vector(30, 22, -1)							-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(-20, 0, -1) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
@@ -40,22 +40,25 @@ ITEM.Hooks["UpdateAnimation"] = function (item,ply)
 			elseif(ply:GetVelocity():Length() > ply:GetWalkSpeed()+25) then
 				ply.running = true
 				ply.idle = false
-			elseif(ply:Speed() == 0) then
+			elseif(ply:GetVelocity():Length() == 0) then
 				ply.idle = true
 			else
 				ply.idle = false 
 				ply.running = false
 			end
 			
-			local tidle = i:LookupSequence("idle01") -- Tables also wrong names, I checked the sequence names in my modelviewer
+			--local tidle = i:LookupSequence("idle_unarmed")
 			local twalk = i:LookupSequence("walk_unarmed")
 			local trun = i:LookupSequence("run_unarmed")
-			if (ply.idle) then
-				i:SetSequence(tidle)
+			print("BEFORE:"..i:GetSequence())
+			if ply.idle and i:GetSequence() > 4 then
+				--i:SetSequence(tidle) 
+				i:SetSequence("idle0"..math.random(1,3))
+				print("AFTER"..i:GetSequence())
 			elseif(!ply.running) then
-				i:SetSequence(twalk)
+				i:SetSequence(twalk) 
 			elseif(ply.running) then
-				i:SetSequence(trun)
+				i:SetSequence(trun) 
 			end
 			if(i.lastthink) then
 				i:FrameAdvance(CurTime()-i.lastthink) --this function better fucking work I HAD TO FIND THIS IN DMODELPANEL ITS NOT EVEN DOCUMENTED!

@@ -26,6 +26,75 @@ end
 
 ITEM.Hooks = {}
 
-ITEM.Hooks["Think"] = function ()
-												--could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
+ITEM.Hooks["Think"] = function (item,ply)
+        if CLIENT then
+                local showhair = true
+                local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
+                for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
+                        if(!SS.STORE.Items[v]) then continue end
+                        local i = SS.STORE.Items[v]
+                        if(i.Type == "mask") then
+                                showhair = false
+                        end
+                        if(i.Type == "headcoverhalf") then
+                                hairmodel = "models/mrgiggles/skeyler/misc/elin_hair_short.mdl"
+                        end
+                end
+                if(showhair) then
+                        ply.hairtoshow = hairmodel
+                else
+                        ply.hairtoshow = nil
+                end
+        end
+end
+ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
+	if CLIENT && ply.hairtoshow then 
+		if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0) then return end
+		if(ply.currenthair) then
+			if(ply.currenthair:GetModel() != ply.hairtoshow) then
+				ply.currenthair:SetModel(ply.hairtoshow)
+			end
+		else
+			ply.currenthair = ClientsideModel(ply.hairtoshow)
+			ply.currenthair:SetNoDraw(true)
+		end
+		
+		local hairpos = Vector(0,0,0)
+		local hairang = Angle(0,0,0)
+		
+		local p = nil
+		if(!ply:Alive() && IsValid(ply:GetRagdollEntity())) then
+			p = ply:GetRagdollEntity()
+		else
+			p = ply
+		end
+		
+		local Pos, Ang = p:GetBonePosition(p:LookupBone("ValveBiped.Bip01_Head1"))
+		
+		local model = ply.currenthair
+		
+		local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+		Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
+		
+		local NewAng, FinalAng = Ang, Ang
+		NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 
+		FinalAng.p = NewAng.p 
+		NewAng = Ang 
+		NewAng:RotateAroundAxis(Ang:Forward(), hairang.y) 
+		FinalAng.y = NewAng.y 
+		NewAng = Ang 
+		NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
+		FinalAng.r = NewAng.r 
+		Ang = FinalAng 
+			
+		model:SetPos(Pos)
+		model:SetAngles(Ang)
+
+		model:SetRenderOrigin(Pos)
+		model:SetRenderAngles(Ang)
+		model:SetupBones()
+		model:DrawModel()
+		model:SetRenderOrigin()
+		model:SetRenderAngles()
+	end
 end

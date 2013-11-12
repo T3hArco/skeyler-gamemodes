@@ -36,7 +36,7 @@ ITEM.BoneMerge = false										-- May be used for certain accessories to boneme
 ITEM.Models = {} 
 ITEM.Models["elin"] = {	["0_0_0_0"]= {pos=Vector(1.8, 2.6, 0), ang=Angle(0, -90, -68), scale=1.05}}
 ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(1.9, 1.15, 0), ang=Angle(0, -90, -83), scale=1}}
-ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(3.25, 3.25, 0), ang=Angle(0, -90, -80), scale=1.05}}
+ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(3.25, 3.25, 0), ang=Angle(0, -90, -75), scale=1.05}}
 ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(1.1, 2.8, 0.2), ang=Angle(0, -90, -90), scale=1}}
 ITEM.Models["zer0"] = {
 	["0_0_0_0"]= {pos=Vector(3.1, 2.5, 0), ang=Angle(0, -90, -75), scale=0.9},

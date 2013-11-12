@@ -39,7 +39,7 @@ ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(9.5, 0.9, -1.175), ang=Angle(0,
 ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(9.6, 1.25, -1.5), ang=Angle(0, -90, -90), scale=1}}
 ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(6.75, 2.3, -0.75), ang=Angle(-4, -90, -90), scale=1}}
 ITEM.Models["zer0"] = {
-	["0_0_0_0"]= {pos=Vector(8.1, 1, -0.75), ang=Angle(-4, -90, -90), scale=0.9},
-	["0_1_0_0"]= {pos=Vector(14.1, 1, -0.75), ang=Angle(-4, -90, -90), scale=0.9}
+	["0_0_0_0"]= {pos=Vector(8.1, 1, -1), ang=Angle(-4, -90, -90), scale=0.9},
+	["0_1_0_0"]= {pos=Vector(14.1, 1, -1), ang=Angle(-4, -90, -90), scale=0.9}
 }
 /* ************* */

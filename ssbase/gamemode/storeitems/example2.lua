@@ -12,6 +12,8 @@ ITEM.Hidden = false											-- If true, the item will not be loaded into the s
 ITEM.Level = 0												-- The level required before the player can purchase this item.
 ITEM.VIP = false											-- If true, the item is VIP only
 
+ITEM.Keywords = {"text","text","text"}
+
 ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint
 
