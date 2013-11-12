@@ -48,7 +48,6 @@ function DB:onConnectionFailed(err)
 end 
 
 function DB_Query(query, SuccessFunc, FailFunc) 
-	if !DB:status() == mysqloo.DATABASE_CONNECTED then DB.Connected = false end 
 	if !DB.Connected then table.insert(DB.PreConnectQueries, {query=query, SuccessFunc=SuccessFunc, FailFunc = FailFunc}) return end  
 	local Query = DB:query(query) 
 
@@ -57,6 +56,12 @@ function DB_Query(query, SuccessFunc, FailFunc)
 	end 
 
 	function Query:OnError(err, sql) 
+		if DB:status() == mysqloo.DATABASE_NOT_CONNECTED then
+
+			table.insert(DB.PreConnectQueries, {query=query, SuccessFunc=SuccessFunc, FailFunc = FailFunc})
+			DB:connect()
+			return
+		end
 		if FailFunc then FailFunc() end 
 		LogQuery("[ERROR] QUERY=\""..sql.." ERROR=\""..err.."\"")
 		Error("[DATABASE] Error QUERY=\""..sql.." ERROR=\""..err.."\"")  
