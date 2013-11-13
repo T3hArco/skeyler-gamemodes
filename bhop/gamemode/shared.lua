@@ -142,7 +142,11 @@ function GM:OnPlayerHitGround(ply)
 	local ent = ply:GetGroundEntity()
 	if(tonumber(ent:GetNWInt("Platform",0)) == 0) then return end
     if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && !table.HasValue(SS.Alldoors,game.GetMap()) && ent.BHSp && ent.BHSp > 100 then
-		ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.9 ) )
+		if(game.GetMap() == "bhop_cartoony" then
+			ply:SetVelocity( Vector( 0, 0, ent.BHSp*2.1 ) )
+		else
+			ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.9 ) )
+		end
 	elseif ent:GetClass() == "func_door" || ent:GetClass() == "func_button" then
 		if(leveldata and leveldata.id != 1) then
 			timer.Simple( leveldata.staytime, function()
