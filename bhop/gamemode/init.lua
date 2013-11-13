@@ -245,11 +245,20 @@ hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
 		end
 	end
 	
-	if(good > bad) then
-		sync = (good*100)/(good+bad)
-	end
+	local straf = p.strafenum
+	timer.Simple(0.2,function()
+		if(straf && good && bad && totalsync && p && p:IsValid() && p:IsOnGround()) then --checkzooors
+			if(good > bad) then
+				sync = (good*100)/(good+bad)
+			end
+		
+			for k,v in pairs(totalsync) do
+				p:PrintMessage(HUD_PRINTTALK,"Strafe "..k..": "..(math.Round(v*100)/100).."% sync.")
+			end
 
-	p:PrintMessage(HUD_PRINTTALK,"You got "..sync.."% sync.")
+			p:PrintMessage(HUD_PRINTTALK,"You got "..(math.Round(sync*100)/100).."% sync with "..straf.." strafes.")
+		end
+	end)
 
 	p.strafe = {}
 	p.strafenum = 0
@@ -277,14 +286,15 @@ hook.Add("Think","StrafeyThink",function()
 				continue
 			end
 			p.lastangle = p:GetAngles()
-			if(p:KeyDown(IN_LEFT) && p.turningleft && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
+
+			if(p:KeyDown(IN_MOVELEFT) && p.turningleft && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
 				p.strafingright = false
 				p.strafingleft = true
 				p.strafenum = p.strafenum + 1
 				p.strafe[p.strafenum] = {}
 				p.strafe[p.strafenum][1] = 0
 				p.strafe[p.strafenum][2] = 0
-			elseif(p:KeyDown(IN_RIGHT) && p.turningright && (p.strafingleft || (!p.strafingright && !p.strafingleft))) then
+			elseif(p:KeyDown(IN_MOVERIGHT) && !p.turningleft && (p.strafingleft || (!p.strafingright && !p.strafingleft))) then
 				p.strafingright = true
 				p.strafingleft = false
 				p.strafenum = p.strafenum + 1
@@ -292,6 +302,7 @@ hook.Add("Think","StrafeyThink",function()
 				p.strafe[p.strafenum][1] = 0
 				p.strafe[p.strafenum][2] = 0
 			elseif(!p.strafingleft && !p.strafingright) then
+				print('nostrafe')
 				continue
 			end
 			local s = p:GetVelocity()
