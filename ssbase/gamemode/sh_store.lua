@@ -2,7 +2,7 @@ SS.STORE = {}
 
 SS.STORE.Equipped = {}
 
-SS.STORE.Categories = {"Hats","Models","Accessories"}
+SS.STORE.Categories = {"PlayerModels","Hats","Accessories"}
 
 SS.STORE.Items = {}
 
