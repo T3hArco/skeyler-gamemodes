@@ -281,7 +281,7 @@ hook.Add("Think","StrafeyThink",function()
 				p.turningleft = false
 			elseif(p.curangle.y > p.lastangle.y) then
 				p.turningleft = true
-			elseif(!p.strafingleft && !p.strafingright) then
+			elseif(!p:KeyDown(IN_MOVELEFT) && !p:KeyDown(IN_MOVERIGHT)) then
 				p.lastangle = p:GetAngles()
 				continue
 			end
@@ -302,7 +302,6 @@ hook.Add("Think","StrafeyThink",function()
 				p.strafe[p.strafenum][1] = 0
 				p.strafe[p.strafenum][2] = 0
 			elseif(!p.strafingleft && !p.strafingright) then
-				print('nostrafe')
 				continue
 			end
 			local s = p:GetVelocity()
@@ -310,7 +309,7 @@ hook.Add("Think","StrafeyThink",function()
 			p.speed = s:Length()
 			if(p.lastspeed) then
 				local g = p.speed - p.lastspeed
-				if(g >= 0) then
+				if(g > 0) then
 					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
 				else
 					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
