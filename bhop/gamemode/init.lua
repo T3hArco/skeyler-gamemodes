@@ -281,7 +281,7 @@ hook.Add("Think","StrafeyThink",function()
 				p.turningleft = false
 			elseif(p.curangle.y > p.lastangle.y) then
 				p.turningleft = true
-			elseif(!p:KeyDown(IN_MOVELEFT) && !p:KeyDown(IN_MOVERIGHT)) then
+			else
 				p.lastangle = p:GetAngles()
 				continue
 			end
