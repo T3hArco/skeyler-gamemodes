@@ -249,7 +249,7 @@ hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
 		sync = (good*100)/(good+bad)
 	end
 
-	p:PrintMessage(HUD_PRINTTALK,"You got "...."% sync.")
+	p:PrintMessage(HUD_PRINTTALK,"You got "..sync.."% sync.")
 
 	p.strafe = {}
 	p.strafenum = 0
