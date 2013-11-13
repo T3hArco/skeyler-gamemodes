@@ -230,3 +230,82 @@ function GM:PlayerWon(ply)
 	print(ply.Payout) 
 	ply:GiveMoney(ply.Payout)
 end 
+
+hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
+	local good = 0
+	local bad = 0
+	local sync = 0
+	local totalsync = {}
+	
+	for k,v in pairs(p.strafe or {}) do
+		if(type(v) == "table") then
+			totalsync[k] = (v[1]*100)/(v[1]+v[2]) --to be used later for stats
+			good = good + v[1]
+			bad = bad + v[2]
+		end
+	end
+	
+	if(good > bad) then
+		sync = (good*100)/(good+bad)
+	end
+
+	p:PrintMessage(HUD_PRINTTALK,"You got "...."% sync.")
+
+	p.strafe = {}
+	p.strafenum = 0
+	p.strafingleft = false
+	p.strafingright = false
+	p.turningleft = false
+	p.lastangle = nil
+	p.speed = nil
+	p.lastspeed = nil
+end)
+
+hook.Add("Think","StrafeyThink",function()
+	for _,p in pairs(player.GetAll()) do
+		if(!p:IsOnGround()) then
+			p.curangle = p:GetAngles()
+			if(!p.lastangle) then
+				p.lastangle = p.curangle
+			end
+			if(p.curangle.y > p.lastangle.y) then
+				p.turningleft = false
+			elseif(p.curangle.y < p.lastangle.y) then
+				p.turningleft = true
+			else
+				p.lastangle = p:GetAngles()
+				continue
+			end
+			p.lastangle = p:GetAngles()
+			if(p:KeyDown(IN_LEFT) && p.turningleft && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
+				p.strafingright = false
+				p.strafingleft = true
+				p.strafenum = p.strafenum + 1
+				p.strafe[p.strafenum] = {}
+				p.strafe[p.strafenum][1] = 0
+				p.strafe[p.strafenum][2] = 0
+			elseif(p:KeyDown(IN_RIGHT) && p.turningright && (p.strafingleft || (!p.strafingright && !p.strafingleft))) then
+				p.strafingright = true
+				p.strafingleft = false
+				p.strafenum = p.strafenum + 1
+				p.strafe[p.strafenum] = {}
+				p.strafe[p.strafenum][1] = 0
+				p.strafe[p.strafenum][2] = 0
+			elseif(!p.strafingleft && !p.strafingright) then
+				continue
+			end
+			local s = p:GetVelocity()
+			s.z = 0
+			p.speed = s:Length()
+			if(p.lastspeed) then
+				local g = p.speed - p.lastspeed
+				if(g > 0) then
+					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
+				else
+					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
+				end
+			end
+			p.lastspeed = p.speed
+		end
+	end
+end)
