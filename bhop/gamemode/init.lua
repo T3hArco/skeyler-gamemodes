@@ -268,9 +268,9 @@ hook.Add("Think","StrafeyThink",function()
 			if(!p.lastangle) then
 				p.lastangle = p.curangle
 			end
-			if(p.curangle.y > p.lastangle.y) then
+			if(p.curangle.y < p.lastangle.y) then
 				p.turningleft = false
-			elseif(p.curangle.y < p.lastangle.y) then
+			elseif(p.curangle.y > p.lastangle.y) then
 				p.turningleft = true
 			else
 				p.lastangle = p:GetAngles()
