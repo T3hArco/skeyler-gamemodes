@@ -248,9 +248,7 @@ hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
 	local straf = p.strafenum
 	timer.Simple(0.2,function()
 		if(straf && good && bad && totalsync && p && p:IsValid() && p:IsOnGround()) then --checkzooors
-			if(good > bad) then
-				sync = (good*100)/(good+bad)
-			end
+			sync = (good*100)/(good+bad)
 		
 			for k,v in pairs(totalsync) do
 				p:PrintMessage(HUD_PRINTTALK,"Strafe "..k..": "..(math.Round(v*100)/100).."% sync.")
