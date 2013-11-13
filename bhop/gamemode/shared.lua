@@ -143,7 +143,7 @@ function GM:OnPlayerHitGround(ply)
 	if(tonumber(ent:GetNWInt("Platform",0)) == 0) then return end
     if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && !table.HasValue(SS.Alldoors,game.GetMap()) && ent.BHSp && ent.BHSp > 100 then
 		if(game.GetMap() == "bhop_cartoony") then
-			ply:SetVelocity( Vector( 0, 0, ent.BHSp*2.3 ) ) --the map has the weakest func_door boosters known to man.
+			ply:SetVelocity( Vector( 0, 0, ent.BHSp*2.4 ) ) --the map has the weakest func_door boosters known to man. it also has made me make over 6 commits
 		else
 			ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.9 ) )
 		end
