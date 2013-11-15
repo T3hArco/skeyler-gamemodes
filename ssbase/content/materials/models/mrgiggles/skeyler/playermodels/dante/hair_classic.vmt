@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\dante\hair_classic"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\dante\hair_classic_norm"
+	"$alphatest" "1"
+	"$nocull" "1"
+
+	"$phong" "1"
+	"$phongexponent" "8"
+	"$phongboost"	"2"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}
