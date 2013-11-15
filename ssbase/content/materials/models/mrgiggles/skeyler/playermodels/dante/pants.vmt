@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\dante\pants"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\dante\pants_norm"
+	"$halflambert" "1"
+}
