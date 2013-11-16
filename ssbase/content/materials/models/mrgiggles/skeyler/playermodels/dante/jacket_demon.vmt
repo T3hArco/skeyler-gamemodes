@@ -4,8 +4,8 @@
 	"$bumpmap" "models\mrgiggles\skeyler\playermodels\dante\jacket_norm"
 
 	"$phong" "1"
-	"$phongexponent" "12"
-	"$phongboost"	"1"
+	"$phongexponent" "14"
+	"$phongboost"	"0.75"
 	"$phongfresnelranges"	"[0.05 0.5 1]"
 
 	"$detail" "models\mrgiggles\skeyler\playermodels\dante\jacket_detail"

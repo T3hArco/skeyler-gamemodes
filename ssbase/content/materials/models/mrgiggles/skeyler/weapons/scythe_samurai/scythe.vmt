@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\weapons\scythe_samurai\scythe"
+	"$bumpmap" "models\mrgiggles\skeyler\weapons\scythe_samurai\scythe_norm"
+
+	"$phong" "1"
+	"$phongexponent" "16"
+	"$phongboost"	"3"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}
