@@ -1,9 +1,9 @@
-ITEM.ID = "tails_feline"									-- Should be a unique string that identifies the item
-ITEM.Name = "Tail (Cat)"									-- The name the item should display
+ITEM.ID = "tail_bunny"										-- Should be a unique string that identifies the item
+ITEM.Name = "Tail (Bunny)"									-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/accessories/tails_feline.mdl"	-- Model used by the item
+ITEM.Model = "models/mrgiggles/skeyler/accessories/tail_bunny.mdl"	-- Model used by the item
 
 ITEM.Type = "tail"											-- Also works for stuff like "mask" and such. Used for item compatibility
 
@@ -12,8 +12,8 @@ ITEM.Tintable = false										-- Used if the model is colorable, but a translat
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(30, 22, -1)							-- Used the modify the position of the camera on DModelPanels 
-ITEM.LookAt = Vector(-20, 0, -1) 							-- Used to change the angle at which the camera views the model 
+ITEM.CamPos = Vector(4, 23, 0)							-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(-4, 0, 0) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
