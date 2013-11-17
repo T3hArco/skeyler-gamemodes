@@ -2,12 +2,13 @@ SS.STORE = {}
 
 SS.STORE.Equipped = {}
 
-SS.STORE.Categories = {"PlayerModels","Hats","Accessories"}
+SS.STORE.Categories = {"Player Models","Hats","Accessories"}
 
 SS.STORE.Items = {}
 
 function SS.STORE:LoadItems()
 	for id,c in pairs(self.Categories) do  
+		c = string.gsub(c," ","")
 		for _,v in pairs(file.Find("ssbase/gamemode/storeitems/"..string.lower(c).."/*","LUA")) do 
 			ITEM = {}
 			ITEM.Category = id 
