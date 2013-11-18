@@ -1,8 +1,8 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models\mrgiggles\skeyler\accessories\glasses\glasses01"
-	"$bumpmap" "models\mrgiggles\skeyler\accessories\\glasses\glasses01_norm"
-	"$nocull" "1"
+	"$basetexture" "models\mrgiggles\skeyler\accessories\glasses\monocle"
+	"$bumpmap" "models\mrgiggles\skeyler\accessories\\glasses\monocle_norm"
+	"$translucent" "1"
 
 	"$phong" "1"
 	"$phongexponent" "24"

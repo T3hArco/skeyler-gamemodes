@@ -3,7 +3,6 @@
 	"$basetexture" "models\mrgiggles\skeyler\accessories\glasses\glasses02"
 	"$bumpmap" "models\mrgiggles\skeyler\accessories\\glasses\glasses02_norm"
 	"$translucent" "1"
-	"$halflambert" "1"
 	"$nocull" "1"
 
 	"$phong" "1"
