@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\hats\fedora\fedora_white"
+	"$bumpmap" "models\mrgiggles\skeyler\hats\fedora\fedora_white_norm"
+
+	"$phong" "1"
+	"$phongexponent" "8"
+	"$phongboost"	"3"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

@@ -1,19 +1,19 @@
-ITEM.ID = "glasses04"										-- Should be a unique string that identifies the item
-ITEM.Name = "Aviators"										-- The name the item should display
+ITEM.ID = "fedora"											-- Should be a unique string that identifies the item
+ITEM.Name = "Fedora"										-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/accessories/glasses04.mdl"	-- Model used by the item
+ITEM.Model = "models/mrgiggles/skeyler/hats/fedora.mdl"		-- Model used by the item
 
-ITEM.Type = "glasses"										-- Also works for stuff like "mask" and such. Used for item compatibility
+ITEM.Type = "hat"											-- Also works for stuff like "mask" and such. Used for item compatibility
 
 ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint 
 
 ITEM.Rotate = 45
 
-ITEM.CamPos = Vector(23, 18, 0)								-- Used the modify the position of the camera on DModelPanels 
-ITEM.LookAt = Vector(0, 0, 0) 								-- Used to change the angle at which the camera views the model 
+ITEM.CamPos = Vector(50, 30, 3)								-- Used the modify the position of the camera on DModelPanels 
+ITEM.LookAt = Vector(0, 0, 3) 								-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
@@ -29,7 +29,7 @@ ITEM.Hooks = {}												-- Could run some shit in think hook maybe clientside
 ITEM.Hooks["Think"] = function ()
 end
 
-/* ACCESSORY VARIABLES */
+/* HAT VARIABLES */
 ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 

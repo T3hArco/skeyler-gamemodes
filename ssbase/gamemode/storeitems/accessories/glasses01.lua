@@ -1,5 +1,5 @@
 ITEM.ID = "glasses01"										-- Should be a unique string that identifies the item
-ITEM.Name = "Glasses"										-- The name the item should display
+ITEM.Name = "Eyeglasses"									-- The name the item should display
  
 ITEM.Price = 2000
  
