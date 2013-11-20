@@ -27,7 +27,7 @@ end
 ITEM.Hooks = {}
 
 ITEM.Hooks["Think"] = function (item,ply)
-        if CLIENT then
+		if CLIENT then
 			if ply:GetSkin() > 0 then
 				if ply:Health() > 66 then 
 					ply:SetSkin(1)
@@ -39,24 +39,27 @@ ITEM.Hooks["Think"] = function (item,ply)
 					ply:SetSkin(4)
 				end
 			end
-                local showhair = true
-                local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
-                for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
-                        if(!SS.STORE.Items[v]) then continue end
-                        local i = SS.STORE.Items[v]
-                        if(i.Type == "mask") then
-                                showhair = false
-                        end
-                        if(i.Type == "headcoverhalf") then
-                                hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
-                        end
-                end
-                if(showhair) then
-                        ply.hairtoshow = hairmodel
-                else
-                        ply.hairtoshow = nil
-                end
-        end
+				local showhair = true
+				local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
+				for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
+					if(!SS.STORE.Items[v]) then continue end
+					local i = SS.STORE.Items[v]
+					if(i.Type == "mask") then
+						showhair = false
+					end
+					if(i.Type == "headcoverfull") then
+						showhair = false
+					end
+					if(i.Type == "headcoverhalf") then
+						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
+					end
+				end
+				if(showhair) then
+					ply.hairtoshow = hairmodel
+				else
+					ply.hairtoshow = nil
+			end
+		end
 end
 ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 	if CLIENT && ply.hairtoshow then 

@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\hats\cat_hat\cat_black"
+	"$bumpmap" "models\mrgiggles\skeyler\hats\cat_hat\cat_norm"
+
+	"$phong" "1"
+	"$phongexponent" "3"
+	"$phongboost"	"0.75"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}

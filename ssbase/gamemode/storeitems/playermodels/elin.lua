@@ -27,25 +27,28 @@ end
 ITEM.Hooks = {}
 
 ITEM.Hooks["Think"] = function (item,ply)
-        if CLIENT then
-                local showhair = true
-                local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
-                for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
-                        if(!SS.STORE.Items[v]) then continue end
-                        local i = SS.STORE.Items[v]
-                        if(i.Type == "mask") then
-                                showhair = false
-                        end
-                        if(i.Type == "headcoverhalf") then
-                                hairmodel = "models/mrgiggles/skeyler/misc/elin_hair_short.mdl"
-                        end
-                end
-                if(showhair) then
-                        ply.hairtoshow = hairmodel
-                else
-                        ply.hairtoshow = nil
-                end
-        end
+		if CLIENT then
+				local showhair = true
+				local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
+				for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
+					if(!SS.STORE.Items[v]) then continue end
+					local i = SS.STORE.Items[v]
+					if(i.Type == "mask") then
+						showhair = false
+					end
+					if(i.Type == "headcoverfull") then
+						showhair = false
+					end
+					if(i.Type == "headcoverhalf") then
+						hairmodel = "models/mrgiggles/skeyler/misc/elin_hair_short.mdl"
+					end
+				end
+				if(showhair) then
+					ply.hairtoshow = hairmodel
+				else
+					ply.hairtoshow = nil
+			end
+		end
 end
 ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 	if CLIENT && ply.hairtoshow then 
