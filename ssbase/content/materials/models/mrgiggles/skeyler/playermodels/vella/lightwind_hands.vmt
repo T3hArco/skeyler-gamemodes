@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_hands"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_hands_norm"
+	"$halflambert" "1"
+
+	"$phong" "1"
+	"$phongexponent" "0.5"
+	"$phongboost"	"30"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "6"
+	"$rimlightboost"          "25"
+}

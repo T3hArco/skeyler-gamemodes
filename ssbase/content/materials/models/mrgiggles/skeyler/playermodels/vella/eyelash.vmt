@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\eyelash"
+	"$translucent" "1"
+	"$nocull" "1"
+}

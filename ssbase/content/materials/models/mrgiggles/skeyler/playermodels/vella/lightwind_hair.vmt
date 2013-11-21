@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_hair"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_hair_norm"
+	"$translucent" "1"
+	//"$alphatest" "1"
+	"$halflambert" "1"
+
+	"$phong" "1"
+	"$phongexponent" "0.5"
+	"$phongboost"	"15"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "8"
+	"$rimlightboost"          "18"
+}

@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_greaves"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_greaves_norm"
+
+	"$envmap" "env_cubemap"
+	"$envmapcontrast" "1"
+	"$envmaptint" "[1 1 1]"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "8"
+	"$rimlightboost"          "8"
+}

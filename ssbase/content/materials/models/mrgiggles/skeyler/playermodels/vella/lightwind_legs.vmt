@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_legs"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_legs_norm"
+
+	"$phong" "1"
+	"$phongexponent" "8"
+	"$phongboost"	"1"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "6"
+	"$rimlightboost"          "25"
+}

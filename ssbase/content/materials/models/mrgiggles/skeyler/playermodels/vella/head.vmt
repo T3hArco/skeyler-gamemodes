@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\head"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\head_norm"
+	"$halflambert" "1"
+
+	"$phong" "1"
+	//"$phongexponent" "1"
+	"$phongexponenttexture"	"models\mrgiggles\skeyler\playermodels\vella\head_exp"
+	"$phongboost"	"1.85"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "4"
+	"$rimlightboost"          "55"
+}
