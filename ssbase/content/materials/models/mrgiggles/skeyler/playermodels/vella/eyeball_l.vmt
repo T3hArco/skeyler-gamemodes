@@ -1,4 +1,6 @@
-"VertexLitGeneric"
+"eyes"
 {
 	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\eyeball_l"
+	"$iris" "models\mrgiggles\skeyler\playermodels\vella\pupil_l"
+	"$halflambert" 1
 }
