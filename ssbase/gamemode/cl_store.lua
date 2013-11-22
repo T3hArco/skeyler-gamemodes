@@ -696,8 +696,8 @@ function PANEL:Paint(w, h)
 	end
 	
 	if(self.Entity.Info && self.Entity.Info.Hooks && self.Entity.Info.ID && self.Entity.Info.Hooks["Think"] && self.Entity.Info.Hooks["PostDrawOpaqueRenderables"]) then
-		self.Info.Hooks["Think"](self.Info.ID,self.Entity)
-		self.Info.Hooks["PostDrawOpaqueRenderables"](self.Info.ID,self.Entity)
+		self.Entity.Info.Hooks["Think"](self.Entity.Info.ID,self.Entity)
+		self.Entity.Info.Hooks["PostDrawOpaqueRenderables"](self.Entity.Info.ID,self.Entity)
 	end
 	
 	render.SuppressEngineLighting( false )
