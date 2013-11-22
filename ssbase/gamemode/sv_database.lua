@@ -55,7 +55,7 @@ function DB_Query(query, SuccessFunc, FailFunc)
 		if SuccessFunc then SuccessFunc(q) end 
 	end 
 
-	function Query:OnError(err, sql) 
+	function Query:onError(err, sql) 
 		if DB:status() == mysqloo.DATABASE_NOT_CONNECTED then
 			DB.Connected = false
 			
