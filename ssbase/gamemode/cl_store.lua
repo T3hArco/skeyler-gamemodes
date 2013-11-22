@@ -522,6 +522,10 @@ function PANEL:Paint(w, h)
 
 	render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), true) 
 	self.Entity:DrawModel()
+	if(self.Info && self.Info.Hooks && self.Info.ID && self.Info.Hooks["Think"] && self.Info.Hooks["PostDrawOpaqueRenderables"]) then
+		self.Info.Hooks["Think"](self.Info.ID,self.Entity)
+		self.Info.Hooks["PostDrawOpaqueRenderables"](self.Info.ID,self.Entity)
+	end
 	render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), false) 
 
 	render.SuppressEngineLighting( false )
@@ -680,6 +684,7 @@ function PANEL:Paint(w, h)
 					if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
 				end
 			end
+			self.Entity.previewlist = {self.Hat.Info.ID}
 		end 
 
 		self.Hat:SetAngles(Ang) 
@@ -687,6 +692,11 @@ function PANEL:Paint(w, h)
 		self.Hat:SetParent(self.Entity) 
 		self.Hat:DrawModel() 
 	end 
+	
+	if(self.Info && self.Info.Hooks && self.Info.ID && self.Info.Hooks["Think"] && self.Info.Hooks["PostDrawOpaqueRenderables"]) then
+		self.Info.Hooks["Think"](self.Info.ID,self.Entity)
+		self.Info.Hooks["PostDrawOpaqueRenderables"](self.Info.ID,self.Entity)
+	end
 	
 	render.SuppressEngineLighting( false )
 	cam.IgnoreZ( false )

@@ -28,7 +28,7 @@ ITEM.Hooks = {}
 
 ITEM.Hooks["Think"] = function (item,ply)
 		if CLIENT then
-			if ply:GetSkin() > 0 then
+			if ply.IsPlayer && ply:IsPlayer() && ply:GetSkin() > 0 then
 				if ply:Health() > 66 then 
 					ply:SetSkin(1)
 				elseif ply:Health() <= 66 and ply:Health() > 33 then 
@@ -41,19 +41,36 @@ ITEM.Hooks["Think"] = function (item,ply)
 			end
 				local showhair = true
 				local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
-				for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
-					if(!SS.STORE.Items[v]) then continue end
-					local i = SS.STORE.Items[v]
-					if(i.Type == "mask") then
-						showhair = false
+				if(ply.previewlist) then
+					for k,v in pairs(ply.previewlist or {}) do
+						if(!SS.STORE.Items[v]) then continue end
+						local i = SS.STORE.Items[v]
+						if(i.Type == "mask") then
+							showhair = false
+						end
+						if(i.Type == "headcoverfull") then
+							showhair = false
+						end
+						if(i.Type == "headcoverhalf") then
+							hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
+						end
 					end
-					if(i.Type == "headcoverfull") then
-						showhair = false
-					end
-					if(i.Type == "headcoverhalf") then
-						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
+				else
+					for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
+						if(!SS.STORE.Items[v]) then continue end
+						local i = SS.STORE.Items[v]
+						if(i.Type == "mask") then
+							showhair = false
+						end
+						if(i.Type == "headcoverfull") then
+							showhair = false
+						end
+						if(i.Type == "headcoverhalf") then
+							hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
+						end
 					end
 				end
+				
 				if(showhair) then
 					ply.hairtoshow = hairmodel
 				else
