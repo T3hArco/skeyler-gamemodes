@@ -522,6 +522,7 @@ function PANEL:Paint(w, h)
 
 	render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), true) 
 	self.Entity:DrawModel()
+	self.Entity.previewlist = nil
 	if(self.Info && self.Info.Hooks && self.Info.ID && self.Info.Hooks["Think"] && self.Info.Hooks["PostDrawOpaqueRenderables"]) then
 		self.Info.Hooks["Think"](self.Info.ID,self.Entity)
 		self.Info.Hooks["PostDrawOpaqueRenderables"](self.Info.ID,self.Entity)
