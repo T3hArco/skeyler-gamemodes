@@ -94,7 +94,7 @@ ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 		local hairang = Angle(0,0,0)
 		
 		local p = nil
-		if(!ply:Alive() && IsValid(ply:GetRagdollEntity())) then
+		if(ply.IsPlayer && ply:IsPlayer() && !ply:Alive() && IsValid(ply:GetRagdollEntity())) then
 			p = ply:GetRagdollEntity()
 		else
 			p = ply
