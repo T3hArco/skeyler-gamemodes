@@ -684,16 +684,18 @@ function PANEL:Paint(w, h)
 					if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
 				end
 			end
-			self.Entity.previewlist = {self.Hat.Info.ID}
 		end 
 
 		self.Hat:SetAngles(Ang) 
 		self.Hat:SetPos(Pos) 
 		self.Hat:SetParent(self.Entity) 
 		self.Hat:DrawModel() 
-	end 
+		self.Entity.previewlist = {self.Hat.Info.ID}
+	else
+		self.Entity.previewlist = nil
+	end
 	
-	if(self.Info && self.Info.Hooks && self.Info.ID && self.Info.Hooks["Think"] && self.Info.Hooks["PostDrawOpaqueRenderables"]) then
+	if(self.Entity.Info && self.Entity.Info.Hooks && self.Entity.Info.ID && self.Entity.Info.Hooks["Think"] && self.Entity.Info.Hooks["PostDrawOpaqueRenderables"]) then
 		self.Info.Hooks["Think"](self.Info.ID,self.Entity)
 		self.Info.Hooks["PostDrawOpaqueRenderables"](self.Info.ID,self.Entity)
 	end

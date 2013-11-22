@@ -30,7 +30,13 @@ ITEM.Hooks["Think"] = function (item,ply)
 		if CLIENT then
 				local showhair = true
 				local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
-				for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
+				if(ply.previewlist) then
+					equip = ply.previewlist
+				elseif(SS.STORE.Equipped[ply]) then
+					equip = SS.STORE.Equipped[ply]
+				end
+				
+				for k,v in pairs(equip or {}) do
 					if(!SS.STORE.Items[v]) then continue end
 					local i = SS.STORE.Items[v]
 					if(i.Type == "mask") then
@@ -66,7 +72,7 @@ ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 		local hairang = Angle(0,0,0)
 		
 		local p = nil
-		if(!ply:Alive() && IsValid(ply:GetRagdollEntity())) then
+		if(ply.IsPlayer && ply:IsPlayer() && !ply:Alive() && IsValid(ply:GetRagdollEntity())) then
 			p = ply:GetRagdollEntity()
 		else
 			p = ply

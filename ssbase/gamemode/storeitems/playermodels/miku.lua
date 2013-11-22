@@ -41,33 +41,24 @@ ITEM.Hooks["Think"] = function (item,ply)
 			end
 				local showhair = true
 				local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
+				local equip = nil
 				if(ply.previewlist) then
-					for k,v in pairs(ply.previewlist or {}) do
-						if(!SS.STORE.Items[v]) then continue end
-						local i = SS.STORE.Items[v]
-						if(i.Type == "mask") then
-							showhair = false
-						end
-						if(i.Type == "headcoverfull") then
-							showhair = false
-						end
-						if(i.Type == "headcoverhalf") then
-							hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
-						end
+					equip = ply.previewlist
+				elseif(SS.STORE.Equipped[ply]) then
+					equip = SS.STORE.Equipped[ply]
+				end
+				
+				for k,v in pairs(equip or {}) do
+					if(!SS.STORE.Items[v]) then continue end
+					local i = SS.STORE.Items[v]
+					if(i.Type == "mask") then
+						showhair = false
 					end
-				else
-					for k,v in pairs(SS.STORE.Equipped[ply] or {}) do
-						if(!SS.STORE.Items[v]) then continue end
-						local i = SS.STORE.Items[v]
-						if(i.Type == "mask") then
-							showhair = false
-						end
-						if(i.Type == "headcoverfull") then
-							showhair = false
-						end
-						if(i.Type == "headcoverhalf") then
-							hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
-						end
+					if(i.Type == "headcoverfull") then
+						showhair = false
+					end
+					if(i.Type == "headcoverhalf") then
+						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
 					end
 				end
 				
