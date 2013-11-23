@@ -40,6 +40,9 @@ ITEM.Hooks["Think"] = function (item,ply)
 				end
 			end
 				local showhair = true
+				if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() then
+					showhair = false
+				end
 				local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
 				local equip = nil
 				if(ply.previewlist) then
