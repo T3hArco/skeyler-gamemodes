@@ -29,6 +29,9 @@ ITEM.Hooks = {}
 ITEM.Hooks["Think"] = function (item,ply)
 		if CLIENT then
 				local showhair = true
+				if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() then
+					showhair = false
+				end
 				local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
 				if(ply.previewlist) then
 					equip = ply.previewlist
