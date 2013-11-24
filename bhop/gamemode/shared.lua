@@ -132,7 +132,7 @@ end
 
 function GM:OnPlayerHitGround(ply)
 	
-	if(table.HasValue(SS.NoHeightReset,game.GetMap())) then
+	if(!table.HasValue(SS.NoHeightReset,game.GetMap())) then
 		-- this is my simple implementation of the jump boost, possible conditioning in future: jump height should only increase IF the player pressed jump key, any hitgrounds after the jump key should call this until finished jumping. (complex to do and unneccessary but would make certain kz maps easier in a way (and close to where they are on css))
 		ply:SetJumpPower(268.4)
 	end
