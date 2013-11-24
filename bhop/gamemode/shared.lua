@@ -21,6 +21,11 @@ SS.Alldoors = {
 	"bhop_monster_jam"
 }
 
+SS.NoHeightReset = {
+	"bhop_muchfast",
+	"bhop_exquisite"
+}
+
 TEAM_BHOP = 1  
 team.SetUp(TEAM_BHOP, "Hoppers", Color(87, 198, 255), false) 
 
@@ -127,9 +132,12 @@ end
 
 function GM:OnPlayerHitGround(ply)
 	
-	-- this is my simple implementation of the jump boost, possible conditioning in future: jump height should only increase IF the player pressed jump key, any hitgrounds after the jump key should call this until finished jumping. (complex to do and unneccessary but would make certain kz maps easier in a way (and close to where they are on css))
-	ply:SetJumpPower(268.4)
+	if(table.HasValue(SS.NoHeightReset,game.GetMap())) then
+		-- this is my simple implementation of the jump boost, possible conditioning in future: jump height should only increase IF the player pressed jump key, any hitgrounds after the jump key should call this until finished jumping. (complex to do and unneccessary but would make certain kz maps easier in a way (and close to where they are on css))
+		ply:SetJumpPower(268.4)
+	end
 	timer.Simple(0.3,function () ply:SetJumpPower(280) end)
+	
 	
 	local leveldata = {}
 	if CLIENT then
