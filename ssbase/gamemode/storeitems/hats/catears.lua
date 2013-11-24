@@ -34,8 +34,9 @@ ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY 
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 
 ITEM.Models = {} 
+ITEM.Models["dante"] = {	["0_0_0_0"]= {pos=Vector(1.75, 1, -0.3), ang=Angle(0, -90, -90), scale=0.775}}
 ITEM.Models["elin"] = {	["0_0_0_0"]= {pos=Vector(-1, 1, -0.3), ang=Angle(0, -90, -90), scale=1}}
-ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(0, 1, -0.3), ang=Angle(0, -90, -90), scale=0.95}}
+ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(0, 0, -0.3), ang=Angle(0, -90, -90), scale=0.95}}
 ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(0.25, 1.5, -0.3), ang=Angle(0, -90, -90), scale=0.925}}
 ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(-1.5, 1.5, -0.1), ang=Angle(0, -90, -90), scale=0.9}}
 ITEM.Models["zer0"] = {

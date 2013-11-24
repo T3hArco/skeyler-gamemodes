@@ -33,6 +33,7 @@ ITEM.Hooks["Think"] = function (item,ply)
 					showhair = false
 				end
 				local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
+				local equip = nil
 				if(ply.previewlist) then
 					equip = ply.previewlist
 				elseif(SS.STORE.Equipped[ply]) then
