@@ -4,14 +4,17 @@
 	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_hands_metal_norm"
 
 	"$envmap" "env_cubemap"
-	//"$envmapcontrast" "1"
-	"$envmaptint" "[0.05 0.05 0.05]"
+	"$envmaptint" "[0.2 0.2 0.2]"
+	"$normalmapalphaenvmapmask" "1"
 
 	"$phong" "1"
-	"$phongexponent" "4"
-	"$phongboost"	"32"
+	"$phongexponenttexture" "models\mrgiggles\skeyler\playermodels\vella\exponent_metal"
+	"$phongalbedotint" "1"
+	"$phongboost"	"24"
+	"$phongwarptexture" "models\mrgiggles\skeyler\playermodels\vella\phongwarp_metal"
+	"$phongfresnelranges"	"[0.15 0.75 1]"
 
 	"$rimlight"               "1"
-	"$rimlightexponent"       "8"
+	"$rimlightexponent"       "24"
 	"$rimlightboost"          "8"
 }

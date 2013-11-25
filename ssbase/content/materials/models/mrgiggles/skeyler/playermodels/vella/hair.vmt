@@ -1,9 +1,9 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_hair"
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\hair"
 	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\hair_norm"
-	"$translucent" "1"
-	//"$alphatest" "1"
+	//"$translucent" "1"
+	"$alphatest" "1"
 	"$halflambert" "1"
 	"$nocull" "1"
 

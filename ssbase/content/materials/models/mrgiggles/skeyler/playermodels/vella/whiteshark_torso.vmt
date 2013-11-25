@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_legs"
-	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_legs_norm"
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\whiteshark_torso"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\whiteshark_torso_norm"
 
 	"$phong" "1"
 	"$phongexponent" "8"

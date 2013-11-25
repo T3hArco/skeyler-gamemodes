@@ -1,11 +1,10 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\lightwind_torso_metal"
-	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\lightwind_torso_metal_norm"
-	"$alphatest" "1"
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\vella\whiteshark_torso_metal"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\whiteshark_torso_metal_norm"
 
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[0.2 0.2 0.2]"
+	"$envmaptint" "[0.3 0.3 0.3]"
 	"$normalmapalphaenvmapmask" "1"
 
 	"$phong" "1"

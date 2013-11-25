@@ -4,12 +4,14 @@
 	"$bumpmap" "models\mrgiggles\skeyler\playermodels\vella\head_norm"
 	"$halflambert" "1"
 
+	"$lightwarptexture" "models\mrgiggles\skeyler\playermodels\vella\skinwarp"
+
 	"$phong" "1"
-	//"$phongexponent" "1"
 	"$phongexponenttexture"	"models\mrgiggles\skeyler\playermodels\vella\head_exp"
 	"$phongboost"	"1.85"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
 
 	"$rimlight"               "1"
-	"$rimlightexponent"       "4"
-	"$rimlightboost"          "55"
+	"$rimlightexponent"       "8"
+	"$rimlightboost"          "24"
 }

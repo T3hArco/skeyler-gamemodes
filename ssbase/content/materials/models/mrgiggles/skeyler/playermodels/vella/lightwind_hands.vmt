@@ -5,10 +5,11 @@
 	"$halflambert" "1"
 
 	"$phong" "1"
-	"$phongexponent" "0.5"
-	"$phongboost"	"30"
+	"$phongexponent" "8"
+	"$phongboost"	"2"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
 
 	"$rimlight"               "1"
-	"$rimlightexponent"       "6"
-	"$rimlightboost"          "25"
+	"$rimlightexponent"       "24"
+	"$rimlightboost"          "8"
 }
