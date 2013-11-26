@@ -17,7 +17,7 @@ PhysicsUpdate
 function ENT:PhysicsUpdate()
 end
 
---[[/*---------------------------------------------------------
+/*---------------------------------------------------------
 PhysicsCollide
 ---------------------------------------------------------*/
 function ENT:PhysicsCollide(data,phys)
@@ -26,5 +26,5 @@ function ENT:PhysicsCollide(data,phys)
 	end
 	
 	local impulse = -data.Speed * data.HitNormal * .4 + (data.OurOldVelocity * -.6)
-	phys:ApplyForceCenter(impulse)
-end]]
+	phys:ApplyForceCenter(impulse*0.5)
+end
