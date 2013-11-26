@@ -130,6 +130,15 @@ function GM:Move(pl, movedata)
 	end
 end
 
+function GM:IsInArea(ent,vec,vec2)
+	local vec3 = ent:GetPos()
+	if((vec3.x > vec.x && vec3.x < vec2.x) && (vec3.y > vec.y && vec3.y < vec2.y) && (vec3.z > vec.z && vec3.z < vec2.z)) then
+		return true
+	else
+		return false
+	end
+end
+
 function GM:OnPlayerHitGround(ply)
 	
 	if(!table.HasValue(SS.NoHeightReset,game.GetMap())) then
@@ -201,3 +210,11 @@ function GM:SetupMove(ply, Data)
 
 	return Data
 end 
+
+if(file.Exists("mapfixes/"..game.GetMap()..".lua","LUA")) then
+	HOOKS = {}
+	include("mapfixes/"..game.GetMap()..".lua")
+	for k,v in pairs(HOOKS) do
+		hook.Add(k,k.."_"..game.GetMap(),v)
+	end
+end
