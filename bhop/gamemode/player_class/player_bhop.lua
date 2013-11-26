@@ -31,12 +31,12 @@ function PLAYER:Loadout()
 	self.Player:Give("weapon_smg1") 
 	self.Player:Give("weapon_fists") 
 	if self.Player:IsSuperAdmin() then self.Player:Give("ss_mapeditor") end 
-	self.Player:GiveAmmo(200, "Pistol", true) 
-	self.Player:GiveAmmo(400, "Smg1", true) 
+	self.Player:GiveAmmo(999, "Pistol", true) 
+	self.Player:GiveAmmo(999, "Smg1", true) 
 	
-	self.Player:GiveAmmo(999, "smg1", true) --this case is diff to the above
-	self.Player:GiveAmmo(999, "pistol", true) --same with this
-	self.Player:GiveAmmo(999, "buckshot", true) 
+	self.Player:SetAmmo(999, "smg1") --just in case some wierd case sensativity
+	self.Player:SetAmmo(999, "pistol") --same with this
+	self.Player:SetAmmo(999, "buckshot") --lol
 end
 
 

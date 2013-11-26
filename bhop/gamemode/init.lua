@@ -136,15 +136,17 @@ function GM:PlayerSpawn(ply)
 
 			hands:Spawn()
 		end
-		
-		ply:GiveAmmo(999, "smg1", true) --this case is diff to the above
-		ply:GiveAmmo(999, "pistol", true) --same with this
-		ply:GiveAmmo(999, "buckshot", true) 
 	else 
 		ply:SetTeam(TEAM_SPECTATOR)
 		ply:Spectate(OBS_MODE_ROAMING)
 	end 
 end 
+
+function GM:PlayerCanPickupWeapon(ply, wep)
+	if ply:HasWeapon(wep:GetClass()) then return false end
+	ply:SetAmmo(999,wep:GetPrimaryAmmoType())
+	return true
+end
 
 function GM:PlayerDisconnected(ply) 
 	ply:PauseTimer() 
