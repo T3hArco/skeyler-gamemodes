@@ -145,7 +145,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 				tracedata.mask = MASK_PLAYERSOLID
 				local trace = util.TraceLine(tracedata)
 				if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
-					if(game.GetMap() == "bhop_lost_world" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
+					if(game.GetMap() == "bhop_lost_world" && tonumber(trace.Entity:GetSaveTable().spawnflags) == 513 && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnPressed",owner)
 						trace.Entity:SetSaveValue("m_toggle_state",0)
 						timer.Simple(trace.Entity:GetSaveTable().m_flWait,function()
