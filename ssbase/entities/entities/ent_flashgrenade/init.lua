@@ -6,9 +6,13 @@ include('shared.lua')
 function ENT:Initialize()
         self.Entity:SetModel("models/weapons/w_eq_flashbang.mdl")
         self.Entity:PhysicsInit( SOLID_VPHYSICS )
-        self.Entity:SetMoveType( MOVETYPE_VPHYSICS )
-        self.Entity:SetSolid( SOLID_VPHYSICS )
-        self.Entity:DrawShadow( false )
+		self.Entity:SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE )
+		self.Entity:SetMoveType( MOVETYPE_VPHYSICS )
+		self.Entity:SetSolid( SOLID_VPHYSICS )
+		self.Entity:DrawShadow( false )
+		self.Entity:SetGravity( 0.4 )
+		self.Entity:SetElasticity( 0.45 )
+		self.Entity:SetFriction(0.2)
 
         self.Entity:SetCollisionGroup( COLLISION_GROUP_WEAPON )
         
@@ -23,21 +27,6 @@ end
 
 function ENT:Think()
         if self.timer <= CurTime() then
-                self.Entity:EmitSound(Sound("Flashbang.Explode"))
-                for id,ply in pairs(player.GetAll()) do
-                        local tracedata = {}
-                        tracedata.start = self:GetPos()
-                        tracedata.endpos = ply:GetShootPos()
-                        tracedata.filter = self
-                        local trace = util.TraceLine(tracedata)
-                
-                        if (trace.Entity != NULL and trace.Entity:IsPlayer() and self:GetPos():Distance(trace.Entity:GetPos()) < 1024) then
-                                umsg.Start("flashbang_flash", ply)
-                                        umsg.Long(CurTime())
-                                        umsg.Long(CurTime() + 6)
-                                umsg.End()
-                        end
-                end
                 self.Entity:Remove()
         end
 end

@@ -6,20 +6,18 @@ OnRemove
 function ENT:OnRemove()
 end
 
---[[/*---------------------------------------------------------
+/*---------------------------------------------------------
 PhysicsUpdate
 ---------------------------------------------------------*/
 function ENT:PhysicsUpdate()
-end]]
+end
 
 /*---------------------------------------------------------
 PhysicsCollide
 ---------------------------------------------------------*/
---[[function ENT:PhysicsCollide(data,phys)
+function ENT:PhysicsCollide(data,phys)
         if data.Speed > 50 then
-                self.Entity:EmitSound(Sound("Flashbang.Bounce"))
+            self.Entity:EmitSound(Sound("Flashbang.Bounce"))
         end
         
-        local impulse = -data.Speed * data.HitNormal * .4 + (data.OurOldVelocity * -.6)
-        phys:ApplyForceCenter(impulse)
-end]]
+end
