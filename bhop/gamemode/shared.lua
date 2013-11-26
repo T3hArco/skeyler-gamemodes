@@ -211,9 +211,9 @@ function GM:SetupMove(ply, Data)
 	return Data
 end 
 
-if(file.Exists("mapfixes/"..game.GetMap()..".lua","LUA")) then
+if(file.Exists("bhop/gamemode/mapfixes/"..game.GetMap()..".lua","LUA")) then
 	HOOKS = {}
-	include("mapfixes/"..game.GetMap()..".lua")
+	include("bhop/gamemode/mapfixes/"..game.GetMap()..".lua")
 	for k,v in pairs(HOOKS) do
 		hook.Add(k,k.."_"..game.GetMap(),v)
 	end
