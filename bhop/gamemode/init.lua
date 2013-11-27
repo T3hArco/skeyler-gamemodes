@@ -253,10 +253,10 @@ hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
 			sync = (good*100)/(good+bad)
 		
 			for k,v in pairs(totalsync) do
-				p:PrintMessage(HUD_PRINTTALK,"Strafe "..k..": "..(math.Round(v*100)/100).."% sync.")
+				p:PrintMessage(HUD_PRINTCONSOLE,"Strafe "..k..": "..(math.Round(v*100)/100).."% sync.")
 			end
 
-			p:PrintMessage(HUD_PRINTTALK,"You got "..(math.Round(sync*100)/100).."% sync with "..straf.." strafes.")
+			p:PrintMessage(HUD_PRINTCONSOLE,"You got "..(math.Round(sync*100)/100).."% sync with "..straf.." strafes.")
 		end
 	end)
 
@@ -309,7 +309,8 @@ hook.Add("Think","StrafeyThink",function()
 			p.speed = s:Length()
 			if(p.lastspeed) then
 				local g = p.speed - p.lastspeed
-				if(g > 0) then
+				p:PrintMessage(HUD_PRINTCONSOLE,tostring(g)
+				if(g >= 0.1) then
 					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
 				else
 					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
