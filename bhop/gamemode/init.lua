@@ -309,7 +309,7 @@ hook.Add("Think","StrafeyThink",function()
 			p.speed = s:Length()
 			if(p.lastspeed) then
 				local g = p.speed - p.lastspeed
-				p:PrintMessage(HUD_PRINTCONSOLE,tostring(g)
+				p:PrintMessage(HUD_PRINTCONSOLE,tostring(g))
 				if(g >= 0.1) then
 					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
 				else
