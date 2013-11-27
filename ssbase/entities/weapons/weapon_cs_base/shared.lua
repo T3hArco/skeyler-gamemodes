@@ -153,7 +153,7 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 								trace.Entity:SetSaveValue("m_toggle_state",1)
 							end
 						end)
-					elseif(game.GetMap() != "bhop_infog" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
+					elseif(game.GetMap() != "bhop_infog_final" && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnDamaged",owner)
 						trace.Entity:SetSaveValue("m_toggle_state",0)
 						timer.Simple(trace.Entity:GetSaveTable().m_flWait,function()
