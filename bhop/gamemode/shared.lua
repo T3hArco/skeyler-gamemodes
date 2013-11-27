@@ -207,6 +207,7 @@ function GM:SetupMove(ply, Data)
 	vel.z = math.min(vel.z, 270) 
 
 	Data:SetVelocity(vel) 
+	ply:SetLocalVelocity(vel)
 
 	return Data
 end 
