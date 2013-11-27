@@ -249,7 +249,7 @@ hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
 	
 	local straf = p.strafenum
 	timer.Simple(0.2,function()
-		if(straf && good && bad && totalsync && p && p:IsValid() && p:IsOnGround()) then --checkzooors
+		if(straf && straf != 0 && good && bad && totalsync && p && p:IsValid() && p:IsOnGround()) then --checkzooors
 			sync = (good*100)/(good+bad)
 		
 			for k,v in pairs(totalsync) do
@@ -309,8 +309,7 @@ hook.Add("Think","StrafeyThink",function()
 			p.speed = s:Length()
 			if(p.lastspeed) then
 				local g = p.speed - p.lastspeed
-				p:PrintMessage(HUD_PRINTCONSOLE,tostring(g))
-				if(g >= 0.1) then
+				if(g > 0.6) then
 					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
 				else
 					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
