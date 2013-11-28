@@ -334,7 +334,7 @@ hook.Add("Think","StrafeyThink",function()
 			p.speed = s:Length()
 			if(p.lastspeed) then
 				local g = p.speed - p.lastspeed
-				if(g > 0.6) then
+				if(g > 1) then
 					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
 				else
 					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
