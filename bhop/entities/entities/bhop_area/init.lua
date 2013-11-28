@@ -46,7 +46,7 @@ function ENT:StartTouch(ply)
 		if self:IsSpawn() then 
 			ply.InSpawn = true
 			ply:ResetTimer()  
-		elseif p:IsTimerRunning() then
+		elseif ply:IsTimerRunning() then
 			hook.Call("PlayerWon", GAMEMODE, ply)  
 		end  
 	end 
