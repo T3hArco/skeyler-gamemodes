@@ -284,7 +284,11 @@ end)
 hook.Add("Think","ACAreas",function()
 	for _,v in pairs(GAMEMODE.ACAreas) do
 		for _,p in pairs(player.GetAll()) do
-			if(p:Team() == TEAM_BHOP && p:HasTimer() && !p.Winner && GAMEMODE:IsInArea(p,v[1],v[2])) then
+			if(p:Team() == TEAM_BHOP && !p.ExploitPrint && p:HasTimer() && !p.Winner && GAMEMODE:IsInArea(p,v[1],v[2])) then
+				p.ExploitPrint = true
+				timer.Simple(3, function()
+					if(p && p:IsValid()) then p.ExploitPrint = false end --stops the annoying spam
+				end)
 				p:EndTimer()
 				p:ChatPrint(v[3])
 			end
@@ -295,6 +299,9 @@ end) --seperate think hooks = more organised and no extra cost in proccessing af
 hook.Add("Think","StrafeyThink",function()
 	for _,p in pairs(player.GetAll()) do
 		if(!p:IsOnGround()) then
+			if(!p.strafe) then
+				p.strafe = {}
+			end
 			p.curangle = p:GetAngles()
 			if(!p.lastangle) then
 				p.lastangle = p.curangle
