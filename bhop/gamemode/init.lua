@@ -18,6 +18,7 @@ AddCSLuaFile("sh_levels.lua")
 AddCSLuaFile("sh_viewoffsets.lua") 
 
 GM.PSaveData = {} -- Save last known positions and angles for respawn here.
+GM.ACAreas = {}
 
 /* Setup the bhop spawn and finish */
 function GM:AreaSetup() 
@@ -39,6 +40,16 @@ function GM:AreaSetup()
 		end 
 	end 
 end 
+
+function GM:AddACArea(min,max,message)
+	local m = ""
+	if(!message) then
+		m = "You have attempted to exploit the map and as such your time has been stopped."
+	else
+		m = message
+	end
+	table.insert(GAMEMODE.ACAreas,{min,max,m})
+end
 
 function GM:LevelSetup(ply, Level)
 	if !Level or !isnumber(Level) or !self.Levels[Level] then return end 
@@ -269,6 +280,17 @@ hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
 	p.speed = nil
 	p.lastspeed = nil
 end)
+
+hook.Add("Think","ACAreas",function()
+	for _,v in pairs(GAMEMODE.ACAreas) do
+		for _,p in pairs(player.GetAll()) do
+			if(p:HasTimer() && !p.Winner && GAMEMODE:IsInArea(p,v[1],v[2])) then
+				p:EndTimer()
+				p:ChatPrint(v[3])
+			end
+		end
+	end
+end) --seperate think hooks = more organised and no extra cost in proccessing afaik
 
 hook.Add("Think","StrafeyThink",function()
 	for _,p in pairs(player.GetAll()) do
