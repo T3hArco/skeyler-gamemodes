@@ -3,10 +3,6 @@ HOOKS["Initialize"] = function()
 	GAMEMODE:AddACArea(Vector(-580, 772, -768),Vector(-315, 894, -568))
 end
 
-[09:56:03] Min = Vector(867, 161, -240)
-[09:56:03] Max = Vector(1371, 664, -240)
-
-
 HOOKS["InitPostEntity"] = function()
 	for k,v in pairs(ents.FindByClass("trigger_teleport")) do
 		if(v:GetPos() == Vector(6560, 5112, 7412)) then
