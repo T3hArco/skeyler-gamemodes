@@ -284,7 +284,7 @@ end)
 hook.Add("Think","ACAreas",function()
 	for _,v in pairs(GAMEMODE.ACAreas) do
 		for _,p in pairs(player.GetAll()) do
-			if(p:Team() == TEAM_BHOP && p:HasTimer() && !p.STimer.EndTime && !p.Winner && GAMEMODE:IsInArea(p,v[1],v[2])) then
+			if(p:Team() == TEAM_BHOP && p:HasTimer() && p:IsTimerRunning() && !p.Winner && GAMEMODE:IsInArea(p,v[1],v[2])) then
 				p:EndTimer()
 				p:ChatPrint(v[3])
 			end
