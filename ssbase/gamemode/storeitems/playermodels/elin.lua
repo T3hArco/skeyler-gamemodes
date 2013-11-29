@@ -61,7 +61,7 @@ ITEM.Hooks["Think"] = function (item,ply)
 		end
 end
 ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
-	if CLIENT && ply.hairtoshow then 
+	if CLIENT && ply && ply:IsValid() && ply.hairtoshow then 
 		if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() and !LocalPlayer():GetObserverTarget() then return end
 		if(ply.currenthair) then
 			if(ply.currenthair:GetModel() != ply.hairtoshow) then
