@@ -4,13 +4,13 @@
 	"$translucent" "1"
 	"$model" "1"
 
-	"$selfillumtint" "1"
+	"$color" "1"
 
 	"Proxies"
 	{
 		"Sine"
 		{
-			"resultVar" "$selfIllumTint"
+			"resultVar" "$color"
 			"sinemin" 0.05
 			"sinemax" 1.00
 			"sineperiod" 0.90
