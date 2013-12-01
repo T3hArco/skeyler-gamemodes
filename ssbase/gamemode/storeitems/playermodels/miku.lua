@@ -63,6 +63,9 @@ ITEM.Hooks["Think"] = function (item,ply)
 					if(i.Type == "headcoverhalf") then
 						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
 					end
+					if(i.Type == "headcoverpart") then
+						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair02.mdl"
+					end
 				end
 				
 				if(showhair) then

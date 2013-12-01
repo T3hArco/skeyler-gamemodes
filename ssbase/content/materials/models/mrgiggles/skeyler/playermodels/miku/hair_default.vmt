@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\skeyler\playermodels\miku\hair_default"
+	"$bumpmap" "models\mrgiggles\skeyler\playermodels\miku\normal"
+	"$halflambert" "1"
+	//"$translucent" "1"
+
+	"$lightwarptexture" "models\mrgiggles\skeyler\playermodels\miku\hairwarp"
+
+	"$phong" "1"
+	"$phongboost"	"0"
+	"$phongexponent" "0"
+	"$phongfresnelranges"	"[0 0 0]"
+
+	"$rimlight"               "1"
+	"$rimlightexponent"       "4"
+	"$rimlightboost"          "4"
+}

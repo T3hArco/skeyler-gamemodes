@@ -5,7 +5,7 @@ ITEM.Price = 2000
  
 ITEM.Model = "models/mrgiggles/skeyler/hats/devhat.mdl"		-- Model used by the item
 
-ITEM.Type = "hat"									-- Also works for stuff like "mask" and such. Used for item compatibility
+ITEM.Type = "headcoverpart"									-- Also works for stuff like "mask" and such. Used for item compatibility
 
 ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint 
@@ -36,7 +36,7 @@ ITEM.BoneMerge = false										-- May be used for certain accessories to boneme
 ITEM.Models = {} 
 ITEM.Models["dante"] = {	["0_0_0_0"]= {pos=Vector(3.35, 0.65, 0), ang=Angle(10, -90, -85), scale=0.99}}
 ITEM.Models["elin"] = {	["0_0_0_0"]= {pos=Vector(4.8, -1.1, 0), ang=Angle(10, -90, -90), scale=1.13}}
-ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(4.5, -0.75, 0), ang=Angle(10, -90, -90), scale=1.125}}
+ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(4.8, -0.8, 0), ang=Angle(10, -90, -90), scale=1.13}}
 ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(5, 0.5, 0), ang=Angle(10, -90, -90), scale=1.075}}
 ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(2.25, 0.75, 0.2), ang=Angle(8, -90, -90), scale=1.05}}
 ITEM.Models["zer0"] = {
