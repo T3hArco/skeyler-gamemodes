@@ -24,7 +24,7 @@ if CLIENT then
 			for k,v in pairs(s.blockkeys.cl) do
 				if(string.find(bind,v)) then
 					if(pressed) then
-						ply:PrintChat("This key is not allowed in "..s.name..".")
+						ply:ChatPrint("This key is not allowed in "..s.name..".")
 					end
 					return true
 				end

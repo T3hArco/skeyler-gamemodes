@@ -147,7 +147,7 @@ function GM:PlayerSay( ply, text, public )
 		if(t == v.cmd) then
 			ply.Style = k
 			ply:SetNWInt("Style",k)
-			ply:PrintChat("Changed to "..v.name..".")
+			ply:ChatPrint("Changed to "..v.name..".")
 			if(ply:IsTimerRunning() || ply.Winner) then
 				ply.Winner = false
 				self.PSaveData[ply:SteamID()] = {}
