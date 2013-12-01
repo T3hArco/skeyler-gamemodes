@@ -150,6 +150,8 @@ function GM:PlayerSay( ply, text, public )
 			ply:PrintChat("Changed to "..v.name..".")
 			if(ply:IsTimerRunning() || ply.Winner) then
 				ply.Winner = false
+				self.PSaveData[ply:SteamID()] = {}
+				ply:SetTeam(TEAM_BHOP) 
 				ply:Spawn()
 			end
 			return ""
@@ -157,8 +159,11 @@ function GM:PlayerSay( ply, text, public )
 	end
 	
 	if(t == "!r") then
+		ply:SetTeam(TEAM_BHOP)
+		self.PSaveData[ply:SteamID()] = {}		
 		ply.Winner = false
 		ply:Spawn()
+		return ""
 	end
 	
 	return self.BaseClass:PlayerSay(ply,text,public)
@@ -448,7 +453,7 @@ function GM:PlayerWon(ply)
 	ply.Winner = true 
 	ply:ChatPrintAll(ply:Name().." has won in ".. FormatTime(ply:GetTotalTime(true)))
 	local t = ply:GetTotalTime(false)
-	if(self.CurrentID && t < tonumber(ply.PBS[ply.LevelData.id][ply.Style])) then
+	if(self.CurrentID && (tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0 ||t < tonumber(ply.PBS[ply.LevelData.id][ply.Style]))) then
 		ply:ChatPrint("You have set a new Personal Best of "..FormatTime(t).."!")
 		local steamid = ply:SteamID()
 		if(tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0) then

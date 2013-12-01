@@ -5,8 +5,8 @@
 
 GM.Styles = {} 
 
-function GM:AddStyle(id, name, blockkeys, cmd, name) 
-	GM.Styles[id] = {id=id, name=name, blockkeys=keys,cmd=cmd,name=name} 
+function GM:AddStyle(id, blockkeys, cmd, name) 
+	GM.Styles[id] = {id=id,blockkeys=blockkeys,cmd=cmd,name=name} 
 end 
 
 STYLE_NORMAL = 1 
