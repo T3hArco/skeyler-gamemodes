@@ -48,7 +48,7 @@ net.Receive("ModifyRT",function()
 	if(r && r != 0) then
 		table.remove(GAMEMODE.RecordTable[l][s],r)
 	end
-	table.insert(GAMEMODE.RecordsTable[l][s],n,{["steamid"] = p,["time"] = t})
+	table.insert(GAMEMODE.RecordTable[l][s],n,{["steamid"] = p,["time"] = t})
 end)
 
 timer.Create("HullstuffSadface",5,0,function()
