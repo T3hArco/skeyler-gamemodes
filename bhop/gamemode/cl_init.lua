@@ -10,7 +10,7 @@ include("player_class/player_bhop.lua")
 include("cl_difficulty_menu.lua")
 include("sh_styles.lua") 
 
-GM.RecordsTable = {}
+GM.RecordTable = {}
 
 GM.DifficultyMenu = false 
 function GM:CreateDifficultyMenu() 
@@ -34,7 +34,7 @@ end
 concommand.Add("open_difficulties", function() GAMEMODE:CreateDifficultyMenu() end)
 
 net.Receive("WriteRT",function()
-	GAMEMODE.RecordsTable = net.ReadTable()
+	GAMEMODE.RecordTable = net.ReadTable()
 end)
 
 net.Receive("ModifyRT",function()
@@ -45,7 +45,9 @@ net.Receive("ModifyRT",function()
 	local n = net.ReadInt(128)
 	local t = net.ReadInt(128)
 	
-	table.remove(GAMEMODE.RecordsTable[l][s],r)
+	if(r && r != 0) then
+		table.remove(GAMEMODE.RecordTable[l][s],r)
+	end
 	table.insert(GAMEMODE.RecordsTable[l][s],n,{["steamid"] = p,["time"] = t})
 end)
 

@@ -8,11 +8,13 @@ local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLogin
 SS.Profiles = {} 
 
 function PLAYER_META:CreateProfile() 
+	if(self:IsBot()) then return end
 	local query = "INSERT INTO users (steamid64, steamid, name, registerIp, registerTimestamp) VALUES ('"..self:SteamID64().."','"..string.sub(self:SteamID(), 7).."','"..DB:escape(self:Name()).."','"..self:IPAddress().."','"..tostring(os.time()).."')"
 	DB_Query(query, function() if self and self:IsValid() then self:ProfileLoad() end end)
 end 
 
 function PLAYER_META:ProfileLoad() 
+	if(self:IsBot()) then return end
 	MsgN("[PROFILE] Loading ", self) 
 	local steamid = self:SteamID() 
 	SS.Profiles[steamid] = {}
@@ -84,6 +86,7 @@ end
 
 /* Sync Profile with database */
 function PLAYER_META:ProfileSave() 
+	if(self:IsBot()) then return end
 	local profile = SS.Profiles[self:SteamID()]
 	profile.money = self.money 
 	profile.exp = self.exp 
@@ -105,6 +108,7 @@ function PLAYER_META:ProfileSave()
 end 
 
 function PLAYER_META:ProfileUpdate(col, val) -- Don't be an idiot with this
+	if(self:IsBot()) then return end
 	if !SERVER then return end 
 	DB_Query("UPDATE users SET "..tostring(col).."='"..tostring(val).."' WHERE steamid='"..string.sub(self:SteamID(), 7).."'" ) 
 end 
