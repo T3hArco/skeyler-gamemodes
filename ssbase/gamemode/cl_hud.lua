@@ -102,6 +102,8 @@ function GM:HUDPaint()
 		surface.SetTextColor(255, 255, 255, self.HudAlpha) 
 		surface.SetTextPos(w/2-tw/2, 40) 
 		surface.DrawText(Text) 
+		
+		Text = FormatTime(LocalPlayer():GetNetworkedInt("STimer_PB", 0)) 
 
 		surface.SetFont("HUD_Timer_Small") 
 		tw = surface.GetTextSize(Text) 

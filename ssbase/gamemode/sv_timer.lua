@@ -27,6 +27,10 @@ function PLAYER_META:StartTimer()
 	self:SaveTimer()
 end 
 
+function PLAYER_META:SetPB(time)
+	self:SetNetworkedInt("STimer_PB", time) 
+end
+
 -- They completed whatever they were doing
 function PLAYER_META:EndTimer() 
 	if !self:HasTimer() then return end 
