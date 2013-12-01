@@ -26,9 +26,9 @@ GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 GM.ACAreas = {}
 GM.RecordTable = {}
 for k,_ in pairs(GM.Levels) do
-	self.RecordTable[k] = {}
+	GM.RecordTable[k] = {}
 	for k2,_ in pairs(GM.Styles) do
-		self.RecordTable[k][k2] = {}
+		GM.RecordTable[k][k2] = {}
 	end
 end
 
