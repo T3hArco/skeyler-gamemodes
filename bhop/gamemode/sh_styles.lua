@@ -14,7 +14,7 @@ STYLE_SW = 2
 STYLE_W = 3 
 
 GM:AddStyle(STYLE_NORMAL, {cl={},sv={}}, "!normal", "Normal") --erry key
-GM:AddStyle(STYLE_SW, {cl={"forward","back"},sv={IN_FORWARD,IN_BACK}}, "!sw", "Sideways") --no W or S
+GM:AddStyle(STYLE_SW, {cl={"moveright","moveleft"},sv={IN_MOVERIGHT,IN_MOVELEFT}}, "!sw", "Sideways") --no W or S
 GM:AddStyle(STYLE_W, {cl={"moveright","back","moveleft"},sv={IN_MOVERIGHT,IN_BACK,IN_MOVELEFT}}, "!w", "W-Only") --no S or A or D
 
 if CLIENT then 

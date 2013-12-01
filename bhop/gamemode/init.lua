@@ -149,20 +149,24 @@ function GM:PlayerSay( ply, text, public )
 			ply:SetNWInt("Style",k)
 			ply:ChatPrint("Changed to "..v.name..".")
 			if(ply:IsTimerRunning() || ply.Winner) then
-				ply.Winner = false
-				self.PSaveData[ply:SteamID()] = {}
+				if ply:Team() == TEAM_BHOP then 
+					ply:ResetTimer() 
+					ply.Winner = false 
+				end  
 				ply:SetTeam(TEAM_BHOP) 
-				ply:Spawn()
+				ply:Spawn() 
 			end
 			return ""
 		end
 	end
 	
 	if(t == "!r") then
-		ply:SetTeam(TEAM_BHOP)
-		self.PSaveData[ply:SteamID()] = {}		
-		ply.Winner = false
-		ply:Spawn()
+		if ply:Team() == TEAM_BHOP then 
+			ply:ResetTimer() 
+			ply.Winner = false 
+		end  
+		ply:SetTeam(TEAM_BHOP) 
+		ply:Spawn() 
 		return ""
 	end
 	
