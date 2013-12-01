@@ -232,6 +232,12 @@ function GM:PlayerSpawn(ply)
 			ply.AreaIgnore = false
 		elseif !ply.InSpawn then 
 			ply:StartTimer() 
+			ply.Q1 = nil
+			ply.Q2 = nil
+			ply.Q3 = nil
+			ply.Q4 = nil
+			ply.Secs = 1
+			ply.Frames = 0
 		end 
 
 		local oldhands = ply:GetHands()
@@ -436,7 +442,7 @@ function GM:PlayerWon(ply)
 			if(v["steamid"] == string.sub(steamid, 7)) then
 				rem = k
 			end
-			if(!newpos && t < tonumber(v["time"]) then
+			if(!newpos && t < tonumber(v["time"])) then
 				newpos = k
 			end
 		end
