@@ -39,7 +39,16 @@ function GM:Initialize()
 			self.CurrentID = data[1]["id"]
 			self:LoadRecs()
 		elseif(data && !data[1]) then
-			DB_Query("INSERT INTO bh_mapids ('mapname') VALUES ('"..game.GetMap().."')")
+			DB_Query("INSERT INTO bh_mapids (mapname) VALUES ('"..game.GetMap().."')",
+			function()
+				DB_Query("SELECT id FROM bh_mapids WHERE mapname='"..game.GetMap().."'", 
+				function(data)
+					if(data && data[1]) then
+						self.CurrentID = data[1]["id"]
+						self:LoadRecs()
+					end
+				end)
+			end)
 		end
 	end, 
 	function() 
@@ -51,7 +60,16 @@ function GM:Initialize()
 					self.CurrentID = data[1]["id"]
 					self:LoadRecs()
 				elseif(data && !data[1]) then
-					DB_Query("INSERT INTO bh_mapids ('mapname') VALUES ('"..game.GetMap()..")")
+					DB_Query("INSERT INTO bh_mapids (mapname) VALUES ('"..game.GetMap().."')",
+						function()
+						DB_Query("SELECT id FROM bh_mapids WHERE mapname='"..game.GetMap().."'", 
+						function(data)
+							if(data && data[1]) then
+								self.CurrentID = data[1]["id"]
+								self:LoadRecs()
+							end
+						end)
+					end)
 				end
 			end)
 		end)
@@ -431,9 +449,9 @@ function GM:PlayerWon(ply)
 		ply:ChatPrint("You have set a new Personal Best of "..FormatTime(t).."!")
 		local steamid = ply:SteamID()
 		if(tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0) then
-			DB_Query("INSERT INTO bh_records ('mapid','level','style','date','time','steamid') VALUES('"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."')")
+			DB_Query("INSERT INTO bh_records (mapid,level,style,date,time,steamid) VALUES('"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."')")
 		else
-			DB_Query("UPDATE bh_records SET time='"..t.."', date='"..os.time().."' WHERE style='"..ply.Style.."' AND level='"..ply.LevelData.id.."'")
+			DB_Query("UPDATE bh_records SET time='"..t.."', date='"..os.time().."' WHERE style='"..ply.Style.."' AND level='"..ply.LevelData.id.."' AND steamid='"..string.sub(steamid, 7).."'")
 		end
 		ply.PBS[ply.LevelData.id][ply.Style] = t
 		ply:SetPB(t)
