@@ -39,7 +39,7 @@ function GM:Initialize()
 			self.CurrentID = data[1]["id"]
 			self:LoadRecs()
 		elseif(data && !data[1]) then
-			DB_Query("INSERT INTO bh_mapids ('mapname') VALUES ('"..game.GetMap()..")")
+			DB_Query("INSERT INTO bh_mapids ('mapname') VALUES ('"..game.GetMap().."')")
 		end
 	end, 
 	function() 
