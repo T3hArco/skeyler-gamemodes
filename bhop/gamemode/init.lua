@@ -246,54 +246,56 @@ function GM:PlayerSpawn(ply)
 			ply:Give("ss_mapeditor") 
 		end 
 
-		if !ply.LevelData then
-			self:LevelSetup(ply,2) --default level
-		end
-		
-		ply:SetPB(tonumber(ply.PBS[ply.LevelData.id][ply.Style]))
-			
-		if ply:HasTimer() and self.PSaveData[ply:SteamID()] then 
-			ply.AreaIgnore = true 
-			local PosInfo = self.PSaveData[ply:SteamID()] 
-			ply:SetPos(PosInfo.LastPosition) 
-			ply:SetEyeAngles(PosInfo.LastAngle) 
-			ply:StartTimer() 
-			ply.AreaIgnore = false
-		elseif !ply.InSpawn then 
-			ply:StartTimer() 
-			ply.Q1 = nil
-			ply.Q2 = nil
-			ply.Q3 = nil
-			ply.Q4 = nil
-			ply.Secs = 1
-			ply.Frames = 0
-		end 
-
-		local oldhands = ply:GetHands()
-		if ( IsValid( oldhands ) ) then oldhands:Remove() end
-
-		local hands = ents.Create( "gmod_hands" )
-		if ( IsValid( hands ) ) then
-			ply:SetHands( hands )
-			hands:SetOwner( ply )
-
-			-- Which hands should we use?
-			local cl_playermodel = ply:GetInfo( "cl_playermodel" )
-			local info = player_manager.TranslatePlayerHands( cl_playermodel )
-			if ( info ) then
-				hands:SetModel( info.model )
-				hands:SetSkin( info.skin )
-				hands:SetBodyGroups( info.body )
+		if(!ply:IsBot()) then
+			if !ply.LevelData then
+				self:LevelSetup(ply,2) --default level
 			end
+		
+			ply:SetPB(tonumber(ply.PBS[ply.LevelData.id][ply.Style]))
+			
+			if ply:HasTimer() and self.PSaveData[ply:SteamID()] then 
+				ply.AreaIgnore = true 
+				local PosInfo = self.PSaveData[ply:SteamID()] 
+				ply:SetPos(PosInfo.LastPosition) 
+				ply:SetEyeAngles(PosInfo.LastAngle) 
+				ply:StartTimer() 
+				ply.AreaIgnore = false
+			elseif !ply.InSpawn then 
+				ply:StartTimer() 
+				ply.Q1 = nil
+				ply.Q2 = nil
+				ply.Q3 = nil
+				ply.Q4 = nil
+				ply.Secs = 1
+				ply.Frames = 0
+			end 
 
-			-- Attach them to the viewmodel
-			local vm = ply:GetViewModel( 0 )
-			hands:AttachToViewmodel( vm )
+			local oldhands = ply:GetHands()
+			if ( IsValid( oldhands ) ) then oldhands:Remove() end
 
-			vm:DeleteOnRemove( hands )
-			ply:DeleteOnRemove( hands )
+			local hands = ents.Create( "gmod_hands" )
+			if ( IsValid( hands ) ) then
+				ply:SetHands( hands )
+				hands:SetOwner( ply )
 
-			hands:Spawn()
+				-- Which hands should we use?
+				local cl_playermodel = ply:GetInfo( "cl_playermodel" )
+				local info = player_manager.TranslatePlayerHands( cl_playermodel )
+				if ( info ) then
+					hands:SetModel( info.model )
+					hands:SetSkin( info.skin )
+					hands:SetBodyGroups( info.body )
+				end
+
+				-- Attach them to the viewmodel
+				local vm = ply:GetViewModel( 0 )
+				hands:AttachToViewmodel( vm )
+
+				vm:DeleteOnRemove( hands )
+				ply:DeleteOnRemove( hands )
+
+				hands:Spawn()
+			end
 		end
 	else 
 		ply:SetTeam(TEAM_SPECTATOR)
