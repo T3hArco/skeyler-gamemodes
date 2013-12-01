@@ -378,6 +378,9 @@ end
 
 function GM:ReadWRRun()
 	self.WRFrames = 0
+	if(!file.IsDir("botfiles","DATA")) then
+		file.CreateDir("botfiles","DATA")
+	end
 	if(file.Exists("botfiles/"..game.GetMap().."_1.txt","DATA")) then
 		local str = file.Read("botfiles/"..game.GetMap().."_1.txt","DATA")
 		str = string.gsub(str,"THISISABOTFILE\n","")

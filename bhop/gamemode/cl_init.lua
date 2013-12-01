@@ -10,7 +10,7 @@ include("player_class/player_bhop.lua")
 include("cl_difficulty_menu.lua")
 include("sh_styles.lua") 
 
-GAMEMODE.RecordsTable = {}
+GM.RecordsTable = {}
 
 GM.DifficultyMenu = false 
 function GM:CreateDifficultyMenu() 
