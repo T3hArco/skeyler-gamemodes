@@ -636,7 +636,7 @@ hook.Add("Think","BotFrames",function()
 		local thisf = GAMEMODE.WRFr[1][wrframes]
 		local nextf = GAMEMODE.WRFr[1][wrframes+1]
 		local add = nextf-thisf
-		thisf = thisf + (add*(CurTime()-lastftime)*1/120)
+		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
 		bot:SetPos(thisf)
 		thisf = nil
 		nextf = nil
