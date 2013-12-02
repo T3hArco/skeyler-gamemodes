@@ -604,10 +604,14 @@ timer.Create("WRBot",1/60,0,function()
 						v.StoreFrames = {}
 						v.StoreFrames[1] = {}
 						v.StoreFrames[2] = {}
+						v.StoreFrames[3] = {}
+						v.StoreFrames[4] = {}
 					end
 					if(v.StoreFrames) then
 						v.StoreFrames[1][v.Frames] = v:GetPos()
-						v.StoreFrames[2][v.Frames] = v:EyeAngles()
+						v.StoreFrames[2][v.Frames] = v:GetAngles()
+						v.StoreFrames[3][v.Frames] = v:EyeAngles()
+						v.StoreFrames[4][v.Frames] = v:GetRenderAngles()
 						v.Frames = v.Frames + 1
 					end
 				end
@@ -624,11 +628,35 @@ timer.Create("WRBot",1/60,0,function()
 				wrframes = 1
 			end
 			bot:SetPos(GAMEMODE.WRFr[1][wrframes])
-			bot:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
+			bot:SetAngles(GAMEMODE.WRFr[2][wrframes])
+			bot:SetEyeAngles(GAMEMODE.WRFr[3][wrframes])
+			bot:SetRenderAngles(GAMEMODE.WRFr[4][wrframes])
 			wrframes = wrframes + 1
 			lastftime = CurTime()
         end
 end)
+
+local function FixAdd(add)
+	if(add.x > 180) then
+		add.x = -1*(add.x-360)
+	end
+	if(add.x < -180) then
+		add.x = -1*(add.x+360)
+	end
+	if(add.y > 180) then
+		add.y = -1*(add.y-360)
+	end
+	if(add.y < -180) then
+		add.y = -1*(add.y+360)
+	end
+	if(add.z > 180) then
+		add.z = -1*(add.z-360)
+	end
+	if(add.z < -180) then
+		add.z = -1*(add.z+360)
+	end
+	return add
+end
 
 hook.Add("Think","BotFrames",function()
 	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && lastftime != 0 && wrframes < GAMEMODE.WRFrames && lastftime != CurTime()) then
@@ -644,7 +672,26 @@ hook.Add("Think","BotFrames",function()
 		thisf = GAMEMODE.WRFr[2][wrframes]
 		nextf = GAMEMODE.WRFr[2][wrframes+1]
 		add = nextf-thisf
-		thisf = thisf + (add*(CurTime()-lastftime)*1/120)
+		add = FixAdd(add)
+		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
+		bot:SetAngles(thisf)
+		thisf = nil
+		nextf = nil
+		add = nil
+		thisf = GAMEMODE.WRFr[3][wrframes]
+		nextf = GAMEMODE.WRFr[3][wrframes+1]
+		add = nextf-thisf
+		add = FixAdd(add)
+		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
 		bot:SetEyeAngles(thisf)
+		thisf = nil
+		nextf = nil
+		add = nil
+		thisf = GAMEMODE.WRFr[4][wrframes]
+		nextf = GAMEMODE.WRFr[4][wrframes+1]
+		add = nextf-thisf
+		add = FixAdd(add)
+		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
+		bot:SetRenderAngles(thisf)
 	end
 end)
