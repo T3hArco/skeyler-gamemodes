@@ -636,7 +636,7 @@ timer.Create("WRBot",1/60,0,function()
         end
 end)
 
-local function FixAdd(add)
+local function GetAdd(add)
 	if(add.p > 180) then
 		add.p = -1*(add.p-360)
 	end
