@@ -594,8 +594,8 @@ hook.Add("SetupMove","LJStats",function(p,data)
 	end
 end)
 
---[[local wrframes = 1
-timer.Create("WRBot",1/100,0,function()
+local wrframes = 1
+timer.Create("WRBot",1/60,0,function()
         for k,v in pairs(player.GetAll()) do
             if(v:Team() == TEAM_BHOP) then
                 if(!v.InStart && v:IsTimerRunning() && !v.Winner && v.Frames) then
@@ -626,59 +626,4 @@ timer.Create("WRBot",1/100,0,function()
 			bot:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
 			wrframes = wrframes + 1
         end
-end) old code incase]]
-
-local wrframes = 1
-local running = false
-function GM:BotAdvance(check)
-	if(check && running) then return end
-	running = true
-	if(self.NewWR) then
-		self.NewWR = false
-		wrframes = 1
-	end
-	if(wrframes > self.WRFrames) then
-		wrframes = 1
-	end
-	if(self.WRBot && self.WRBot:IsValid() && self.WRFr) then
-		local bot = self.WRBot
-		bot:SetPos(self.WRFr[1][wrframes])
-		bot:SetEyeAngles(self.WRFr[2][wrframes])
-		if(wrframes < self.WRFrames) then
-			timer.Simple((self.WRFr[3][wrframes])/40,function() self:BotAdvance(false) end)
-		else
-			timer.Simple((self.WRFr[3][1])/40,function() self:BotAdvance(false) end)
-		end
-	end
-	wrframes = wrframes + 1
-end
-
-hook.Add("SetupMove","WRBot",function(v,data) 
-	if(v.count && v.count == 4) then
-        if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
-                if(v:IsTimerRunning() && !v.Winner && v.Frames) then
-                        if(v.Frames == 0) then
-								v.LastTime = CurTime()
-                                v.Frames = 1
-                                v.StoreFrames = {}
-								v.StoreFrames[1] = {}
-								v.StoreFrames[2] = {}
-								v.StoreFrames[3] = {}
-                        end
-                        if(v.StoreFrames) then
-                                v.StoreFrames[1][v.Frames] = v:GetPos()
-                                v.StoreFrames[2][v.Frames] = v:EyeAngles()
-								v.StoreFrames[3][v.Frames] = CurTime() - v.LastTime
-                                v.Frames = v.Frames + 1
-                        end
-                end
-        end
-	end
-	if(!v.count) then
-		v.count = 1
-	end
-	v.count = v.count + 1
-	if(v.count > 4) then
-		v.count = 1
-	end
 end)
