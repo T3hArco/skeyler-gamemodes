@@ -394,7 +394,7 @@ function GM:ReadWRRun()
 		str = util.Decompress(str)
 		str = util.JSONToTable(str)
 		self.WRFr = str
-		self.WRFrames = #self.WRFr
+		self.WRFrames = #self.WRFr[1]
 	end
 	if(self.WRFr) then
 		self:SpawnBot()
@@ -458,7 +458,7 @@ function GM:PlayerWon(ply)
 		if(newpos == 1 && ply.Style == 1 && ply.StoreFrames) then
 			self.WRFr = ply.StoreFrames
 			ply.StoreFrames = nil
-			self.WRFrames = #self.WRFr
+			self.WRFrames = #self.WRFr[1]
 			self.NewWR = true
 			file.Write("botfiles/"..game.GetMap()..".txt", "THISISABOTFILE\n")
 			local write = util.TableToJSON(self.WRFr)
