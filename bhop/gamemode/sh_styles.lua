@@ -38,7 +38,7 @@ hook.Add("KeyPress","CheckMode",function(ply,key)
 	if not IsFirstTimePredicted() then return end
 	if not IsValid(ply) then return end
 	
-	if(ply.Style != 1) then
+	if(ply:Team() == TEAM_BHOP && ply.Style && ply.Style != 1) then
 		local s = GAMEMODE.Styles[ply.Style]
 		for k,v in pairs(s.blockkeys.sv) do
 			if(key == v) then

@@ -556,21 +556,21 @@ hook.Add("SetupMove","LJStats",function(p,data)
 		end
 		p.lastangle = p:EyeAngles()
 
-		if(p:KeyDown(IN_MOVELEFT) && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
+		if(p.strafenum && p:KeyDown(IN_MOVELEFT) && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
 			p.strafingright = false
 			p.strafingleft = true
 			p.strafenum = p.strafenum + 1
 			p.strafe[p.strafenum] = {}
 			p.strafe[p.strafenum][1] = 0
 			p.strafe[p.strafenum][2] = 0
-		elseif(p:KeyDown(IN_MOVERIGHT) && (p.strafingleft || (!p.strafingright && !p.strafingleft))) then
+		elseif(p.strafenum && p:KeyDown(IN_MOVERIGHT) && (p.strafingleft || (!p.strafingright && !p.strafingleft))) then
 			p.strafingright = true
 			p.strafingleft = false
 			p.strafenum = p.strafenum + 1
 			p.strafe[p.strafenum] = {}
 			p.strafe[p.strafenum][1] = 0
 			p.strafe[p.strafenum][2] = 0
-		elseif(p.strafenum == 0) then
+		elseif(p.strafenum && p.strafenum == 0) then
 			dontrun = true
 		end
 		if(!p.strafenum) then
@@ -614,7 +614,7 @@ timer.Create("WRBot",1/80,0,function()
 			end
 		end
 		if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr) then
-           	local bot = v
+           	local bot = GAMEMODE.WRBot
 			if(GAMEMODE.NewWR) then
 				GAMEMODE.NewWR = false
 				wrframes = 1
