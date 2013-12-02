@@ -262,11 +262,7 @@ function GM:PlayerSpawn(ply)
 				ply.AreaIgnore = false
 			elseif !ply.InSpawn then 
 				ply:StartTimer() 
-				ply.Q1 = nil
-				ply.Q2 = nil
-				ply.Q3 = nil
-				ply.Q4 = nil
-				ply.Secs = 1
+				ply.StoreFrames = nil
 				ply.Frames = 0
 			end 
 
@@ -392,39 +388,15 @@ function GM:ReadWRRun()
 	if(!file.IsDir("botfiles","DATA")) then
 		file.CreateDir("botfiles","DATA")
 	end
-	if(file.Exists("botfiles/"..game.GetMap().."_1.txt","DATA")) then
-		local str = file.Read("botfiles/"..game.GetMap().."_1.txt","DATA")
+	if(file.Exists("botfiles/"..game.GetMap()..".txt","DATA")) then
+		local str = file.Read("botfiles/"..game.GetMap()..".txt","DATA")
 		str = string.gsub(str,"THISISABOTFILE\n","")
 		str = util.Decompress(str)
 		str = util.JSONToTable(str)
-		self.WR1 = str
-		self.WRFrames = self.WRFrames + #self.WR1
+		self.WRFr = str
+		self.WRFrames = #self.WRFr
 	end
-	if(file.Exists("botfiles/"..game.GetMap().."_2.txt","DATA")) then
-		local str = file.Read("botfiles/"..game.GetMap().."_2.txt","DATA")
-		str = string.gsub(str,"THISISABOTFILE\n","")
-		str = util.Decompress(str)
-		str = util.JSONToTable(str)
-		self.WR2 = str
-		self.WRFrames = self.WRFrames + #self.WR2
-	end
-	if(file.Exists("botfiles/"..game.GetMap().."_3.txt","DATA")) then
-		local str = file.Read("botfiles/"..game.GetMap().."_3.txt","DATA")
-		str = string.gsub(str,"THISISABOTFILE\n","")
-		str = util.Decompress(str)
-		str = util.JSONToTable(str)
-		self.WR3 = str
-		self.WRFrames = self.WRFrames + #self.WR3
-	end
-	if(file.Exists("botfiles/"..game.GetMap().."_4.txt","DATA")) then
-		local str = file.Read("botfiles/"..game.GetMap().."_4.txt","DATA")
-		str = string.Replace(str,"THISISABOTFILE\n","")
-		str = util.Decompress(str)
-		str = util.JSONToTable(str)
-		self.WR4 = str
-		self.WRFrames = self.WRFrames + #self.WR4
-	end
-	if(self.WR1) then
+	if(self.WRFr) then
 		self:SpawnBot()
 	end
 end
@@ -483,94 +455,16 @@ function GM:PlayerWon(ply)
 		if(!newpos) then
 			newpos = #self.RecordTable[ply.LevelData.id][ply.Style] + 1
 		end
-		if(newpos == 1) then
-			local q = {}
-			if(ply.Q1) then
-				q[1] = ply.Q1
-			end
-			if(ply.Q2) then
-				q[2] = ply.Q2
-			end
-			if(ply.Q3) then
-				q[3] = ply.Q3
-			end
-			if(ply.Q4) then
-				q[4] = ply.Q4
-			end
-			if(!self.WRBot) then
-				sb = true
-			end
-			self.WRFrames = ply.Frames
-			self.WR1 = nil
-			self.WR1 = {}
-			self.WR2 = nil
-			self.WR2 = {}
-			self.WR3 = nil
-			self.WR3 = {}
-			self.WR4 = nil
-			self.WR4 = {}
-			for k,v in pairs(q[1]) do
-				local tab = string.Explode(";",v)
-				for _,l in pairs(tab) do
-					if(l != "") then
-						table.insert(self.WR1,l)
-					end
-				end
-			end
-			if(q[2] && type(q[2]) == "table") then
-				for k,v in pairs(q[2]) do
-					local tab = string.Explode(";",v)
-					for _,l in pairs(tab) do
-						if(l != "") then
-							table.insert(self.WR2,l)
-						end
-					end
-				end
-			end
-			if(q[3] && type(q[3]) == "table") then
-				for k,v in pairs(q[3]) do
-					local tab = string.Explode(";",v)
-					for _,l in pairs(tab) do
-						if(l != "") then
-							table.insert(self.WR3,l)
-						end
-					end
-				end
-			end
-			if(q[4] && type(q[4]) == "table") then
-				for k,v in pairs(q[4]) do
-					local tab = string.Explode(";",v)
-					for _,l in pairs(tab) do
-						if(l != "") then
-							table.insert(self.WR4,l)
-						end
-					end
-				end
-			end
+		if(newpos == 1 && ply.Style == 1 && ply.StoreFrames) then
+			self.WRFr = ply.StoreFrames
+			ply.StoreFrames = nil
+			self.WRFrames = #self.WRFr
 			self.NewWR = true
-			file.Write("botfiles/"..game.GetMap().."_1.txt", "THISISABOTFILE\n")
-			local write = util.TableToJSON(self.WR1)
+			file.Write("botfiles/"..game.GetMap()..".txt", "THISISABOTFILE\n")
+			local write = util.TableToJSON(self.WRFr)
 			write = util.Compress(write)
-			file.Append("botfiles/"..game.GetMap().."_1.txt",write)
-			if(#self.WR2 > 0) then
-				file.Write("botfiles/"..game.GetMap().."_2.txt", "THISISABOTFILE\n")
-				local write2 = util.TableToJSON(self.WR2)
-				write2 = util.Compress(write2)
-				file.Append("botfiles/"..game.GetMap().."_2.txt",write2)
-			end
-			if(#self.WR3 > 0) then
-				file.Write("botfiles/"..game.GetMap().."_3.txt", "THISISABOTFILE\n")
-				local write2 = util.TableToJSON(self.WR3)
-				write2 = util.Compress(write2)
-				file.Append("botfiles/"..game.GetMap().."_3.txt",write2)
-			end
-			if(#self.WR4 > 0) then
-				file.Write("botfiles/"..game.GetMap().."_4.txt", "THISISABOTFILE\n")
-				local write2 = util.TableToJSON(self.WR4)
-				write2 = util.Compress(write2)
-				file.Append("botfiles/"..game.GetMap().."_4.txt",write2)
-			end
-				
+			file.Append("botfiles/"..game.GetMap()..".txt",write)
+			
 			self:SpawnBot()
 		end
 		table.remove(self.RecordTable[ply.LevelData.id][ply.Style],k)
@@ -639,7 +533,7 @@ hook.Add("Think","ACAreas",function()
 			end
 		end
 	end
-	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1 && #player.GetAll() != 0) then
+	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && #player.GetAll() != 0) then
 		GAMEMODE:SpawnBot()
 	end
 end) --seperate think hooks = more organised and no extra cost in proccessing afaik
@@ -699,150 +593,36 @@ hook.Add("SetupMove","LJStats",function(p,data)
 	end
 end)
 
---at the minute wr secs are no "real" indication of time just a number to split up frames into to make storing them easier or someshit lol.
-
 local wrframes = 1
-local wrsecs = 1
 hook.Add("SetupMove","WRBot",function(v,data) 
 	if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
-		if(v:IsTimerRunning() && !v.Winner && v.Secs && v.Frames) then
+		if(v:IsTimerRunning() && !v.Winner && v.Frames) then
 			if(v.Frames == 0) then
 				v.Frames = 1
-				v.Q1 = {}
-				v.Q2 = {}
-				v.Q3 = {}
-				v.Q4 = {}
+				v.StoreFrames = {}
 			end
-			if(v.Secs/60<30) then
-				local start = 0
-				local f = v.Secs - start
-				if(!v.Q1[f]) then
-					v.Q1[f] = ""
-				end
-				local p = v:GetPos()
-				local ang = v:GetAngles()
-				local aim = v:EyeAngles()
-				local r = v:GetRenderAngles()
-				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-				v.Q1[f] = v.Q1[f]..addon
-			elseif(v.Secs/60<60) then
-				local start = 29*60
-				local f = v.Secs - start
-				if(!v.Q2[f]) then
-					v.Q2[f] = ""
-				end
-				local p = v:GetPos()
-				local ang = v:GetAngles()
-				local aim = v:EyeAngles()
-				local r = v:GetRenderAngles()
-				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-				v.Q2[f] = v.Q2[f]..addon
-			elseif(v.Secs/60<90) then
-				local start = 59*60
-				local f = v.Secs - start
-				if(!v.Q3[f]) then
-					v.Q3[f] = ""
-				end
-				local p = v:GetPos()
-				local ang = v:GetAngles()
-				local aim = v:EyeAngles()
-				local r = v:GetRenderAngles()
-				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-				v.Q3[f] = v.Q3[f]..addon
-			elseif(v.Secs/60<=120) then
-				local start = 89*60
-				local f = v.Secs - start
-				if(!v.Q4[f]) then
-					v.Q4[f] = ""
-				end
-				local p = v:GetPos()
-				local ang = v:GetAngles()
-				local aim = v:EyeAngles()
-				local r = v:GetRenderAngles()
-				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-				v.Q4[f] = v.Q4[f]..addon
+			if(v.StoreFrames) then
+				v.StoreFrames[v.Frames][1] = v:GetPos()
+				v.StoreFrames[v.Frames][2] = v:GetAngles()
+				v.StoreFrames[v.Frames][3] = v:EyeAngles()
+				v.StoreFrames[v.Frames][4] = v:GetRenderAngles()
+				v.Frames = v.Frames + 1
 			end
-			v.Frames = v.Frames + 1
-			v.Secs = math.floor((v.Frames/80)+1)
 		end
 	end
-	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1 && v:IsBot() && v == GAMEMODE.WRBot) then
+	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && v:IsBot() && v == GAMEMODE.WRBot) then
 		local bot = v
 		if(GAMEMODE.NewWR) then
 			GAMEMODE.NewWR = false
 			wrframes = 1
-			wrsecs = 1
 		end
 		if wrframes >= GAMEMODE.WRFrames then
 			wrframes = 1
-			wrsecs = 1
 		end
-		if(wrsecs/60<30 && GAMEMODE.WR1) then
-			local start = 0
-			local f = wrframes - start
-			if(!GAMEMODE.WR1[f] || GAMEMODE.WR1[f] == "") then
-				wrframes = wrframes + 1
-				f = wrframes - start
-			end
-			local split = string.Explode(":",GAMEMODE.WR1[f])
-			local sp1 = string.Explode(",",split[1])
-			local sp2 = string.Explode(",",split[2])
-			local sp3 = string.Explode(",",split[3])
-			local sp4 = string.Explode(",",string.gsub(split[4],".",","))
-			bot:SetPos(Vector(sp1[1],sp1[2],sp1[3]))
-			bot:SetAngles(Angle(tonumber(sp2[1]),tonumber(sp2[2]),tonumber(sp2[3])))
-			bot:SetEyeAngles(Angle(tonumber(sp3[1]),tonumber(sp3[2]),tonumber(sp3[3])))
-			bot:SetRenderAngles(Angle(tonumber(sp4[1]),tonumber(sp4[2]),tonumber(sp4[3])))
-		elseif(wrsecs/60<60 && GAMEMODE.WR2) then
-			local start = 29*100*60
-			local f = wrframes - start
-			if(!GAMEMODE.WR2[f] || GAMEMODE.WR2[f] == "") then
-				wrframes = wrframes + 1
-				f = wrframes - start
-			end
-			local split = string.Explode(":",GAMEMODE.WR2[f])
-			local sp1 = string.Explode(",",split[1])
-			local sp2 = string.Explode(",",split[2])
-			local sp3 = string.Explode(",",split[3])
-			local sp4 = string.Explode(",",string.gsub(split[4],".",","))
-			bot:SetPos(Vector(sp1[1],sp1[2],sp1[3]))
-			bot:SetAngles(Angle(tonumber(sp2[1]),tonumber(sp2[2]),tonumber(sp2[3])))
-			bot:SetEyeAngles(Angle(tonumber(sp3[1]),tonumber(sp3[2]),tonumber(sp3[3])))
-			bot:SetRenderAngles(Angle(tonumber(sp4[1]),tonumber(sp4[2]),tonumber(sp4[3])))
-		elseif(wrsecs/60<90 && GAMEMODE.WR3) then
-			local start = 59*100*60
-			local f = wrframes - start
-			if(!GAMEMODE.WR3[f] || GAMEMODE.WR3[f] == "") then
-				wrframes = wrframes + 1
-				f = wrframes - start
-			end
-			local split = string.Explode(":",GAMEMODE.WR3[f])
-			local sp1 = string.Explode(",",split[1])
-			local sp2 = string.Explode(",",split[2])
-			local sp3 = string.Explode(",",split[3])
-			local sp4 = string.Explode(",",string.gsub(split[4],".",","))
-			bot:SetPos(Vector(sp1[1],sp1[2],sp1[3]))
-			bot:SetAngles(Angle(tonumber(sp2[1]),tonumber(sp2[2]),tonumber(sp2[3])))
-			bot:SetEyeAngles(Angle(tonumber(sp3[1]),tonumber(sp3[2]),tonumber(sp3[3])))
-			bot:SetRenderAngles(Angle(tonumber(sp4[1]),tonumber(sp4[2]),tonumber(sp4[3])))
-		elseif(wrsecs/60<120 && GAMEMODE.WR4) then
-			local start = 89*100*60
-			local f = wrframes - start
-			if(!GAMEMODE.WR4[f] || GAMEMODE.WR4[f] == "") then
-				wrframes = wrframes + 1
-				f = wrframes - start
-			end
-			local split = string.Explode(":",GAMEMODE.WR4[f])
-			local sp1 = string.Explode(",",split[1])
-			local sp2 = string.Explode(",",split[2])
-			local sp3 = string.Explode(",",split[3])
-			local sp4 = string.Explode(",",string.gsub(split[4],".",","))
-			bot:SetPos(Vector(sp1[1],sp1[2],sp1[3]))
-			bot:SetAngles(Angle(tonumber(sp2[1]),tonumber(sp2[2]),tonumber(sp2[3])))
-			bot:SetEyeAngles(Angle(tonumber(sp3[1]),tonumber(sp3[2]),tonumber(sp3[3])))
-			bot:SetRenderAngles(Angle(tonumber(sp4[1]),tonumber(sp4[2]),tonumber(sp4[3])))
-		end
+		bot:SetPos(GAMEMODE.WRFr[wrframes][1])
+		bot:SetAngles(GAMEMODE.WRFr[wrframes][2])
+		bot:SetEyeAngles(GAMEMODE.WRFr[wrframes][3])
+		bot:SetRenderAngles(GAMEMODE.WRFr[wrframes][4])
 		wrframes = wrframes + 1
-		wrsecs = math.floor((wrframes/80)+1)
 	end
 end)
