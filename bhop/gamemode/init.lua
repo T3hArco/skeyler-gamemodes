@@ -658,7 +658,7 @@ local function GetAdd(add)
 		add.r = -1*(add.r+360)
 	end
 	add.r = add.r*(CurTime()-lastftime)*1/60
-	return add
+	return Angle(add.p,add.y,add.r)
 end
 
 hook.Add("Think","BotFrames",function()
