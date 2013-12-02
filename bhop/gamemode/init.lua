@@ -594,7 +594,7 @@ hook.Add("SetupMove","LJStats",function(p,data)
 end)
 
 local wrframes = 1
-timer.Create("WRBot",1/110,0,function()
+timer.Create("WRBot",1/120,0,function()
         for k,v in pairs(player.GetAll()) do
             if(v:Team() == TEAM_BHOP) then
                 if(!v.InStart && v:IsTimerRunning() && !v.Winner && v.Frames) then
