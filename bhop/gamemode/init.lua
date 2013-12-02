@@ -629,7 +629,7 @@ end) old code incase]]
 
 local wrframes = 1
 hook.Add("SetupMove","WRBot",function(v,data) 
-	if(v.count && v.count == 3) then
+	if(v.count && v.count == 5) then
         if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
                 if(v:IsTimerRunning() && !v.Winner && v.Frames) then
                         if(v.Frames == 0) then
@@ -646,7 +646,6 @@ hook.Add("SetupMove","WRBot",function(v,data)
                 end
         end
         if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && v:IsBot() && v == GAMEMODE.WRBot) then
-                local bot = v
                 if(GAMEMODE.NewWR) then
                         GAMEMODE.NewWR = false
                         wrframes = 1
@@ -655,15 +654,19 @@ hook.Add("SetupMove","WRBot",function(v,data)
                         wrframes = 1
                 end
                 data:SetOrigin(GAMEMODE.WRFr[1][wrframes])
-                bot:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
-                wrframes = wrframes + 1
-        end
+		end
+	end
+	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && v:IsBot() && v == GAMEMODE.WRBot) then
+		v:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
+	end
+	if(v.count == 5) then
+		wrframes = wrframes + 1
 	end
 	if(!v.count) then
 		v.count = 1
 	end
 	v.count = v.count + 1
-	if(v.count > 3) then
+	if(v.count > 5) then
 		v.count = 1
 	end
 end)
