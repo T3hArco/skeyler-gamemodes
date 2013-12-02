@@ -639,7 +639,6 @@ hook.Add("SetupMove","WRBot",function(v,data)
 								v.StoreFrames[2] = {}
                         end
                         if(v.StoreFrames) then
-                                v.StoreFrames[v.Frames] = {}
                                 v.StoreFrames[1][v.Frames] = v:GetPos()
                                 v.StoreFrames[2][v.Frames] = v:EyeAngles()
                                 v.Frames = v.Frames + 1
