@@ -683,7 +683,6 @@ hook.Add("Think","BotFrames",function()
 		thisf = GAMEMODE.WRFr[3][wrframes]
 		nextf = GAMEMODE.WRFr[3][wrframes+1]
 		add = nextf-thisf
-		add = FixAdd(add)
 		thisf = thisf + GetAdd(add)
 		bot:SetEyeAngles(thisf)
 		thisf = nil
@@ -692,7 +691,6 @@ hook.Add("Think","BotFrames",function()
 		thisf = GAMEMODE.WRFr[4][wrframes]
 		nextf = GAMEMODE.WRFr[4][wrframes+1]
 		add = nextf-thisf
-		add = FixAdd(add)
 		thisf = thisf + GetAdd(add)
 		bot:SetRenderAngles(thisf)
 	end
