@@ -594,37 +594,38 @@ hook.Add("SetupMove","LJStats",function(p,data)
 end)
 
 local wrframes = 1
-hook.Add("SetupMove","WRBot",function(v,data) 
-	if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
-		print('calld')
-		if(v:IsTimerRunning() && !v.Winner && v.Frames) then
-			if(v.Frames == 0) then
-				v.Frames = 1
-				v.StoreFrames = {}
+timer.Create("WRBot",1/80,0,function()
+        for k,v in pairs(player.GetAll()) do
+            if(v:Team() == TEAM_BHOP) then
+                if(v:IsTimerRunning() && !v.Winner && v.Secs && v.Frames) then
+                    if(v.Frames == 0) then
+						v.Frames = 1
+						v.StoreFrames = {}
+					end
+					if(v.StoreFrames) then
+						v.StoreFrames[v.Frames] = {}
+						v.StoreFrames[v.Frames][1] = v:GetPos()
+						v.StoreFrames[v.Frames][2] = v:GetAngles()
+						v.StoreFrames[v.Frames][3] = v:EyeAngles()
+						v.StoreFrames[v.Frames][4] = v:GetRenderAngles()
+						v.Frames = v.Frames + 1
+					end
+				end
 			end
-			if(v.StoreFrames) then
-				v.StoreFrames[v.Frames] = {}
-				v.StoreFrames[v.Frames][1] = v:GetPos()
-				v.StoreFrames[v.Frames][2] = v:GetAngles()
-				v.StoreFrames[v.Frames][3] = v:EyeAngles()
-				v.StoreFrames[v.Frames][4] = v:GetRenderAngles()
-				v.Frames = v.Frames + 1
+		end
+		if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr) then
+           	local bot = v
+			if(GAMEMODE.NewWR) then
+				GAMEMODE.NewWR = false
+				wrframes = 1
 			end
-		end
-	end
-	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && v:IsBot() && v == GAMEMODE.WRBot) then
-		local bot = v
-		if(GAMEMODE.NewWR) then
-			GAMEMODE.NewWR = false
-			wrframes = 1
-		end
-		if wrframes >= GAMEMODE.WRFrames then
-			wrframes = 1
-		end
-		bot:SetPos(GAMEMODE.WRFr[wrframes][1])
-		bot:SetAngles(GAMEMODE.WRFr[wrframes][2])
-		bot:SetEyeAngles(GAMEMODE.WRFr[wrframes][3])
-		bot:SetRenderAngles(GAMEMODE.WRFr[wrframes][4])
-		wrframes = wrframes + 1
-	end
+			if wrframes >= GAMEMODE.WRFrames then
+				wrframes = 1
+			end
+			bot:SetPos(GAMEMODE.WRFr[wrframes][1])
+			bot:SetAngles(GAMEMODE.WRFr[wrframes][2])
+			bot:SetEyeAngles(GAMEMODE.WRFr[wrframes][3])
+			bot:SetRenderAngles(GAMEMODE.WRFr[wrframes][4])
+			wrframes = wrframes + 1
+        end
 end)
