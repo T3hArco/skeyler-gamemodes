@@ -595,7 +595,7 @@ end)
 
 local wrframes = 1
 local lastftime = 0
-timer.Create("WRBot",1/60,0,function()
+timer.Create("WRBot",1/30,0,function()
         for k,v in pairs(player.GetAll()) do
             if(v:Team() == TEAM_BHOP) then
                 if(!v.InStart && v:IsTimerRunning() && !v.Winner && v.Frames) then
@@ -643,21 +643,21 @@ local function GetAdd(add)
 	if(add.p < -180) then
 		add.p = -1*(add.p+360)
 	end
-	add.p = add.p*(CurTime()-lastftime)*1/60
+	add.p = add.p*(CurTime()-lastftime)*1/30
 	if(add.y > 180) then
 		add.y = -1*(add.y-360)
 	end
 	if(add.y < -180) then
 		add.y = -1*(add.y+360)
 	end
-	add.y = add.y*(CurTime()-lastftime)*1/60
+	add.y = add.y*(CurTime()-lastftime)*1/30
 	if(add.r > 180) then
 		add.r = -1*(add.r-360)
 	end
 	if(add.r < -180) then
 		add.r = -1*(add.r+360)
 	end
-	add.r = add.r*(CurTime()-lastftime)*1/60
+	add.r = add.r*(CurTime()-lastftime)*1/30
 	return Angle(add.p,add.y,add.r)
 end
 
@@ -667,7 +667,7 @@ hook.Add("Think","BotFrames",function()
 		local thisf = GAMEMODE.WRFr[1][wrframes]
 		local nextf = GAMEMODE.WRFr[1][wrframes+1]
 		local add = nextf-thisf
-		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
+		thisf = thisf + (add*(CurTime()-lastftime)*1/30)
 		bot:SetPos(thisf)
 		thisf = nil
 		nextf = nil
