@@ -645,9 +645,9 @@ function GM:BotAdvance(check)
 		bot:SetPos(self.WRFr[1][wrframes])
 		bot:SetEyeAngles(self.WRFr[2][wrframes])
 		if(wrframes < self.WRFrames) then
-			timer.Simple(self.WRFr[3][wrframes],function() self:BotAdvance(false) end)
+			timer.Simple((self.WRFr[3][wrframes])/40,function() self:BotAdvance(false) end)
 		else
-			timer.Simple(self.WRFr[3][1],function() self:BotAdvance(false) end)
+			timer.Simple((self.WRFr[3][1])/40,function() self:BotAdvance(false) end)
 		end
 	end
 	wrframes = wrframes + 1
