@@ -596,12 +596,14 @@ end)
 local wrframes = 1
 hook.Add("SetupMove","WRBot",function(v,data) 
 	if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
+		print('calld')
 		if(v:IsTimerRunning() && !v.Winner && v.Frames) then
 			if(v.Frames == 0) then
 				v.Frames = 1
 				v.StoreFrames = {}
 			end
 			if(v.StoreFrames) then
+				v.StoreFrames[v.Frames] = {}
 				v.StoreFrames[v.Frames][1] = v:GetPos()
 				v.StoreFrames[v.Frames][2] = v:GetAngles()
 				v.StoreFrames[v.Frames][3] = v:EyeAngles()
