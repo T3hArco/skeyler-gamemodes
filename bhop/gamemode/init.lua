@@ -639,7 +639,7 @@ hook.Add("SetupMove","WRBot",function(v,data)
 								v.StoreFrames[2] = {}
                         end
                         if(v.StoreFrames) then
-                                v.StoreFrames[1][v.Frames] = v:GetPos()
+                                v.StoreFrames[1][v.Frames] = data:GetOrigin()
                                 v.StoreFrames[2][v.Frames] = v:EyeAngles()
                                 v.Frames = v.Frames + 1
                         end
@@ -654,7 +654,7 @@ hook.Add("SetupMove","WRBot",function(v,data)
                 if wrframes >= GAMEMODE.WRFrames then
                         wrframes = 1
                 end
-                bot:SetPos(GAMEMODE.WRFr[1][wrframes])
+                data:SetOrigin(GAMEMODE.WRFr[1][wrframes])
                 bot:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
                 wrframes = wrframes + 1
         end
