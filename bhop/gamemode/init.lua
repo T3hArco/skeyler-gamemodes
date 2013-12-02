@@ -594,20 +594,18 @@ hook.Add("SetupMove","LJStats",function(p,data)
 end)
 
 local wrframes = 1
-timer.Create("WRBot",1/80,0,function()
+timer.Create("WRBot",1/110,0,function()
         for k,v in pairs(player.GetAll()) do
             if(v:Team() == TEAM_BHOP) then
                 if(v:IsTimerRunning() && !v.Winner && v.Frames) then
                     if(v.Frames == 0) then
 						v.Frames = 1
-						v.StoreFrames = {}
+						v.StoreFrames[1] = {}
+						v.StoreFrames[2] = {}
 					end
 					if(v.StoreFrames) then
-						v.StoreFrames[v.Frames] = {}
-						v.StoreFrames[v.Frames][1] = v:GetPos()
-						v.StoreFrames[v.Frames][2] = v:GetAngles()
-						v.StoreFrames[v.Frames][3] = v:EyeAngles()
-						v.StoreFrames[v.Frames][4] = v:GetRenderAngles()
+						v.StoreFrames[1][v.Frames] = v:GetPos()
+						v.StoreFrames[2][v.Frames] = v:EyeAngles()
 						v.Frames = v.Frames + 1
 					end
 				end
@@ -622,10 +620,8 @@ timer.Create("WRBot",1/80,0,function()
 			if wrframes >= GAMEMODE.WRFrames then
 				wrframes = 1
 			end
-			bot:SetPos(GAMEMODE.WRFr[wrframes][1])
-			bot:SetAngles(GAMEMODE.WRFr[wrframes][2])
-			bot:SetEyeAngles(GAMEMODE.WRFr[wrframes][3])
-			bot:SetRenderAngles(GAMEMODE.WRFr[wrframes][4])
+			bot:SetPos(GAMEMODE.WRFr[1][wrframes])
+			bot:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
 			wrframes = wrframes + 1
         end
 end)

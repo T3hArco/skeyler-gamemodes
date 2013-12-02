@@ -48,6 +48,12 @@ net.Receive("ModifyRT",function()
 	if(r && r != 0) then
 		table.remove(GAMEMODE.RecordTable[l][s],r)
 	end
+	if(!GAMEMODE.RecordTable[l]) then
+		GAMEMODE.RecordTable[l] = {}
+	end
+	if(!GAMEMODE.RecordTable[l][s]) then
+		GAMEMODE.RecordTable[l][s] = {}
+	end
 	table.insert(GAMEMODE.RecordTable[l][s],n,{["steamid"] = p,["time"] = t})
 end)
 
