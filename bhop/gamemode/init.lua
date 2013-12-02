@@ -643,18 +643,21 @@ local function FixAdd(add)
 	if(add.p < -180) then
 		add.p = -1*(add.p+360)
 	end
+	add.p = add.p*(CurTime()-lastftime)*1/60
 	if(add.y > 180) then
 		add.y = -1*(add.y-360)
 	end
 	if(add.y < -180) then
 		add.y = -1*(add.y+360)
 	end
+	add.y = add.y*(CurTime()-lastftime)*1/60
 	if(add.r > 180) then
 		add.r = -1*(add.r-360)
 	end
 	if(add.r < -180) then
 		add.r = -1*(add.r+360)
 	end
+	add.r = add.r*(CurTime()-lastftime)*1/60
 	return add
 end
 
@@ -672,8 +675,7 @@ hook.Add("Think","BotFrames",function()
 		thisf = GAMEMODE.WRFr[2][wrframes]
 		nextf = GAMEMODE.WRFr[2][wrframes+1]
 		add = nextf-thisf
-		add = FixAdd(add)
-		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
+		thisf = thisf + GetAdd(add)
 		bot:SetAngles(thisf)
 		thisf = nil
 		nextf = nil
@@ -682,7 +684,7 @@ hook.Add("Think","BotFrames",function()
 		nextf = GAMEMODE.WRFr[3][wrframes+1]
 		add = nextf-thisf
 		add = FixAdd(add)
-		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
+		thisf = thisf + GetAdd(add)
 		bot:SetEyeAngles(thisf)
 		thisf = nil
 		nextf = nil
@@ -691,7 +693,7 @@ hook.Add("Think","BotFrames",function()
 		nextf = GAMEMODE.WRFr[4][wrframes+1]
 		add = nextf-thisf
 		add = FixAdd(add)
-		thisf = thisf + (add*(CurTime()-lastftime)*1/60)
+		thisf = thisf + GetAdd(add)
 		bot:SetRenderAngles(thisf)
 	end
 end)
