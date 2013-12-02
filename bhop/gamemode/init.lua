@@ -629,7 +629,7 @@ end) old code incase]]
 
 local wrframes = 1
 hook.Add("SetupMove","WRBot",function(v,data) 
-	if(v.count && v.count == 2) then
+	if(v.count && v.count == 3) then
         if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
                 if(v:IsTimerRunning() && !v.Winner && v.Frames) then
                         if(v.Frames == 0) then
@@ -664,7 +664,7 @@ hook.Add("SetupMove","WRBot",function(v,data)
 		v.count = 1
 	end
 	v.count = v.count + 1
-	if(v.count > 2) then
+	if(v.count > 3) then
 		v.count = 1
 	end
 end)
