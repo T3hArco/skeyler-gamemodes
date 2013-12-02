@@ -597,7 +597,7 @@ local wrframes = 1
 timer.Create("WRBot",1/80,0,function()
         for k,v in pairs(player.GetAll()) do
             if(v:Team() == TEAM_BHOP) then
-                if(v:IsTimerRunning() && !v.Winner && v.Secs && v.Frames) then
+                if(v:IsTimerRunning() && !v.Winner && v.Frames) then
                     if(v.Frames == 0) then
 						v.Frames = 1
 						v.StoreFrames = {}
