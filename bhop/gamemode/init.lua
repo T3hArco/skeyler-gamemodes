@@ -637,11 +637,11 @@ timer.Create("WRBot",1/60,0,function()
 end)
 
 local function FixAdd(add)
-	if(add.x > 180) then
-		add.x = -1*(add.x-360)
+	if(add.p > 180) then
+		add.p = -1*(add.p-360)
 	end
-	if(add.x < -180) then
-		add.x = -1*(add.x+360)
+	if(add.p < -180) then
+		add.p = -1*(add.p+360)
 	end
 	if(add.y > 180) then
 		add.y = -1*(add.y-360)
@@ -649,11 +649,11 @@ local function FixAdd(add)
 	if(add.y < -180) then
 		add.y = -1*(add.y+360)
 	end
-	if(add.z > 180) then
-		add.z = -1*(add.z-360)
+	if(add.r > 180) then
+		add.r = -1*(add.r-360)
 	end
-	if(add.z < -180) then
-		add.z = -1*(add.z+360)
+	if(add.r < -180) then
+		add.r = -1*(add.r+360)
 	end
 	return add
 end
