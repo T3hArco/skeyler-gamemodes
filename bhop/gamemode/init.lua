@@ -698,7 +698,7 @@ end)
 
 local wrframes = 1
 local wrsecs = 1
-timer.Create("WRBot",1/100,0,function()
+timer.Create("WRBot",1/80,0,function()
 	for k,v in pairs(player.GetAll()) do
 		if(v:Team() == TEAM_BHOP) then
 			if(v:IsTimerRunning() && !v.Winner && v.Secs && v.Frames) then
@@ -759,7 +759,7 @@ timer.Create("WRBot",1/100,0,function()
 					v.Q4[f] = v.Q4[f]..addon
 				end
 				v.Frames = v.Frames + 1
-				v.Secs = math.floor((v.Frames/100)+1)
+				v.Secs = math.floor((v.Frames/80)+1)
 			end
 		end
 	end
@@ -840,7 +840,7 @@ timer.Create("WRBot",1/100,0,function()
 			bot:SetRenderAngles(Angle(tonumber(sp4[1]),tonumber(sp4[2]),tonumber(sp4[3])))
 		end
 		wrframes = wrframes + 1
-		wrsecs = math.floor((wrframes/120)+1)
+		wrsecs = math.floor((wrframes/80)+1)
 	end
 	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1 && #player.GetAll() != 0) then
 		GAMEMODE:SpawnBot()
