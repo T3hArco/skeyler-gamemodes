@@ -627,7 +627,7 @@ end)
 
 hook.Add("Think","ACAreas",function()
 	for _,p in pairs(player.GetAll()) do
-		if(p:IsBot()) then 
+		if(p:IsBot() && GAMEMODE.WRBot && p == GAMEMODE.WRBot) then 
 			if(p:GetMoveType() == 2) then
 				p:SetMoveType(0)
 			end
@@ -638,6 +638,9 @@ hook.Add("Think","ACAreas",function()
 				p:ChatPrint(v[3])
 			end
 		end
+	end
+	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1 && #player.GetAll() != 0) then
+		GAMEMODE:SpawnBot()
 	end
 end) --seperate think hooks = more organised and no extra cost in proccessing afaik
 
@@ -696,75 +699,75 @@ hook.Add("SetupMove","LJStats",function(p,data)
 	end
 end)
 
+--at the minute wr secs are no "real" indication of time just a number to split up frames into to make storing them easier or someshit lol.
+
 local wrframes = 1
 local wrsecs = 1
-timer.Create("WRBot",1/80,0,function()
-	for k,v in pairs(player.GetAll()) do
-		if(v:Team() == TEAM_BHOP) then
-			if(v:IsTimerRunning() && !v.Winner && v.Secs && v.Frames) then
-				if(v.Frames == 0) then
-					v.Frames = 1
-					v.Q1 = {}
-					v.Q2 = {}
-					v.Q3 = {}
-					v.Q4 = {}
-				end
-				if(v.Secs/60<30) then
-					local start = 0
-					local f = v.Secs - start
-					if(!v.Q1[f]) then
-						v.Q1[f] = ""
-					end
-					local p = v:GetPos()
-					local ang = v:GetAngles()
-					local aim = v:EyeAngles()
-					local r = v:GetRenderAngles()
-					local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-					v.Q1[f] = v.Q1[f]..addon
-				elseif(v.Secs/60<60) then
-					local start = 29*60
-					local f = v.Secs - start
-					if(!v.Q2[f]) then
-						v.Q2[f] = ""
-					end
-					local p = v:GetPos()
-					local ang = v:GetAngles()
-					local aim = v:EyeAngles()
-					local r = v:GetRenderAngles()
-					local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-					v.Q2[f] = v.Q2[f]..addon
-				elseif(v.Secs/60<90) then
-					local start = 59*60
-					local f = v.Secs - start
-					if(!v.Q3[f]) then
-						v.Q3[f] = ""
-					end
-					local p = v:GetPos()
-					local ang = v:GetAngles()
-					local aim = v:EyeAngles()
-					local r = v:GetRenderAngles()
-					local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-					v.Q3[f] = v.Q3[f]..addon
-				elseif(v.Secs/60<=120) then
-					local start = 89*60
-					local f = v.Secs - start
-					if(!v.Q4[f]) then
-						v.Q4[f] = ""
-					end
-					local p = v:GetPos()
-					local ang = v:GetAngles()
-					local aim = v:EyeAngles()
-					local r = v:GetRenderAngles()
-					local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
-					v.Q4[f] = v.Q4[f]..addon
-				end
-				v.Frames = v.Frames + 1
-				v.Secs = math.floor((v.Frames/80)+1)
+hook.Add("SetupMove","WRBot",function(v,data) 
+	if(v != GAMEMODE.WRBot && v:Team() == TEAM_BHOP) then
+		if(v:IsTimerRunning() && !v.Winner && v.Secs && v.Frames) then
+			if(v.Frames == 0) then
+				v.Frames = 1
+				v.Q1 = {}
+				v.Q2 = {}
+				v.Q3 = {}
+				v.Q4 = {}
 			end
+			if(v.Secs/60<30) then
+				local start = 0
+				local f = v.Secs - start
+				if(!v.Q1[f]) then
+					v.Q1[f] = ""
+				end
+				local p = v:GetPos()
+				local ang = v:GetAngles()
+				local aim = v:EyeAngles()
+				local r = v:GetRenderAngles()
+				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
+				v.Q1[f] = v.Q1[f]..addon
+			elseif(v.Secs/60<60) then
+				local start = 29*60
+				local f = v.Secs - start
+				if(!v.Q2[f]) then
+					v.Q2[f] = ""
+				end
+				local p = v:GetPos()
+				local ang = v:GetAngles()
+				local aim = v:EyeAngles()
+				local r = v:GetRenderAngles()
+				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
+				v.Q2[f] = v.Q2[f]..addon
+			elseif(v.Secs/60<90) then
+				local start = 59*60
+				local f = v.Secs - start
+				if(!v.Q3[f]) then
+					v.Q3[f] = ""
+				end
+				local p = v:GetPos()
+				local ang = v:GetAngles()
+				local aim = v:EyeAngles()
+				local r = v:GetRenderAngles()
+				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
+				v.Q3[f] = v.Q3[f]..addon
+			elseif(v.Secs/60<=120) then
+				local start = 89*60
+				local f = v.Secs - start
+				if(!v.Q4[f]) then
+					v.Q4[f] = ""
+				end
+				local p = v:GetPos()
+				local ang = v:GetAngles()
+				local aim = v:EyeAngles()
+				local r = v:GetRenderAngles()
+				local addon = p.x..","..p.y..","..p.z..":"..ang.p..","..ang.y..","..ang.r..":"..aim.p..","..aim.y..","..aim.r..":"..r.p..","..r.y..","..r.r..";"
+				v.Q4[f] = v.Q4[f]..addon
+			end
+			v.Frames = v.Frames + 1
+			v.Secs = math.floor((v.Frames/80)+1)
 		end
 	end
-	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1) then
-		local bot = GAMEMODE.WRBot
+	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1 && v:IsBot() && v == GAMEMODE.WRBot) then
+		local bot = v
 		if(GAMEMODE.NewWR) then
 			GAMEMODE.NewWR = false
 			wrframes = 1
@@ -841,8 +844,5 @@ timer.Create("WRBot",1/80,0,function()
 		end
 		wrframes = wrframes + 1
 		wrsecs = math.floor((wrframes/80)+1)
-	end
-	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WR1 && #player.GetAll() != 0) then
-		GAMEMODE:SpawnBot()
 	end
 end)
