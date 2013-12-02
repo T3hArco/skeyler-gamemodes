@@ -421,7 +421,6 @@ function GM:SpawnBot()
 					v:SetMoveType(0)
 					v:SetCollisionGroup(10)
 				end
-				self:BotAdvance(true)
 			end
 		end
 	end)
@@ -595,6 +594,7 @@ hook.Add("SetupMove","LJStats",function(p,data)
 end)
 
 local wrframes = 1
+local lastftime = 0
 timer.Create("WRBot",1/60,0,function()
         for k,v in pairs(player.GetAll()) do
             if(v:Team() == TEAM_BHOP) then
@@ -618,6 +618,7 @@ timer.Create("WRBot",1/60,0,function()
 			if(GAMEMODE.NewWR) then
 				GAMEMODE.NewWR = false
 				wrframes = 1
+				lastftime = 0
 			end
 			if wrframes >= GAMEMODE.WRFrames then
 				wrframes = 1
@@ -625,5 +626,25 @@ timer.Create("WRBot",1/60,0,function()
 			bot:SetPos(GAMEMODE.WRFr[1][wrframes])
 			bot:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
 			wrframes = wrframes + 1
+			lastftime = CurTime()
         end
+end)
+
+hook.Add("Think","BotFrames",function()
+	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && lastftime != 0 && wrframes < GAMEMODE.WRFrames && lastftime != CurTime()) then
+		local bot = GAMEMODE.WRBot
+		local thisf = GAMEMODE.WRFr[1][wrframes]
+		local nextf = GAMEMODE.WRFr[1][wrframes+1]
+		local add = nextf-thisf
+		thisf = thisf + (add*(CurTime()-lastftime)*1/120)
+		bot:SetPos(thisf)
+		thisf = nil
+		nextf = nil
+		add = nil
+		thisf = GAMEMODE.WRFr[2][wrframes]
+		nextf = GAMEMODE.WRFr[2][wrframes+1]
+		add = nextf-thisf
+		thisf = thisf + (add*(CurTime()-lastftime)*1/120)
+		bot:SetEyeAngles(thisf)
+	end
 end)
