@@ -104,7 +104,7 @@ ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 		local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
 		Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
 		
-		model:SetBodygroup(1,p:GetBodyGroup(1))
+		model:SetBodygroup(1,p:GetBodygroup(1))
 		
 		local NewAng, FinalAng = Ang, Ang
 		NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 

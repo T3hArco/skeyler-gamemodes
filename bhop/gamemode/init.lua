@@ -295,7 +295,7 @@ function GM:PlayerSpawn(ply)
 		end
 	else 
 		ply:SetTeam(TEAM_SPECTATOR)
-		ply:Spectate(OBS_MODE_ROAMING)
+		ply:Spectate(ply.SpecMode)
 	end 
 end 
 

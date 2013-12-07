@@ -46,6 +46,8 @@ end
 function GM:PlayerInitialSpawn(ply) 
 	ply:ProfileLoad() 
 
+	ply.SpecMode = OBS_MODE_CHASE 
+
 	ply:SendLua("ResolutionCheck()") 
 end 
 
@@ -81,6 +83,39 @@ function GM:PlayerSpawn(ply)
 		hands:Spawn()
 	end
 end 
+
+function GM:GetPlayers(b_alive, filter)  
+	local players = player.GetAll() 
+	local Return = {} 
+	for k,v in pairs(players) do 
+		if v:Alive() and b_alive then 
+			if (filter and !table.HasValue(filter, v)) or !filter then 
+				table.insert(Return, v) 
+			end 
+		else 
+			if filter and !table.HasValue(filter, v) then 
+				table.insert(Return, v) 
+			end 
+		end 
+	end 
+	return Return 
+end 
+
+function GM:SpectateNext(ply) 
+
+end 
+
+function GM:SpectatePrev(ply) 
+
+end 
+
+hook.Add("KeyPress", "SpectateModeChange", function(ply, key) 
+	if ply:Team() == TEAM_SPEC then 
+		if key == IN_ATTACK then 
+
+		end 
+	end 
+end )
 
 function GM:PlayerDisconnected(ply) 
 	self:ProfileSave() 

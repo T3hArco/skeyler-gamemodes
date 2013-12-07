@@ -3,7 +3,8 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money"}
+local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money"} 
+local update_filter = {"id", "steamId", "rank"}
 
 SS.Profiles = {} 
 
@@ -96,6 +97,7 @@ function PLAYER_META:ProfileSave()
 	local Query = "UPDATE users SET " 
 	local first = true 
 	for k,v in pairs(profile) do 
+		if table.HasValue(update_filter, k) then continue end -- We don't want to automatically update these.
 		if first then 
 			Query = Query..k.."='"..v.."'" 
 			first = false 
