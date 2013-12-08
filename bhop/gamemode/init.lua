@@ -174,11 +174,11 @@ function GM:PlayerSay( ply, text, public )
 end
 
 function GM:LoadRecs()
-	DB_Query("SELECT level,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."'",
+	DB_Query("SELECT name,level,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1'",
 	function(data)
 		if(data) then
 			for _,v in pairs(data) do
-				table.insert(self.RecordTable[tonumber(v["level"])][tonumber(v["style"])],{["steamid"] = v["steamid"],["time"] = v["time"]})
+				table.insert(self.RecordTable[tonumber(v["level"])][tonumber(v["style"])],{["name"] = v["name"],["steamid"] = v["steamid"],["time"] = v["time"]})
 			end
 		end
 	end)
@@ -434,10 +434,12 @@ function GM:PlayerWon(ply)
 	if(self.CurrentID && (tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0 ||t < tonumber(ply.PBS[ply.LevelData.id][ply.Style]))) then
 		ply:ChatPrint("You have set a new Personal Best of "..FormatTime(t).."!")
 		local steamid = ply:SteamID()
+		local name = ply:Nick()
 		if(tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0) then
-			DB_Query("INSERT INTO bh_records (mapid,level,style,date,time,steamid) VALUES('"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."')")
+			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 		else
-			DB_Query("UPDATE bh_records SET time='"..t.."', date='"..os.time().."' WHERE style='"..ply.Style.."' AND level='"..ply.LevelData.id.."' AND steamid='"..string.sub(steamid, 7).."'")
+			DB_Query("UPDATE bh_records SET pb='0' WHERE style='"..ply.Style.."' AND level='"..ply.LevelData.id.."' AND steamid='"..string.sub(steamid, 7).."' AND pb='1'")
+			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
 		end
 		ply.PBS[ply.LevelData.id][ply.Style] = t
 		ply:SetPB(t)
@@ -468,15 +470,18 @@ function GM:PlayerWon(ply)
 			self:SpawnBot()
 		end
 		table.remove(self.RecordTable[ply.LevelData.id][ply.Style],k)
-		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],newpos,{["steamid"] = string.sub(steamid, 7), ["time"] = t})
+		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],newpos,{["name"] = name, ["steamid"] = string.sub(steamid, 7), ["time"] = t})
 		net.Start("ModifyRT")
 		net.WriteString(steamid)
+		net.WriteString(name)
 		net.WriteInt(4,ply.LevelData.id)
 		net.WriteInt(4,ply.Style)
 		net.WriteInt(128,rem)
 		net.WriteInt(128,newpos)
 		net.WriteInt(128,t)
 		net.Broadcast()
+	else
+		DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
 	end
 	print(ply.Payout) 
 	ply:GiveMoney(ply.Payout)
@@ -544,17 +549,6 @@ hook.Add("SetupMove","LJStats",function(p,data)
 		if(!p.strafe) then
 			p.strafe = {}
 		end
-		p.curangle = p:EyeAngles()
-		if(p.curangle.y < 0) then
-			p.curangle.y = p.curangle.y + 360
-		end
-		if(!p.lastangle) then
-			p.lastangle = p.curangle.y
-		end
-		if(p.curangle.y == p.lastangle) then
-			dontrun = true
-		end
-		p.lastangle = p:EyeAngles()
 
 		if(p.strafenum && p:KeyDown(IN_MOVELEFT) && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
 			p.strafingright = false
@@ -580,7 +574,7 @@ hook.Add("SetupMove","LJStats",function(p,data)
 			p.speed = data:GetVelocity():Length2D()
 			if(p.lastspeed) then
 				local g = p.speed - p.lastspeed
-				if(g > 0.5) then
+				if(g > 0) then
 					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
 				else
 					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
