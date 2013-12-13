@@ -6,6 +6,7 @@
 
 include("shared.lua")
 include("sv_config.lua")
+include("sv_jumpstats.lua")
 include("sh_levels.lua") 
 include("sh_styles.lua") 
 include("sh_maps.lua") 
@@ -487,43 +488,6 @@ function GM:PlayerWon(ply)
 	ply:GiveMoney(ply.Payout)
 end 
 
-hook.Add("OnPlayerHitGround","StrafeySyncy",function(p,bool)
-	local good = 0
-	local bad = 0
-	local sync = 0
-	local totalsync = {}
-	
-	for k,v in pairs(p.strafe or {}) do
-		if(type(v) == "table") then
-			totalsync[k] = (v[1]*100)/(v[1]+v[2]) --to be used later for stats
-			good = good + v[1]
-			bad = bad + v[2]
-		end
-	end
-	
-	local straf = p.strafenum
-	timer.Simple(0.2,function()
-		if(straf && straf != 0 && good && bad && totalsync && p && p:IsValid() && p:IsOnGround()) then --checkzooors
-			sync = (good*100)/(good+bad)
-		
-			for k,v in pairs(totalsync) do
-				p:PrintMessage(HUD_PRINTCONSOLE,"Strafe "..k..": "..(math.Round(v*100)/100).."% sync.")
-			end
-
-			p:PrintMessage(HUD_PRINTCONSOLE,"You got "..(math.Round(sync*100)/100).."% sync with "..straf.." strafes.")
-		end
-	end)
-
-	p.strafe = {}
-	p.strafenum = 0
-	p.strafingleft = false
-	p.strafingright = false
-	p.turningleft = false
-	p.lastangle = nil
-	p.speed = nil
-	p.lastspeed = nil
-end)
-
 hook.Add("Think","ACAreas",function()
 	for _,p in pairs(player.GetAll()) do
 		if(p:IsBot() && GAMEMODE.WRBot && p == GAMEMODE.WRBot) then 
@@ -542,50 +506,6 @@ hook.Add("Think","ACAreas",function()
 		GAMEMODE:SpawnBot()
 	end
 end) --seperate think hooks = more organised and no extra cost in proccessing afaik
-
-hook.Add("SetupMove","LJStats",function(p,data)
-	if(!p:IsOnGround()) then
-		local dontrun = false
-		if(!p.strafe) then
-			p.strafe = {}
-		end
-
-		if(p.strafenum && p:KeyDown(IN_MOVELEFT) && (p.strafingright || (!p.strafingright && !p.strafingleft))) then
-			p.strafingright = false
-			p.strafingleft = true
-			p.strafenum = p.strafenum + 1
-			p.strafe[p.strafenum] = {}
-			p.strafe[p.strafenum][1] = 0
-			p.strafe[p.strafenum][2] = 0
-		elseif(p.strafenum && p:KeyDown(IN_MOVERIGHT) && (p.strafingleft || (!p.strafingright && !p.strafingleft))) then
-			p.strafingright = true
-			p.strafingleft = false
-			p.strafenum = p.strafenum + 1
-			p.strafe[p.strafenum] = {}
-			p.strafe[p.strafenum][1] = 0
-			p.strafe[p.strafenum][2] = 0
-		elseif(p.strafenum && p.strafenum == 0) then
-			dontrun = true
-		end
-		if(!p.strafenum) then
-			dontrun = true
-		end
-		if(!dontrun) then
-			p.speed = data:GetVelocity():Length2D()
-			if(p.lastspeed) then
-				local g = p.speed - p.lastspeed
-				if(g > 0) then
-					p.strafe[p.strafenum][1] = p.strafe[p.strafenum][1] + 1
-				else
-					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
-				end
-			end
-			p.lastspeed = p.speed
-		elseif(p.strafenum && p.strafenum != 0) then
-			p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
-		end
-	end
-end)
 
 local wrframes = 1
 local lastftime = 0
