@@ -428,6 +428,7 @@ function GM:SpawnBot()
 end
 
 function GM:PlayerWon(ply) 
+	if(ply:IsBot()) then return end
 	ply:EndTimer()
 	ply.Winner = true 
 	ply:ChatPrintAll(ply:Name().." has won in ".. FormatTime(ply:GetTotalTime(true)))
