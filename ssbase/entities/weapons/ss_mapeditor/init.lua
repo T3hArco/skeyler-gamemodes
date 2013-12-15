@@ -39,7 +39,7 @@ hook.Add("PlayerSay","addmap",function(ply,text,pub)
 		if(string.lower(text) == "!setspawn") then
 			local a = ply:GetAngles()
 			local p = ply:GetPos()
-			ply.StP = {Vector(math.Round(o.x),math.Round(o.y),math.Round(o.z)),Angle(0,math.Round(a.y/90)*90,0)}
+			ply.StP = {Vector(math.Round(p.x),math.Round(p.y),math.Round(p.z)),Angle(0,math.Round(a.y/90)*90,0)}
 			return
 		elseif(string.sub(string.lower(text),1,8) == "!addmap ") then
 			local args = string.Explode(" ",text)
