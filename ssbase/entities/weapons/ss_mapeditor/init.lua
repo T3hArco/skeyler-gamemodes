@@ -40,35 +40,37 @@ hook.Add("PlayerSay","addmap",function(ply,text,pub)
 			local a = ply:GetAngles()
 			local p = ply:GetPos()
 			ply.StP = {Vector(math.Round(p.x),math.Round(p.y),math.Round(p.z)),Angle(0,math.Round(a.y/90)*90,0)}
-			return
+			ply:ChatPrint("Spawn Point Set!")
+			return ""
 		elseif(string.sub(string.lower(text),1,8) == "!addmap ") then
 			local args = string.Explode(" ",text)
 			table.remove(args,1)
 			if(!args[1] || tonumber(args[1]) == 0) then
 				ply:ChatPrint("Invalid Arguments!")
-				return
+				return ""
 			end
 			if(args[2]) then
 				ply:ChatPrint("Wrong number of arguments!")
-				return
+				return ""
 			end
 			if(!ply.SZ || !ply.EZ) then
 				ply:ChatPrint("No defined Start or End Zones")
-				return
+				return ""
 			end
 			if(!ply.StP) then
 				ply:ChatPrint("No defined Spawn Point!")
-				return
+				return ""
 			end
 			SS:AddMap(game.GetMap(),args[1],ply.StP[1],ply.StP[2],ply.SZ[1],ply.SZ[2],ply.EZ[1],ply.EZ[2])
 			ply.SZ = nil
 			ply.EZ = nil
 			ply.StP = nil
 			GAMEMODE:AreaSetup()
-			return
+			ply:ChatPrint("Map Setup!")
+			return ""
 		elseif(string.lower(text) == "!addmap") then
 			ply:ChatPrint("Invalid Arguments!")
-			return
+			return ""
 		end
 	end
 end)
