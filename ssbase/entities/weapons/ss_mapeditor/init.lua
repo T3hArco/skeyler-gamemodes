@@ -10,7 +10,7 @@ SWEP.Weight       = 5
 SWEP.AutoSwitchTo    = false
 SWEP.AutoSwitchFrom     = false
 
-net.Recieve("StartPosition",function(len,ply)
+net.Receive("StartPosition",function(len,ply)
 	local v1,v2 = Vector(0,0,0),Vector(0,0,0)
 	local ov1,ov2 = net.ReadVector(),net.ReadVector()
 	v1.x = math.min(ov1.x,ov2.x)
@@ -22,7 +22,7 @@ net.Recieve("StartPosition",function(len,ply)
 	ply.SZ = {v1,v2}
 end)
 
-net.Recieve("EndPosition",function(len,ply)
+net.Receive("EndPosition",function(len,ply)
 	local v1,v2 = Vector(0,0,0),Vector(0,0,0)
 	local ov1,ov2 = net.ReadVector(),net.ReadVector()
 	v1.x = math.Round(math.min(ov1.x,ov2.x))
