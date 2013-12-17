@@ -347,6 +347,14 @@ function SWEP:DrawHUD()
 
 end
 
+function SWEP:TranslateFOV(fov)
+	if(CLIENT && LocalPlayer():IsBot()) then
+		return 90
+	else
+		return fov
+	end
+end
+
 /*---------------------------------------------------------
 	onRestore
 	Loaded a saved game (or changelevel)

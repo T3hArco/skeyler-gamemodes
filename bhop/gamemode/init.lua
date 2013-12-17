@@ -509,104 +509,34 @@ hook.Add("Think","ACAreas",function()
 end) --seperate think hooks = more organised and no extra cost in proccessing afaik
 
 local wrframes = 1
-local lastftime = 0
-timer.Create("WRBot",1/30,0,function()
-        for k,v in pairs(player.GetAll()) do
-            if(v:Team() == TEAM_BHOP) then
-                if(!v.InStart && v:IsTimerRunning() && !v.Winner && v.Frames) then
-                    if(v.Frames == 0) then
-						v.Frames = 1
-						v.StoreFrames = {}
-						v.StoreFrames[1] = {}
-						v.StoreFrames[2] = {}
-						v.StoreFrames[3] = {}
-						v.StoreFrames[4] = {}
-					end
-					if(v.StoreFrames) then
-						v.StoreFrames[1][v.Frames] = v:GetPos()
-						v.StoreFrames[2][v.Frames] = v:GetAngles()
-						v.StoreFrames[3][v.Frames] = v:EyeAngles()
-						v.StoreFrames[4][v.Frames] = v:GetRenderAngles()
-						v.Frames = v.Frames + 1
-					end
-				end
-			end
+
+hook.Add("SetupMove","wrbot",function(ply,data)
+	if(ply == GAMEMODE.WRBot) then
+		if(GAMEMODE.NewWR) then
+			GAMEMODE.NewWR = false
+			wrframes = 1
 		end
-		if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr) then
-           	local bot = GAMEMODE.WRBot
-			if(GAMEMODE.NewWR) then
-				GAMEMODE.NewWR = false
-				wrframes = 1
-				lastftime = 0
-			end
-			if wrframes >= GAMEMODE.WRFrames then
-				wrframes = 1
-			end
-			bot:SetPos(GAMEMODE.WRFr[1][wrframes])
-			bot:SetAngles(GAMEMODE.WRFr[2][wrframes])
-			bot:SetEyeAngles(GAMEMODE.WRFr[3][wrframes])
-			bot:SetRenderAngles(GAMEMODE.WRFr[4][wrframes])
-			wrframes = wrframes + 1
-			lastftime = CurTime()
-        end
-end)
-
-local function GetAdd(add)
-	if(add.p > 180) then
-		add.p = -1*(add.p-360)
-	end
-	if(add.p < -180) then
-		add.p = -1*(add.p+360)
-	end
-	add.p = add.p*(CurTime()-lastftime)*1/30
-	if(add.y > 180) then
-		add.y = -1*(add.y-360)
-	end
-	if(add.y < -180) then
-		add.y = -1*(add.y+360)
-	end
-	add.y = add.y*(CurTime()-lastftime)*1/30
-	if(add.r > 180) then
-		add.r = -1*(add.r-360)
-	end
-	if(add.r < -180) then
-		add.r = -1*(add.r+360)
-	end
-	add.r = add.r*(CurTime()-lastftime)*1/30
-	return Angle(add.p,add.y,add.r)
-end
-
-hook.Add("Think","BotFrames",function()
-	if(GAMEMODE.WRBot && GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && lastftime != 0 && wrframes < GAMEMODE.WRFrames && lastftime != CurTime()) then
-		local bot = GAMEMODE.WRBot
-		local thisf = GAMEMODE.WRFr[1][wrframes]
-		local nextf = GAMEMODE.WRFr[1][wrframes+1]
-		local add = nextf-thisf
-		thisf = thisf + (add*(CurTime()-lastftime)*1/30)
-		bot:SetPos(thisf)
-		thisf = nil
-		nextf = nil
-		add = nil
-		thisf = GAMEMODE.WRFr[2][wrframes]
-		nextf = GAMEMODE.WRFr[2][wrframes+1]
-		add = nextf-thisf
-		thisf = thisf + GetAdd(add)
-		bot:SetAngles(thisf)
-		thisf = nil
-		nextf = nil
-		add = nil
-		thisf = GAMEMODE.WRFr[3][wrframes]
-		nextf = GAMEMODE.WRFr[3][wrframes+1]
-		add = nextf-thisf
-		thisf = thisf + GetAdd(add)
-		bot:SetEyeAngles(thisf)
-		thisf = nil
-		nextf = nil
-		add = nil
-		thisf = GAMEMODE.WRFr[4][wrframes]
-		nextf = GAMEMODE.WRFr[4][wrframes+1]
-		add = nextf-thisf
-		thisf = thisf + GetAdd(add)
-		bot:SetRenderAngles(thisf)
+		if wrframes >= GAMEMODE.WRFrames then
+			wrframes = 1
+		end
+		data:SetOrigin(GAMEMODE.WRFr[1][wrframes])
+		ply:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
+		if(GAMEMODE.WRFr[3][wrframes]>0) then
+			data:SetButtons(IN_ATTACK)
+		end
+		wrframes = wrframes + 1
+	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && ply.Frames) then
+		if(ply.Frames == 0) then
+			ply.Frames = 1
+			ply.StoreFrames = {}
+			ply.StoreFrames[1] = {}
+			ply.StoreFrames[2] = {}
+			ply.StoreFrames[3] = {}
+		end
+		ply.StoreFrames[1][ply.Frames] = data:GetOrigin()
+		ply.StoreFrames[2][ply.Frames] = ply:EyeAngles()
+		ply.StoreFrames[3][wrframes] = bit.band(data:GetButtons(),IN_ATTACK)
+		
+		ply.Frames = ply.Frames + 1
 	end
 end)
