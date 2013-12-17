@@ -1,3 +1,5 @@
+util.AddNetworkString("LJStats")
+
 local JUMP_LJ = 1
 local JUMP_DROP = 2
 local JUMP_UP = 3
@@ -238,13 +240,16 @@ function OnLand(p,jpos)
 			if((jt == JUMP_WJ || dj) && straf && straf != 0 && dist && dist > jumpdist[jt] && jt && validlj && good && bad && totalstats) then --checkzooors
 				sync = (good*100)/(good+bad)
 				
-				p:PrintMessage(HUD_PRINTCONSOLE,jumptypes[jt].." Distance "..(math.Round(dist*100)/100).." units.")
-		
+				net.Start("LJStats")
+				net.WriteString(jumptypes[jt]) --TITLE
+				net.WriteInt(32,dist) --DISTANCE
+				net.WriteInt(32,#totalstats["sync"])
 				for k,v in pairs(totalstats["sync"]) do
-					p:PrintMessage(HUD_PRINTCONSOLE,"Strafe "..k..": "..(math.Round(v*100)/100).."% sync.")
+					net.WriteInt(16,v) --SYNC
+					net.WriteInt(16,totalstats["speed"]) --SPEED
 				end
-
-				p:PrintMessage(HUD_PRINTCONSOLE,"You got "..(math.Round(sync*100)/100).."% sync with "..straf.." strafes.")
+				net.WriteInt(16,sync) --TOTAL/OVERALL SYNC
+				net.Send(p)
 			end
 		end
 	end)
