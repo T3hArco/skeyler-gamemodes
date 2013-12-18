@@ -25,7 +25,7 @@ end
 -- Called on spawn to give the player their default loadout
 --
 function PLAYER:Loadout()
-	if(self.Player():IsBot()) then
+	if(self.Player:IsBot()) then
 		self.Player:Give("weapon_crowbar_fov") 
 	else
 		self.Player:Give("weapon_crowbar") 

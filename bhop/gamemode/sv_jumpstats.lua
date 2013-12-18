@@ -243,7 +243,7 @@ function OnLand(p,jpos)
 				net.Start("LJStats")
 				net.WriteString(jumptypes[jt]) --TITLE
 				net.WriteInt(32,dist) --DISTANCE
-				net.WriteTable(totalstats["strafe"]) --table o strafe values
+				net.WriteTable(totalstats["sync"]) --table o sync values
 				net.WriteTable(totalstats["speed"]) --table o speed values
 				net.WriteInt(16,sync) --TOTAL/OVERALL SYNC
 				net.Send(p)

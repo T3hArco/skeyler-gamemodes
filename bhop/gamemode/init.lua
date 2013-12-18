@@ -521,9 +521,7 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		end
 		data:SetOrigin(GAMEMODE.WRFr[1][wrframes])
 		ply:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
-		if(GAMEMODE.WRFr[3][wrframes]>0) then
-			data:SetButtons(IN_ATTACK)
-		end
+
 		wrframes = wrframes + 1
 	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && ply.Frames) then
 		if(ply.Frames == 0) then
@@ -535,7 +533,6 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		end
 		ply.StoreFrames[1][ply.Frames] = data:GetOrigin()
 		ply.StoreFrames[2][ply.Frames] = ply:EyeAngles()
-		ply.StoreFrames[3][wrframes] = bit.band(data:GetButtons(),IN_ATTACK)
 		
 		ply.Frames = ply.Frames + 1
 	end
