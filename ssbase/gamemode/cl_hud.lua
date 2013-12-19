@@ -25,6 +25,7 @@ surface.CreateFont("HUD_Timer", {font="Century Gothic", size=40, weight=1000})
 surface.CreateFont("HUD_Timer_Small", {font="Century Gothic", size=24, weight=1000}) 
 
 surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550}) 
+surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=23, weight=530}) 
 
 
 HUD_LEFT = Material("skeyler/hud_box_left.png") 
@@ -260,3 +261,48 @@ function GM:HUDPaint()
 	surface.SetTextPos(w-95-tw/2, h-60-th/2) 
 	surface.DrawText(Text) 
 end 
+
+function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originally in an example code I'm ready to tweak later
+ 
+	if !ply:Alive() then return end
+ 
+	local offset = Vector( 0, 0, 15 )
+	local ang = LocalPlayer():EyeAngles()
+	local pos = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Head1")) + offset + ang:Up()
+ 
+	ang:RotateAroundAxis( ang:Forward(), 90 )
+	ang:RotateAroundAxis( ang:Right(), 90 )
+ 
+ 	local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
+	local a = 0
+	if(d <= 1600) then
+		if((d-800)<0) then
+			a = 50
+		else
+			a = math.Round(math.min(50,((d-800)/800)*50))
+		end
+	end
+	local r = SS.Ranks[ply:GetRank()]
+	local c = Color(r.color.r,r.color.g,r.color.b,a) --so we dont change the actual value of the original color as stupid lua acts like that
+	if(a != 0) then
+		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.27 )
+			surface.SetDrawColor(Color(255,255,255,a))
+			surface.SetFont("PLAYER_TEXT")
+			local nick = string.sub(ply:Nick(),1,16)
+			if(nick != ply:Nick()) then
+				nick = nick.."..."
+			end
+			nick = string.upper(nick)
+			local w,_ = surface.GetTextSize(nick)
+			w = w + 20
+			surface.DrawOutlinedRect(((-1*w)/2)-2,-14,w+4,28)
+			surface.DrawOutlinedRect(((-1*w)/2)-1,-13,w+2,26)
+			surface.DrawOutlinedRect((-1*w)/2,-12,w,24) --preserving transparency unless we turn into material
+			surface.SetDrawColor(c)
+			surface.DrawRect((-1*w)/2,-12,w,24)
+			draw.SimpleText( nick, "PLAYER_TEXT", 0, 0, Color(255,255,255,150), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+		cam.End3D2D()
+	end
+ 
+	self.BaseClass:PostPlayerDraw(ply)
+end

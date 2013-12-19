@@ -14,7 +14,7 @@ SS.AddRank(100, "Owner", Color(64, 64, 64))
 SS.AddRank(50, "Admin", Color(255, 72, 72)) 
 SS.AddRank(20, "Dev", Color(87, 198, 255)) 
 SS.AddRank(1, "VIP", Color(255, 216, 0)) 
-SS.AddRank(0, "Regular", Color(255, 255, 255)) 
+SS.AddRank(0, "Regular", Color(200, 200, 200)) 
 
 function PLAYER_META:IsProfileLoaded() 
 	return self:GetNetworkedBool("ss_profileloaded", false) 
