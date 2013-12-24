@@ -39,11 +39,11 @@ end)
 
 net.Receive("ModifyRT",function()
 	local p = net.ReadString()
+	local n = net.ReadString()
 	local l = net.ReadInt(4)
 	local s = net.ReadInt(4)
-	local r = net.ReadInt(128)
-	local n = net.ReadInt(128)
-	local t = net.ReadInt(128)
+	local r = net.ReadInt(32)
+	local t = net.ReadInt(32)
 	
 	if(!GAMEMODE.RecordTable[l]) then
 		GAMEMODE.RecordTable[l] = {}
@@ -54,7 +54,8 @@ net.Receive("ModifyRT",function()
 	if(r && r != 0 && GAMEMODE.RecordTable[l][s][r]) then
 		table.remove(GAMEMODE.RecordTable[l][s],r)
 	end
-	table.insert(GAMEMODE.RecordTable[l][s],n,{["steamid"] = p,["time"] = t})
+	table.insert(GAMEMODE.RecordTable[l][s],{["name"] = n,["steamid"] = p,["time"] = t})
+	table.SortByMember(self.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
 end)
 
 timer.Create("HullstuffSadface",5,0,function()

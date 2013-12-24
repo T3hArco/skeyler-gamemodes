@@ -25,8 +25,9 @@ surface.CreateFont("HUD_Timer", {font="Century Gothic", size=40, weight=1000})
 surface.CreateFont("HUD_Timer_Small", {font="Century Gothic", size=24, weight=1000}) 
 
 surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550}) 
-surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=23, weight=530}) 
+surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=34, weight=530}) 
 
+PLAYER_MASK = Material("skeyler/names/diagonals.png","noclamp smooth")
 
 HUD_LEFT = Material("skeyler/hud_box_left.png") 
 HUD_CENTER = Material("skeyler/hud_box_center.png") 
@@ -283,10 +284,10 @@ function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originall
 		end
 	end
 	local r = SS.Ranks[ply:GetRank()]
-	local c = Color(r.color.r,r.color.g,r.color.b,a) --so we dont change the actual value of the original color as stupid lua acts like that
+	local c = Color(r.color.r,r.color.g,r.color.b,math.Round(a*0.95)) --so we dont change the actual value of the original color as stupid lua acts like that
 	if(a != 0) then
-		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.27 )
-			surface.SetDrawColor(Color(255,255,255,a))
+		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
+			surface.SetDrawColor(Color(255,255,255,math.Round(a)))
 			surface.SetFont("PLAYER_TEXT")
 			local nick = string.sub(ply:Nick(),1,16)
 			if(nick != ply:Nick()) then
@@ -294,12 +295,15 @@ function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originall
 			end
 			nick = string.upper(nick)
 			local w,_ = surface.GetTextSize(nick)
-			w = w + 20
-			surface.DrawOutlinedRect(((-1*w)/2)-2,-14,w+4,28)
-			surface.DrawOutlinedRect(((-1*w)/2)-1,-13,w+2,26)
-			surface.DrawOutlinedRect((-1*w)/2,-12,w,24) --preserving transparency unless we turn into material
+			w = w + 35
+			--surface.DrawOutlinedRect(((-1*w)/2)-2,-20,w+4,40)
+			surface.DrawOutlinedRect(((-1*w)/2)-1,-19,w+2,38)
+			surface.DrawOutlinedRect((-1*w)/2,-18,w,36) --preserving transparency unless we turn into material
 			surface.SetDrawColor(c)
-			surface.DrawRect((-1*w)/2,-12,w,24)
+			surface.DrawRect((-1*w)/2,-18,w,36)
+			surface.SetMaterial(PLAYER_MASK)
+			surface.SetDrawColor(Color(255,255,255,255))
+			surface.DrawTexturedRectUV((-1*w)/2,-18,w,36, 0, 0, w/2560, 36/640 )
 			draw.SimpleText( nick, "PLAYER_TEXT", 0, 0, Color(255,255,255,150), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 		cam.End3D2D()
 	end

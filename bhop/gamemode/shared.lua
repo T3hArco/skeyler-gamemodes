@@ -18,7 +18,8 @@ GM.HUDShowTimer = true
 
 SS.Alldoors = {
 	"bhop_archives",
-	"bhop_monster_jam"
+	"bhop_monster_jam",
+	"bhop_exzha"
 }
 
 SS.NoHeightReset = {

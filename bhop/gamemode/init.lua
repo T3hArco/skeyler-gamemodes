@@ -1,4 +1,4 @@
----------------------------
+	---------------------------
 --       Bunny Hop       -- 
 -- Created by xAaron113x --
 ---------------------------
@@ -175,7 +175,7 @@ function GM:PlayerSay( ply, text, public )
 end
 
 function GM:LoadRecs()
-	DB_Query("SELECT name,level,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1'",
+	DB_Query("SELECT name,level,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1' ORDER BY time",
 	function(data)
 		if(data) then
 			for _,v in pairs(data) do
@@ -441,25 +441,22 @@ function GM:PlayerWon(ply)
 			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 		else
 			DB_Query("UPDATE bh_records SET pb='0' WHERE style='"..ply.Style.."' AND level='"..ply.LevelData.id.."' AND steamid='"..string.sub(steamid, 7).."' AND pb='1'")
-			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
+			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 		end
 		ply.PBS[ply.LevelData.id][ply.Style] = t
 		ply:SetPB(t)
 	
 		local rem = 0
-		local newpos = nil
 		for k,v in pairs(self.RecordTable[ply.LevelData.id][ply.Style]) do
 			if(v["steamid"] == string.sub(steamid, 7)) then
 				rem = k
 			end
-			if(!newpos && t < tonumber(v["time"])) then
-				newpos = k
-			end
 		end
-		if(!newpos) then
-			newpos = #self.RecordTable[ply.LevelData.id][ply.Style] + 1
-		end
-		if(newpos == 1 && ply.Style == 1 && ply.StoreFrames) then
+		local i = {["name"] = name, ["steamid"] = string.sub(steamid, 7), ["time"] = t}
+		table.remove(self.RecordTable[ply.LevelData.id][ply.Style],k)
+		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],i)
+		table.SortByMember(self.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
+		if(self.RecordTable[ply.LevelData.id][ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && ply.StoreFrames) then
 			self.WRFr = ply.StoreFrames
 			ply.StoreFrames = nil
 			self.WRFrames = #self.WRFr[1]
@@ -471,16 +468,13 @@ function GM:PlayerWon(ply)
 			
 			self:SpawnBot()
 		end
-		table.remove(self.RecordTable[ply.LevelData.id][ply.Style],k)
-		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],newpos,{["name"] = name, ["steamid"] = string.sub(steamid, 7), ["time"] = t})
 		net.Start("ModifyRT")
 		net.WriteString(steamid)
 		net.WriteString(name)
-		net.WriteInt(4,ply.LevelData.id)
-		net.WriteInt(4,ply.Style)
-		net.WriteInt(128,rem)
-		net.WriteInt(128,newpos)
-		net.WriteInt(128,t)
+		net.WriteInt(ply.LevelData.id,4)
+		net.WriteInt(ply.Style,4)
+		net.WriteInt(rem,32)
+		net.WriteInt(t,32)
 		net.Broadcast()
 	else
 		DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
