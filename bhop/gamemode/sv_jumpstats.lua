@@ -26,7 +26,20 @@ hook.Add("PlayerInitialSpawn","LJColEn",function(p)
 	p:SetCustomCollisionCheck(true)
 end)
 
+hook.Add("PlayerSay","ljstats_say",function(p,text,pub)
+	if(string.lower(text) == "!lj") then
+		if(p.ljen) then
+			p.ljen = false
+			p:PrintMessage(HUD_PRINTCHAT,"LJStats Disabled")
+		else
+			p.ljen = true
+			p:PrintMessage(HUD_PRINTCHAT,"LJStats Enabled")
+		end
+	end
+end)
+
 hook.Add("SetupMove","LJStats",function(p,data)
+	if(!p.ljen) then return end
 	local b = data:GetButtons()
 	if(!p:IsOnGround() && p.didjump && !p.inbhop) then
 		if(p:Crouching()) then
@@ -77,7 +90,7 @@ hook.Add("SetupMove","LJStats",function(p,data)
 				else
 					p.strafe[p.strafenum][2] = p.strafe[p.strafenum][2] + 1
 				end
-				p.strafe[p.strafenum][3] = g
+				p.strafe[p.strafenum][3] = p.speed
 				local cp = p.newp
 				local op = p.oldp
 				if(p.lastducking && !p:Crouching()) then
@@ -149,6 +162,7 @@ hook.Add("ShouldCollide","LJWorldCollide",function(ent1,ent2)
 		p = ent2
 		o = ent1
 	end
+	if(!p.ljen) then return end
 	if(p.didjump && o != p.lastent) then --wjs mess this up
 		timer.Simple(1,function()
 			if(!p:IsOnGround() && !p.inbhop && p.didjump) then
@@ -242,10 +256,10 @@ function OnLand(p,jpos)
 				
 				net.Start("LJStats")
 				net.WriteString(jumptypes[jt]) --TITLE
-				net.WriteInt(32,dist) --DISTANCE
+				net.WriteInt(dist,16) --DISTANCE
 				net.WriteTable(totalstats["sync"]) --table o sync values
 				net.WriteTable(totalstats["speed"]) --table o speed values
-				net.WriteInt(16,sync) --TOTAL/OVERALL SYNC
+				net.WriteInt(sync,16) --TOTAL/OVERALL SYNC
 				net.Send(p)
 			end
 		end
