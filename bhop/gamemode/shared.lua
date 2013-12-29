@@ -27,6 +27,10 @@ SS.NoHeightReset = {
 	"bhop_exquisite"
 }
 
+SS.Heightdoors = {
+	"bhop_gnite"
+}
+
 TEAM_BHOP = 1  
 team.SetUp(TEAM_BHOP, "Hoppers", Color(87, 198, 255), false) 
 

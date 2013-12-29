@@ -327,7 +327,7 @@ function GM:InitPostEntity()
 			local mins = v:OBBMins()
 			local maxs = v:OBBMaxs()
 			local h = maxs.z - mins.z
-			if(h > 80 && !table.HasValue(SS.Alldoors,game.GetMap())) then continue end
+			if(h > 80 && !table.HasValue(SS.Alldoors,game.GetMap()) && !table.HasValue(SS.Heightdoors,game.GetMap())) then continue end
 			local tab = ents.FindInBox( v:LocalToWorld(mins)-Vector(0,0,10), v:LocalToWorld(maxs)+Vector(0,0,5) )
 			if(tab) then
 				for _,v2 in pairs(tab) do if(v2 && v2:IsValid() && v2:GetClass() == "trigger_teleport") then tele = v2 end end
@@ -514,16 +514,17 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 			wrframes = 1
 		end
 
-		local d = GAMEMODE.WRFr[1][wrframes]
+		data:SetOrigin(GAMEMODE.WRFr[1][wrframes])
+		ply:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
 		wrframes = wrframes + 1
-		return d
 	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && ply.Frames) then
 		if(ply.Frames == 0) then
 			ply.Frames = 1
 			ply.StoreFrames = {}
 			ply.StoreFrames[1] = {}
 		end
-		ply.StoreFrames[1][ply.Frames] = data
+		ply.StoreFrames[1][ply.Frames] = data:GetOrigin()
+		ply.StoreFrames[2][ply.Frames] = ply:EyeAngles()
 		
 		ply.Frames = ply.Frames + 1
 	end
