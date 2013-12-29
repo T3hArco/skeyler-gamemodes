@@ -134,7 +134,7 @@ end
 concommand.Add("level_select", function(ply, cmd, args) GAMEMODE:LevelSetup(ply, tonumber(args[1])) end)
 
 function GM:ShowTeam(ply) 
-	if ply:Team() != TEAM_BHOP and ply:HasTimer() then -- Just resume if they already played.
+	if ply:Team() != TEAM_BHOP and ply:HasTimer() and self.PSaveData[ply:SteamID()] then -- Just resume if they already played.
 		self:LevelSetup(ply, self.PSaveData[ply:SteamID()].Level)
 	else 
 		ply:ConCommand("open_difficulties") 
@@ -295,8 +295,13 @@ function GM:PlayerSpawn(ply)
 			end
 		end
 	else 
-		ply:SetTeam(TEAM_SPECTATOR)
+		ply:StripWeapons()
 		ply:Spectate(ply.SpecMode)
+		if(!ply.roam) then
+			local players = self:GetPlayers(true,{ply})
+			ply:SpectateEntity(players[ply.SpecID])
+		end
+		ply:Freeze(false)
 	end 
 end 
 

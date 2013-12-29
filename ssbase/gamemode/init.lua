@@ -159,7 +159,7 @@ function GM:ToggleRoam(ply)
 		ply.SpecMode = OBS_MODE_ROAMING
 		ply.roam = true
 	end
-	ply:SetObserverMode(ply.SpecMode)
+	ply:Spectate(ply.SpecMode)
 end
 
 hook.Add("KeyPress", "SpectateModeChange", function(ply, key) 
