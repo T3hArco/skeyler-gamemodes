@@ -55,7 +55,7 @@ net.Receive("ModifyRT",function()
 		table.remove(GAMEMODE.RecordTable[l][s],r)
 	end
 	table.insert(GAMEMODE.RecordTable[l][s],{["name"] = n,["steamid"] = p,["time"] = t})
-	table.SortByMember(self.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
+	table.SortByMember(GAMEMODE.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
 end)
 
 timer.Create("HullstuffSadface",5,0,function()

@@ -47,6 +47,9 @@ function GM:PlayerInitialSpawn(ply)
 	ply:ProfileLoad() 
 
 	ply.SpecMode = OBS_MODE_CHASE 
+	ply.SpecID = 1
+	ply.roam = false
+	ply.chase = true
 
 	ply:SendLua("ResolutionCheck()") 
 end 
@@ -92,8 +95,8 @@ function GM:GetPlayers(b_alive, filter)
 			if (filter and !table.HasValue(filter, v)) or !filter then 
 				table.insert(Return, v) 
 			end 
-		else 
-			if filter and !table.HasValue(filter, v) then 
+		elseif !b_alive then
+			if (filter and !table.HasValue(filter, v)) or !filter then 
 				table.insert(Return, v) 
 			end 
 		end 
@@ -102,20 +105,92 @@ function GM:GetPlayers(b_alive, filter)
 end 
 
 function GM:SpectateNext(ply) 
-
+	local players = self:GetPlayers(true,{ply})
+	if(#players == 1) then
+		if(ply.SpecID != 1) then
+			ply.SpecID = 1
+			ply:SpectateEntity(players[ply.SpecID])
+		end
+		return
+	end
+	ply.SpecID = ply.SpecID + 1
+	if(ply.SpecID>#players)then
+		ply.SpecID = 1
+	end
+	ply:SpectateEntity(players[ply.SpecID])
 end 
 
 function GM:SpectatePrev(ply) 
-
+	local players = self:GetPlayers(true,{ply})
+	if(#players == 1) then
+		if(ply.SpecID != 1) then
+			ply.SpecID = 1
+			ply:SpectateEntity(players[ply.SpecID])
+		end
+		return
+	end
+	ply.SpecID = ply.SpecID - 1
+	if(ply.SpecID<1)then
+		ply.SpecID = #players
+	end
+	ply:SpectateEntity(players[ply.SpecID])
 end 
+
+function GM:ChangeSpecMode(ply)
+	if(ply.chase) then
+		ply.SpecMode = OBS_MODE_IN_EYE
+		ply.chase = false
+	else
+		ply.SpecMode = OBS_MODE_CHASE
+		ply.chase = true
+	end
+	ply:SetObserverMode(ply.SpecMode)
+end
+
+function GM:ToggleRoam(ply)
+	if(ply.roam) then
+		if(ply.chase) then
+			ply.SpecMode = OBS_MODE_CHASE
+		else
+			ply.SpecMode = OBS_MODE_IN_EYE
+		end
+		ply.roam = false
+	else
+		ply.SpecMode = OBS_MODE_ROAMING
+		ply.roam = true
+	end
+	ply:SetObserverMode(ply.SpecMode)
+end
 
 hook.Add("KeyPress", "SpectateModeChange", function(ply, key) 
 	if ply:Team() == TEAM_SPEC then 
-		if key == IN_ATTACK then 
-
-		end 
+		if !ply.roam && key == IN_ATTACK then 
+			GAMEMODE:SpectateNext(ply)
+		elseif !ply.roam && key == IN_ATTACK2 then 
+			GAMEMODE:SpectatePrev(ply)
+		elseif !ply.roam && key == IN_JUMP then 
+			GAMEMODE:ChangeSpecMode(ply)
+		elseif key == IN_RELOAD then 
+			GAMEMODE:ToggleRoam(ply)
+		end
 	end 
 end )
+
+function GM:PlayerSay( ply, text, public )
+	local t = string.lower( text )
+	
+	if(t == "!spec" || t == "!spectate") then
+		if(ply:Team() == TEAM_SPEC) then
+			ply:ChatPrint("You are already a spectator")
+			return ""
+		end
+		ply:SetTeam(TEAM_SPEC)
+		ply:Spawn()
+		return ""
+	end
+	
+	return self.BaseClass:PlayerSay(ply,text,public)
+end
 
 function GM:PlayerDisconnected(ply) 
 	self:ProfileSave() 

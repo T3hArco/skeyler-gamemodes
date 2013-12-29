@@ -19,7 +19,7 @@ GM:AddStyle(STYLE_W, {cl={"moveright","back","moveleft"},sv={IN_MOVERIGHT,IN_BAC
 
 if CLIENT then 
 	hook.Add("PlayerBindPress","CheckIllegalKey",function(ply,bind,pressed)
-		if(ply:GetNWInt("Style",1) != 1) then
+		if(tonumber(ply:GetNWInt("Style",1)) != 1) then
 			local s = GAMEMODE.Styles[ply:GetNWInt("Style",1)]
 			for k,v in pairs(s.blockkeys.cl) do
 				if(string.find(bind,v)) then

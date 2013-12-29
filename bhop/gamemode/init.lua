@@ -522,6 +522,7 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 			ply.Frames = 1
 			ply.StoreFrames = {}
 			ply.StoreFrames[1] = {}
+			ply.StoreFrames[2] = {}
 		end
 		ply.StoreFrames[1][ply.Frames] = data:GetOrigin()
 		ply.StoreFrames[2][ply.Frames] = ply:EyeAngles()

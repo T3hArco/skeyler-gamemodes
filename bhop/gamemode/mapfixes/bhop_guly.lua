@@ -13,7 +13,7 @@ HOOKS["InitPostEntity"] = function()
 		if(v:GetPos() == Vector(543.5, -980, -84)) then
 			v:SetKeyValue("target","level15")
 		end
-		if(table.HasValue(remove,v:GetPos()) then
+		if(table.HasValue(remove,v:GetPos())) then
 			v:Remove()
 		end
 	end
