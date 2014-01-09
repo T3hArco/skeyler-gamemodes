@@ -518,9 +518,12 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		if wrframes >= GAMEMODE.WRFrames then
 			wrframes = 1
 		end
+		
+		local o = Vector(GAMEMODE.WRFr[1][wrframes],GAMEMODE.WRFr[2][wrframes],GAMEMODE.WRFr[3][wrframes])
+		local a = Angle(GAMEMODE.WRFr[4][wrframes],GAMEMODE.WRFr[5][wrframes],0)
 
-		data:SetOrigin(GAMEMODE.WRFr[1][wrframes])
-		ply:SetEyeAngles(GAMEMODE.WRFr[2][wrframes])
+		data:SetOrigin(o)
+		ply:SetEyeAngles(a)
 		wrframes = wrframes + 1
 	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && ply.Frames) then
 		if(ply.Frames == 0) then
@@ -528,9 +531,17 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 			ply.StoreFrames = {}
 			ply.StoreFrames[1] = {}
 			ply.StoreFrames[2] = {}
+			ply.StoreFrames[3] = {}
+			ply.StoreFrames[4] = {}
+			ply.StoreFrames[5] = {}
 		end
-		ply.StoreFrames[1][ply.Frames] = data:GetOrigin()
-		ply.StoreFrames[2][ply.Frames] = ply:EyeAngles()
+		local o = data:GetOrigin()
+		local a = data:GetAngles()
+		ply.StoreFrames[1][ply.Frames] = o.x
+		ply.StoreFrames[2][ply.Frames] = o.y
+		ply.StoreFrames[3][ply.Frames] = o.z
+		ply.StoreFrames[4][ply.Frames] = o.p
+		ply.StoreFrames[5][ply.Frames] = o.y
 		
 		ply.Frames = ply.Frames + 1
 	end
