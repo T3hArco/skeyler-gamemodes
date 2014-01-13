@@ -49,7 +49,11 @@ function FormatTime(Time)
 		end 
 		if k < 3 then Text = Text..":" end 
 	end 
-	Text = Text.."."..Mili
+	if string.len(Mili) < 2 then 
+		Text = Text.."."..Mili.."0" 
+	else 
+		Text = Text.."."..Mili
+	end 
 	return Text 
 end 
 
