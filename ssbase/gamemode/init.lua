@@ -46,6 +46,8 @@ end
 function GM:PlayerInitialSpawn(ply) 
 	ply:ProfileLoad() 
 
+	ply:SetTeam(TEAM_SPEC) 
+
 	ply.SpecMode = OBS_MODE_CHASE 
 	ply.SpecID = 1
 	ply.roam = false
