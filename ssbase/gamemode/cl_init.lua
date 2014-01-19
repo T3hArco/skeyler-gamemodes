@@ -9,6 +9,7 @@ for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do -- Fix this later fagget
 end
 
 include("shared.lua")
+include("sh_library.lua")
 include("sh_profiles.lua") 
 include("sh_store.lua") 
 include("cl_chatbox.lua") 
