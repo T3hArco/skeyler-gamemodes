@@ -71,11 +71,7 @@ SS.Fakenamers = {}
 function PLAYER_META:CheckFake() -- Can improve these but I'll just leave it for now.
 	if SS.Fakenamers[self:SteamID()] and SS.Fakenamers[self:SteamID()].b then
 		local t = SS.Fakenamers[self:SteamID()]
-
-		self:SetNWInt("ss_fakerank", t.id)
-		self:SetNWString("ss_fakename", t.name)
-		self:SetNWBool("ss_bfakename", t.b)
-		self:ChatPrint("[FAKENAME]: "..self:Name().." is now "..t.name..". Fakerank: "..self:GetFakeRankName()..".\n")
+		self:SetFake(t.name, t.id)
 	end
 end
 
