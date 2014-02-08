@@ -9,11 +9,11 @@ function GM:AddStyle(id, blockkeys, cmd, name)
 	GM.Styles[id] = {id=id,blockkeys=blockkeys,cmd=cmd,name=name} 
 end 
 
-STYLE_NORMAL = 1 
+STYLE_CLASSIC = 1 
 STYLE_SW = 2 
 STYLE_W = 3 
 
-GM:AddStyle(STYLE_NORMAL, {cl={},sv={}}, "!normal", "Normal") --erry key
+GM:AddStyle(STYLE_CLASSIC, {cl={},sv={}}, "!classic", "Classic") --erry key
 GM:AddStyle(STYLE_SW, {cl={"moveright","moveleft"},sv={IN_MOVERIGHT,IN_MOVELEFT}}, "!sw", "Sideways") --no W or S
 GM:AddStyle(STYLE_W, {cl={"moveright","back","moveleft"},sv={IN_MOVERIGHT,IN_BACK,IN_MOVELEFT}}, "!w", "W-Only") --no S or A or D
 

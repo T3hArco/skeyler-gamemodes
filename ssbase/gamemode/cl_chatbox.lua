@@ -27,13 +27,13 @@ function chat.AddText(ply, ...)
 	end 
 	for k,v in pairs(plychanges) do 
 		table.insert(t, k+add, team.GetColor(v:Team())) 
-		t[k+1+add] = t[k+1+add]:Name() 
+		t[k+1+add] = t[k+1+add]:Nick() 
 		add=add+1 
 	end 
 
 	local Time = TIMESTAMPS24:GetBool() and os.date("[%H:%M:%S] ") or os.date("[%I:%M:%S] ")
 	AddChatText(Color(255, 255, 255), Time, unpack(t))
-	table.insert(Lines, 1, {info={ply=ply, Alpha=255, StayTime=CurTime()+3, time=Time}, t=t})
+	table.insert(Lines, 1, {info={ply=ply, Alpha=255, StayTime=CurTime()+3, time=Time, fakerank = ply and ply:IsFakenamed() and ply:GetFakeRank()}, t=t})
 end 
 
 hook.Add("HUDPaint", "PaintChatboxLines", function() 
@@ -53,15 +53,31 @@ hook.Add("HUDPaint", "PaintChatboxLines", function()
 				v.info.Alpha = math.Approach(v.info.Alpha, 0, 1) 
 			end 
 
-			if v.info.ply and v.info.ply.GetRank and v.info.ply:GetRank() > 0 then 
-				local Col = v.info.ply:GetRankColor() 
+			if v.info.ply and v.info.ply.GetRank and v.info.ply:GetRank() > 0 and ((v.info.fakerank and v.info.fakerank > 0) or !v.info.fakerank) then 
+				local Col
+				local Text
+
+				local FakeRank = v.info.fakerank
+
+				if FakeRank == 50 then
+					Col = Color(255, 72, 72)
+					Text = "ADMIN"
+				elseif FakeRank == 20 then
+					Col = Color(87, 198, 255)
+					Text = "DEV"
+				elseif FakeRank == 1 then
+					Col = Color(255, 216, 0)
+					Text = "VIP"
+				else
+					Col = v.info.ply:GetRankColor() 
+					Text = string.upper(v.info.ply:GetRankName()) 
+				end
+				
 				surface.SetDrawColor(Col.r, Col.g, Col.b, v.info.Alpha) 
 				surface.SetMaterial(TAG_MAT) 
 				surface.DrawTexturedRect(x-58, y2, 64, 16) 
 				surface.SetDrawColor(255, 255, 255, v.info.Alpha*0.1) 
-				surface.DrawRect(x-58+1, y2+1, 56-2, 7)
-
-				local Text = string.upper(v.info.ply:GetRankName()) 
+				surface.DrawRect(x-58+1, y2+1, 56-2, 7) 
 
 				surface.SetFont("TagFont") 
 				local w, h = surface.GetTextSize(Text) 

@@ -19,6 +19,7 @@ AddCSLuaFile("cl_difficulty_menu.lua")
 AddCSLuaFile("sh_levels.lua") 
 AddCSLuaFile("sh_styles.lua") 
 AddCSLuaFile("sh_viewoffsets.lua") 
+AddCSLuaFile("cl_records.lua") 
 
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
@@ -251,8 +252,10 @@ function GM:PlayerSpawn(ply)
 			if !ply.LevelData then
 				self:LevelSetup(ply,2) --default level
 			end
-		
-			ply:SetPB(tonumber(ply.PBS[ply.LevelData.id][ply.Style]))
+			
+			if ply.PBS and ply.PBS[ply.LevelData.id] and ply.PBS[ply.LevelData.id][ply.Style] then -- We have to make sure it exists.
+				ply:SetPB(tonumber(ply.PBS[ply.LevelData.id][ply.Style])) 
+			end 
 			
 			if ply:HasTimer() and self.PSaveData[ply:SteamID()] then 
 				ply.AreaIgnore = true 

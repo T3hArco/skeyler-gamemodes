@@ -41,7 +41,7 @@ end
 function DB:onConnectionFailed(err) 
 	DB.Fails = DB.Fails + 1 
 	if DB.Fails > 3 then return end 
-	QueryLog("Connection Error:  "..err) 
+	LogQuery("Connection Error:  "..err) 
 	MsgN("[DATABASE] Connection Error:  "..err) 
 	MsgN("[DATABASE] Retrying connection in 60 seconds")
 	timer.Simple(60, function() MsgN("[DATABASE] Retrying connection") self:connect() end) 

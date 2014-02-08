@@ -9,6 +9,7 @@ include("sh_viewoffsets.lua")
 include("player_class/player_bhop.lua")
 include("cl_difficulty_menu.lua")
 include("sh_styles.lua") 
+include("cl_records.lua") 
 
 GM.RecordTable = {}
 

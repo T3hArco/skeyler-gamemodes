@@ -21,13 +21,15 @@ AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
 AddCSLuaFile("cl_chatbox.lua") 
+AddCSLuaFile("sh_library.lua")
 AddCSLuaFile("sh_profiles.lua") 
 AddCSLuaFile("sh_store.lua") 
 AddCSLuaFile("cl_store.lua") 
 -- AddCSLuaFile("vgui/ss_hub_store_icon.lua") 
 include("shared.lua")
 include("sh_profiles.lua") 
-include("sv_database.lua") 
+include("sv_database.lua")
+include("sh_library.lua")  
 include("sh_maps.lua")
 include("sh_store.lua") 
 include("sv_profiles.lua") 
@@ -45,6 +47,9 @@ end
 
 function GM:PlayerInitialSpawn(ply) 
 	ply:ProfileLoad() 
+	ply:CheckFake()
+
+	ply:SetTeam(TEAM_SPEC) 
 
 	ply.SpecMode = OBS_MODE_CHASE 
 	ply.SpecID = 1
@@ -188,7 +193,11 @@ function GM:PlayerSay( ply, text, public )
 		ply:Spawn()
 		return ""
 	end
-	
+
+	if ply:IsSSMuted() then
+		return ""
+	end
+
 	return self.BaseClass:PlayerSay(ply,text,public)
 end
 
