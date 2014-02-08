@@ -540,8 +540,8 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		ply.StoreFrames[1][ply.Frames] = o.x
 		ply.StoreFrames[2][ply.Frames] = o.y
 		ply.StoreFrames[3][ply.Frames] = o.z
-		ply.StoreFrames[4][ply.Frames] = o.p
-		ply.StoreFrames[5][ply.Frames] = o.y
+		ply.StoreFrames[4][ply.Frames] = a.p
+		ply.StoreFrames[5][ply.Frames] = a.y
 		
 		ply.Frames = ply.Frames + 1
 	end
