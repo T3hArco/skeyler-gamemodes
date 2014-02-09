@@ -15,6 +15,7 @@ GM.AllowedList["STEAM_0:0:14340930"]=true -- Arcky
 GM.AllowedList["STEAM_0:0:13707575"]=true -- Stebbzor
 GM.AllowedList["STEAM_0:1:22006069"]=true -- Arco
 GM.AllowedList["STEAM_0:1:14671056"]=true -- Hateful
+GM.AllowedList["STEAM_0:0:8232794"]=true -- Chewgum
 
 GM.AllowedList[""]=true
 
