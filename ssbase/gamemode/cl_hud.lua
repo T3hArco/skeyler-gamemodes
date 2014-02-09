@@ -285,7 +285,7 @@ function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originall
 	end
 	if(a != 0) then
 		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 4, 4, Color(0,0,0,(200/a*255)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255*200)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 		cam.End3D2D()
 	end
