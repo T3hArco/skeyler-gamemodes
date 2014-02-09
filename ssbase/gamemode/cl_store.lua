@@ -14,7 +14,7 @@ local StoreCats = {}
 surface.CreateFont("ss_hub", {font="Arvil Sans", size=65, weight=500}) 
 surface.CreateFont("ss_hub_header", {font="Arvil Sans", size=42, weight=500}) 
 surface.CreateFont("ss_hub_nav", {font="Arial", size=20, weight=800}) 
-surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=28, weight=500, antialias=true}) 
+surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=32, weight=500, antialias=true}) 
 surface.CreateFont("ss_hub_store_buttons", {font="Arial", size=14, weight=700}) 
 surface.CreateFont("ss_hub_store_price", {font="Arial", size=18, weight=1000}) 
 
@@ -207,8 +207,8 @@ local PANEL = {}
 function PANEL:Init() 
 	STORE = self 
 	self.Preview = vgui.Create("ss_hub_store_preview", self)  
-	self.Preview:SetSize(HubWidth*0.367-10, HubWidth*0.367-10) --HubWidth-HubWidth*0.18-HubWidth*0.367-10
-	self.Preview:SetPos(HubWidth*0.18+(HubWidth-HubWidth*0.18-HubWidth*0.367)+5, 60) 
+	self.Preview:SetSize(340-10, 340-10) --HubWidth-HubWidth*0.18-HubWidth*0.367-10
+	self.Preview:SetPos(175+(HubWidth-175-340)+5, 60) 
 
 	-- self.MBodyGroup = vgui.Create("DPanel", self) 
 	-- self.MBodyGroup:SetSize(100, 25) 
@@ -249,13 +249,13 @@ function PANEL:Init()
 
 
 
-	local LastY = 55 
+	local LastY = 80 
 	for k,v in pairs(SS.STORE.Categories) do 
 		StoreCats[v] = {} 
 		local t = StoreCats[v] 
 		t.button = vgui.Create("ss_hub_store_button", self) 
 		t.button:SetCursor( "hand" )
-		t.button:SetSize(HubWidth*0.18, 40) 
+		t.button:SetSize(175, 44) 
 		t.button:SetPos(0, LastY) 
 		t.button:SetTitle(v) 
 		t.button.t = t 
@@ -289,14 +289,6 @@ function PANEL:Init()
 				if v2.Type == "model" then Panel.Model = true end 
 			end 
 		end 
-
-		-- for i=1, 30 do 
-		-- 	local Panel = t.List:Add("ss_hub_store_icon")  
-		-- 	Panel:SetSize(150, 150) 
-		-- 	Panel:SetModel("models/player/breen.mdl") 
-		-- 	Panel.PPanel = t.Panel 
-		-- 	Panel.Price = 1578948
-		-- end 
 	end 
 	self:SetCat(1) 
 end 
@@ -308,8 +300,8 @@ function PANEL:PerformLayout()
 	-- self.MBodyGroup.Value:SetPos(2.5+self.MBodyGroup.BodyGroup:GetWide()+2.5, 2.5) 
 
 	for k,v in pairs(StoreCats) do 
-		v.Panel:SetPos(HubWidth*0.18, 60) 
-		v.Panel:SetSize(HubWidth-HubWidth*0.18-HubWidth*0.367, self:GetTall()-65-30)
+		v.Panel:SetPos(175, 60) 
+		v.Panel:SetSize(HubWidth-175-340, self:GetTall()-65-30)
 
 		v.Panel.VBar:SetSize(17, v.Panel:GetTall()) 
 		v.Panel.VBar:SetPos(v.Panel:GetWide()-v.Panel.VBar:GetWide()-10 , 0)
@@ -325,7 +317,7 @@ end
 
 function PANEL:Paint(w, h) 
 	surface.SetDrawColor(19, 19, 19, 255*0.6)
-	surface.DrawRect(HubWidth*0.18, 55, HubWidth-HubWidth*0.18-HubWidth*0.367, self:GetTall()-55-30)
+	surface.DrawRect(175, 55, HubWidth-175-340, self:GetTall()-55-30)
 end 
 
 function PANEL:SetCat(i) 
@@ -755,7 +747,7 @@ function SS:AddHubTab(name, iconPath, panelName)
 end 
 
 SS:AddHubTab("Store", "skeyler/icons/store.png", "ss_hub_store") 
-SS:AddHubTab("Profile", "skeyler/icons/profile.png", "ss_hub_profile") 
+SS:AddHubTab("Inventory", "skeyler/icons/profile.png", "ss_hub_inventory") 
 SS:AddHubTab("Settings", "skeyler/icons/settings.png", "ss_hub_settings") 
 SS:AddHubTab("Help", "skeyler/icons/help.png", "ss_hub_help") 
 
