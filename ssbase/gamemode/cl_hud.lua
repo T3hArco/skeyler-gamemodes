@@ -25,7 +25,7 @@ surface.CreateFont("HUD_Timer", {font="Century Gothic", size=40, weight=1000})
 surface.CreateFont("HUD_Timer_Small", {font="Century Gothic", size=24, weight=1000}) 
 
 surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550}) 
-surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=34, weight=530}) 
+surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=530}) 
 
 PLAYER_MASK = Material("skeyler/names/diagonals.png","noclamp smooth")
 
@@ -276,16 +276,16 @@ function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originall
  
  	local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
 	local a = 0
-	if(d <= 1400) then
-		if((d-800)<0) then
+	if(d <= 800) then
+		if((d-300)<0) then
 			a = 255
 		else
-			a = math.Round(math.min(255,((600-(d-800))/600)*255))
+			a = math.Round(math.min(255,((500-(d-300))/500)*255))
 		end
 	end
 	if(a != 0) then
 		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 2, 2, Color(0,0,0,(200/a*255)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 4, 4, Color(0,0,0,(200/a*255)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 		cam.End3D2D()
 	end
