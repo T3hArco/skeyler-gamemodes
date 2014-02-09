@@ -278,7 +278,7 @@ function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originall
 	local a = 0
 	if(d <= 1400) then
 		if((d-800)<0) then
-			a = 50
+			a = 255
 		else
 			a = math.Round(math.min(255,((600-(d-800))/600)*255))
 		end
