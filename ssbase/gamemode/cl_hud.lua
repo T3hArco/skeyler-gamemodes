@@ -276,35 +276,17 @@ function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originall
  
  	local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
 	local a = 0
-	if(d <= 1600) then
+	if(d <= 1400) then
 		if((d-800)<0) then
 			a = 50
 		else
-			a = math.Round(math.min(50,((d-800)/800)*50))
+			a = math.Round(math.min(255,((600-(d-800))/600)*255))
 		end
 	end
-	local r = SS.Ranks[ply:GetRank()]
-	local c = Color(r.color.r,r.color.g,r.color.b,math.Round(a*0.95)) --so we dont change the actual value of the original color as stupid lua acts like that
 	if(a != 0) then
 		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-			surface.SetDrawColor(Color(255,255,255,math.Round(a)))
-			surface.SetFont("PLAYER_TEXT")
-			local nick = string.sub(ply:Nick(),1,16)
-			if(nick != ply:Nick()) then
-				nick = nick.."..."
-			end
-			nick = string.upper(nick)
-			local w,_ = surface.GetTextSize(nick)
-			w = w + 35
-			--surface.DrawOutlinedRect(((-1*w)/2)-2,-20,w+4,40)
-			surface.DrawOutlinedRect(((-1*w)/2)-1,-19,w+2,38)
-			surface.DrawOutlinedRect((-1*w)/2,-18,w,36) --preserving transparency unless we turn into material
-			surface.SetDrawColor(c)
-			surface.DrawRect((-1*w)/2,-18,w,36)
-			surface.SetMaterial(PLAYER_MASK)
-			surface.SetDrawColor(Color(255,255,255,255))
-			surface.DrawTexturedRectUV((-1*w)/2,-18,w,36, 0, 0, w/2560, 36/640 )
-			draw.SimpleText( nick, "PLAYER_TEXT", 0, 0, Color(255,255,255,150), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+			draw.SimpleText( nick, "PLAYER_TEXT", 2, 2, Color(0,0,0,(200/a*255)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+			draw.SimpleText( nick, "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 		cam.End3D2D()
 	end
  

@@ -24,6 +24,8 @@ AddCSLuaFile("cl_records.lua")
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
 
+local StoreFrames = {} --local is better
+
 GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 GM.ACAreas = {}
 GM.RecordTable = {}
@@ -465,7 +467,7 @@ function GM:PlayerWon(ply)
 		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],i)
 		table.SortByMember(self.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
 		if(self.RecordTable[ply.LevelData.id][ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && ply.StoreFrames) then
-			self.WRFr = ply.StoreFrames
+			self.WRFr = StoreFrames[ply]
 			ply.StoreFrames = nil
 			self.WRFrames = #self.WRFr[1]
 			self.NewWR = true
@@ -531,20 +533,20 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && ply.Frames) then
 		if(ply.Frames == 0) then
 			ply.Frames = 1
-			ply.StoreFrames = {}
-			ply.StoreFrames[1] = {}
-			ply.StoreFrames[2] = {}
-			ply.StoreFrames[3] = {}
-			ply.StoreFrames[4] = {}
-			ply.StoreFrames[5] = {}
+			StoreFrames[ply] = {}
+			StoreFrames[ply][1] = {}
+			StoreFrames[ply][2] = {}
+			StoreFrames[ply][3] = {}
+			StoreFrames[ply][4] = {}
+			StoreFrames[ply][5] = {}
 		end
 		local o = data:GetOrigin()
 		local a = data:GetAngles()
-		ply.StoreFrames[1][ply.Frames] = o.x
-		ply.StoreFrames[2][ply.Frames] = o.y
-		ply.StoreFrames[3][ply.Frames] = o.z
-		ply.StoreFrames[4][ply.Frames] = a.p
-		ply.StoreFrames[5][ply.Frames] = a.y
+		StoreFrames[ply][1][ply.Frames] = o.x
+		StoreFrames[ply][2][ply.Frames] = o.y
+		StoreFrames[ply][3][ply.Frames] = o.z
+		StoreFrames[ply][4][ply.Frames] = a.p
+		StoreFrames[ply][5][ply.Frames] = a.y
 		
 		ply.Frames = ply.Frames + 1
 	end

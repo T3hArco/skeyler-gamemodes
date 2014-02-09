@@ -87,13 +87,7 @@ function GM:Move(pl, movedata)
 	local forward, right = aim:Forward(), aim:Right()
 	local fmove = movedata:GetForwardSpeed()
 	local smove = movedata:GetSideSpeed()
-	
-	if pl:KeyDown( IN_MOVERIGHT ) then
-		smove = (smove * 10) + 500
-	elseif pl:KeyDown( IN_MOVELEFT ) then
-		smove = (smove * 10) - 500
-	end --this is just to ensure that lj is fine
-	
+
 	forward.z, right.z = 0,0
 	forward:Normalize()
 	right:Normalize()
@@ -109,7 +103,7 @@ function GM:Move(pl, movedata)
 	end
 
 	local wishspd = wishspeed
-	wishspd = math.Clamp(wishspd, 0, 30)
+	wishspd = math.Clamp(wishspd, 0, 35)
 
 	local wishdir = wishvel:GetNormal()
 	local current = movedata:GetVelocity():Dot(wishdir)
@@ -118,7 +112,7 @@ function GM:Move(pl, movedata)
 
 	if(addspeed <= 0) then return end
 
-	local accelspeed = (120) * wishspeed * FrameTime()
+	local accelspeed = (150) * wishspeed * FrameTime()
 
 	if(accelspeed > addspeed) then
 		accelspeed = addspeed
