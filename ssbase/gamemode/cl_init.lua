@@ -16,6 +16,7 @@ include("cl_chatbox.lua")
 include("cl_hud.lua") 
 -- include("ss_vgui/ss_hub_store_icon.lua") 
 include("cl_store.lua") 
+include("cl_scoreboard.lua")
 
 GM:HUDAddShouldNotDraw("CHudHealth") 
 GM:HUDAddShouldNotDraw("CHudSecondaryAmmo") 
@@ -48,8 +49,8 @@ function GM:RenderScreenspaceEffects()
 		else 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 0, 0.5) 
 		end 
-		DrawToyTown( self.GUIBlurAmt, ScrH() ) 
-		surface.SetDrawColor(92, 92, 92, 160/10*self.GUIBlurAmt*0.50)
+		--DrawToyTown( self.GUIBlurAmt, ScrH() )  -- this is really hard on the gpu. is it really needed?
+		surface.SetDrawColor(92, 92, 92, 210/10*self.GUIBlurAmt)
 		surface.SetMaterial(self.GUIBlurOverlay) 
 		surface.DrawTexturedRect(0, 0, 2480-(1920-ScrW()), 2480-(1080-ScrH())) 
 	end 

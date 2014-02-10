@@ -26,6 +26,8 @@ AddCSLuaFile("sh_profiles.lua")
 AddCSLuaFile("sh_store.lua") 
 AddCSLuaFile("cl_store.lua") 
 -- AddCSLuaFile("vgui/ss_hub_store_icon.lua") 
+AddCSLuaFile("cl_scoreboard.lua")
+
 include("shared.lua")
 include("sh_profiles.lua") 
 include("sv_database.lua")

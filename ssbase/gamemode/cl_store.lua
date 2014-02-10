@@ -14,7 +14,7 @@ local StoreCats = {}
 surface.CreateFont("ss_hub", {font="Arvil Sans", size=65, weight=500}) 
 surface.CreateFont("ss_hub_header", {font="Arvil Sans", size=42, weight=500}) 
 surface.CreateFont("ss_hub_nav", {font="Arial", size=20, weight=800}) 
-surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=32, weight=500, antialias=true}) 
+surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=36, weight=500, antialias=true}) 
 surface.CreateFont("ss_hub_store_buttons", {font="Arial", size=14, weight=700}) 
 surface.CreateFont("ss_hub_store_price", {font="Arial", size=18, weight=1000}) 
 
@@ -81,7 +81,9 @@ function PANEL:SetTab(id)
 	end 
 end 
 
-function PANEL:Paint(w, h) 
+function PANEL:Paint(w, h)
+	-- add checks for how much alpha the panel has so we dont set alpha all the time?
+	self:SetAlpha(255 /10 *GAMEMODE.GUIBlurAmt)
 end 
 vgui.Register("ss_hub", PANEL, "DPanel") 
 
@@ -119,7 +121,7 @@ end
 
 function PANEL:Paint(w, h) 
 	if self.Hovered or self.Active then 
-		draw.RoundedBox(8, 0, 0, w, h, Color(247, 148, 30, 255*0.7)) 
+		draw.RoundedBox(8, 0, 0, w, h, Color(85, 190, 247, 255 *0.6)) --Color(247, 148, 30, 255*0.7)) 
 	end 
 
 	surface.SetDrawColor(255, 255, 255, 255) 
@@ -166,11 +168,21 @@ function PANEL:PerformLayout()
 end 
 
 function PANEL:Paint(w, h) 
-	draw.RoundedBoxEx(4, 0, 0, HubWidth, 54, Color(255, 255, 255, 255), true, true, true, true) 
-	draw.RoundedBoxEx(4, 1, 27, HubWidth-2, 27-2, Color(238, 238, 238, 255), false, false, true, true)
+	--draw.RoundedBoxEx(4, 0, 0, HubWidth, 54, Color(255, 255, 255, 255), true, true, true, true) 
+	--draw.RoundedBoxEx(4, 1, 27, HubWidth-2, 27-2, Color(238, 238, 238, 255), false, false, true, true)
 
-	draw.RoundedBoxEx(4, 0, self:GetTall()-30, HubWidth, 30, Color(255, 255, 255, 255), true, true, true, true)
-	draw.RoundedBoxEx(4, 1, self:GetTall()-15, HubWidth-2, 14, Color(238, 238, 238, 255), false, false, true, true)
+	--draw.RoundedBoxEx(4, 0, self:GetTall()-30, HubWidth, 30, Color(255, 255, 255, 255), true, true, true, true)
+	--draw.RoundedBoxEx(4, 1, self:GetTall()-15, HubWidth-2, 14, Color(238, 238, 238, 255), false, false, true, true)
+	
+	draw.RoundedBox(4, 0, 0, w, 60, Color(194, 193, 198, 160))
+	draw.SimpleRect(1, 1, w -2, 60 -2, Color(251, 251, 251))
+	draw.SimpleRect(2, 25, w -4, 60 -27, Color(245, 245, 245))
+	
+	draw.RoundedBox(4, 0, h -30, w, 30, Color(194, 193, 198, 160))
+	draw.SimpleRect(1, h -(30 -1), w -2, 28, Color(251, 251, 251))
+	draw.SimpleRect(2,  h -15, w -4, 13, Color(245, 245, 245))
+	
+	
 	-- surface.SetDrawColor(238, 238, 238, 255) 
 	-- surface.DrawRect(1, 20, HubWidth-2, 20-2) 
 	-- surface.DrawRect(1, self:GetTall()-15, HubWidth-2, 9)
@@ -183,7 +195,7 @@ function PANEL:Paint(w, h)
 	surface.DrawText(Text) 
 
 	surface.SetDrawColor(255, 255, 255, 255*0.25) 
-	surface.DrawRect(1, 54, HubWidth-2, self:GetTall()-54-30) 
+	surface.DrawRect(2, 60, HubWidth-4, self:GetTall()-54-30) 
 end 
 
 function PANEL:Think() 
@@ -255,8 +267,8 @@ function PANEL:Init()
 		local t = StoreCats[v] 
 		t.button = vgui.Create("ss_hub_store_button", self) 
 		t.button:SetCursor( "hand" )
-		t.button:SetSize(175, 44) 
-		t.button:SetPos(0, LastY) 
+		t.button:SetSize(173, 44) 
+		t.button:SetPos(2, LastY) 
 		t.button:SetTitle(v) 
 		t.button.t = t 
 		LastY = LastY+t.button:GetTall()
@@ -317,7 +329,7 @@ end
 
 function PANEL:Paint(w, h) 
 	surface.SetDrawColor(19, 19, 19, 255*0.6)
-	surface.DrawRect(175, 55, HubWidth-175-340, self:GetTall()-55-30)
+	surface.DrawRect(175, 60, HubWidth-175-340, self:GetTall()-60-30)
 end 
 
 function PANEL:SetCat(i) 
@@ -755,6 +767,7 @@ concommand.Add("ss_store", function()
 	if SS.Hub then 
 		if !SS.Hub:IsVisible() then 
 			SS.Hub:SetVisible(true) 
+			SS.Hub:SetAlpha(0)
 			GAMEMODE:SetGUIBlur(true) 
 			gui.EnableScreenClicker(true)
 		else 
