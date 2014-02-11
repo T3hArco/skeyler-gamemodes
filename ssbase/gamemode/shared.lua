@@ -68,3 +68,11 @@ function FormatNum(n)
     end
     return n
 end
+
+-- Atlas chat shared config.
+if (atlaschat) then
+
+	-- We don't want rank icons or avatars.
+	atlaschat.enableAvatars = atlaschat.config.New("Enable avatars?", "avatars", false, true, true, true, true)
+	atlaschat.enableRankIcons = atlaschat.config.New("Enable rank icons?", "rank_icons", false, true, true, true, true)
+end

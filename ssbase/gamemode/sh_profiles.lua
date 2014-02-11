@@ -10,11 +10,11 @@ function SS.AddRank(id, name, color)
 	SS.Ranks[id] = {name=name, color=color} 
 end 
 
-SS.AddRank(100, "Owner", Color(64, 64, 64)) 
-SS.AddRank(50, "Admin", Color(255, 72, 72)) 
-SS.AddRank(20, "Dev", Color(87, 198, 255)) 
-SS.AddRank(1, "VIP", Color(255, 216, 0)) 
-SS.AddRank(0, "Regular", Color(200, 200, 200)) 
+SS.AddRank(100, "Owner", Color(79, 79, 79)) 
+SS.AddRank(50, "Admin", Color(212, 109, 109)) 
+SS.AddRank(20, "Dev", Color(115, 183, 205)) 
+SS.AddRank(1, "VIP", Color(212, 189, 98)) 
+SS.AddRank(0, "Regular", Color(0, 0, 0, 0)) 
 
 function PLAYER_META:IsProfileLoaded() 
 	return self:GetNetworkedBool("ss_profileloaded", false) 

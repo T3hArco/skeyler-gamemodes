@@ -1,7 +1,9 @@
+local IsValid, ValidPanel = IsValid, ValidPanel
 
--- should probably make these global
-local ROW_LEFT = 1
-local ROW_RIGHT = 2
+SS.Scoreboard = {}
+
+SS.Scoreboard.ROW_LEFT = 1
+SS.Scoreboard.ROW_RIGHT = 2
 
 surface.CreateFont("skeyler.scoreboard.title", {font = "Arvil Sans", size = 62, weight = 400})
 surface.CreateFont("skeyler.scoreboard.title.blur", {font = "Arvil Sans", size = 62, weight = 400, antialias = false, blursize = 4})
@@ -12,10 +14,12 @@ surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Arvil Sans", size = 3
 surface.CreateFont("skeyler.scoreboard.row.title", {font = "Arvil Sans", size = 36, weight = 400})
 surface.CreateFont("skeyler.scoreboard.row.title.blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 2})
 
+surface.CreateFont("skeyler.scoreboard.ping.small", {font = "Arvil Sans", size = 20, weight = 400})
+
 local panel = {}
 
 function panel:Init()
-	self.rows = {[ROW_RIGHT] = {}, [ROW_LEFT] = {}}
+	self.rows = {[SS.Scoreboard.ROW_RIGHT] = {}, [SS.Scoreboard.ROW_LEFT] = {}}
 	self.startTime = SysTime() -0.6
 	
 	self:DockPadding(2, 60, 2, 30)
@@ -28,7 +32,7 @@ function panel:Init()
 		draw.SimpleRect(0, 0, w, h, Color(245, 246, 247, 50))
 	end
 	
-	self.list.VBar:SetWide(16)
+	self.list.VBar:SetWide(8)
 	self.list.VBar:Dock(NODOCK)
 	self.list.VBar.btnUp:Remove()
 	self.list.VBar.btnDown:Remove()
@@ -41,13 +45,13 @@ function panel:Init()
 		local x2, y2 = parent:GetPos()
 		local w2, h2 = parent:GetSize()
 		
-		if (x >= w2 -75 and x <= w2 +15 and y >= 0 and y <= h2) then
+		if (x >= w2 -25 and x <= w2 +15 and y >= 0 and y <= h2) then
 			if (self.Depressed) then
-				draw.RoundedBox(8, 0, 0, w, h, Color(255, 255, 255, 180))
+				draw.RoundedBox(8, 0, 0, w, h, Color(255, 255, 255, 255))
 			elseif (self.Hovered) then
-				draw.RoundedBox(8, 0, 0, w, h, Color(191, 192, 193, 180))
+				draw.RoundedBox(8, 0, 0, w, h, Color(191, 192, 193, 255))
 			else
-				draw.RoundedBox(8, 0, 0, w, h, Color(221, 222, 223, 180))
+				draw.RoundedBox(8, 0, 0, w, h, Color(221, 222, 223, 255))
 			end
 		end
 	end
@@ -87,7 +91,7 @@ function panel:Init()
 		self:Rebuild()
 	
 		self.VBar:SetUp(height, self.pnlCanvas:GetTall())
-		self.VBar:SetPos(width -20, 0)
+		self.VBar:SetPos(width -8, 0)
 		self.VBar:SetTall(height)
 		
 		if (self.VBar.Enabled) then
@@ -104,19 +108,42 @@ function panel:Init()
 	end
 end
 
-function panel:AddRow(name, width, x_align, rowType, callback)
-	rowType = rowType or ROW_RIGHT
+function panel:Resize()
+	local height, children, index = 90, self.list:GetCanvas():GetChildren(), 1
 	
-	local id = table.insert(self.rows[rowType], {name = name, width = width, x = (rowType == ROW_LEFT and 71 or rowType == ROW_RIGHT and (self:GetWide() -8) -width), x_align = x_align or TEXT_ALIGN_LEFT, rowType = rowType, callback = callback})
+	for k, child in pairs(children) do
+		if (ValidPanel(child)) then
+			height = height +50
+			
+			if (index % 2 == 1) then
+				child:SetAltLine(true)
+			else
+				child:SetAltLine(false)
+			end
+			
+			index = index +1
+		end
+	end
+	
+	height = math.min(ScrH() *0.7, height)
+	
+	self:SetTall(height)
+	self:Center()
+end
+
+function panel:AddRow(name, width, x_align, rowType, callback)
+	rowType = rowType or SS.Scoreboard.ROW_RIGHT
+	
+	local id = table.insert(self.rows[rowType], {name = name, width = width, x = (rowType == SS.Scoreboard.ROW_LEFT and 71 or rowType == SS.Scoreboard.ROW_RIGHT and (self:GetWide() -8) -width), x_align = x_align or TEXT_ALIGN_LEFT, rowType = rowType, callback = callback})
 	local rows = self.rows[rowType]
 	
 	for i = 1, id -1 do
 		local previous = rows[i]
 
 		if (previous) then
-			if (rows[id].rowType == ROW_RIGHT) then
+			if (rows[id].rowType == SS.Scoreboard.ROW_RIGHT) then
 				rows[id].x = rows[id].x -previous.width
-			elseif (rows[id].rowType == ROW_LEFT) then
+			elseif (rows[id].rowType == SS.Scoreboard.ROW_LEFT) then
 				rows[id].x = rows[id].x +previous.width
 			end
 		end
@@ -124,6 +151,8 @@ function panel:AddRow(name, width, x_align, rowType, callback)
 end
 
 function panel:AddPlayer(player)
+	local base = self
+	
 	local panel = vgui.Create("Panel")
 	panel:SetTall(50)
 	panel:Dock(TOP)
@@ -144,6 +173,17 @@ function panel:AddPlayer(player)
 		surface.DrawLine(0, h -1, w, h -1)
 	end
 	
+	function panel:Think()
+		if (!IsValid(self.player)) then
+			self:Remove()
+			
+			timer.Simple(FrameTime() *2, function()
+				base.list:GetCanvas():InvalidateLayout()
+				base:Resize()
+			end)
+		end
+	end
+	
 	local avatar = panel:Add("Panel")
 	avatar:SetWide(50)
 	avatar:Dock(LEFT)
@@ -160,22 +200,7 @@ function panel:AddPlayer(player)
 	self.list:AddItem(panel)
 	self.list:InvalidateLayout(true)
 	
-	local height, children = 90, self.list:GetCanvas():GetChildren()
-	
-	for k, child in pairs(children) do
-		if (ValidPanel(child)) then
-			height = height +50
-			
-			if (k % 2 == 1) then
-				child:SetAltLine(true)
-			end
-		end
-	end
-	
-	height = math.min(ScrH() *0.7, height)
-	
-	self:SetTall(height)
-	self:Center()
+	self:Resize()
 	
 	-- Add all the row functions.
 	for i = 1, #self.rows do
@@ -199,6 +224,16 @@ function panel:Think()
 			self:AddPlayer(player)
 			
 			player.ssbase_scoreboard = true
+		end
+	end
+	
+	if (self:IsVisible()) then
+		if (input.IsMouseDown(MOUSE_LEFT) or input.IsMouseDown(MOUSE_RIGHT)) then
+			if (!self.mouseEnabled) then
+				gui.EnableScreenClicker(true)
+				
+				self.mouseEnabled = true
+			end
 		end
 	end
 end
@@ -226,9 +261,9 @@ function panel:PaintOver(w, h)
 			draw.SimpleText(row.name, "skeyler.scoreboard.row.title.blur", x, 30, Color(0, 0, 0, 160), row.x_align, TEXT_ALIGN_CENTER)
 			draw.SimpleText(row.name, "skeyler.scoreboard.row.title", x, 30, Color(87, 87, 87), row.x_align, TEXT_ALIGN_CENTER)
 			
-			if (row.rowType == ROW_LEFT) then
-			--	draw.SimpleRect(row.x +row.width, 2, 2, h -32, Color(0, 0, 0, 30))
-			elseif (row.rowType == ROW_RIGHT) then
+			if (row.rowType == SS.Scoreboard.ROW_LEFT) then
+			--	draw.SimpleRect(row.x +row.width, 2, 2, h -32, Color(0, 0, 0, 30)) -- need to fix the right rows
+			elseif (row.rowType == SS.Scoreboard.ROW_RIGHT) then
 				draw.SimpleRect(row.x -2, 1, 1, h -31, Color(0, 0, 0, 50))
 			end
 		end
@@ -238,23 +273,24 @@ function panel:PaintOver(w, h)
 		util.PaintShadow(w, 60, -w, -60, 4, 0.35)
 		util.PaintShadow(w, h, -w, -30, 4, 0.35)
 		
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title.blur", 62, -10, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 63, -9, Color(0, 0, 0, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 62, -10, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title.blur", 71, -10, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 72, -9, Color(0, 0, 0, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 71, -10, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	surface.DisableClipping(false)
 end
 
-vgui.Register("ssbase.scoreboard", panel, "EditablePanel")
+vgui.Register("ss.scoreboard", panel, "EditablePanel")
 
 local scoreboard
+local arrowTexture = Material("skeyler/arrow.png", "noclamp smooth")
 
 function GM:ScoreboardShow()
 	if (!ValidPanel(scoreboard)) then
-		scoreboard = vgui.Create("ssbase.scoreboard")
+		scoreboard = vgui.Create("ss.scoreboard")
 		scoreboard:SetSize(math.Clamp(ScrW() *0.95, 800, 1280), 90)
 		scoreboard:Center()
 		
-		scoreboard:AddRow("PLAYER", scoreboard:GetWide() *0.3, nil, ROW_LEFT, function(panel, player, row)
+		scoreboard:AddRow("PLAYER", scoreboard:GetWide() *0.3, nil, SS.Scoreboard.ROW_LEFT, function(panel, player, row)
 			local name = player:Nick()
 			
 			local label = panel:Add("DLabel")
@@ -265,6 +301,17 @@ function GM:ScoreboardShow()
 			label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
 			label:Dock(LEFT)
 			label:DockMargin(10, 0, 0, 0)
+			
+			function label:Think()
+				if (IsValid(player)) then
+					local text = self:GetText()
+					local name = player:Nick()
+					
+					if (text != name) then
+						self:SetText(name)
+					end
+				end
+			end
 		end)
 		
 		local color_bar_background = Color(0, 0, 0, 140)
@@ -274,30 +321,41 @@ function GM:ScoreboardShow()
 			barPanel:SetSize(row.width , 50)
 			barPanel:Dock(RIGHT)
 		
-			barPanel.color_bar_ping = Color(0, 0, 60, 255)
-			
 			function barPanel:Paint(w, h)
-				local ping, width, height = player:Ping(), 5, 5
-				local multiplier = 1 -math.Clamp((ping -50) /400, 0, 1)
-				
-				self.color_bar_ping.r = (1 -multiplier) *255
-				self.color_bar_ping.g = multiplier *255
-			
-				for i = 1, 4 do
-					local x, barHeight = w /2 -10 +(i -1) *(width +1), i *height
-					local y = (h -barHeight) -h /4
+				if (IsValid(player)) then
+					local ping, width, height = player:Ping(), 5, 5
+					local multiplier = 1 -math.Clamp((ping -50) /400, 0, 1)
 					
-					draw.SimpleRect(x, y, width, barHeight, color_bar_background)
+					for i = 1, 4 do
+						local x, barHeight = w /2 -10 +(i -1) *(width +1), i *height
+						local y = (h -barHeight) -h /4
+						
+						draw.SimpleRect(x, y, width, barHeight, color_bar_background)
+						
+						if (i == 1 or multiplier >= i /4) then
+							surface.SetDrawColor(color_white)
+							surface.DrawRect(x, y, width, barHeight)
+						end
+						end
 					
-					if (i == 1 or multiplier >= i /4) then
-						surface.SetDrawColor(self.color_bar_ping)
-						surface.DrawRect(x, y, width, barHeight)
+					if (self.Hovered) then
+						local pingWidth = util.GetTextSize("skeyler.scoreboard.row", ping)
+						local width, height = pingWidth +58, h
+						local x, y = w -12, h /2 -height /2
+						
+						surface.DisableClipping(true)
+							draw.Material(x -13, y +height /2 -27 /2, 13, 27, Color(0, 0, 0, 225), arrowTexture)
+							draw.SimpleRect(x, y, width, height, Color(0, 0, 0, 200))
+							
+							draw.SimpleText(ping, "skeyler.scoreboard.row", x +24, y +height /2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+							draw.SimpleText("ms", "skeyler.scoreboard.ping.small", x +24 +pingWidth +1, y +height /2 +4, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+						surface.DisableClipping(false)
 					end
 				end
 			end
 		end)
-		
-		scoreboard:AddRow("TIME", 110, TEXT_ALIGN_CENTER, ROW_RIGHT, function(panel, player, row)
+	
+		scoreboard:AddRow("TIME", 110, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 			local label = panel:Add("DLabel")
 			label:SetSize(row.width, 50)
 			label:SetText(string.FormattedTime(RealTime(), "%02i:%02i:%02i") )
@@ -308,7 +366,7 @@ function GM:ScoreboardShow()
 			label:Dock(RIGHT)
 		end)
 		
-		scoreboard:AddRow("DIFFICULTY", 132, TEXT_ALIGN_CENTER, ROW_RIGHT, function(panel, player, row)
+		scoreboard:AddRow("DIFFICULTY", 132, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 			local label = panel:Add("DLabel")
 			label:SetSize(row.width, 50)
 			label:SetText("EXTREME")
@@ -319,7 +377,7 @@ function GM:ScoreboardShow()
 			label:Dock(RIGHT)
 		end)
 		
-		scoreboard:AddRow("SCORE", 110, TEXT_ALIGN_CENTER, ROW_RIGHT, function(panel, player, row)
+		scoreboard:AddRow("SCORE", 110, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 			local label = panel:Add("DLabel")
 			label:SetSize(row.width, 50)
 			label:SetText(math.random(100, 99999))
@@ -330,35 +388,64 @@ function GM:ScoreboardShow()
 			label:Dock(RIGHT)
 		end)
 		
-		scoreboard:AddRow("Rank", 164, TEXT_ALIGN_CENTER, ROW_RIGHT, function(panel, player, row)
+		scoreboard:AddRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 			local rankPanel = panel:Add("Panel")
 			rankPanel:SetSize(row.width, 50)
 			rankPanel:Dock(RIGHT)
 			
 			function rankPanel:Paint(w, h)
-				local name = player == LocalPlayer() and "DEVELOPER" or "DIrT-SHIRT"
-				
-				if (player == LocalPlayer()) then
-					local color = Color(77, 150, 187, 255)
-				
-					draw.SimpleRect(1, 1, w -1, h -2, color)
+				if (IsValid(player)) then
+					local name, color = player:GetRankName(), player:GetRankColor()
+					
+					if (name) then
+						draw.SimpleRect(1, 1, w -1, h -2, color)
+	
+						draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+						draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					else
+						draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+						draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					end
 				end
-				
-				draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-				draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end
 		end)
 	end
 	
 	scoreboard:SetVisible(true)
-	
-	gui.EnableScreenClicker(true)
 end
 
 function GM:ScoreboardHide()
 	if (ValidPanel(scoreboard)) then
 		scoreboard:SetVisible(false)
+		
+		scoreboard.mouseEnabled = false
 	end
-	
+
 	gui.EnableScreenClicker(false)
+end
+
+-- Scrolling without mouse enabled.
+hook.Add("PlayerBindPress", "ss.scoreboard.scroll", function(player, bind, pressed)
+	if (ValidPanel(scoreboard) and scoreboard:IsVisible() and !scoreboard.mouseEnabled) then
+		if (bind == "invprev") then
+			scoreboard.list.VBar:SetScroll(scoreboard.list.VBar:GetScroll() -14)
+			
+			return true
+		end
+		
+		if (bind == "invnext") then
+			scoreboard.list.VBar:SetScroll(scoreboard.list.VBar:GetScroll() +14)
+			
+			return true
+		end
+	end
+end)
+
+-- For autorefresh.
+if (!game.IsDedicated()) then
+	local players = player.GetAll()
+	
+	for k, v in pairs(players) do
+		v.ssbase_scoreboard = nil
+	end
 end

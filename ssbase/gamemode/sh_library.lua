@@ -176,22 +176,6 @@ function util.FindPlayer(name, user)
 	end
 end
 
-function util.FormatNumber(number)
-	if (number >= 1e14) then
-		return tostring(number)
-	end
-
-	number = tostring(number)
-
-    local dp = string.find(number, "%.") or #number +1
-	
-	for i = dp -4, 1, -3 do
-		number = string.sub(number, 1, i) .. "," .. string.sub(number, i +1)
-	end
-	
-    return number
-end
-
 function string.Capitalize(text)
 	return string.upper(string.sub(text, 1, 1)) .. string.sub(text, 2)
 end

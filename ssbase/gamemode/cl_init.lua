@@ -93,5 +93,5 @@ function GM:PostDrawViewModel( ViewModel, Player, Weapon )
 
 	if ( Weapon.PostDrawViewModel == nil ) then return false end		
 	return Weapon:PostDrawViewModel( ViewModel, Weapon, Player )
-	
+
 end

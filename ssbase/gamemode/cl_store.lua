@@ -14,7 +14,7 @@ local StoreCats = {}
 surface.CreateFont("ss_hub", {font="Arvil Sans", size=65, weight=500}) 
 surface.CreateFont("ss_hub_header", {font="Arvil Sans", size=42, weight=500}) 
 surface.CreateFont("ss_hub_nav", {font="Arial", size=20, weight=800}) 
-surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=36, weight=500, antialias=true}) 
+surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=32, weight=500, antialias=true}) 
 surface.CreateFont("ss_hub_store_buttons", {font="Arial", size=14, weight=700}) 
 surface.CreateFont("ss_hub_store_price", {font="Arial", size=18, weight=1000}) 
 
@@ -121,7 +121,7 @@ end
 
 function PANEL:Paint(w, h) 
 	if self.Hovered or self.Active then 
-		draw.RoundedBox(8, 0, 0, w, h, Color(85, 190, 247, 255 *0.6)) --Color(247, 148, 30, 255*0.7)) 
+		draw.RoundedBox(4, 0, 0, w, h, Color(39, 207, 255, 255)) --Color(247, 148, 30, 255*0.7)) 
 	end 
 
 	surface.SetDrawColor(255, 255, 255, 255) 
@@ -194,9 +194,9 @@ function PANEL:Paint(w, h)
 	surface.SetTextPos(self:GetWide()/2-tw/2, 54/2-th/2)
 	surface.DrawText(Text) 
 
-	surface.SetDrawColor(255, 255, 255, 255*0.25) 
+	surface.SetDrawColor(0, 0, 0, 120) 
 	surface.DrawRect(2, 60, HubWidth-4, self:GetTall()-54-30) 
-end 
+end
 
 function PANEL:Think() 
 	if !self:IsVisible() then return end 
@@ -401,7 +401,7 @@ function PANEL:Init()
 		end 
 		surface.SetDrawColor(0, 0, 0, 255*0.85) 
 		surface.DrawRect(0, 0, w, self.Offset) 
-		surface.DrawRect(0, h-self.Offset, w, self.Offset) 
+		--surface.DrawRect(0, h-self.Offset, w, self.Offset) 
 
 		local x, y = self:LocalToScreen(0, 0) 
 		local Text = FormatNum(self:GetParent().Price or "100") 
@@ -421,23 +421,17 @@ function PANEL:Init()
 
 	self.BPreview = vgui.Create("DPanel", self.InfoPnl) 
 	self.BPreview:SetCursor( "hand" )
-	self.BPreview:SetSize(62, 22) 
+	
 	function self.BPreview:Paint(w, h) 
-		self.Col = self.Hovered and Color(195, 195, 195, 255) or Color(156, 156, 156, 255)
-		draw.RoundedBox(4, 0, 0, w, h, self.Col) 
+		self.Col = self.Hovered and Color(195, 195, 195, 250) or Color(156, 156, 156, 250)
+		draw.SimpleRect(0, 0, w, h, self.Col) 
 
-		surface.SetFont("ss_hub_store_buttons") 
-		local tw, th = surface.GetTextSize("PREVIEW") 
-		surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
-		surface.SetTextColor(0, 0, 0, 255*0.35) 
-		surface.DrawText("PREVIEW")
-		surface.SetTextPos(w/2-tw/2, h/2-th/2) 
-		surface.SetTextColor(255, 255, 255, 255) 
-		surface.DrawText("PREVIEW")
+		draw.SimpleText("PREVIEW", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.35), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText("PREVIEW", "ss_hub_store_buttons", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end 
 
 	function self.BPreview:Think() 
-		self:SetPos(6, self:GetParent():GetTall()-self:GetParent().Offset+5)
+		self:SetPos(0, self:GetParent():GetTall()-self:GetParent().Offset +6)
 	end 
 
 	function self.BPreview:OnMouseReleased() 
@@ -450,30 +444,41 @@ function PANEL:Init()
 
 	self.BPurchase = vgui.Create("DPanel", self.InfoPnl) 
 	self.BPurchase:SetCursor( "hand" )
-	self.BPurchase:SetSize(62, 22)
+	
 	function self.BPurchase:Paint(w, h) 
-		self.Col = self.Hovered and Color(237, 205, 115, 255) or Color(221, 187, 94, 255)
-		draw.RoundedBox(4, 0, 0, w, h, self.Col) 
+		self.Col = self.Hovered and Color(33 +10, 175 +20, 234 +20, 240) or Color(33, 175, 234, 240)
+		draw.SimpleRect(0, 0, w, h, self.Col) 
 
-		surface.SetFont("ss_hub_store_buttons") 
-		local tw, th = surface.GetTextSize("PURCHASE") 
-		surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
+		--surface.SetFont("ss_hub_store_buttons") 
+		
+		--local tw, th = surface.GetTextSize("PURCHASE") 
+		
+		draw.SimpleText("PURCHASE", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.35), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText("PURCHASE", "ss_hub_store_buttons", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		
+		--[[surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
 		surface.SetTextColor(0, 0, 0, 255*0.35) 
-		surface.DrawText("PURCHASE")   
+		surface.DrawText("PURCHASE")
+		
 		surface.SetTextPos(w/2-tw/2, h/2-th/2) 
 		surface.SetTextColor(255, 255, 255, 255) 
-		surface.DrawText("PURCHASE")  
+		surface.DrawText("PURCHASE")]]
 	end 
 
 	function self.BPurchase:Think() 
-		self:SetPos(74, self:GetParent():GetTall()-self:GetParent().Offset+5)
+		self:SetPos(self:GetParent():GetWide() /2, self:GetParent():GetTall()-self:GetParent().Offset +6)
 	end 
 end 
 
 function PANEL:PerformLayout() 
 	local w, h = self:GetSize() 
 	self.InfoPnl:SetSize(w-8, h-8) 
-	self.InfoPnl:SetPos(4, 4)  
+	self.InfoPnl:SetPos(4, 4)
+	
+	local w, h = self.InfoPnl:GetSize()
+	
+	self.BPreview:SetSize(w /2, 26) 
+	self.BPurchase:SetSize(w /2, 26)
 end 
 
 function PANEL:LayoutEntity( Entity )
