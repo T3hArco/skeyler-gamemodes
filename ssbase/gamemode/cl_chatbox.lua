@@ -834,27 +834,30 @@ atlaschat.theme.Register(theme)
 -- Let's force a theme.
 atlaschat.themeConfig = atlaschat.config.New(nil, "theme", "skeylerservers", true, true, true, true)
 
----------------------------------------------------------
--- Create the chatbox.
----------------------------------------------------------
-
-hook.Add("HUDPaint", "atlaschat.CreateChatbox", function()
-	if (atlaschat.theme.loaded and system.HasFocus()) then
-		local panel = atlaschat.theme.GetValue("panel")
-		
-		if (!ValidPanel(panel)) then
-			atlaschat.theme.DeriveThemes()
+-- Development autorefresh.
+hook.Add("OnReloaded", "ss.chat.OnReloaded", function()
+	---------------------------------------------------------
+	-- Create the chatbox.
+	---------------------------------------------------------
+	
+	hook.Add("HUDPaint", "atlaschat.CreateChatbox", function()
+		if (atlaschat.theme.loaded and system.HasFocus()) then
+			local panel = atlaschat.theme.GetValue("panel")
 			
-			atlaschat.theme.Call("Initialize")
+			if (!ValidPanel(panel)) then
+				atlaschat.theme.DeriveThemes()
+				
+				atlaschat.theme.Call("Initialize")
+				
+				atlaschat.themeConfig:OnChange(atlaschat.themeConfig:GetString())
+	
+				net.Start("atlaschat.plload")
+				net.SendToServer()
+			end
 			
-			atlaschat.themeConfig:OnChange(atlaschat.themeConfig:GetString())
-
-			net.Start("atlaschat.plload")
-			net.SendToServer()
+			hook.Remove("HUDPaint", "atlaschat.CreateChatbox")
 		end
-		
-		hook.Remove("HUDPaint", "atlaschat.CreateChatbox")
-	end
+	end)
 end)
 
 --[[

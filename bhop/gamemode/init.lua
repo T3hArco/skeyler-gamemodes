@@ -20,6 +20,7 @@ AddCSLuaFile("sh_levels.lua")
 AddCSLuaFile("sh_styles.lua") 
 AddCSLuaFile("sh_viewoffsets.lua") 
 AddCSLuaFile("cl_records.lua") 
+AddCSLuaFile("cl_scoreboard.lua") 
 
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")

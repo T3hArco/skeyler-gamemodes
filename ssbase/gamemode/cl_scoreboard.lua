@@ -5,6 +5,37 @@ SS.Scoreboard = {}
 SS.Scoreboard.ROW_LEFT = 1
 SS.Scoreboard.ROW_RIGHT = 2
 
+local stored = {[SS.Scoreboard.ROW_RIGHT] = {}, [SS.Scoreboard.ROW_LEFT] = {}}
+
+function SS.Scoreboard.RegisterRow(name, width, x_align, rowType, callback)
+	rowType = rowType or SS.Scoreboard.ROW_RIGHT
+	
+	table.insert(stored[rowType], {name = name, width = width, x_align = x_align, rowType = rowType, callback = callback})
+end
+
+-- I add it here so it'll add it first.
+SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+	local rankPanel = panel:Add("Panel")
+	rankPanel:SetSize(row.width, 50)
+	rankPanel:Dock(RIGHT)
+	
+	function rankPanel:Paint(w, h)
+		if (IsValid(player)) then
+			local name, color = player:GetRankName(), player:GetRankColor()
+			
+			if (name) then
+				draw.SimpleRect(1, 1, w -1, h -2, color)
+
+				draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			else
+				draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
+		end
+	end
+end)
+
 surface.CreateFont("skeyler.scoreboard.title", {font = "Arvil Sans", size = 62, weight = 400})
 surface.CreateFont("skeyler.scoreboard.title.blur", {font = "Arvil Sans", size = 62, weight = 400, antialias = false, blursize = 4})
 
@@ -290,7 +321,7 @@ function GM:ScoreboardShow()
 		scoreboard:SetSize(math.Clamp(ScrW() *0.95, 800, 1280), 90)
 		scoreboard:Center()
 		
-		scoreboard:AddRow("PLAYER", scoreboard:GetWide() *0.3, nil, SS.Scoreboard.ROW_LEFT, function(panel, player, row)
+		SS.Scoreboard.RegisterRow("PLAYER", scoreboard:GetWide() *0.3, nil, SS.Scoreboard.ROW_LEFT, function(panel, player, row)
 			local name = player:Nick()
 			
 			local label = panel:Add("DLabel")
@@ -313,10 +344,11 @@ function GM:ScoreboardShow()
 				end
 			end
 		end)
-		
+	
 		local color_bar_background = Color(0, 0, 0, 140)
 		
-		scoreboard:AddRow("PING", 85, TEXT_ALIGN_CENTER, nil, function(panel, player, row)
+		-- This needs to be on the last row so we add it here.
+		SS.Scoreboard.RegisterRow("PING", 85, TEXT_ALIGN_CENTER, nil, function(panel, player, row)
 			local barPanel = panel:Add("Panel")
 			barPanel:SetSize(row.width , 50)
 			barPanel:Dock(RIGHT)
@@ -354,61 +386,20 @@ function GM:ScoreboardShow()
 				end
 			end
 		end)
-	
-		scoreboard:AddRow("TIME", 110, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
-			local label = panel:Add("DLabel")
-			label:SetSize(row.width, 50)
-			label:SetText(string.FormattedTime(RealTime(), "%02i:%02i:%02i") )
-			label:SetFont("skeyler.scoreboard.row")
-			label:SetColor(Color(242, 242, 242))
-			label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
-			label:SetContentAlignment(5)
-			label:Dock(RIGHT)
-		end)
 		
-		scoreboard:AddRow("DIFFICULTY", 132, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
-			local label = panel:Add("DLabel")
-			label:SetSize(row.width, 50)
-			label:SetText("EXTREME")
-			label:SetFont("skeyler.scoreboard.row")
-			label:SetColor(Color(242, 242, 242))
-			label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
-			label:SetContentAlignment(5)
-			label:Dock(RIGHT)
-		end)
-		
-		scoreboard:AddRow("SCORE", 110, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
-			local label = panel:Add("DLabel")
-			label:SetSize(row.width, 50)
-			label:SetText(math.random(100, 99999))
-			label:SetFont("skeyler.scoreboard.row")
-			label:SetColor(Color(242, 242, 242))
-			label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
-			label:SetContentAlignment(5)
-			label:Dock(RIGHT)
-		end)
-		
-		scoreboard:AddRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
-			local rankPanel = panel:Add("Panel")
-			rankPanel:SetSize(row.width, 50)
-			rankPanel:Dock(RIGHT)
+		for i = 1, #stored[SS.Scoreboard.ROW_LEFT] do
+			local data = stored[SS.Scoreboard.ROW_LEFT][i]
 			
-			function rankPanel:Paint(w, h)
-				if (IsValid(player)) then
-					local name, color = player:GetRankName(), player:GetRankColor()
-					
-					if (name) then
-						draw.SimpleRect(1, 1, w -1, h -2, color)
-	
-						draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-						draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-					else
-						draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-						draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-					end
-				end
+			scoreboard:AddRow(data.name, data.width, data.x_align, data.rowType, data.callback)
+		end
+		
+		for i = 0, #stored[SS.Scoreboard.ROW_RIGHT] do
+			local data = stored[SS.Scoreboard.ROW_RIGHT][#stored[SS.Scoreboard.ROW_RIGHT] -i]
+			
+			if (data) then
+				scoreboard:AddRow(data.name, data.width, data.x_align, data.rowType, data.callback)
 			end
-		end)
+		end
 	end
 	
 	scoreboard:SetVisible(true)
