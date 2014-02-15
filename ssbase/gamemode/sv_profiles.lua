@@ -3,7 +3,7 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money"} 
+local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store"} 
 local update_filter = {"id", "steamId", "rank"}
 
 SS.Profiles = {} 
@@ -51,7 +51,8 @@ function PLAYER_META:ProfileLoaded(res)
 
 		self:SetRank(self.profile.rank) 
 		self:SetMoney(self.profile.money) 
-		self:SetExp(self.profile.exp) 
+		self:SetExp(self.profile.exp)
+		self:SetStoreItems(self.profile.store)
 		self.profile.lastLoginIp = self:IPAddress() 
 		self.profile.lastLoginTimestamp = os.time() 
 		self.playtimeStart = os.time() 
@@ -69,7 +70,8 @@ function PLAYER_META:ProfileLoaded(res)
 		self.profile.playtime = 0
 		self:SetRank(DB_DEVS and 100 or 0)
 		self:SetMoney(100) 
-		self:SetExp(1) 
+		self:SetExp(1)
+		self:SetStoreItems("")
 		self:ChatPrint("We had problems loading your profile and have created a temporary one for you.") 
 	end 
 	timer.Create(self:SteamID().."_ProfileUpdate", 120, 0, function() 
@@ -115,3 +117,6 @@ function PLAYER_META:ProfileUpdate(col, val) -- Don't be an idiot with this
 	DB_Query("UPDATE users SET "..tostring(col).."='"..tostring(val).."' WHERE steamid='"..string.sub(self:SteamID(), 7).."'" ) 
 end 
 
+function PLAYER_META:SetStoreItems(data)
+	self.storeItems = von.deserialize(data) -- using von might be a bad idea for this. don't save this often.
+end

@@ -3,20 +3,20 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do -- Fix this later fagget  
-	print(v) 
-	-- include("ss_vgui/"..v) 
-end
-
 include("shared.lua")
 include("sh_library.lua")
 include("sh_profiles.lua") 
 include("sh_store.lua") 
 include("cl_chatbox.lua") 
 include("cl_hud.lua") 
--- include("ss_vgui/ss_hub_store_icon.lua") 
+
 include("cl_store.lua") 
 include("cl_scoreboard.lua")
+
+include("panels/ss_slot.lua")
+include("panels/ss_slider.lua")
+include("panels/ss_tooltip.lua")
+include("panels/ss_checkbox.lua")
 
 GM:HUDAddShouldNotDraw("CHudHealth") 
 GM:HUDAddShouldNotDraw("CHudSecondaryAmmo") 
@@ -42,15 +42,15 @@ function GM:SetGUIBlur(bool)
 	self.GUIBlur = bool or false 
 end 
 
-function GM:RenderScreenspaceEffects() 
+function GM:DrawOverlay() 
 	if self.GUIBlurAmt > 0 or self.GUIBlur then 
 		if self.GUIBlur then 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 10, 0.2) 
 		else 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 0, 0.5) 
 		end 
-		--DrawToyTown( self.GUIBlurAmt, ScrH() )  -- this is really hard on the gpu. is it really needed?
-		surface.SetDrawColor(92, 92, 92, 210/10*self.GUIBlurAmt)
+
+		surface.SetDrawColor(92, 92, 92, 200/10*self.GUIBlurAmt)
 		surface.SetMaterial(self.GUIBlurOverlay) 
 		surface.DrawTexturedRect(0, 0, 2480-(1920-ScrW()), 2480-(1080-ScrH())) 
 	end 
@@ -76,10 +76,11 @@ local function HUDAmmoCalc()
 	return mag_left, max_clip, tostring(mag_left).."/"..tostring(mag_extra) 
 end 
 
---[[---------------------------------------------------------
-   Name: gamemode:PostDrawViewModel()
-   Desc: Called after drawing the view model
------------------------------------------------------------]]
+-----------------------------------------------------------
+--   Name: gamemode:PostDrawViewModel()
+ --  Desc: Called after drawing the view model
+-----------------------------------------------------------
+
 function GM:PostDrawViewModel( ViewModel, Player, Weapon )
 
 	if ( !IsValid( Weapon ) ) then return false end
@@ -94,4 +95,4 @@ function GM:PostDrawViewModel( ViewModel, Player, Weapon )
 	if ( Weapon.PostDrawViewModel == nil ) then return false end		
 	return Weapon:PostDrawViewModel( ViewModel, Weapon, Player )
 
-end
+end 

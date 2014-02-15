@@ -3,45 +3,91 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-SS.STORE.CSModels = {}
+-- MAKE THE RIGHT-CLICK DRAG FROM CURRENT VIEW POSITION
+
+-- NICE RAMP!!! LET'S SKATE
+local bit = bit
+local net = net
+local util = util
+local hook = hook
+local pairs = pairs
+local table = table
+local CLIENT = CLIENT
+local IsValid = IsValid
+local EF_NODRAW = EF_NODRAW
+local ValidPanel = ValidPanel
+local LocalPlayer = LocalPlayer
+local GetViewEntity = GetViewEntity
+local ClientsideModel = ClientsideModel
+local MAXIMUM_SLOTS = SS.STORE.SLOT.MAXIMUM
 
 local HubWidth = math.max(ScrW()*0.6, 800) 
-local HubHeight = math.max(ScrH()*0.725, 600) 
+local HubHeight = math.max(ScrH()*0.725, 600)
+
+if (ValidPanel(SS.Hub)) then
+	SS.Hub:Remove()
+end
+
 SS.Hub = false 
 SS.HubTabs = {} 
 local StoreCats = {} 
 
-surface.CreateFont("ss_hub", {font="Arvil Sans", size=65, weight=500}) 
-surface.CreateFont("ss_hub_header", {font="Arvil Sans", size=42, weight=500}) 
+surface.CreateFont("ss_hub", {font = "Arvil Sans", size = 62, weight = 400}) 
+surface.CreateFont("ss_hub_blur", {font = "Arvil Sans", size = 62, weight = 400, antialias = false, blursize = 4})
+surface.CreateFont("ss_hub_header", {font="Arvil Sans", size=42, weight=400}) 
 surface.CreateFont("ss_hub_nav", {font="Arial", size=20, weight=800}) 
-surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=32, weight=500, antialias=true}) 
+surface.CreateFont("ss_hub_store_cat", {font="Arvil Sans", size=32, weight=400}) 
 surface.CreateFont("ss_hub_store_buttons", {font="Arial", size=14, weight=700}) 
 surface.CreateFont("ss_hub_store_price", {font="Arial", size=18, weight=1000}) 
+surface.CreateFont("ss_hub_close_tip", {font="Calibri", size=16, weight=400}) 
+surface.CreateFont("ss_hub_close_tip.blur", {font="Calibri", size=16, weight=400, antialias = false, blursize = 4}) 
 
-/* The HUB's main panel */
+surface.CreateFont("ss_hub_store_purchase", {font = "Arvil Sans", size = 36, weight = 400}) 
+surface.CreateFont("ss_hub_store_purchase_blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 6}) 
+
+surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 29, weight = 200}) 
+
+---------------------------------------------------------
+-- The HUB's main panel.
+---------------------------------------------------------
+
 local PANEL = {} 
 function PANEL:Init() 
+	self:DockPadding(0, 75, 0, 30)
+	self:SetFocusTopLevel(true)
+	self:SetDrawOnTop(true)
+	
 	self.nav = vgui.Create("ss_hub_nav", self) 
-
-	for k,v in pairs(SS.HubTabs) do 
-		v.panel = vgui.Create("ss_hub_container", self) 
-		v.panel:SetPos(-v.panel:GetWide(), 75)  
-		v.panel:SetVisible(false) 
-		if v.panelName then 
-			v.panel.panel = vgui.Create(v.panelName, v.panel)  
-		end 
-		v.panel.id = k 
+	
+	-- The middle part.
+	self.container = self:Add("ss_hub_container")
+	self.container:Dock(FILL)
+	
+	self:InvalidateLayout(true)
+	self.container:InvalidateLayout(true)
+	
+	for k, v in pairs(SS.HubTabs) do
+		
+		-- Create the category panel.
+		self.container:AddCategory(k, v.name, v.panelName)
+		
 		v.button = vgui.Create("ss_hub_nav_buttons", self.nav) 
 		v.button:SetIcon(v.iconPath) 
 		v.button:SetLabel(v.name) 
 		v.button.t = v  
 		v.button.id = k 
-	end 
-	self:SetTab(#SS.HubTabs) 
+	end
+	
+	self:SetTab(#SS.HubTabs, SS.HubTabs[#SS.HubTabs].button) 
 
 	GAMEMODE:SetGUIBlur(true) 
-	gui.EnableScreenClicker(true) 
+	
+	self:MakePopup()
 end 
+
+function PANEL:GetCategory(id)
+	return self.container:GetCategory(id)
+end
 
 function PANEL:PerformLayout() 
 	self:SetSize(HubWidth, HubHeight) 
@@ -49,68 +95,81 @@ function PANEL:PerformLayout()
 
 	local lastX = HubWidth+15
 	for k,v in pairs(SS.HubTabs) do 
-		lastX = lastX-v.button:GetWide()-15
-		v.button:SetPos(lastX, self.nav:GetTall()/2-v.button:GetTall()/2) 
+		if (ValidPanel(v.button)) then
+			lastX = lastX-v.button:GetWide()-15
+			v.button:SetPos(lastX, self.nav:GetTall()/2-v.button:GetTall()/2) 
+		end
 	end 
 end 
 
-function PANEL:SetTab(id) 
-	self.lasttab = self.curtab or -1
-	self.curtab = id 
-	self.Right = (self.lasttab == -1 or self.lasttab < id)
-	for k,v in pairs(SS.HubTabs) do 
-		if k == id then 
-			if v.panel and v.panel:IsValid() then 
-				if self.Right then 
-					v.panel:SetPos(-v.panel:GetWide()-10, 75) 
-				else 
-					v.panel:SetPos(HubWidth+10, 75) 
-				end 
-				v.panel:SetVisible(true) 
-				v.panel.Active = true 
-				v.panel.Right = self.Right
-				v.button.Active = true  
-			end 
-		else 
-			if v.panel and v.panel:IsValid() then 
-				v.panel.Right = self.Right
-				v.panel.Active = false 
-				v.button.Active = false 
-			end 
-		end 
-	end 
+function PANEL:SetTab(id, button)
+	self.container:SetActive(id)
+	
+	if (ValidPanel(self.lastButton)) then
+		self.lastButton.Active = false
+	end
+	
+	self.lastButton = button
+	
+	if (ValidPanel(self.lastButton)) then
+		self.lastButton.Active = true
+	end
 end 
 
-function PANEL:Paint(w, h)
-	-- add checks for how much alpha the panel has so we dont set alpha all the time?
-	self:SetAlpha(255 /10 *GAMEMODE.GUIBlurAmt)
+-- TextEntry only works when you have the panel do MakePopup (???).
+-- So we need this to make F1 available.
+function PANEL:OnKeyCodePressed(code)
+	if (code == KEY_F1) then
+		RunConsoleCommand("ss_store")
+	end
+end
+
+function PANEL:Think()
+	local alpha = self:GetAlpha()
+	if (GAMEMODE.GUIBlur) then
+		if (alpha < 255) then
+			self:SetAlpha(255 /10 *GAMEMODE.GUIBlurAmt)
+		end
+	else
+	
+		if (alpha > 0) then
+			self:SetAlpha(255 /10 *GAMEMODE.GUIBlurAmt)
+			
+			if (self:GetAlpha() -4 <= 0) then
+				self:SetVisible(false)
+			end
+		end
+	end
 end 
-vgui.Register("ss_hub", PANEL, "DPanel") 
+vgui.Register("ss_hub", PANEL, "EditablePanel") 
 
+---------------------------------------------------------
+-- The Hub Navigation.
+---------------------------------------------------------
 
-/* The Hub Navigation */ 
 local PANEL = {} 
 function PANEL:PerformLayout() 
-	self:SetSize(HubWidth, 50) 
+	self:SetSize(HubWidth, 60) 
 	self:SetPos(0, 0) 
 end 
 
-function PANEL:Paint(w, h) 
-	surface.SetFont("ss_hub") 
-	local w, th = surface.GetTextSize("THE HUB") 
-	surface.SetTextPos(0+1, h/2-th/2+1)
-	surface.SetTextColor(0, 0, 0, 255*0.35) 
-	surface.DrawText("THE HUB")
-	surface.SetTextColor(255, 255, 255) 
-	surface.SetTextPos(0, h/2-th/2) 
-	surface.DrawText("THE HUB") 
-end 
+function PANEL:Paint(w, h)
+	draw.SimpleText("THE HUB", "ss_hub_blur", 0, 0, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText("THE HUB", "ss_hub", 1, 1, Color(0, 0, 0, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText("THE HUB", "ss_hub", 0, 0, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+end
+
 vgui.Register("ss_hub_nav", PANEL, "DPanel") 
 
-/* The Hub Navigation Buttons */
+---------------------------------------------------------
+-- The Hub Navigation Buttons.
+---------------------------------------------------------
+
 local PANEL = {} 
 function PANEL:Init() 
 	self:NoClipping(true) 
+	
+	self:SetCursor( "hand" )
 end 
 
 function PANEL:PerformLayout() 
@@ -121,7 +180,7 @@ end
 
 function PANEL:Paint(w, h) 
 	if self.Hovered or self.Active then 
-		draw.RoundedBox(4, 0, 0, w, h, Color(39, 207, 255, 255)) --Color(247, 148, 30, 255*0.7)) 
+		draw.RoundedBox(4, 0, 0, w, h, Color(39, 207, 255, 255))
 	end 
 
 	surface.SetDrawColor(255, 255, 255, 255) 
@@ -140,12 +199,12 @@ function PANEL:Paint(w, h)
 	if self.id != 1 then 
 		surface.SetDrawColor(232, 232, 232, 255*0.1) 
 		surface.DrawLine(w+7.5, 7, w+7.5, h-7) 
-	end 
+	end
 end 
 
 function PANEL:OnMouseReleased() 
 	if self.Active then return end 
-	SS.Hub:SetTab(self.id)  
+	SS.Hub:SetTab(self.id, self)  
 end 
 
 function PANEL:SetLabel(txt) 
@@ -157,133 +216,231 @@ function PANEL:SetIcon(matPath)
 end 
 vgui.Register("ss_hub_nav_buttons", PANEL, "DPanel") 
 
-/* The HUB's containers */
-local PANEL = {} 
+---------------------------------------------------------
+-- The HUB's container.
+---------------------------------------------------------
+
+local PANEL = {}
+
 function PANEL:Init() 
-	self:SetSize(HubWidth, HubHeight-75) 
-	self:SetPos(-self:GetWide(), 75) 
+	self.categories = {}
+	
+	self:DockPadding(2, 60, 2, 30)
 end 
 
-function PANEL:PerformLayout() 
-end 
-
-function PANEL:Paint(w, h) 
-	--draw.RoundedBoxEx(4, 0, 0, HubWidth, 54, Color(255, 255, 255, 255), true, true, true, true) 
-	--draw.RoundedBoxEx(4, 1, 27, HubWidth-2, 27-2, Color(238, 238, 238, 255), false, false, true, true)
-
-	--draw.RoundedBoxEx(4, 0, self:GetTall()-30, HubWidth, 30, Color(255, 255, 255, 255), true, true, true, true)
-	--draw.RoundedBoxEx(4, 1, self:GetTall()-15, HubWidth-2, 14, Color(238, 238, 238, 255), false, false, true, true)
-	
-	draw.RoundedBox(4, 0, 0, w, 60, Color(194, 193, 198, 160))
-	draw.SimpleRect(1, 1, w -2, 60 -2, Color(251, 251, 251))
-	draw.SimpleRect(2, 25, w -4, 60 -27, Color(245, 245, 245))
-	
-	draw.RoundedBox(4, 0, h -30, w, 30, Color(194, 193, 198, 160))
-	draw.SimpleRect(1, h -(30 -1), w -2, 28, Color(251, 251, 251))
-	draw.SimpleRect(2,  h -15, w -4, 13, Color(245, 245, 245))
-	
-	
-	-- surface.SetDrawColor(238, 238, 238, 255) 
-	-- surface.DrawRect(1, 20, HubWidth-2, 20-2) 
-	-- surface.DrawRect(1, self:GetTall()-15, HubWidth-2, 9)
-
-	local Text = string.upper(SS.HubTabs[self.id].name) 
-	surface.SetFont("ss_hub_header") 
-	local tw, th = surface.GetTextSize(Text) 
-	surface.SetTextColor(80, 80, 77, 255) 
-	surface.SetTextPos(self:GetWide()/2-tw/2, 54/2-th/2)
-	surface.DrawText(Text) 
-
-	surface.SetDrawColor(0, 0, 0, 120) 
-	surface.DrawRect(2, 60, HubWidth-4, self:GetTall()-54-30) 
+function PANEL:GetCategory(id)
+	return self.categories[id]
 end
 
-function PANEL:Think() 
-	if !self:IsVisible() then return end 
-	local x, y = self:GetPos() 
-	if !self.Active then 
-		x = math.Approach(x, self.Right and HubWidth or (-self:GetWide()), 70) 
-		if x >= HubWidth or x <= (-self:GetWide()) then 
-			self:SetVisible(false) 
-		end 
-	else 
-		x = math.Approach(x, 0, 70) 
-	end 
-	self:SetPos(x, y) 
-end 
+-- Adds a new category panel.
+function PANEL:AddCategory(id, name, panelName)
+	local category = self:Add(panelName)
+	
+	if (!ValidPanel(category)) then
+		category = self:Add("Panel")
+	end
+	
+	category:Dock(FILL)
+	
+	category.id = id
+	category.name = name
+
+	table.insert(self.categories, id, category)
+	
+	category:SetVisible(false)
+	
+	return category
+end
+
+-- Changes the active category.
+function PANEL:SetActive(id)
+	if (!self.movingPanels) then
+		local current = self.categories[id]
+
+		if (ValidPanel(self.lastCategory) and self.lastCategory != current and ValidPanel(current)) then
+			if (self.lastCategory.id > current.id) then
+				current:Dock(NODOCK)
+				current:SetPos(self:GetWide(), current.y)
+				current:MoveTo(0, current.y, 0.2, 0, 0.4, function(tbl, panel) panel:Dock(FILL) end)
+				
+				local last = self.lastCategory
+				
+				last:Dock(NODOCK)
+				last:MoveTo(-self:GetWide(), last.y, 0.2, 0, 0.4, function() self.movingPanels = nil last:SetVisible(false) end)
+			elseif (self.lastCategory.id < current.id) then
+				current:Dock(NODOCK)
+				current:SetPos(-self:GetWide(), current.y)
+				
+				current:MoveTo(0, current.y, 0.2, 0, 0.4, function(tbl, panel) panel:Dock(FILL) end)
+				
+				local last = self.lastCategory
+				
+				last:Dock(NODOCK)
+				last:MoveTo(self:GetWide(), last.y, 0.2, 0, 0.4, function() self.movingPanels = nil last:SetVisible(false) end)
+			end
+			
+			self.movingPanels = true
+		end
+		
+		-- Maybe we want to update the category when you click it?
+		--self.callback(self.categoryPanel, self.created)
+		
+		if (ValidPanel(current) and self.lastCategory != self) then
+			current:SetVisible(true)
+			self.created = true
+			
+			self.lastCategory = current
+		end
+		
+		self.active = id
+	end
+end
+
+local color_outline = Color(194, 193, 198, 160)
+local color_background = Color(251, 251, 251)
+local color_background_dark = Color(245, 245, 245)
+
+function PANEL:Paint(w, h) 
+	draw.RoundedBox(4, 0, 0, w, 60, color_outline)
+	draw.SimpleRect(1, 1, w -2, 60 -2, color_background)
+	draw.SimpleRect(2, 25, w -4, 60 -27, color_background_dark)
+	
+	draw.RoundedBox(4, 0, h -30, w, 30, color_outline)
+	draw.SimpleRect(1, h -(30 -1), w -2, 28, color_background)
+	draw.SimpleRect(2,  h -15, w -4, 13, color_background_dark)
+
+	if (self.active) then
+		local text = self.categories[self.active].name
+		
+		draw.SimpleText(text, "ss_hub_header", w /2, 51, Color(80, 80, 77, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+	end
+	
+	draw.SimpleRect(2, 60, w -4, h -90, Color(0, 0, 0, 120))
+end
+
+function PANEL:PaintOver(w, h)
+	surface.DisableClipping(true)
+		util.PaintShadow(w, 60, -w, -60, 4, 0.35)
+		util.PaintShadow(w, h, -w, -30, 4, 0.35)
+		
+		draw.SimpleText("F1 TO CLOSE", "ss_hub_close_tip.blur", w, h +8, color_black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText("F1 TO CLOSE", "ss_hub_close_tip", w +1, h +9, Color(0, 0, 0, 180), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText("F1 TO CLOSE", "ss_hub_close_tip", w, h +8, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+	surface.DisableClipping(false)
+end
+
 vgui.Register("ss_hub_container", PANEL, "DPanel")
 
-/* The HUB's store */ 
+---------------------------------------------------------
+-- The HUB's store.
+---------------------------------------------------------
+
 STORE = false 
 local PANEL = {} 
 function PANEL:Init() 
-	STORE = self 
-	self.Preview = vgui.Create("ss_hub_store_preview", self)  
-	self.Preview:SetSize(340-10, 340-10) --HubWidth-HubWidth*0.18-HubWidth*0.367-10
-	self.Preview:SetPos(175+(HubWidth-175-340)+5, 60) 
-
-	-- self.MBodyGroup = vgui.Create("DPanel", self) 
-	-- self.MBodyGroup:SetSize(100, 25) 
-
-	-- function self.MBodyGroup:Paint(w, h) 
-	-- 	surface.SetDrawColor(255, 255, 255, 255*0.20) 
-	-- 	surface.DrawRect(0, 0, w, h) 
-
-	-- 	-- surface.SetFont("ss_hub_store_buttons") 
-	-- 	-- surface.SetTextColor(255, 255, 255, 255) 
-	-- 	-- local tw, th = surface.GetTextSize("Model") 
-	-- 	-- surface.SetTextPos(5, h/2-th/2) 
-	-- 	-- surface.DrawText("Model") 
-	-- end  
-
-	-- self.MBodyGroup.BodyGroup = vgui.Create("DTextBox", self.MBodyGroup) 
-	-- self.MBodyGroup.BodyGroup:SetSize(45, 20) 
-	-- self.MBodyGroup.BodyGroup:SetNumeric(true) 
-	-- self.MBodyGroup.BodyGroup:SetEnterAllowed(false)
-
-	-- function self.MBodyGroup.BodyGroup.OnChange() 
-	-- 	local val = self.MBodyGroup.BodyGroup:GetValue() 
-	-- 	self.Preview.Entity:SetBodyGroup(val, self.MBodyGroup.Value:GetValue()) 
-	-- end 
-
-	-- self.MBodyGroup.Value = vgui.Create("DTextBox", self.MBodyGroup) 
-	-- self.MBodyGroup.Value:SetSize(45, 20) 
-	-- self.MBodyGroup.Value:SetNumeric(true) 
-	-- self.MBodyGroup.Value:SetEnterAllowed(false)
-
-	-- function self.MBodyGroup.Value.OnChange() 
-	-- 	local val = self.MBodyGroup.Value:GetValue() 
-	-- 	self.Preview.Entity:SetBodyGroup(self.MBodyGroup.BodyGroup:GetValue(), val) 
-	-- end 
+	STORE = self
 	
+	self.categoryList = self:Add("DScrollPanel")
+	self.categoryList:Dock(LEFT)
+	self.categoryList:SetWide(170)
+	self.categoryList:GetCanvas():DockPadding(0, 21, 0, 0)
+	
+	local list = self.categoryList
+	
+	local listBase = self:Add("Panel")
+	listBase:Dock(LEFT)
+	listBase:DockPadding(0, 0, 0, 90)
+	listBase:SetWide(HubWidth -615)
 
+	function listBase:Paint(w, h)
+		draw.SimpleRect(0, 0, w, h, Color(19, 19, 19, 255 *0.6))
+		
+		surface.SetDrawColor(19, 19, 19, 255 *0.25)
+		surface.DrawLine(1, 1, w, 1)
+		surface.DrawLine(w -2, 2, w -2, h -2)
+		surface.DrawLine(1, h -2, w -1, h -2)
+		
+		if (ValidPanel(list.selected)) then
+			local x, y = list.selected:GetPos()
+			local height = list.selected:GetTall()
+			
+			surface.DrawLine(1, 2, 1, y)
+			surface.DrawLine(1, y +height, 1, h -2)
+		end
+	end
+	
+	listBase.search = listBase:Add("DTextEntry")
+	listBase.search:SetTall(36)
+	listBase.search:SetText("search for an item in the shop...")
+	listBase.search:SetFont("ss_hub_store_buttons")
+	
+	function listBase.search.OnEnter(_self)
+		local value = _self:GetValue()
+		
+		self.categoryList.selected.t.List:Clear()
+	
+		for k2, v2 in pairs(SS.STORE.Items) do
+			if v2.Category == self.categoryList.selected.t.id then
+				local found = string.find(v2.Name, value, 0, true)
+				
+				if (found) then
+					local Panel =  self.categoryList.selected.t.List:Add("ss_hub_store_icon") 
+					Panel:SetSize(150, 150) 
+					Panel:SetModel(v2.Model) 
+					Panel:SetCamPos(v2.CamPos) 
+					Panel:SetLookAt(v2.LookAt) 
+					Panel:SetFOV(v2.Fov)
+					Panel:SetData(v2)
+					Panel.Rotate = v2.Rotate or 45 
+					Panel.PPanel = self.categoryList.selected.t.Panel 
 
-
-
-
-	local LastY = 80 
-	for k,v in pairs(SS.STORE.Categories) do 
+					if v2.Type == "model" then Panel.Model = true end
+				end
+			end 
+		end 
+	end
+	
+	function listBase.search:Paint(w, h)
+		draw.RoundedBox(8, 0, 0, w, h, color_white)
+		
+		self:DrawTextEntryText(Color(70, 70, 70, 200), Color(60, 160, 60, 60), Color(60, 60, 60, 240))
+	end
+	
+	function listBase:PerformLayout()
+		local w, h = self:GetSize()
+		
+		self.search:SetWide(w /2)
+		self.search:SetPos(w /2 -self.search:GetWide() /2, h -62)
+	end
+	
+	for k, v in pairs(SS.STORE.Categories) do 
 		StoreCats[v] = {} 
+		
 		local t = StoreCats[v] 
-		t.button = vgui.Create("ss_hub_store_button", self) 
-		t.button:SetCursor( "hand" )
-		t.button:SetSize(173, 44) 
-		t.button:SetPos(2, LastY) 
+		
+		t.button = vgui.Create("ss_hub_store_button") 
+		t.button:SetCursor("hand")
+		t.button:SetTall(44) 
 		t.button:SetTitle(v) 
 		t.button.t = t 
-		LastY = LastY+t.button:GetTall()
-		t.id = k 
+		t.id = k
+		
+		if (k == #SS.STORE.Categories) then
+			t.button:SetLastLine(true)
+		end
+		
+		self.categoryList:AddItem(t.button)
+		
+		t.Panel = listBase:Add("DScrollPanel")
+		t.Panel:Dock(FILL)
+		
+		util.ReplaceScrollbar(t.Panel)
 
-		t.Panel = vgui.Create("DScrollPanel", self) 
-		t.Panel.VBar.btnUp:SetVisible(false) 
-		t.Panel.VBar.btnDown:SetVisible(false) 
-		t.Panel.VBar:Dock(NODOCK) 
-		function t.Panel.VBar.btnGrip:Paint(w, h) 
-			draw.RoundedBox(8, 0, 0, w, h, Color(234, 234, 234, 255*0.5)) 
-		end 
-		t.Panel.VBar.Paint = function() end  
-
-		t.List = vgui.Create("DIconLayout", t.Panel)  
+		t.List = vgui.Create("DIconLayout")
+		t.List:SetSpaceX(12)
+		t.List:SetSpaceY(12)
+		t.List:SetBorder(21)
+		t.List:Dock(FILL)
 		t.Panel:AddItem(t.List)  
 
 		for k2, v2 in pairs(SS.STORE.Items) do 
@@ -293,62 +450,50 @@ function PANEL:Init()
 				Panel:SetModel(v2.Model) 
 				Panel:SetCamPos(v2.CamPos) 
 				Panel:SetLookAt(v2.LookAt) 
-				Panel:SetFOV(v2.Fov) 
+				Panel:SetFOV(v2.Fov)
+				Panel:SetData(v2)
+				
 				Panel.Rotate = v2.Rotate or 45 
 				Panel.PPanel = t.Panel 
-				Panel.Price = v2.Price 
-				Panel.Info = v2 
-				if v2.Type == "model" then Panel.Model = true end 
+
+				if v2.Type == "model" then Panel.Model = true end
 			end 
 		end 
 	end 
-	self:SetCat(1) 
-end 
-
-function PANEL:PerformLayout() 
-	self:SetSize(self:GetParent():GetSize()) 
-	-- self.MBodyGroup:SetPos(self:GetWide()-self.MBodyGroup:GetWide(), 55+20) 
-	-- self.MBodyGroup.BodyGroup:SetPos(2.5, 2.5) 
-	-- self.MBodyGroup.Value:SetPos(2.5+self.MBodyGroup.BodyGroup:GetWide()+2.5, 2.5) 
-
-	for k,v in pairs(StoreCats) do 
-		v.Panel:SetPos(175, 60) 
-		v.Panel:SetSize(HubWidth-175-340, self:GetTall()-65-30)
-
-		v.Panel.VBar:SetSize(17, v.Panel:GetTall()) 
-		v.Panel.VBar:SetPos(v.Panel:GetWide()-v.Panel.VBar:GetWide()-10 , 0)
-
-		v.List:SetWide(v.Panel:GetWide()-v.Panel.VBar:GetWide()-10) 
-
-		v.List.n_Columns = math.floor(v.List:GetWide()/150)
-		v.List:SetSpaceX(((v.List:GetWide()-v.List.n_Columns*150)/v.List.n_Columns)/2) 
-		v.List:SetSpaceY(v.List:GetSpaceX()) 
-		v.List:SetBorder(v.List:GetSpaceX()) 
-	end 
+	
+	self.Preview = self:Add("ss_hub_store_preview")
+	self.Preview:Dock(FILL)
 end 
 
 function PANEL:Paint(w, h) 
-	surface.SetDrawColor(19, 19, 19, 255*0.6)
-	surface.DrawRect(175, 60, HubWidth-175-340, self:GetTall()-60-30)
+	return true
 end 
 
 function PANEL:SetCat(i) 
 	for k,v in pairs(StoreCats) do 
 		if v.id == i then 
-			v.active = true 
-			v.Panel:SetVisible(true) 
-		else 
-			v.active = false 
+			v.button.Active = true 
+			v.Panel:SetVisible(true)
+			
+			self.categoryList.selected = v.button
+		else
+			v.button.Active = false 
 			v.Panel:SetVisible(false) 
 		end 
 	end 
 end 
 vgui.Register("ss_hub_store", PANEL, "DPanel") 
 
-/* The store buttons */ 
-local PANEL = {} 
-function PANEL:Init() 
+---------------------------------------------------------
+-- The store buttons.
+---------------------------------------------------------
 
+local PANEL = {} 
+
+AccessorFunc(PANEL, "m_bLastLine", "LastLine")
+
+function PANEL:Init() 
+	self:Dock(TOP)
 end 
 
 function PANEL:SetTitle(txt) 
@@ -356,14 +501,18 @@ function PANEL:SetTitle(txt)
 end 
 
 function PANEL:Paint(w, h) 
-	if self.t.active or self.Hovered then 
-		surface.SetDrawColor(19, 19, 19, 255*0.6) 
-		surface.DrawRect(0, 1, w, h-2) 
-	end 
-	surface.SetDrawColor(19, 19, 19, 255*0.2)
+	if self.Active or self.Hovered then 
+		surface.SetDrawColor(19, 19, 19, 255 *0.6) 
+		surface.DrawRect(0, 0, w, h) 
+	end
+	
+	surface.SetDrawColor(19, 19, 19, 255 *0.5)
 	surface.DrawRect(0, 0, w, 1) 
-	surface.DrawRect(0, h-1, w, 1) 
-
+	
+	if (self.m_bLastLine) then
+		surface.DrawRect(0, h -1, w, 1) 
+	end
+	
 	if self.Title then 
 		surface.SetFont("ss_hub_store_cat") 
 		local tw, th = surface.GetTextSize(self.Title) 
@@ -377,46 +526,72 @@ function PANEL:Paint(w, h)
 end 
 
 function PANEL:OnMouseReleased() 
-	self:GetParent():SetCat(self.t.id) 
+	STORE:SetCat(self.t.id, self)
 end 
 vgui.Register("ss_hub_store_button", PANEL, "DPanel") 
 
-/* The store icons */ 
-local PANEL = {} 
-local bgmat = Material("skeyler/store/icon_base.png") 
-local highlight = Material("skeyler/store/icon_highlight.png")
-function PANEL:Init() 
+---------------------------------------------------------
+-- The store icons.
+---------------------------------------------------------
+
+local PANEL = {}
+
+AccessorFunc(PANEL, "m_bEqupIcon", "EquipIcon")
+AccessorFunc(PANEL, "m_bInventoryIcon", "InventoryIcon")
+
+local bgmat = Material("skeyler/store/icon_base.png", "noclamp smooth") 
+local highlight = Material("skeyler/store/icon_highlight.png", "noclamp smooth")
+
+function PANEL:Init()
+	local this = self
+	
+	self:DockPadding(4, 4, 4, 4)
+	
+	self.Rotate = 0
 	self.Ang = 45
 	self:SetCamPos( Vector( 60, 30, 64 ) )
 	self:SetLookAt( Vector( 0, 0, 64 ) )
 	self:SetFOV( 20 )
 
 	self.InfoPnl = vgui.Create("DPanel", self) 
+	self.InfoPnl:Dock(FILL)
+	
+	self.toolTip = self.InfoPnl:CreateToolTip()
+	self.toolTip:SetSize(200, 0)
+	self.toolTip:DockPadding(8, 8, 8, 8)
+	
 	self.InfoPnl.Offset = 0 
-	function self.InfoPnl:Paint(w, h) 
-		if self.Hovered or self:IsChildHovered(1) then 
-			self.Offset = math.Approach(self.Offset, 32, 5) 
-		else 
-			self.Offset = math.Approach(self.Offset, 0, 5) 
-		end 
-		surface.SetDrawColor(0, 0, 0, 255*0.85) 
-		surface.DrawRect(0, 0, w, self.Offset) 
-		--surface.DrawRect(0, h-self.Offset, w, self.Offset) 
-
-		local x, y = self:LocalToScreen(0, 0) 
-		local Text = FormatNum(self:GetParent().Price or "100") 
-		surface.SetFont("ss_hub_store_price") 
-		local tw, th = surface.GetTextSize(Text) 
-		surface.SetTextPos(w/2-(tw+22)/2+22+1, -32+32/2-th/2+1+self.Offset) 
-		surface.SetTextColor(0, 0, 0, 255*0.35) 
-		surface.DrawText(Text) 
-		surface.SetTextPos(w/2-(tw+22)/2+22, -32+32/2-th/2+self.Offset) 
-		surface.SetTextColor(255, 255, 255, 255) 
-		surface.DrawText(Text) 
-
-		surface.SetMaterial(HUD_COIN) 
-		surface.SetDrawColor(255, 255, 255, 255) 
-		surface.DrawTexturedRect(w/2-(tw+14)/2, 4-30+self.Offset, 12, 17) 
+	
+	function self.InfoPnl:Paint(w, h)
+		local hasItem = LocalPlayer():HasStoreItem(this.Info.ID)
+		
+		if (hasItem and !this.m_bInventoryIcon) then
+			self.Offset = math.Approach(self.Offset, 0, 5)
+			
+			draw.SimpleRect(0, 0, w, h, Color(0, 0, 0, 220))
+			
+			draw.SimpleText("PURCHASED", "ss_hub_store_purchase_blur", w /2, h /2, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText("PURCHASED", "ss_hub_store_purchase", w /2 +1, h /2 +1, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText("PURCHASED", "ss_hub_store_purchase", w /2, h /2, Color(10, 220, 10, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		else
+			if self.Hovered or self:IsChildHovered(1) then 
+				self.Offset = math.Approach(self.Offset, 32, 5)
+			else 
+				self.Offset = math.Approach(self.Offset, 0, 5)
+			end 
+			
+			surface.SetDrawColor(0, 0, 0, 255 *0.85) 
+			surface.DrawRect(0, 0, w, self.Offset) 
+	
+			local x, y = self:LocalToScreen(0, 0) 
+			local text = FormatNum(this.Info.Price or "100")
+			local width = util.GetTextSize("ss_hub_store_price", text)
+			
+			draw.SimpleText(text, "ss_hub_store_price", w /2 -(width +23) /2 +23, -15 +(32 *(self.Offset /32)), color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			draw.SimpleText(text, "ss_hub_store_price", w /2 -(width +22) /2 +22, -16 +(32 *(self.Offset /32)), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			
+			draw.Material(w /2 -(width +14) /2, -16 +(32 *(self.Offset /32)) -8, 12, 17, color_white, HUD_COIN)
+		end
 	end 
 
 	self.BPreview = vgui.Create("DPanel", self.InfoPnl) 
@@ -426,7 +601,7 @@ function PANEL:Init()
 		self.Col = self.Hovered and Color(195, 195, 195, 250) or Color(156, 156, 156, 250)
 		draw.SimpleRect(0, 0, w, h, self.Col) 
 
-		draw.SimpleText("PREVIEW", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.35), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText("PREVIEW", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.42), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		draw.SimpleText("PREVIEW", "ss_hub_store_buttons", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end 
 
@@ -435,34 +610,48 @@ function PANEL:Init()
 	end 
 
 	function self.BPreview:OnMouseReleased() 
-		if self:GetParent():GetParent().Model then 
-			STORE.Preview:SetModel(self:GetParent():GetParent().Entity:GetModel(), self:GetParent():GetParent().Info) 
-		else 
-			STORE.Preview:SetHat(self:GetParent():GetParent().Entity:GetModel(), self:GetParent():GetParent().Info) 
+		local parent = self:GetParent():GetParent()
+		
+		if (parent.Info.Bone) then
+			STORE.Preview:SetHat(parent.Entity:GetModel(), parent.Info) 
+		else
+			STORE.Preview:SetModel(parent.Entity:GetModel(), parent.Info) 
 		end 
+		
+		surface.PlaySound("garrysmod/ui_click.wav")
 	end 
 
 	self.BPurchase = vgui.Create("DPanel", self.InfoPnl) 
 	self.BPurchase:SetCursor( "hand" )
 	
+	function self.BPurchase:OnMouseReleased()
+		local id = this.Info.ID
+		local hasItem = LocalPlayer():HasStoreItem(id)
+		
+		if (hasItem and this.m_bInventoryIcon) then
+			net.Start("SS_ItemEquip")
+				net.WriteString(id)
+			net.SendToServer()
+		else
+			net.Start("ss.store.buy")
+				net.WriteString(id)
+			net.SendToServer()
+		end
+		
+		surface.PlaySound("garrysmod/ui_click.wav")
+	end
+	
 	function self.BPurchase:Paint(w, h) 
 		self.Col = self.Hovered and Color(33 +10, 175 +20, 234 +20, 240) or Color(33, 175, 234, 240)
 		draw.SimpleRect(0, 0, w, h, self.Col) 
-
-		--surface.SetFont("ss_hub_store_buttons") 
 		
-		--local tw, th = surface.GetTextSize("PURCHASE") 
-		
-		draw.SimpleText("PURCHASE", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.35), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText("PURCHASE", "ss_hub_store_buttons", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		
-		--[[surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
-		surface.SetTextColor(0, 0, 0, 255*0.35) 
-		surface.DrawText("PURCHASE")
-		
-		surface.SetTextPos(w/2-tw/2, h/2-th/2) 
-		surface.SetTextColor(255, 255, 255, 255) 
-		surface.DrawText("PURCHASE")]]
+		if (this.m_bInventoryIcon) then
+			draw.SimpleText("EQUIP", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.42), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText("EQUIP", "ss_hub_store_buttons", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		else
+			draw.SimpleText("PURCHASE", "ss_hub_store_buttons", w /2 +1, h /2 +1, Color(0, 0, 0, 255 *0.42), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText("PURCHASE", "ss_hub_store_buttons", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
 	end 
 
 	function self.BPurchase:Think() 
@@ -470,15 +659,44 @@ function PANEL:Init()
 	end 
 end 
 
+function PANEL:SetData(data)
+	self.Info = data
+	
+	local label = self.toolTip:Add("DLabel")
+	label:Dock(TOP)
+	label:DockMargin(0, 0, 0, 8)
+	label:SetText(data.Name)
+	label:SetFont("ss.tooltip.name")
+	label:SetColor(color_white)
+	label:SizeToContents()
+	
+	self.toolTip:InvalidateLayout(true)
+	self.toolTip:SizeToChildren(false, true)
+end
+
+function PANEL:SetEquipIcon(bool)
+	
+	-- Remove useless stuff.
+	if (bool) then
+		self:DockPadding(0, 0, 0, 0)
+		
+		self.InfoPnl.tooltip_ss:Remove()
+	
+		self.InfoPnl:Remove()
+		self.BPreview:Remove()
+		self.BPurchase:Remove()
+	end
+	
+	self.m_bEqupIcon = bool
+end
+
 function PANEL:PerformLayout() 
-	local w, h = self:GetSize() 
-	self.InfoPnl:SetSize(w-8, h-8) 
-	self.InfoPnl:SetPos(4, 4)
-	
-	local w, h = self.InfoPnl:GetSize()
-	
-	self.BPreview:SetSize(w /2, 26) 
-	self.BPurchase:SetSize(w /2, 26)
+	if (ValidPanel(self.InfoPnl)) then
+		local w, h = self.InfoPnl:GetSize()
+		
+		self.BPreview:SetSize(w /2, 26) 
+		self.BPurchase:SetSize(w /2, 26)
+	end
 end 
 
 function PANEL:LayoutEntity( Entity )
@@ -492,11 +710,15 @@ function PANEL:LayoutEntity( Entity )
 	Entity:SetAngles( Angle( 0, self.Ang,  0) )
 end
 
-function PANEL:Paint(w, h) 
-	surface.SetMaterial(bgmat) 
-	surface.SetDrawColor(255, 255, 255, 255) 
-	surface.DrawTexturedRect(0, 0, 150, 150)  
+function PANEL:Paint(w, h)
 
+	-- We draw this in the equip icon.
+	if (!self.m_bEqupIcon) then
+		surface.SetMaterial(bgmat) 
+		surface.SetDrawColor(249, 249, 249, 250) 
+		surface.DrawTexturedRect(0, 0, 150, 150)  
+	end
+	
 	if ( !IsValid( self.Entity ) ) then return end
 	
 	local x, y = self:LocalToScreen( 0, 0 )
@@ -513,49 +735,54 @@ function PANEL:Paint(w, h)
 	end
 	
 	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096 ) 
-	
-	cam.IgnoreZ( false )
-	
-	render.SuppressEngineLighting( true )
-	render.SetLightingOrigin( self.Entity:GetPos() )
-	render.ResetModelLighting( self.colAmbientLight.r/255, self.colAmbientLight.g/255, self.colAmbientLight.b/255 )
-	render.SetColorModulation( self.colColor.r/255, self.colColor.g/255, self.colColor.b/255 )
-	render.SetBlend( self.colColor.a/255 )
-	
-	for i=0, 6 do
-		local col = self.DirectionalLight[ i ]
-		if ( col ) then
-			render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
-		end
-	end
-
-	render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), true) 
-	self.Entity:DrawModel()
-	self.Entity.previewlist = nil
-	if(self.Info && self.Info.Hooks && self.Info.ID && self.Info.Hooks["Think"] && self.Info.Hooks["PostDrawOpaqueRenderables"]) then
-		self.Info.Hooks["Think"](self.Info.ID,self.Entity)
-		self.Info.Hooks["PostDrawOpaqueRenderables"](self.Info.ID,self.Entity)
-	end
-	render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), false) 
-
-	render.SuppressEngineLighting( false )
-	cam.IgnoreZ( false )
+		cam.IgnoreZ( false )
+			render.SuppressEngineLighting( true )
+				render.SetLightingOrigin( self.Entity:GetPos() )
+				render.ResetModelLighting( self.colAmbientLight.r/255, self.colAmbientLight.g/255, self.colAmbientLight.b/255 )
+				render.SetColorModulation( self.colColor.r/255, self.colColor.g/255, self.colColor.b/255 )
+				render.SetBlend( self.colColor.a/255 )
+		
+				local hasItem = LocalPlayer():HasStoreItem(self.Info.ID)
+		
+				if ((!hasItem or self.m_bInventoryIcon) or self.m_bEqupIcon) then
+					for i = 0, 6 do
+						local col = self.DirectionalLight[ i ]
+						
+						if ( col ) then
+							render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
+						end
+					end
+				end
+	 
+				render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), true) 
+					self.Entity:DrawModel()
+					
+					if (self.Info and self.Info.Hooks) then
+						if (self.Info.Hooks.Think) then
+							self.Info.Hooks.Think(nil, self.Entity)
+						end
+						
+						if (self.Info.Hooks.PostDrawOpaqueRenderables) then
+							self.Info.Hooks.PostDrawOpaqueRenderables(nil, self.Entity)
+						end
+					end
+				render.SetScissorRect(math.max(x+4, px, ox), math.max(y+4, py, oy), math.min(x+w-4, px+pw, ox+ow), math.min(y+h-4, py+ph, oy+oh), false) 
+			render.SuppressEngineLighting( false )
+		cam.IgnoreZ( false )
 	cam.End3D()
 
-	-- surface.SetMaterial(highlight) 
-	-- surface.SetDrawColor(255, 255, 255, 255*0.5) 
-	-- surface.DrawTexturedRect(0, 0, 150, 150) 
-	
 	self.LastPaint = RealTime()
 end
+
 vgui.Register("ss_hub_store_icon", PANEL, "DModelPanel") 
 
-/* Store Preview model */ 
+---------------------------------------------------------
+-- Store preview model.
+---------------------------------------------------------
+
 local PANEL = {} 
 function PANEL:Init() 
-
 	self.Entity = nil 
-	self.Hat = nil 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
 
@@ -564,7 +791,8 @@ function PANEL:Init()
 	self.StartX = 0 
 	self.StartY = 0
 	self.n_CamPos = 150
-
+	self.camZ = 135
+	
 	self:SetCamPos( Vector( self.n_CamPos, self.n_CamPos, 64 ) )
 	self:SetLookAt( Vector( 0, 0, 64 ) )
 	self:SetFOV( 20 )
@@ -575,29 +803,20 @@ function PANEL:Init()
 	
 	self:SetAmbientLight( Color( 50, 50, 50 ) )
 	
-	self:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
-	self:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
+	self:SetDirectionalLight(BOX_TOP, color_white)
+	self:SetDirectionalLight(BOX_FRONT, color_white)
 	
-	self:SetColor( Color( 255, 255, 255, 255 ) ) 
+	self:SetColor(color_white) 
 end
 
 function PANEL:SetModel( strModelName, Table )
-
-	-- Note - there's no real need to delete the old 
-	-- entity, it will get garbage collected, but this is nicer.
-	if ( IsValid( self.Entity ) ) then
-		self.Entity:Remove()
-		self.Entity = nil		
+	if (!IsValid(self.Entity)) then
+		self.Entity = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
+		self.Entity.previews = {}
+	else
+		self.Entity:SetModel(strModelName)
 	end
 	
-	-- Note: Not in menu dll
-	if ( !ClientsideModel ) then return end
-	
-	self.Entity = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
-	if ( !IsValid(self.Entity) ) then return end
-	
-	-- self.Entity:SetPos(self.Entity:GetPos()+Vector(0, 0, 30))
-
 	self.Entity:SetNoDraw( true ) 
 
 	self.Entity.Info = Table 
@@ -608,37 +827,36 @@ function PANEL:SetModel( strModelName, Table )
 	if (iSeq <= 0) then iSeq = self.Entity:LookupSequence( "walk_all_moderate" ) end
 	
 	if (iSeq > 0) then self.Entity:ResetSequence( iSeq ) end
-	
-	
-end 
+end
 
-function PANEL:SetHat( strModelName, Table )
-
-	-- Note - there's no real need to delete the old 
-	-- entity, it will get garbage collected, but this is nicer.
-	if ( IsValid( self.Hat ) ) then
-		self.Hat:Remove()
-		self.Hat = nil		
+function PANEL:SetHat(model, data)
+	if (IsValid(self.Entity)) then
+		if (self.Entity.previews[data.Slot] and IsValid(self.Entity.previews[data.Slot].entity)) then
+			self.Entity.previews[data.Slot].entity:Remove()
+		end
+		
+		self.Entity.previews[data.Slot] = {}
+		self.Entity.previews[data.Slot].item = data.ID
+		self.Entity.previews[data.Slot].entity = ClientsideModel(model)
+		self.Entity.previews[data.Slot].entity:SetNoDraw(true)
 	end
-	
-	-- Note: Not in menu dll
-	if ( !ClientsideModel ) then return end
-	
-	self.Hat = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
-	if ( !IsValid(self.Hat) ) then return end
-	
-	self.Hat:SetNoDraw( true ) 
-
-	self.Hat.Info = Table 
-	
 end 
+
+function PANEL:RemoveHat(slot)
+	if (IsValid(self.Entity) and self.Entity.previews[slot]) then
+		if (IsValid(self.Entity.previews[slot].entity)) then
+			self.Entity.previews[slot].entity:Remove()
+		end
+		
+		self.Entity.previews[slot] = nil
+	end
+end
 
 function PANEL:Paint(w, h) 
 	if ( !IsValid( self.Entity ) ) then return end
 	
 	local x, y = self:LocalToScreen( 0, 0 )
 	local w, h = self:GetSize() 
-	self:SetTall(self:GetParent():GetTall()-55-30-10) 
 
 	self:LayoutEntity( self.Entity )
 	
@@ -647,87 +865,120 @@ function PANEL:Paint(w, h)
 		ang = (self.vLookatPos-self.vCamPos):Angle()
 	end
 	
-	
-	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, self:GetParent():GetTall()-55-30-10, 5, 4096 )
-	cam.IgnoreZ( true )
-	
-	render.SuppressEngineLighting( true )
-	render.SetLightingOrigin( self.Entity:GetPos() )
-	render.ResetModelLighting( self.colAmbientLight.r/255, self.colAmbientLight.g/255, self.colAmbientLight.b/255 )
-	render.SetColorModulation( self.colColor.r/255, self.colColor.g/255, self.colColor.b/255 )
-	render.SetBlend( self.colColor.a/255 )
-	
-	for i=0, 6 do
-		local col = self.DirectionalLight[ i ]
-		if ( col ) then
-			render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
-		end
-	end
-
-	self.Entity:DrawModel()
-
-	if self.Hat then 
-		local Pos, Ang = self.Entity:GetBonePosition(self.Entity:LookupBone(SS.STORE.Items[self.Hat.Info.ID].Bone or "ValveBiped.Bip01_Head1"))
-
-		if SS.STORE.Items[self.Hat.Info.ID].Models and SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID] then 
-			for group,t in pairs(SS.STORE.Items[self.Hat.Info.ID].Models[self.Entity.Info.ID]) do
-				local split = string.Explode("_",group)
-				local mg = self.Entity:GetBodygroup(tonumber(split[1]))
-				local ig = self.Hat:GetBodygroup(tonumber(split[3]))
-				if(mg == tonumber(split[2]) && ig == tonumber(split[4])) then
-					if t.pos then
-						local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-						Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
-					end 
-					local NewAng, FinalAng = Ang, Ang
-					if t.ang then 
-						NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
-						FinalAng.p = NewAng.p 
-						NewAng = Ang 
-						NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
-						FinalAng.y = NewAng.y 
-						NewAng = Ang 
-						NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
-						FinalAng.r = NewAng.r 
-						Ang = FinalAng 
-					end 
-					if t.scale then self.Hat:SetModelScale(t.scale, 0) end 
+	cam.Start3D( self.vCamPos, ang, self.fFOV, x, y, w, h, 5, 4096 )
+		cam.IgnoreZ( true )
+			render.SuppressEngineLighting( true )
+			render.SetLightingOrigin( self.Entity:GetPos() )
+			render.ResetModelLighting( self.colAmbientLight.r/255, self.colAmbientLight.g/255, self.colAmbientLight.b/255 )
+			render.SetColorModulation( self.colColor.r/255, self.colColor.g/255, self.colColor.b/255 )
+			render.SetBlend( self.colColor.a/255 )
+			
+			for i=0, 6 do
+				local col = self.DirectionalLight[ i ]
+				if ( col ) then
+					render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
 				end
 			end
-		end 
-
-		self.Hat:SetAngles(Ang) 
-		self.Hat:SetPos(Pos) 
-		self.Hat:SetParent(self.Entity) 
-		self.Hat:DrawModel() 
-		self.Entity.previewlist = {self.Hat.Info.ID}
-	else
-		self.Entity.previewlist = nil
-	end
-	
-	if(self.Entity.Info && self.Entity.Info.Hooks && self.Entity.Info.ID && self.Entity.Info.Hooks["Think"] && self.Entity.Info.Hooks["PostDrawOpaqueRenderables"]) then
-		self.Entity.Info.Hooks["Think"](self.Entity.Info.ID,self.Entity)
-		self.Entity.Info.Hooks["PostDrawOpaqueRenderables"](self.Entity.Info.ID,self.Entity)
-	end
-	
-	render.SuppressEngineLighting( false )
-	cam.IgnoreZ( false )
+		
+			self.Entity:DrawModel()
+			
+			if (self.Entity.Info and self.Entity.Info.Hooks) then
+				if (self.Entity.Info.Hooks.Think) then
+					self.Entity.Info.Hooks.Think(self.Entity.previews, self.Entity)
+				end
+				
+				if (self.Entity.Info.Hooks.PostDrawOpaqueRenderables) then
+					self.Entity.Info.Hooks.PostDrawOpaqueRenderables(self.Entity.previews, self.Entity)
+				end
+			end
+			
+			for i = 1, MAXIMUM_SLOTS do
+				local data = self.Entity.previews[i]
+				
+				if (data) then
+					if (IsValid(data.entity)) then
+						local item = SS.STORE.Items[data.item]
+						
+						-- Maybe cache this?
+						local index = self.Entity:LookupBone(item.Bone or "ValveBiped.Bip01_Head1")
+						
+						if (index and index > -1) then
+							local position, angles = self.Entity:GetBonePosition(index)
+							local modelData = item.Models[string.lower(self.Entity:GetModel())]
+							
+							if (modelData) then
+								local positionData
+								
+								for i = 1, #modelData do
+									local modelBodygroup = self.Entity:GetBodygroup(modelData[i][1])
+									local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
+									
+									if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
+										positionData = modelData[i]
+									end
+								end
+								
+								if (positionData) then
+									if positionData.pos then
+										local up, right, forward = angles:Up(), angles:Right(), angles:Forward()
+										
+										position = position + up*positionData.pos.z + right*positionData.pos.y + forward*positionData.pos.x -- NOTE: y and x could be wrong way round
+									end 
+			
+									if positionData.ang then 
+										angles:RotateAroundAxis(angles:Up(), positionData.ang.p) 
+										angles:RotateAroundAxis(angles:Forward(), positionData.ang.y) 
+										angles:RotateAroundAxis(angles:Right(), positionData.ang.r) 
+									end
+									
+									if positionData.scale then data.entity:SetModelScale(positionData.scale, 0) end 
+								end
+							end
+		
+							data.entity:SetPos(position)
+							data.entity:SetAngles(angles)
+							data.entity:DrawModel()
+							
+							if (item.Hooks.Think) then
+								item.Hooks.Think(data, self.Entity)
+							end
+							
+							if (item.Hooks.PostDrawOpaqueRenderables) then
+								item.Hooks.PostDrawOpaqueRenderables(data, self.Entity)
+							end
+						end
+					end
+				end
+			end
+			
+			render.SuppressEngineLighting(false)
+		cam.IgnoreZ(false)
 	cam.End3D()
 	
 	self.LastPaint = RealTime()
-	
 end
 
 function PANEL:OnMousePressed(mousecode) 
+	input.SetCursorPos(input.GetCursorPos())
+	
 	if mousecode == MOUSE_LEFT then  
 		if !self.Entity then return end 
-		input.SetCursorPos(input.GetCursorPos()) 
+		
 		self.n_LastYaw = self.Entity:GetAngles() 
 		self.n_LastCam = self.n_CamPos
 		self.StartX, self.StartY = input.GetCursorPos()
 		self.MouseCapt = true  
-		self:MouseCapture(true) 
+		self:MouseCapture(true)
 	end 
+	
+	if (mousecode == MOUSE_RIGHT) then
+		self.rightMouse = true
+		self.lastY = self.camZ
+		
+		self:MouseCapture(true)
+	end
+	
+	self:SetCursor("sizeall")
 end 
 
 function PANEL:OnMouseReleased(mousecode) 
@@ -735,29 +986,280 @@ function PANEL:OnMouseReleased(mousecode)
 		self.MouseCapt = false 
 		self:MouseCapture(false) 
 	end 
+	
+	if (mousecode == MOUSE_RIGHT) then
+		self.rightMouse = false
+		
+		self:MouseCapture(false)
+	end
+	
+	self:SetCursor("hand")
 end 
 
 function PANEL:OnCursorMoved(x, y) 
-	if !self.MouseCapt then return end 
-	x, y = input.GetCursorPos() 
-	self.n_EntityYaw = self.n_LastYaw.y+(x-self.StartX) 
-	self.n_CamPos = math.min(200, math.max(30, self.n_LastCam+(y-self.StartY))) 
+	if self.MouseCapt then
+		x, y = input.GetCursorPos() 
+		self.n_EntityYaw = self.n_LastYaw.y+(x-self.StartX) 
+		self.n_CamPos = math.min(200, math.max(30, self.n_LastCam+(y-self.StartY)))
+	end
+	
+	if (self.rightMouse) then
+		x, y = input.GetCursorPos() 
+		
+		self.camZ = math.min(self:GetTall(), (self.lastY +(y -self.lastY)) *0.25)
+	end
 end 
 
 function PANEL:LayoutEntity( Entity )
 	if ( self.bAnimated ) then
 		self:RunAnimation()
 	end
-	local Z = 40+(30/190*((200-self.n_CamPos)-10))
+	
+--	local Z = self.camZ+(30/190*((200-self.n_CamPos)-10))
+	local z = self.camZ -100
+
 	Entity:SetAngles(Angle(0, self.n_EntityYaw or 0, 0)) 
-	self:SetCamPos(Vector(self.n_CamPos, self.n_CamPos, Z)) 
-	self:SetLookAt(Vector(0, 0, Z)) 
+	self:SetCamPos(Vector(self.n_CamPos, self.n_CamPos, z)) 
+	self:SetLookAt(Vector(0, 0, z)) 
 end
 vgui.Register("ss_hub_store_preview", PANEL, "DModelPanel") 
 
------------------------------------------------
------------------------------------------------
------------------------------------------------
+---------------------------------------------------------
+-- The inventory section.
+---------------------------------------------------------
+
+local panel = {}
+
+function panel:Init()
+	self.categories = {}
+	
+	self.categoryList = self:Add("DScrollPanel")
+	self.categoryList:Dock(LEFT)
+	self.categoryList:SetWide(170)
+	self.categoryList:GetCanvas():DockPadding(0, 21, 0, 0)
+	
+	for k, v in pairs(SS.STORE.Categories) do 
+		local button = vgui.Create("ss_hub_store_button") 
+		button:SetCursor("hand")
+		button:SetTall(44) 
+		button:SetTitle(v) 
+		
+		button.category = k
+		
+		function button.OnMouseReleased(_self)
+			self:SetCategory(_self.category)
+		end
+
+		self.categoryList:AddItem(button)
+		
+		local list = self:Add("DScrollPanel")
+		list:Dock(LEFT)
+		list:SetWide(HubWidth -175 -440)
+		
+		list.button = button
+		
+		util.ReplaceScrollbar(list)
+		
+		function list:Paint(w, h)
+			draw.SimpleRect(0, 0, w, h, Color(19, 19, 19, 255 *0.6))
+		end
+		
+		list.iconLayout = vgui.Create("DIconLayout")
+		list.iconLayout:SetSpaceX(12)
+		list.iconLayout:SetSpaceY(12)
+		list.iconLayout:SetBorder(21)
+		list.iconLayout:Dock(TOP)
+		
+		list:AddItem(list.iconLayout)
+		list:SetVisible(false)
+		
+		self.categories[k] = list
+	end 
+	
+	self.preview = self:Add("ss_hub_store_preview")
+	self.preview:Dock(FILL)
+	self.preview.camZ = 125
+	
+	local headSlot = self.preview:Add("ss.slot")
+	headSlot:SetPos(21, 21)
+	headSlot:SetSize(84, 84)
+	headSlot:SetSlot(SS.STORE.SLOT.HEAD)
+	
+	local modelSlot = self.preview:Add("ss.slot")
+	modelSlot:SetSize(84, 84)
+	modelSlot:SetSlot(SS.STORE.SLOT.MODEL)
+	
+	local slotContainer = self.preview:Add("Panel")
+	slotContainer:SetTall(86)
+	
+	for i = 4, MAXIMUM_SLOTS do
+		local slot = slotContainer:Add("ss.slot")
+		slot:SetWide(84)
+		slot:Dock(LEFT)
+		slot:SetSlot(i)
+
+		slot:DockMargin(0, 0, 21, 0)
+	end
+	
+	function self.preview:PerformLayout()
+		local w, h = self:GetSize()
+		
+		modelSlot:SetPos(w -(84 +21), 21)
+		
+		slotContainer:SizeToChildren(true)
+		slotContainer:SetPos(w /2 -slotContainer:GetWide() /2, h -(84 +21))
+	end
+	
+	self:SetCategory(1)
+end 
+
+function panel:Update()
+	local active = self.lastCategory
+	
+	if (ValidPanel(active)) then
+		active.iconLayout:Clear()
+		
+		for id, data in pairs(SS.STORE.INVENTORY) do
+			local item = SS.STORE.Items[id]
+			
+			if (!LocalPlayer():HasEquipped(item.ID) and item.Category == active.button.category) then 
+				local icon = active.iconLayout:Add("ss_hub_store_icon")
+				icon:SetSize(150, 150)
+				icon:SetModel(item.Model)
+				icon:SetCamPos(item.CamPos)
+				icon:SetLookAt(item.LookAt)
+				icon:SetFOV(item.Fov)
+				icon:SetInventoryIcon(true)
+				icon:SetData(item)
+				
+				icon.Rotate = item.Rotate or 45
+				icon.PPanel = active.iconLayout
+
+				icon.Model = item.Type == "model"
+			end 
+		end
+	end
+	
+	local cache = SS.Gear.GetCacheByPlayer(LocalPlayer())
+	
+	if (cache) then
+		for i = 1, MAXIMUM_SLOTS do
+			local data = cache[i]
+			
+			if (data and data.item and data.item != "") then
+				local item = SS.STORE.Items[data.item]
+				
+				if (item.Bone) then
+					self.preview:SetHat(item.Model, item)
+				end
+			end
+		end
+	end
+end
+
+function panel:SetCategory(id)
+	if (ValidPanel(self.lastCategory)) then
+		self.lastCategory:SetVisible(false)
+		self.lastCategory.button.Active = false
+	end
+	
+	self.lastCategory = self.categories[id]
+	self.lastCategory.button.Active = true
+	
+	self.lastCategory:SetVisible(true)
+	
+	self:Update()
+end
+
+function panel:Think()
+	local model = SS.Gear.Get(LocalPlayer(), SS.STORE.SLOT.MODEL)
+
+	if (model and model.item) then
+		model = SS.STORE.Items[model.item]
+		
+		if (model.Model and previewModel != model.Model) then
+			self.preview:SetModel(model.Model, model)
+		end
+	end
+	
+	local active = self.lastCategory
+	
+	if (ValidPanel(active)) then
+		local highlight
+		local children = active.iconLayout:GetChildren()
+		
+		for k, child in pairs(children) do
+			if (ValidPanel(child)) then
+				if (child.InfoPnl.Hovered or child.InfoPnl:IsChildHovered(1)) then
+					highlight = child.Info.Slot
+				end
+			end
+		end
+		
+		local equipSlots = SS.GetEquipSlots()
+		
+		for i = 1, #equipSlots do
+			local slot = equipSlots[i]
+			
+			if (ValidPanel(slot)) then
+				if (highlight == i) then
+					slot:SetHighlight(true)
+				else
+					slot:SetHighlight(false)
+				end
+			end
+		end
+	end
+end
+
+vgui.Register("ss_hub_inventory", panel, "Panel")
+
+---------------------------------------------------------
+-- The settings section.
+---------------------------------------------------------
+
+local panel = {}
+
+function panel:Init()
+	self.list = self:Add("DScrollPanel")
+	self.list:Dock(FILL)
+	self.list:GetCanvas():DockPadding(28, 0, 28, 16)
+	
+	util.ReplaceScrollbar(self.list)
+	
+	local test, testBase = util.CheckboxAndLabel(nil, "This is a test checkbox")
+	testBase:Dock(TOP)
+	
+	self.list:AddItem(testBase)
+	
+	local slider, base = util.SliderAndLabel(nil, "This is a test slider.")
+	base:Dock(TOP)
+	
+	base.autoSize = true
+	
+	self.list:AddItem(base)
+	
+		local test, testBase = util.CheckboxAndLabel(nil, "This is a test checkbox")
+	testBase:Dock(TOP)
+	
+		self.list:AddItem(testBase)
+end
+
+function panel:Paint(w, h)
+	local children = self.list:GetCanvas():GetChildren()
+	
+	surface.SetDrawColor(Color(0, 0, 0, 140))
+	
+	for k, child in pairs(children) do
+		surface.DrawLine(0, child.y +child:GetTall(), w, child.y +child:GetTall())
+	end
+end
+
+vgui.Register("ss_hub_settings", panel, "Panel")
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function SS:AddHubTab(name, iconPath, panelName) 
 	table.insert(self.HubTabs, 1, {name=name, iconPath=iconPath, panelName=panelName}) 
@@ -769,7 +1271,7 @@ SS:AddHubTab("Settings", "skeyler/icons/settings.png", "ss_hub_settings")
 SS:AddHubTab("Help", "skeyler/icons/help.png", "ss_hub_help") 
 
 concommand.Add("ss_store", function()  
-	if SS.Hub then 
+	if ValidPanel(SS.Hub) then 
 		if !SS.Hub:IsVisible() then 
 			SS.Hub:SetVisible(true) 
 			SS.Hub:SetAlpha(0)
@@ -778,157 +1280,250 @@ concommand.Add("ss_store", function()
 		else 
 			GAMEMODE:SetGUIBlur(false)
 			gui.EnableScreenClicker(false)
-			SS.Hub:SetVisible(false) 
+			--SS.Hub:SetVisible(false) 
 		end 
-		return  
+		return 
+	else
+		local cache = SS.Gear.GetCache()
+		local steamID = LocalPlayer():SteamID()
+		
+		-- Request full update.
+		if (!cache[steamID]) then
+			
+			cache[steamID] = {}
+		
+			net.Start("ss.gear.rqgrfull")
+				net.WriteString(steamID)
+			net.SendToServer()
+		end
 	end 
 	SS.Hub = vgui.Create("ss_hub")  
 end )
 
-local modelids = {}
-local invalidplayeritems = {}
+---------------------------------------------------------
+-- Network the items that a player owns.
+---------------------------------------------------------
 
-local p = FindMetaTable("Player")
-
-function p:AddClientsideModel(id)
-	if not SS.STORE.Items[id] then return false end
-	
-	local i = SS.STORE.Items[id]
-	
-	local mdl = ClientsideModel(i.Model, RENDERGROUP_OPAQUE)
-	mdl:SetNoDraw(true)
-	
-	if not SS.STORE.CSModels[self] then SS.STORE.CSModels[self] = {} end
-	SS.STORE.CSModels[self][id] = mdl
-end
-
-function p:RemoveClientsideModel(id)
-	if not SS.STORE.Items[id] then return false end
-	if not SS.STORE.CSModels[self] then return false end
-	if not SS.STORE.CSModels[self][id] then return false end
-	
-	SS.STORE.CSModels[self][id] = nil
-end
-
-net.Receive("SS_NewCSModel", function(length)
-	local ply = net.ReadEntity()
+net.Receive("ss.store.gtitms", function(bits)
 	local id = net.ReadString()
 	
-	if not IsValid(ply) then
-		if not invalidplayeritems[ply] then
-			invalidplayeritems[ply] = {}
-		end
+	SS.STORE.INVENTORY[id] = {}
+	
+	if (ValidPanel(SS.Hub)) then
+		local category = SS.Hub:GetCategory(3)
+	
+		category:Update()
+	end
+end)
+
+---------------------------------------------------------
+-- Player gear/apparel system.
+---------------------------------------------------------
+
+SS.Gear = {}
+
+local cache = {}
+
+function SS.Gear.Get(player, slot)
+	local steamID = player:SteamID()
+	
+	return cache[steamID] and cache[steamID][slot]
+end
+
+function SS.Gear.GetCache()
+	return cache
+end
+
+function SS.Gear.GetCacheByPlayer(player)
+	local steamID = player:SteamID()
+	
+	return cache[steamID]
+end
+
+---------------------------------------------------------
+-- Full gear update.
+---------------------------------------------------------
+
+net.Receive("ss.gear.gtgrfull", function(bits)
+	local steamID = net.ReadString()
+
+	for i = 1, MAXIMUM_SLOTS do
+		cache[steamID][i] = {}
+
+		local unique = net.ReadString()
 		
-		table.insert(invalidplayeritems[ply], id)
-		return
-	end
-	
-	ply:AddClientsideModel(id)
-end)
-
-net.Receive("SS_RemoveCSModel", function(length)
-	local ply = net.ReadEntity()
-	local id = net.ReadString()
-	
-	if not ply or not IsValid(ply) or not ply:IsPlayer() then return end
-	
-	ply:RemoveClientsideModel(id)
-end)
-
-net.Receive("SS_EquipTable",function()
-	local ply = net.ReadEntity()
-	if(SS.STORE.Equipped[ply]) then
-		SS.STORE.Equipped[ply] = {}
-	end
-	SS.STORE.Equipped[ply] = net.ReadTable()
-end)
-
-net.Receive("SS_CSModels",function()
-	local items = net.ReadTable()
-	
-	for ply, items in pairs(items) do
-		if not IsValid(ply) then -- skip if the player isn't valid yet and add them to the table to sort out later
-			invalidplayeritems[ply] = items
-			continue
-		end
+		if (unique != "") then
+			local item = SS.STORE.Items[unique]
 			
-		for _, id in pairs(items) do
-			if STORE.Items[id] then
-				ply:AddClientsideModel(id)
+			if (item) then
+				cache[steamID][item.Slot].item = item.ID
+				
+				if (item.Bone) then
+					if (IsValid(cache[steamID][i].entity)) then
+						cache[steamID][i].entity:Remove()
+					end
+	
+					cache[steamID][item.Slot].entity = ClientsideModel(item.Model)
+					
+					-- EFFECTS_BONEMERGE ?
+					--if (item.BoneMerge) then
+				--	end
+				end
+				
+				-- Call equip on client?
 			end
 		end
 	end
 end)
 
-hook.Add("Think", "STORE_Think", function()
-	for ply, items in pairs(invalidplayeritems) do
-		if IsValid(ply) then
-			for _, id in pairs(items) do
-				if SS.STORE.Items[id] then
-					ply:AddClientsideModel(id)
+---------------------------------------------------------
+-- Single slot update.
+---------------------------------------------------------
+
+net.Receive("ss.gear.gtgrslot", function(bits)
+	local item = SS.STORE.Items[net.ReadString()]
+	local steamID = net.ReadString()
+	local remove = net.ReadBit()
+
+	if (remove == 1) then
+		if (IsValid(cache[steamID][item.Slot].entity)) then
+			cache[steamID][item.Slot].entity:Remove()
+		end
+		
+		cache[steamID][item.Slot].dirty = nil
+		cache[steamID][item.Slot].item = nil
+	else
+		if (item) then
+			cache[steamID][item.Slot].dirty = nil
+			cache[steamID][item.Slot].item = item.ID
+			
+			if (item.Bone) then
+				if (IsValid(cache[steamID][item.Slot].entity)) then
+					cache[steamID][item.Slot].entity:Remove()
+				end
+				
+				cache[steamID][item.Slot].entity = ClientsideModel(item.Model)
+			end
+			
+			-- EFFECTS_BONEMERGE ?
+			--if (item.BoneMerge) then
+			--end
+			
+			-- Call equip on client?
+		end
+	end
+	
+	if (steamID == LocalPlayer():SteamID()) then
+		local category = SS.Hub:GetCategory(3)
+		
+		category:Update()
+	end
+end)
+
+---------------------------------------------------------
+-- Sets a slot to dirty.
+---------------------------------------------------------
+
+net.Receive("ss.gear.gtgrslotd", function(bits)
+	local steamID = net.ReadString()
+	
+	if (cache[steamID]) then
+		local slot = net.ReadUInt(8)
+	
+		cache[steamID][slot].dirty = true
+	end
+end)
+
+---------------------------------------------------------
+-- Draws the gear.
+---------------------------------------------------------
+
+hook.Add("PostPlayerDraw", "ss.gear.render", function(player)
+	local steamID = player:SteamID()
+	
+	-- Request full update.
+	if (!cache[steamID]) then
+		cache[steamID] = {}
+
+		net.Start("ss.gear.rqgrfull")
+			net.WriteString(steamID)
+		net.SendToServer()
+	else
+		for i = 1, MAXIMUM_SLOTS do
+			local data = cache[steamID][i]
+			
+			if (data) then
+			
+				-- Request update for slot if it's dirty.
+				if (data.dirty) then
+					cache[steamID][i].dirty = false
+					
+					net.Start("ss.gear.rqgrslot")
+						net.WriteString(steamID)
+						net.WriteUInt(i, 8)
+					net.SendToServer()
+				end
+				
+				local item = SS.STORE.Items[data.item]
+				
+				if (item) then
+					if (IsValid(data.entity)) then
+					
+						-- Maybe cache this?
+						local index = player:LookupBone(item.Bone or "ValveBiped.Bip01_Head1")
+						
+						if (index and index > -1) then
+							
+							-- Using bone matrix fixes the hat from lagging behind when the player is getting shot. (lol)
+							local boneMatrix = player:GetBoneMatrix(index)
+							local position, angles = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
+							
+							local modelData = item.Models[string.lower(player:GetModel())]
+							
+							if (modelData) then
+								local positionData
+								
+								for i = 1, #modelData do
+									local modelBodygroup = player:GetBodygroup(modelData[i][1])
+									local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
+									
+									if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
+										positionData = modelData[i]
+									end
+								end
+								
+								if (positionData) then
+									if positionData.pos then
+										local up, right, forward = angles:Up(), angles:Right(), angles:Forward()
+										
+										position = position + up*positionData.pos.z + right*positionData.pos.y + forward*positionData.pos.x -- NOTE: y and x could be wrong way round
+									end 
+				
+									if positionData.ang then 
+										angles:RotateAroundAxis(angles:Up(), positionData.ang.p) 
+										angles:RotateAroundAxis(angles:Forward(), positionData.ang.y) 
+										angles:RotateAroundAxis(angles:Right(), positionData.ang.r) 
+									end
+									
+									if positionData.scale then data.entity:SetModelScale(positionData.scale, 0) end 
+								end
+							end
+		
+							data.entity:SetPos(position)
+							data.entity:SetAngles(angles)
+						end
+					end
+					
+					-- This is probably not the right place to call these, but whatever.
+					if (item.Hooks.Think) then
+						item.Hooks.Think(cache[steamID], player)
+					end
+					
+					if (item.Hooks.PostDrawOpaqueRenderables) then
+						item.Hooks.PostDrawOpaqueRenderables(cache[steamID], player)
+					end
 				end
 			end
-			
-			invalidplayeritems[ply] = nil
 		end
-	end
-end)
-
-net.Receive("SS_SetModelIDs",function(len)
-	modelids = net.ReadTable()
-end)
-
-net.Receive("SS_SetModelID",function(len)
-	local p = net.ReadEntity()
-	modelids[p] = net.ReadString()
-end)
-
---half ripped from ps in part
-hook.Add("PostPlayerDraw", "STORE_PPD", function(ply)
-	if not ply:Alive() then return end
-	if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and (GetConVar('thirdperson') and GetConVar('thirdperson'):GetInt() == 0) then return end
-	if not SS.STORE.CSModels[ply] then return end
-	
-	for id, model in pairs(SS.STORE.CSModels[ply]) do
-		if not SS.STORE.Items[id] then SS.STORE.CSModels[ply][id] = nil continue end
-		
-		local Pos, Ang = ply:GetBonePosition(ply:LookupBone(SS.STORE.Items[id].Bone or "ValveBiped.Bip01_Head1"))
-		
-		if SS.STORE.Items[id].Models and SS.STORE.Items[id].Models[modelids[ply]] then 
-			for group,t in pairs(SS.STORE.Items[id].Models[modelids[ply]]) do
-				local split = string.Explode("_",group)
-				local mg = ply:GetBodygroup(tonumber(split[1]))
-				local ig = model:GetBodygroup(tonumber(split[3]))
-				if(mg == tonumber(split[2]) && ig == tonumber(split[4])) then
-					if t.pos then
-						local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-						Pos = Pos + up*t.pos.z + right*t.pos.y + forward*t.pos.x -- NOTE: y and x could be wrong way round
-					end 
-					local NewAng, FinalAng = Ang, Ang
-					if t.ang then 
-						NewAng:RotateAroundAxis(Ang:Up(), t.ang.p) 
-						FinalAng.p = NewAng.p 
-						NewAng = Ang 
-						NewAng:RotateAroundAxis(Ang:Forward(), t.ang.y) 
-						FinalAng.y = NewAng.y 
-						NewAng = Ang 
-						NewAng:RotateAroundAxis(Ang:Right(), t.ang.r) 
-						FinalAng.r = NewAng.r 
-						Ang = FinalAng 
-					end 
-					if t.scale then model:SetModelScale(t.scale, 0) end 
-				end
-			end
-		end
-		
-		model:SetPos(Pos)
-		model:SetAngles(Ang)
-
-		model:SetRenderOrigin(Pos)
-		model:SetRenderAngles(Ang)
-		model:SetupBones()
-		model:DrawModel()
-		model:SetRenderOrigin()
-		model:SetRenderAngles()
 	end
 end)

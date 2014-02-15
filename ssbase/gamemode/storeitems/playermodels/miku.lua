@@ -14,6 +14,8 @@ ITEM.CamPos = Vector(50, 30, 64)						-- Used the modify the position of the cam
 ITEM.LookAt = Vector(0, 0, 64) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
+ITEM.Slot = SS.STORE.SLOT.MODEL								-- What inventory slot this item shoud be placed in.
+
 ITEM.Functions = {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()
@@ -26,56 +28,59 @@ end
 
 ITEM.Hooks = {}
 
-ITEM.Hooks["Think"] = function (item,ply)
-		if CLIENT then
-			if ply.IsPlayer && ply:IsPlayer() && ply:GetSkin() > 0 then
-				if ply:Health() > 66 then 
-					ply:SetSkin(1)
-				elseif ply:Health() <= 66 and ply:Health() > 33 then 
-					ply:SetSkin(2)
-				elseif ply:Health() <= 33 and ply:Health() > 0 then 
-					ply:SetSkin(3)
-				else
-					ply:SetSkin(4)
-				end
-			end
-				local showhair = true
-				if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() then
-					showhair = false
-				end
-				local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
-				local equip = nil
-				if(ply.previewlist) then
-					equip = ply.previewlist
-				elseif(SS.STORE.Equipped[ply]) then
-					equip = SS.STORE.Equipped[ply]
-				end
-				
-				for k,v in pairs(equip or {}) do
-					if(!SS.STORE.Items[v]) then continue end
-					local i = SS.STORE.Items[v]
-					if(i.Type == "mask") then
-						showhair = false
-					end
-					if(i.Type == "headcoverfull") then
-						showhair = false
-					end
-					if(i.Type == "headcoverhalf") then
-						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
-					end
-					if(i.Type == "headcoverpart") then
-						hairmodel = "models/mrgiggles/skeyler/misc/miku_hair02.mdl"
-					end
-				end
-				
-				if(showhair) then
-					ply.hairtoshow = hairmodel
-				else
-					ply.hairtoshow = nil
+function ITEM.Hooks.Think(data, ply)
+	if CLIENT then
+		if ply.IsPlayer && ply:IsPlayer() && ply:GetSkin() > 0 then
+			if ply:Health() > 66 then 
+				ply:SetSkin(1)
+			elseif ply:Health() <= 66 and ply:Health() > 33 then 
+				ply:SetSkin(2)
+			elseif ply:Health() <= 33 and ply:Health() > 0 then 
+				ply:SetSkin(3)
+			else
+				ply:SetSkin(4)
 			end
 		end
+		
+		local showhair = true
+		
+		if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() then
+			showhair = false
+		end
+		
+		local hairmodel = "models/mrgiggles/skeyler/misc/miku_hair.mdl"
+		
+		if (data) then
+			for i = 1, SS.STORE.SLOT.MAXIMUM do
+				local info = data[i]
+				
+				if (info and info.item) then
+					local item = SS.STORE.Items[info.item]
+					
+					if (item) then
+						if (item.Type == "mask" or item.Type == "headcoverfull") then
+							showhair = false
+						else
+							if (item.Type == "headcoverhalf") then
+								hairmodel = "models/mrgiggles/skeyler/misc/miku_hair_short.mdl"
+							elseif (item.Type == "headcoverpart") then
+								hairmodel = "models/mrgiggles/skeyler/misc/miku_hair02.mdl"
+							end
+						end
+					end
+				end
+			end
+		end
+	
+		if(showhair) then
+			ply.hairtoshow = hairmodel
+		else
+			ply.hairtoshow = nil
+		end
+	end
 end
-ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
+
+function ITEM.Hooks.PostDrawOpaqueRenderables(data, ply)
 	if CLIENT && ply && ply:IsValid() && ply.hairtoshow then 
 		if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() and !LocalPlayer():GetObserverTarget() then return end
 		if(ply.currenthair) then
@@ -97,34 +102,39 @@ ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 			p = ply
 		end
 		
-		local Pos, Ang = p:GetBonePosition(p:LookupBone("ValveBiped.Bip01_Head1"))
+		local index = p:LookupBone("ValveBiped.Bip01_Head1")
 		
-		local model = ply.currenthair
-		
-		local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-		Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
-		
-		model:SetBodygroup(1,p:GetBodygroup(1))
-		
-		local NewAng, FinalAng = Ang, Ang
-		NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 
-		FinalAng.p = NewAng.p 
-		NewAng = Ang 
-		NewAng:RotateAroundAxis(Ang:Forward(), hairang.y) 
-		FinalAng.y = NewAng.y 
-		NewAng = Ang 
-		NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
-		FinalAng.r = NewAng.r 
-		Ang = FinalAng 
+		if (index and index > -1) then
+			local boneMatrix = p:GetBoneMatrix(index)
+			local Pos, Ang = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
 			
-		model:SetPos(Pos)
-		model:SetAngles(Ang)
-
-		model:SetRenderOrigin(Pos)
-		model:SetRenderAngles(Ang)
-		model:SetupBones()
-		model:DrawModel()
-		model:SetRenderOrigin()
-		model:SetRenderAngles()
+			local model = ply.currenthair
+			
+			local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+			Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
+			
+			model:SetBodygroup(1,p:GetBodygroup(1))
+			
+			local NewAng, FinalAng = Ang, Ang
+			NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 
+			FinalAng.p = NewAng.p 
+			NewAng = Ang 
+			NewAng:RotateAroundAxis(Ang:Forward(), hairang.y) 
+			FinalAng.y = NewAng.y 
+			NewAng = Ang 
+			NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
+			FinalAng.r = NewAng.r 
+			Ang = FinalAng 
+				
+			model:SetPos(Pos)
+			model:SetAngles(Ang)
+	
+			model:SetRenderOrigin(Pos)
+			model:SetRenderAngles(Ang)
+			model:SetupBones()
+			model:DrawModel()
+			model:SetRenderOrigin()
+			model:SetRenderAngles()
+		end
 	end
 end

@@ -16,6 +16,8 @@ ITEM.CamPos = Vector(50, 30, -1)								-- Used the modify the position of the c
 ITEM.LookAt = Vector(0, 0, -1) 								-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
+ITEM.Slot = SS.STORE.SLOT.HEAD								-- What inventory slot this item shoud be placed in.
+
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()						-- e.g miku hair attach with the models Equip
@@ -34,13 +36,13 @@ ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY 
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 
 ITEM.Models = {} 
-ITEM.Models["dante"] = {	["0_0_0_0"]= {pos=Vector(6.1, -0.15, 0), ang=Angle(10, -90, -90), scale=0.8}}
-ITEM.Models["elin"] = {	["0_0_0_0"]= {pos=Vector(7.75, -2.25, 0), ang=Angle(10, -90, -90), scale=0.98}}
-ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(8.1, -1.5, 0), ang=Angle(5, -90, -90), scale=0.98}}
-ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(8, -0.35, 0), ang=Angle(4, -90, -90), scale=0.925}}
-ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(5.15, 0.25, 0.2), ang=Angle(0, -90, -90), scale=0.875}}
-ITEM.Models["zer0"] = {
-	["0_0_0_0"]= {pos=Vector(6.65, -0.7, 0), ang=Angle(5, -90, -90), scale=0.875},
-	["0_1_0_0"]= {pos=Vector(12.65, -0.7, 0), ang=Angle(5, -90, -90), scale=0.875}
+ITEM.Models[SS.STORE.MODEL.DANTE] = {{0, 0, 0, pos=Vector(6.1, -0.15, 0), ang=Angle(10, -90, -90), scale=0.8}}
+ITEM.Models[SS.STORE.MODEL.ELIN] = {{0, 0, 0, pos=Vector(7.75, -2.25, 0), ang=Angle(10, -90, -90), scale=0.98}}
+ITEM.Models[SS.STORE.MODEL.MIKU] = {{0, 0, 0, pos=Vector(8.1, -1.5, 0), ang=Angle(5, -90, -90), scale=0.98}}
+ITEM.Models[SS.STORE.MODEL.TRON] = {{0, 0, 0, pos=Vector(8, -0.35, 0), ang=Angle(4, -90, -90), scale=0.925}}
+ITEM.Models[SS.STORE.MODEL.USIF] = {{0, 0, 0, pos=Vector(5.15, 0.25, 0.2), ang=Angle(0, -90, -90), scale=0.875}}
+ITEM.Models[SS.STORE.MODEL.ZERO] = {
+	{0, 0, 0, pos=Vector(6.65, -0.7, 0), ang=Angle(5, -90, -90), scale=0.875},
+	{0, 0, 1, pos=Vector(12.65, -0.7, 0), ang=Angle(5, -90, -90), scale=0.875}
 }
 /* ************* */

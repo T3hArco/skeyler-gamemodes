@@ -14,6 +14,8 @@ ITEM.CamPos = Vector(50, 30, 64)						-- Used the modify the position of the cam
 ITEM.LookAt = Vector(0, 0, 64) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
+ITEM.Slot = SS.STORE.SLOT.MODEL								-- What inventory slot this item shoud be placed in.
+
 ITEM.Functions = {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()
@@ -33,7 +35,8 @@ ITEM.Hooks["Think"] = function (item,ply)
 					showhair = false
 				end
 				local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
-				local equip = nil
+			
+--[[			local equip = nil
 				if(ply.previewlist) then
 					equip = ply.previewlist
 				elseif(SS.STORE.Equipped[ply]) then
@@ -52,7 +55,7 @@ ITEM.Hooks["Think"] = function (item,ply)
 					if(i.Type == "headcoverhalf") then
 						hairmodel = "models/mrgiggles/skeyler/misc/elin_hair_short.mdl"
 					end
-				end
+				end]]
 				if(showhair) then
 					ply.hairtoshow = hairmodel
 				else

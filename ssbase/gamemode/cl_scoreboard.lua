@@ -7,6 +7,10 @@ SS.Scoreboard.ROW_RIGHT = 2
 
 local stored = {[SS.Scoreboard.ROW_RIGHT] = {}, [SS.Scoreboard.ROW_LEFT] = {}}
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function SS.Scoreboard.RegisterRow(name, width, x_align, rowType, callback)
 	rowType = rowType or SS.Scoreboard.ROW_RIGHT
 	
@@ -49,6 +53,10 @@ surface.CreateFont("skeyler.scoreboard.ping.small", {font = "Arvil Sans", size =
 
 local panel = {}
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function panel:Init()
 	self.rows = {[SS.Scoreboard.ROW_RIGHT] = {}, [SS.Scoreboard.ROW_LEFT] = {}}
 	self.startTime = SysTime() -0.6
@@ -59,85 +67,18 @@ function panel:Init()
 	self.list:Dock(FILL)
 	self.list:DockMargin(8, 0, 8, 0)
 	
+	local color_background = Color(245, 246, 247, 50)
+	
 	function self.list:Paint(w, h)
-		draw.SimpleRect(0, 0, w, h, Color(245, 246, 247, 50))
-	end
-	
-	self.list.VBar:SetWide(8)
-	self.list.VBar:Dock(NODOCK)
-	self.list.VBar.btnUp:Remove()
-	self.list.VBar.btnDown:Remove()
-	
-	function self.list.VBar:Paint(w, h) end
-	
-	function self.list.VBar.btnGrip:Paint(w, h)
-		local parent = self:GetParent():GetParent()
-		local x, y = parent:ScreenToLocal(gui.MousePos())
-		local x2, y2 = parent:GetPos()
-		local w2, h2 = parent:GetSize()
-		
-		if (x >= w2 -25 and x <= w2 +15 and y >= 0 and y <= h2) then
-			if (self.Depressed) then
-				draw.RoundedBox(8, 0, 0, w, h, Color(255, 255, 255, 255))
-			elseif (self.Hovered) then
-				draw.RoundedBox(8, 0, 0, w, h, Color(191, 192, 193, 255))
-			else
-				draw.RoundedBox(8, 0, 0, w, h, Color(221, 222, 223, 255))
-			end
-		end
-	end
-	
-	function self.list.VBar:OnCursorMoved(x, y)
-		if (!self.Enabled) then return end
-		if (!self.Dragging) then return end
-	
-		local x = 0
-		local y = gui.MouseY()
-		local x, y = self:ScreenToLocal(x, y)
-		
-		y = y -self.HoldPos
-		
-		local TrackSize = self:GetTall() -self:GetWide() *2 -self.btnGrip:GetTall()
-		
-		y = y /TrackSize
-		
-		self:SetScroll(y *self.CanvasSize)	
+		draw.SimpleRect(0, 0, w, h, color_background)
 	end
 
-	function self.list.VBar:PerformLayout()
-		local Scroll = self:GetScroll() /self.CanvasSize
-		local BarSize = math.max(self:BarScale() *self:GetTall(), 0)
-		local Track = self:GetTall() -BarSize
-		
-		Track = Track +1
-		Scroll = Scroll *Track
-		
-		self.btnGrip:SetPos(0, Scroll)
-		self.btnGrip:SetSize(self:GetWide(), BarSize)
-	end
-	
-	function self.list:PerformLayout()
-		local width, height = self:GetSize()
-	
-		self:Rebuild()
-	
-		self.VBar:SetUp(height, self.pnlCanvas:GetTall())
-		self.VBar:SetPos(width -8, 0)
-		self.VBar:SetTall(height)
-		
-		if (self.VBar.Enabled) then
-			self.pnlCanvas:SetWide(width)
-			self.pnlCanvas:SetPos(0, self.VBar:GetOffset())
-		else
-			self.pnlCanvas:SetWide(width)
-			self.pnlCanvas:SetPos(0, 0)
-		
-			self.VBar:SetScroll(self.pnlCanvas:GetTall())
-		end
-
-		self:Rebuild()
-	end
+	util.ReplaceScrollbar(self.list)
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function panel:Resize()
 	local height, children, index = 90, self.list:GetCanvas():GetChildren(), 1
@@ -162,6 +103,10 @@ function panel:Resize()
 	self:Center()
 end
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function panel:AddRow(name, width, x_align, rowType, callback)
 	rowType = rowType or SS.Scoreboard.ROW_RIGHT
 	
@@ -180,6 +125,10 @@ function panel:AddRow(name, width, x_align, rowType, callback)
 		end
 	end
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function panel:AddPlayer(player)
 	local base = self
@@ -247,6 +196,10 @@ function panel:AddPlayer(player)
 	end
 end
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function panel:Think()
 	local players = player.GetAll()
 	
@@ -269,6 +222,10 @@ function panel:Think()
 	end
 end
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function panel:Paint(w, h)
 	Derma_DrawBackgroundBlur(self, self.startTime)
 	
@@ -280,6 +237,10 @@ function panel:Paint(w, h)
 	draw.SimpleRect(1, h -(30 -1), w -2, 28, Color(251, 251, 251))
 	draw.SimpleRect(2,  h -15, w -4, 13, Color(245, 245, 245))
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function panel:PaintOver(w, h)
 	for i = 1, #self.rows do
@@ -314,6 +275,10 @@ vgui.Register("ss.scoreboard", panel, "EditablePanel")
 
 local scoreboard
 local arrowTexture = Material("skeyler/arrow.png", "noclamp smooth")
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function GM:ScoreboardShow()
 	if (!ValidPanel(scoreboard)) then
@@ -368,7 +333,7 @@ function GM:ScoreboardShow()
 							surface.SetDrawColor(color_white)
 							surface.DrawRect(x, y, width, barHeight)
 						end
-						end
+					end
 					
 					if (self.Hovered) then
 						local pingWidth = util.GetTextSize("skeyler.scoreboard.row", ping)
@@ -405,17 +370,26 @@ function GM:ScoreboardShow()
 	scoreboard:SetVisible(true)
 end
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function GM:ScoreboardHide()
 	if (ValidPanel(scoreboard)) then
 		scoreboard:SetVisible(false)
 		
+		if (scoreboard.mouseEnabled) then
+			gui.EnableScreenClicker(false)
+		end
+		
 		scoreboard.mouseEnabled = false
 	end
-
-	gui.EnableScreenClicker(false)
 end
 
+---------------------------------------------------------
 -- Scrolling without mouse enabled.
+---------------------------------------------------------
+
 hook.Add("PlayerBindPress", "ss.scoreboard.scroll", function(player, bind, pressed)
 	if (ValidPanel(scoreboard) and scoreboard:IsVisible() and !scoreboard.mouseEnabled) then
 		if (bind == "invprev") then

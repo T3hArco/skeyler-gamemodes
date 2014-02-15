@@ -16,6 +16,8 @@ ITEM.CamPos = Vector(40, 22, 5)								-- Used the modify the position of the ca
 ITEM.LookAt = Vector(0, 0, 0) 								-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
+ITEM.Slot = SS.STORE.SLOT.HEAD								-- What inventory slot this item shoud be placed in.
+
 ITEM.Functions = {} 										-- Anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()						-- e.g miku hair attach with the models Equip
@@ -34,13 +36,13 @@ ITEM.Bone = "ValveBiped.Bip01_Head1"						-- Bone the item is attached to. ONLY 
 ITEM.BoneMerge = false										-- May be used for certain accessories to bonemerge the item instead. ONLY NEED TO DEFINE FOR HATS/ACCESSORIES.
 
 ITEM.Models = {} 
-ITEM.Models["dante"] = {	["0_0_0_0"]= {pos=Vector(13, -1, 0), ang=Angle(8, -90, -90), scale=1}}
-ITEM.Models["elin"] = {	["0_0_0_0"]= {pos=Vector(15, -1, 0), ang=Angle(8, -90, -90), scale=1}}
-ITEM.Models["miku"] = {	["0_0_0_0"]= {pos=Vector(15, -1, 0), ang=Angle(8, -90, -90), scale=1}}
-ITEM.Models["tron"] = {	["0_0_0_0"]= {pos=Vector(13.5, 0, 0), ang=Angle(0, -90, -90), scale=1}}
-ITEM.Models["usif"] = {	["0_0_0_0"]= {pos=Vector(10, 0, 0.2), ang=Angle(0, -90, -90), scale=1}}
-ITEM.Models["zer0"] = {
-	["0_0_0_0"]= {pos=Vector(13, 0, 0), ang=Angle(0, -90, -90), scale=1},
-	["0_1_0_0"]= {pos=Vector(6, 0, 0), ang=Angle(0, -90, -90), scale=1}
+ITEM.Models[SS.STORE.MODEL.DANTE] = {{0, 0, 0, pos=Vector(13, -1, 0), ang=Angle(8, -90, -90), scale=1}}
+ITEM.Models[SS.STORE.MODEL.ELIN] = {{0, 0, 0, pos=Vector(15, -1, 0), ang=Angle(8, -90, -90), scale=1}}
+ITEM.Models[SS.STORE.MODEL.MIKU] = {{0, 0, 0, pos=Vector(15, -1, 0), ang=Angle(8, -90, -90), scale=1}}
+ITEM.Models[SS.STORE.MODEL.TRON] = {{0, 0, 0, pos=Vector(13.5, 0, 0), ang=Angle(0, -90, -90), scale=1}}
+ITEM.Models[SS.STORE.MODEL.USIF] = {{0, 0, 0, pos=Vector(10, 0, 0.2), ang=Angle(0, -90, -90), scale=1}}
+ITEM.Models[SS.STORE.MODEL.ZERO] = {
+	{0, 0, 0, pos=Vector(13, 0, 0), ang=Angle(0, -90, -90), scale=1},
+	{0, 0, 1, pos=Vector(6, 0, 0), ang=Angle(0, -90, -90), scale=1}
 }
 /* ************* */

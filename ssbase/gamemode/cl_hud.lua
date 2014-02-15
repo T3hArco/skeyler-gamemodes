@@ -29,15 +29,15 @@ surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=530})
 
 PLAYER_MASK = Material("skeyler/names/diagonals.png","noclamp smooth")
 
-HUD_LEFT = Material("skeyler/hud_box_left.png") 
-HUD_CENTER = Material("skeyler/hud_box_center.png") 
-HUD_RIGHT = Material("skeyler/hud_box_ammo.png") 
-HUD_RIGHT_CIRCLE = Material("skeyler/hud_box_ammo_circle.png") 
-HUD_HP = Material("skeyler/hud_bar_health.png") 
-HUD_XP = Material("skeyler/hud_bar_xp.png") 
-HUD_AMMO = Material("skeyler/hud_bar_ammo.png") 
-HUD_BAR_CENTER = Material("skeyler/hud_bar_center.png") 
-HUD_COIN = Material("skeyler/skeyler_coin02.png") 
+HUD_LEFT = Material("skeyler/hud_box_left.png", "noclamp smooth") 
+HUD_CENTER = Material("skeyler/hud_box_center.png", "noclamp smooth") 
+HUD_RIGHT = Material("skeyler/hud_box_ammo.png", "noclamp smooth") 
+HUD_RIGHT_CIRCLE = Material("skeyler/hud_box_ammo_circle.png", "noclamp smooth") 
+HUD_HP = Material("skeyler/hud_bar_health.png", "noclamp smooth") 
+HUD_XP = Material("skeyler/hud_bar_xp.png", "noclamp smooth") 
+HUD_AMMO = Material("skeyler/hud_bar_ammo.png", "noclamp smooth") 
+HUD_BAR_CENTER = Material("skeyler/hud_bar_center.png", "noclamp smooth") 
+HUD_COIN = Material("skeyler/skeyler_coin02.png", "noclamp smooth") 
 
 
 GM.HudAlpha = 0 
@@ -63,7 +63,7 @@ local weaponImgs = {
 function GetWeaponIcon(wep) 
 
 end 
-
+ 
 local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0 
 
 function GM:HUDPaint() 
@@ -202,13 +202,13 @@ function GM:HUDPaint()
 	end 
 
 	/* Right HUD (Ammo) */
-	surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
-	surface.SetMaterial(HUD_RIGHT) 
-	surface.DrawTexturedRect(w-356, h-106, 256, 64) 
-	
 	surface.SetDrawColor(255, 255, 255, self.HudAlpha)
 	surface.SetMaterial(HUD_RIGHT_CIRCLE) 
-	surface.DrawTexturedRect(w-179, h-173, 256, 256) 
+	surface.DrawTexturedRect(w -(256 -46), h-173, 256, 256) 
+	
+	surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
+	surface.SetMaterial(HUD_RIGHT) 
+	surface.DrawTexturedRect(w -(256 +131), h-106, 256, 64) 
 
 	Text = "" 
 	wep = LocalPlayer():GetActiveWeapon() 
@@ -229,16 +229,15 @@ function GM:HUDPaint()
 		frac = math.Approach(frac, wep:Clip1()/GetPrimaryClipSize(wep), 0.01) 
 	end 
 
--- 172, 13
-	render.SetScissorRect(w-162-172*frac, h-87, w-162, h-74, true)
+	render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, true)
 	surface.SetDrawColor(255, 255, 255, self.HudAlpha*0.85) 
 	surface.SetMaterial(HUD_AMMO) 
-	surface.DrawTexturedRect(w-334, h-87, 256, 16)
-	render.SetScissorRect(w-162-172*frac, h-87, w-162, h-74, false)
+	surface.DrawTexturedRect(w -(256 +108), h-87, 256, 16)
+	render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, false)
 
 	surface.SetFont("HUD_CENTER") 
 	surface.SetTextColor(255, 255, 255, self.HudAlpha) 
-	surface.SetTextPos(w-334, h-116) 
+	surface.SetTextPos(w-364, h-116) 
 	surface.DrawText(Text) 
 	
 	Text = "a"
@@ -248,7 +247,7 @@ function GM:HUDPaint()
 	surface.SetFont("HUD_WEPS") 
 	tw, th = surface.GetTextSize(Text) 
 	surface.SetTextColor(35, 35, 35, self.HudAlpha) 
-	surface.SetTextPos(w-95-tw/2, h-95-th/2)
+	surface.SetTextPos(w-125-tw/2, h-95-th/2)
 	surface.DrawText(Text) 
 
 	Text = "None" 
@@ -259,36 +258,40 @@ function GM:HUDPaint()
 	surface.SetFont("HUD_CENTER") 
 	surface.SetTextColor(35, 35, 35, self.HudAlpha) 
 	tw, th = surface.GetTextSize(Text) 
-	surface.SetTextPos(w-95-tw/2, h-60-th/2) 
+	surface.SetTextPos(w-125-tw/2, h-60-th/2) 
 	surface.DrawText(Text) 
 end 
-
+ 
 function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originally in an example code I'm ready to tweak later
  
 	if !ply:Alive() then return end
- 
-	local offset = Vector( 0, 0, 15 )
-	local ang = LocalPlayer():EyeAngles()
-	local pos = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Head1")) + offset + ang:Up()
- 
-	ang:RotateAroundAxis( ang:Forward(), 90 )
-	ang:RotateAroundAxis( ang:Right(), 90 )
- 
- 	local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
-	local a = 0
-	if(d <= 800) then
-		if((d-300)<0) then
-			a = 255
-		else
-			a = math.Round(math.min(255,((500-(d-300))/500)*255))
+	
+	local index = ply:LookupBone("ValveBiped.Bip01_Head1")
+	
+	if (index and index > -1) then
+		local offset = Vector( 0, 0, 15 )
+		local ang = LocalPlayer():EyeAngles()
+		local pos = ply:GetBonePosition(index) + offset + ang:Up()
+	
+		ang:RotateAroundAxis( ang:Forward(), 90 )
+		ang:RotateAroundAxis( ang:Right(), 90 )
+	
+		local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
+		local a = 0
+		if(d <= 800) then
+			if((d-300)<0) then
+				a = 255
+			else
+				a = math.Round(math.min(255,((500-(d-300))/500)*255))
+			end
+		end
+		if(a != 0) then
+			cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
+				draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255*200)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+				draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+			cam.End3D2D()
 		end
 	end
-	if(a != 0) then
-		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255*200)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-			draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-		cam.End3D2D()
-	end
- 
-	self.BaseClass:PostPlayerDraw(ply)
+	
+	--self.BaseClass:PostPlayerDraw(ply)
 end

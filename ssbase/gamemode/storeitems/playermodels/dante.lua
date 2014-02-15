@@ -14,6 +14,8 @@ ITEM.CamPos = Vector(50, 30, 64)						-- Used the modify the position of the cam
 ITEM.LookAt = Vector(0, 0, 64) 							-- Used to change the angle at which the camera views the model 
 ITEM.Fov = 20 
 
+ITEM.Slot = SS.STORE.SLOT.MODEL								-- What inventory slot this item shoud be placed in.
+
 ITEM.Functions = {} 								--anything that can be called but not a gmod hook but more of a "store hook" goes here
 
 ITEM.Functions["Equip"] = function ()

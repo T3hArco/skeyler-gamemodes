@@ -57,7 +57,7 @@ atlaschat.CreateFont("Skeyler Servers ChatFont", "ss.chatFont", "Arial", 16, 100
 
 function theme:Initialize()
 	self.baseClass.Initialize(self)
-	
+
 	self.panel.entry:SetFont("ss.chatFont")
 end
 
@@ -116,10 +116,6 @@ end
 theme.color.background = Color(69, 69, 69, 160)
 
 function theme:PaintPanel(w, h)
-	--draw.SimpleRect(0, 0, w, h, self.color.background)
-	
-	--draw.SimpleText(GetHostName(), "atlaschat.theme.default.title", 8, 20, self.color.generic_label, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	
 	self:PaintSnowFlakes(w, h)
 end
 
@@ -836,10 +832,11 @@ atlaschat.themeConfig = atlaschat.config.New(nil, "theme", "skeylerservers", tru
 
 -- Development autorefresh.
 hook.Add("OnReloaded", "ss.chat.OnReloaded", function()
+
 	---------------------------------------------------------
 	-- Create the chatbox.
 	---------------------------------------------------------
-	
+
 	hook.Add("HUDPaint", "atlaschat.CreateChatbox", function()
 		if (atlaschat.theme.loaded and system.HasFocus()) then
 			local panel = atlaschat.theme.GetValue("panel")
@@ -851,6 +848,10 @@ hook.Add("OnReloaded", "ss.chat.OnReloaded", function()
 				
 				atlaschat.themeConfig:OnChange(atlaschat.themeConfig:GetString())
 	
+				atlaschat.FixInvalidFont()
+				
+				atlaschat.fontHeight = draw.GetFontHeight(atlaschat.font:GetString())
+				
 				net.Start("atlaschat.plload")
 				net.SendToServer()
 			end

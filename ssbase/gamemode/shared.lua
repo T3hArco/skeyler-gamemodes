@@ -3,14 +3,13 @@
 -- Created by xAaron113x --
 ---------------------------
 
+DeriveGamemode("base") 
+
 GM.Name 		= "SSBase"
 GM.Author 		= "xAaron113x"
 GM.Email 		= "xaaron113x@gmail.com"
 GM.Website 		= "aaron113.pw"
 GM.TeamBased 	= false 
-
-DeriveGamemode("base") 
-DEFINE_BASECLASS("gamemode_base")
 
 GM.VIPBonusHP = false 
 GM.HUDShowVel = false 
@@ -21,12 +20,12 @@ TEAM_SPEC = TEAM_SPECTATOR
 
 team.SetUp(TEAM_SPEC, "Spectator", Color(197, 197, 197), false) 
 
-PLAYER_META.Alive2 = PLAYER_META.Alive 
+PLAYER_META.Alive2 = PLAYER_META.Alive2 or PLAYER_META.Alive 
 function PLAYER_META:Alive() 
 	if self:Team() == TEAM_SPEC then return false end 
 	return self:Alive2() 
 end 
-
+ 
 function FormatTime(Time) 
 	local Mili, Seconds, Mins, Hours, Text
 
@@ -56,7 +55,7 @@ function FormatTime(Time)
 	end 
 	return Text 
 end 
-
+ 
 function FormatNum(n)
 	if (!n) then
 		return 0
@@ -68,7 +67,7 @@ function FormatNum(n)
     end
     return n
 end
-
+ 
 -- Atlas chat shared config.
 if (atlaschat) then
 

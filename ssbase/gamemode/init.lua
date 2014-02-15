@@ -12,11 +12,6 @@ DB_HOST = "162.213.209.3"
 DB_USER = "servers_gmod"
 DB_PASS = "wdXWciNSRsh2CA1jJ3Kdt"
 
-for _,v in pairs(file.Find("ss_vgui/*.lua","LUA")) do  -- Fix this later fagget  
-	print(v) 
-	-- AddCSLuaFile("ss_vgui/"..v) 
-end
-
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
@@ -25,8 +20,12 @@ AddCSLuaFile("sh_library.lua")
 AddCSLuaFile("sh_profiles.lua") 
 AddCSLuaFile("sh_store.lua") 
 AddCSLuaFile("cl_store.lua") 
--- AddCSLuaFile("vgui/ss_hub_store_icon.lua") 
 AddCSLuaFile("cl_scoreboard.lua")
+
+AddCSLuaFile("panels/ss_slot.lua")
+AddCSLuaFile("panels/ss_slider.lua")
+AddCSLuaFile("panels/ss_tooltip.lua")
+AddCSLuaFile("panels/ss_checkbox.lua")
 
 include("shared.lua")
 include("sh_profiles.lua") 
@@ -46,7 +45,7 @@ function PLAYER_META:ChatPrintAll(msg)
 		v:ChatPrint(msg) 
 	end 
 end 
-
+ 
 function GM:PlayerInitialSpawn(ply) 
 	ply:ProfileLoad() 
 	ply:CheckFake()
