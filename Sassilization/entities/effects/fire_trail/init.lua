@@ -1,0 +1,54 @@
+function EFFECT:Init(data)
+	self.Ent = data:GetEntity()
+	
+	if not IsValid( self.Ent ) then
+		self.Ent = nil
+		return
+	end
+
+	if self.Ent:GetClass() == "unit_nw_entity" then
+		self.count = 1
+	else
+		self.count = 2
+	end
+	
+	self.Sc = data:GetScale()
+	self.Size = math.random(7, 13)
+	self.LifeTime = data:GetMagnitude()
+	self.LifeTime = self.LifeTime and CurTime() + self.LifeTime or nil
+	self.Mins = self.Ent:OBBMins()
+	self.Maxs = self.Ent:OBBMaxs()
+	self.Emitter = ParticleEmitter( self.Ent:GetPos() )
+end
+
+function EFFECT:Think( )
+	if not self.Ent then return false end
+	if not IsValid( self.Ent ) then self.Emitter:Finish() return false end
+	if self.LifeTime and CurTime() > self.LifeTime then self.Emitter:Finish() return false end
+	
+	self.Size = math.Rand(6,10) * self.Sc
+	
+	local position = self.Ent:LocalToWorld(self.Ent:OBBCenter())
+	position.z = self.Ent:GetPos().z
+	
+	for i = 1, self.count do
+		local random = Vector(math.Rand(self.Mins.x or 0, 1), math.Rand(self.Mins.y or 0, 1), -self.Mins.z) +Vector(math.Rand(-1, self.Maxs.x or 0), math.Rand(-1, self.Maxs.y or 0), math.Rand(-1, self.Mins.z or 0))
+		local particle = self.Emitter:Add("effects/fire_cloud1", position +random)
+	
+		particle:SetVelocity(Vector(math.Rand(-3,3),math.Rand(-3,3),math.Rand(1,10)))
+		particle:SetDieTime( math.Rand(1.5,2) )
+		particle:SetStartAlpha( math.Rand( 130, 150 ) )
+		particle:SetEndAlpha(1)
+		particle:SetStartSize( self.Size )
+		particle:SetEndSize( 0 )
+		particle:SetRoll( math.Rand( -95, 95 ) )
+		particle:SetRollDelta( math.Rand( -0.1, 0.1 ) )
+		particle:SetColor( math.Rand( 150, 255 ), math.Rand( 120, 150 ), 100 )
+		particle:SetGravity(Vector(0, 0, 20))
+	end
+	
+	return true
+end
+
+function EFFECT:Render()
+end

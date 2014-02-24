@@ -1,0 +1,86 @@
+Update 69 11-12-19
+
+    * [News] Work on Sassilization 2.0 has begun
+
+Release 11-19-07
+
+    * [Added] Waiting screen with random tips.
+    * [Added] Destroyed Building Effects
+    * [Added] Scally Wag (unit)
+    * [Added] Plummet (miracle)
+    * [Added] /kick command (admin only)
+    * [Added] /mute command
+    * [Added] /muteall command (admin only)
+    * [Added] Menu Pictures (in the build menu)
+    * [Added] Miracle Delays
+    * [Changed] Archer Towers (larger range down or up)
+    * [Changed] Scoreboard (private mute)
+    * [Changed] Maplist (added melonfield, mountains, etc.)
+
+
+Release 10-02-07:
+
+    * [Added] Darkland Money for kills
+    * [Added] Alliances share resources
+    * [Added] Some fun stuff for me to do
+    * [Added] Admin Console Commands (sa_reset, sa_restart, sa_changemap)
+    * [Added] You lose gold when you lose buildings
+    * [Added] New Sounds (unit select and alert) ...more to come
+    * [Fixed] Ally Tower Exploit (You could upgrade allies' buildings for free)
+    * [Fixed] Bombard Blocking (You can't stand over a building to block bombard)
+    * [Fixed] Archers (they were 1 hit killers)
+    * [Improved] Balance Issues
+    * [Improved] Resource Staff
+    * [Improved] Ballistas (they work now)
+    * [Changed] The map rotation
+    * [Changed] Win money (formula is 180 * number of players / allies)
+    * [Changed] Default Resource income (now +5)
+    * [Changed] Node income (now +1 per node)
+    * [Changed] Bombard is weaker
+    * [Changed] Decimation is weaker
+    * [Removed] Nothing
+    * [Pending] Team alliances of more than two
+    * [Pending] More miracles
+
+
+Release 09-08-07:
+
+    * [Added] Unit cap (100)
+    * [Added] Maps (sa_lakeisland, sa_mineshaft, sa_cubicles)
+    * [Added] Gold rewards for destroying enemies
+    * [Added] Caps chat Blocker (No more childish yelling)
+    * [Fixed] Ballistas (I found out they were healing instead of dealing damage)
+    * [Improved] Unit movement (Less floating units)
+    * [Improved] Walls again
+    * [Improved] Optimization
+    * [Improved] Catapults (Won't fire blindly at shit now)
+    * [Changed] Arrows (Smaller model for archers)
+    * [Removed] Gold income reduction with allies
+    * [Removed] Maps (sa_zonecontrol, sa_desolate, sa_risk_a1)
+    * [Pending] Fixed catapult model with working animations
+    * [Pending] Jaanus might make a player model
+
+
+Release 09-03-07
+
+    * [Added] Sounds
+    * [Added] More hints
+    * [Changed] Wall building (connects 2 non-connected walls)
+    * [Changed] The map list (need more maps now)
+    * [Fixed] Most building on walls exploits
+    * [Fixed] Catapults (Better aim)
+    * [Fixed] Ballistas
+
+
+First Release
+
+    * [Added] Store
+    * [Added] Archer Towers
+    * [Added] Archers
+    * [Added] New Models (Buildings and units)
+    * [Fixed] Water spawning exploit
+    * [Fixed] Build menu sticking
+    * [Changed] Unit spawning (now done like buildings)
+    * [Changed] Player Colors
+    * [Improved] Unit movement
+    * [Improved] Walls

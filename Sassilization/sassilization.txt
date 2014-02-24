@@ -1,0 +1,7 @@
+"sassilization"
+{
+	"base"		"base"
+	"title"		"Sassilization"
+	"maps"		"^sa_|^sassilization_"
+	"menusystem"	"1"
+}

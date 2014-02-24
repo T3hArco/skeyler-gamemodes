@@ -1,0 +1,136 @@
+
+-----------------------------------------
+--        CLASSES
+-----------------------------------------
+
+local CLASSES = {}
+
+
+
+function AddUnit(Name, Table)
+    CLASSES[Name] = Table
+    if(!Table.NoSpawn and Name != "base") then
+        table.insert(UnitOrder, Name)
+    end
+    if(Table.Model) then
+        if(type(Table.Model) == "table") then
+            for k,v in ipairs(Table.Model) do
+                util.PrecacheModel(v)
+            end
+        else
+            util.PrecacheModel(Table.Model)
+        end
+    end
+end
+/*
+AddUnit("base", {
+    Model = "models/Roller.mdl",
+    key = "base",
+})
+
+AddUnit("peasant", {
+    Model = "models/jaanus/peasant.mdl",
+    NoSpawn = true,
+    Name = "Peasant",
+    Data = {
+        Supply = 1,
+        Health = 15,
+        Damage = 1.5,
+        AttackDelay = 1.2,
+        AttackMoveDelay = 1.2,
+        Range = 4,
+        SightRange = 32,
+        Speed = 30,
+        Size = 3,
+    },
+})
+
+AddUnit("swordsman", {
+    Model = "models/mrgiggles/sassilization/swordsman.mdl",
+    Name = "Swordsman",
+    Iron = 8,
+    Food = 10,
+    Gold = 0,
+    Data = {
+        Supply = 1,
+        Health = 15,
+        Damage = 1.5,
+        AttackDelay = 1.2,
+        AttackMoveDelay = 1,
+        Range = 6,
+        SightRange = 32,
+        Speed = 30,
+        Size = 5,
+    },
+    Require = {city = 0},
+    OBBMins = Vector(-1, -1, -1),
+    OBBMaxs = Vector(1, 1, 4)
+})
+
+AddUnit("archer", {
+    Model = "models/sassilization/mrgiggles/pvk/archer.mdl",
+    Name = "Archer",
+    Iron = 11,
+    Food = 9,
+    Gold = 0,
+    Data = {
+        Supply = 1,
+        Health = 9,
+        Damage = 2.8,
+        AttackDelay = 2,
+        AttackMoveDelay = 1,
+        Range = 60,
+        SightRange = 72,
+        Speed = 35,
+        Size = 4,
+    },
+    Require = {city = 0, workshop = 1},
+    OBBMins = Vector(-1, -1, -1),
+    OBBMaxs = Vector(1, 1, 4)
+})
+
+AddUnit("catapult", {
+    Model = "models/mrgiggles/sassilization/Catapult.mdl",
+    Name = "Catapult",
+    Iron = 38,
+    Food = 30,
+    Gold = 5,
+    Data = {
+        Supply = 2,
+        Health = 35,
+        Damage = 3.2,
+        AttackDelay = 6,
+        AttackMoveDelay = 2,
+        Range = 80,
+        SightRange = 100,
+        Speed = 20,
+        Size = 10,
+    },
+    Require = {city = 0, workshop = 2},
+    OBBMins = Vector(-8, -8, -1),
+    OBBMaxs = Vector(8, 8, 8)
+})
+
+AddUnit("scallywag", {
+    Model = "models/mrgiggles/sassilization/scallywag.mdl",
+    Name = "ScallyWag",
+    Iron = 17,
+    Food = 22,
+    Gold = 1,
+    Data = {
+        Supply = 1.5,
+        Health = 32,
+        Damage = 3.2,
+        AttackDelay = 2,
+        AttackMoveDelay = 0,
+        Range = 70,
+        SightRange = 90,
+        Speed = 25,
+        UpRight = true,
+        Size = 6,
+    },
+    Require = {city = 0, workshop = 1},
+    OBBMins = Vector(-2, -2, -1),
+    OBBMaxs = Vector(2, 2, 4)
+})
+*/
