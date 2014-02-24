@@ -1,0 +1,7 @@
+"sslobby"
+{
+	"title"		"SSLobby"
+	"base"		"ssbase"
+	"maps"		"^lounge_*"
+	"menusystem"	"1"
+}
