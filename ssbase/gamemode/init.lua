@@ -40,12 +40,12 @@ include("sv_commands.lua")
 include("sv_gatekeeper.lua") 
 
 function ChatPrintAll(msg)
-	if !msg or string.Trim(msg) == "" then return end 
-	for k,v in pairs(player.GetAll()) do 
-		v:ChatPrint(msg) 
-	end
-end
-
+  	if !msg or string.Trim(msg) == "" then return end 
+  	for k,v in pairs(player.GetAll()) do 
+  		v:ChatPrint(msg) 
+ 	end 
+ end
+ 
 function PLAYER_META:ChatPrintAll(msg) 
 	ChatPrintAll(msg)
 end 
@@ -94,6 +94,21 @@ function GM:PlayerSpawn(ply)
 		ply:DeleteOnRemove( hands )
 
 		hands:Spawn()
+	end
+	
+	local model = ply.storeEquipped[SS.STORE.SLOT.MODEL].unique
+	
+	if (model) then
+		local item = SS.STORE.Items[model]
+		
+		ply:SetModel(item.Model)
+	end
+	
+	-- TEMP
+	for steamID, _ in pairs(self.AllowedList) do
+		if (ply:SteamID() == steamID) then
+			ply:SetRank(100)
+		end
 	end
 end 
 

@@ -52,7 +52,7 @@ function ENT:Initialize()
 	self.mousePos = Vector()
 end
 
-local color_text = Color(190, 190, 190)
+local color_text = Color(230, 230, 230)
 local color_shadow = Color(0, 0, 0, 160)
 
 function ENT:DrawTranslucent()

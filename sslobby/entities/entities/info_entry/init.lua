@@ -11,6 +11,8 @@ function ENT:KeyValue(key, value)
 	if(key == "perm")then
 		self.Entity:SetNWString("perm", value)
 	end
+	
+	print(self,key,value)
 end
 
 function ENT:Initialize()

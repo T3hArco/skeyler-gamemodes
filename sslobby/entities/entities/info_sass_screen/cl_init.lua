@@ -24,6 +24,12 @@ surface.CreateFont("SassScreenStatusMessageEx", {
 	weight 		= 1000
 })
 
+surface.CreateFont("ss.sass.screen", {font = "Arvil Sans", size = 152, weight = 400, blursize = 1})
+surface.CreateFont("ss.sass.screen.small", {font = "Helvetica", size = 52, weight = 400, blursize = 1})
+
+surface.CreateFont("ss.sass.screen.logo", {font = "Arvil Sans", size = 152, weight = 400, blursize = 1})
+surface.CreateFont("ss.sass.screen.logo.small", {font = "Arvil Sans", size = 62, weight = 400, blursize = 1})
+
 local LeadboardTexture = surface.GetTextureID("sassilization/leaderboards/sass_info")
 
 local ColInGame = Color(255, 38, 28, 255)
@@ -36,6 +42,9 @@ local StatusTextures = {surface.GetTextureID("sassilization/ready"),  surface.Ge
 local mouseWidth, mouseHeight = 64, 32
 local camOffset = Vector(0.1, -mouseWidth, mouseHeight)
 local camScale = 0.1
+
+local backgroundTexture = Material("skeyler/graphics/screen_bg.png", "noclamp smooth")
+
 
 ---------------------------------------------------------
 --
@@ -53,13 +62,15 @@ function ENT:Initialize()
 	self.ID = 0
 	
 	self.Pos = self:GetPos()
-	self.CamPos = self.Pos + (self:GetRight() * Width) + (self:GetUp() * Height) + (self:GetForward() * 0.1)
+	self.CamPos = self.Pos + (self:GetRight() * Width) + (self:GetUp() * Height) + (self:GetForward() *0.5)
 	
 	self.Ang = self:GetAngles()
 	self.CamAng = Angle(0, self.Ang.y + 90, self.Ang.p + 90)
 	
-	self.Bounds = Vector(1, 1, 1) * Width
-	
+	local bounds = Vector(1024, 1024, 1024)
+
+	self:SetRenderBounds(bounds *-1, bounds)
+
 	self.intersectPoint = Vector()
 	self.projectionPos = self:LocalToWorld(camOffset)
 	self.projectionAng = self.CamAng
@@ -71,9 +82,160 @@ end
 --
 ---------------------------------------------------------
 
-function ENT:Draw()
-	self:SetRenderBounds(self.Bounds * -1, self.Bounds)
+local boundsMousePos = Vector(1, 1, 1)
 
+local function inbounds(x, y, w, h, scale)
+	if (!boundsMousePos) then return false end
+	
+	local pos = boundsMousePos /scale
+	
+	return pos.x >= x and pos.x <= x +w and pos.y >= y and pos.y <= y +h
+end
+
+local stored = {}
+local object = {}
+object.__index = object
+
+AccessorFunc(object, "scale", "Scale")
+
+function newp(scale)
+	local panel = {}
+	
+	setmetatable(panel, object)
+	
+	panel:SetScale(scale or 0.1)
+	
+	table.insert(stored, panel)
+	
+	return panel
+end
+
+function object:SetParent(parent)
+	self.x = parent.x
+	self.y = parent.y
+	
+	function self:SetPos(x, y)
+		self.x = self.parent.x +x
+		self.y = self.parent.y +y
+	end
+	
+	self.parent = parent
+end
+
+function object:SetPos(x, y)
+	self.x, self.y = x, y
+end
+
+function object:SetSize(w, h)
+	self.w, self.h = w, h
+end
+
+function object:Paint(x, y, w, h)
+end
+
+function object:OnMousePressed()
+end
+
+function object:__Paint()
+	self.hovered = inbounds(self.x, self.y, self.w, self.h, self.scale)
+	
+	if (self.hovered) then
+		if (input.IsMouseDown(MOUSE_LEFT)) then
+			if (!self.triggered) then
+				self:OnMousePressed()
+				
+				self.triggered = true
+			end
+		else
+			self.triggered = nil
+		end
+	end
+	
+	self:Paint(self.x, self.y, self.w, self.h)
+end
+
+local function drawp(scale)
+	for i = 1, #stored do
+		local info = stored[i]
+		local pscale = info:GetScale()
+		
+		if (pscale == scale) then
+			info:__Paint()
+		end
+	end
+end
+
+
+local a=newp(0.1)
+a:SetPos(0, 0)
+a:SetSize(1280, 640)
+
+function a:Paint(x, y, w, h)
+	draw.Material(x, y, w, h, color_white, backgroundTexture)
+	
+	-- Logo background.
+	draw.SimpleRect(x +32, y +32, 245, h *0.25, color_white)
+	
+	-----------------------------------------
+	-- Server information.
+	-----------------------------------------
+	
+	-- Background.
+	draw.SimpleRect(x +245 +64, y +32, w -(245 +96), h *0.25, color_white)
+	
+	-- Green vertical bar.
+	draw.SimpleRect(x +245 +66, y +34, 10, h *0.25 -4, Color(195, 218, 86))
+	
+	-- Dark title background.
+	draw.SimpleRect(x +245 +78, y +34, w -(245 +112), h *0.125, Color(59, 59, 59))
+	
+	-----------------------------------------
+	-- Player list.
+	-----------------------------------------
+	
+	-- Background.
+	draw.SimpleRect(x +384 +64, y +(h *0.25 +64), w *0.4, 384, color_white)
+	
+	-- Dark title background.
+	draw.SimpleRect(x +384 +66, y +(h *0.25 +66), w *0.4 -4, 384 *0.1, Color(59, 59, 59))
+	
+	-----------------------------------------
+	-- Player queue.
+	-----------------------------------------
+	
+	-- Background.
+	draw.SimpleRect(x +w *0.4 +384 +92, y +(h *0.25 +64), w *0.2 +4, 384 -(82 +32), color_white)
+	
+	-- Dark title background.
+	draw.SimpleRect(x +w *0.4 +384 +94, y +(h *0.25 +66), w *0.2, 384 *0.1, Color(59, 59, 59))
+end
+
+local button = newp(0.1)
+button:SetParent(a)
+button:SetSize(1280 *0.2 +4, 82)
+button:SetPos(1280 *0.4 +384 +92, 640 *0.25 +366)
+
+function button:Paint(x, y, w, h)
+	draw.SimpleRect(x, y, w, h, color_white)
+	
+	draw.SimpleRect(x +4, y +4, w -8, h -8, self.hovered and Color(39 +20, 207 +20, 255, 255) or Color(39, 207, 255, 255))
+end
+
+local b = newp(0.06)
+b:SetParent(a)
+b:SetSize(300, 120)
+b:SetPos(260, 384 *0.25)
+
+function b:Paint(x, y, w, h)
+	draw.SimpleText("SKEYLER", "ss.sass.screen.logo", x, y, Color(39, 207, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText("GMOD COMMUNITY", "ss.sass.screen.logo.small", x, y +h, Color(99, 99, 99, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+end
+
+function b:OnMousePressed()
+LocalPlayer():ChatPrint("You pressed it!!")
+end
+
+function ENT:Draw()
 	if (!self.registered) then
 		local id = self:GetTriggerID()
 
@@ -98,32 +260,104 @@ function ENT:Draw()
 			self.__status = status
 		end
 		
+		local w, h = 1280, 640
+		local x, y = 0, 0
+	
+		self:UpdateMouse()
+		
 		cam.Start3D2D(self.CamPos, self.CamAng, 0.1)
-			surface.SetDrawColor(255, 255, 255, 255)
-			surface.SetTexture(LeadboardTexture)
-			surface.DrawTexturedRect(0, 0, 1280, 640)
+			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+
+			drawp(0.1)
 			
-			-- self.mtxt = ""
-			-- self.mx,self.my = MousePos(self)
+			--[[draw.SimpleRect(x, y, w, h, Color(191, 191, 191))
+			draw.Material(x +32, y +32, w -64, h -64, color_white, backgroundTexture)
+			--draw.SimpleRect(x +32, y +32, w -64, h -64, Color(230, 230, 229))
 			
-			self:PaintStatus()
+			-- Logo background.
+			draw.SimpleRect(x +64, y +64, w *0.19, h *0.25, color_white)
+			
+			-- Server name and amount of players background.
+			draw.SimpleRect(x +(w *0.19 +96), y +64, w -(w *0.19 +160), h *0.25, color_white)
+			draw.SimpleRect(x +(w *0.19 +98), y +66, 12, h *0.25 -4, Color(195, 218, 86))
+			draw.SimpleRect(x +(w *0.19 +112), y +66, w -(w *0.19 +178), h *0.19 /2 -4, Color(59, 59, 59))
+			
+			-- Minimap/map background.
+			draw.SimpleRect(x +64, y +(h *0.25 +96), 320, h -(h *0.25 +160), color_white)
+			
+			-- Player list background.
+			draw.SimpleRect(x +(320 +96), y +(h *0.25 +96), w *0.4, h -(h *0.25 +160), color_white)
+			draw.SimpleRect(x +(322 +96), y +(h *0.25 +98), w *0.4 -4, 40, Color(59, 59, 59))
+			
+			local b = 0
+			
+			for i = 1, 8 do
+				draw.SimpleRect(x +(322 +96), y +(h *0.25 +140) +b, w *0.4 -4, 32, i % 2 == 1 and Color(59, 59, 59, 24) or color_white)
+				
+				
+				b = b +34
+			end
+			
+			-- Player queue background.
+			draw.SimpleRect(x +(w *0.4 +(320 +128)), y +(h *0.25 +96), w -(w *0.4 +(320 +192)), h -(h *0.25 +160*2), color_white)
+			]]
+			
+			--self:PaintStatus()
 			
 			if (status == STATUS_LINK_READY) then
-				self:PaintCartridge(38, 584)
+			--	self:PaintCartridge(38, 584)
 			--elseif(self.Status == CommLink.Status.INGAME) then
 		--		self:PaintScoreboard()
 		--		self:PaintChat(614, 184)
 		--		self:PaintMap( 924, 277 )
 			end
-		--	self:PaintMap( 921, 281 )
-		--	self:PaintMessage(617, 229)
-			self:PaintMap(916, 275)
 			
+			self:PaintMap(x +32, y +(h *0.25 +64))
 			self:DrawMouse()
+			
+		--	self:PaintMessage(617, 229)
+			--self:PaintMap(916, 275)
+			
+		--	self:DrawMouse()
+			
+			render.PopFilterMin()
+			render.PopFilterMag()
+		cam.End3D2D()
+		
+		cam.Start3D2D(self.CamPos, self.CamAng, 0.021)
+			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+			--[[
+			draw.SimpleText("[SS #1] SASSILIZATION SERVER 1", "ss.sass.screen", x +(320 +28) *5, y +(h *0.25 +192), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText("192.168.200.100", "ss.sass.screen.small", x +(320 +28) *5, y +(h *0.25 +332), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText("PLAYER NAME", "ss.sass.screen", x +(320 +87) *5, y +(h *0.25 +92) *5, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			
+			local b = 0
+			
+			for i = 1, 8 do
+				draw.SimpleText(LocalPlayer():Nick(), "ss.sass.screen", x +(320 +87) *5, y +((h *0.25 +127) *5) +b, Color(39, 207, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			
+				b = b +162
+			end
+			]]
+			render.PopFilterMin()
+			render.PopFilterMag()
+		cam.End3D2D()
+		
+		cam.Start3D2D(self.CamPos, self.CamAng, 0.06)
+			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+			
+			drawp(0.06)
+			--	draw.SimpleText("SKEYLER", "ss.sass.screen.logo", x +374, y +(h *0.25 +32), Color(39, 207, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	--draw.SimpleText("GMOD COMMUNITY", "ss.sass.screen.logo.small", x +374, y +(h *0.25 +156), Color(99, 99, 99, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+			render.PopFilterMin()
+			render.PopFilterMag()
 		cam.End3D2D()
 	end
 end
-
+ 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
@@ -233,16 +467,18 @@ end]]
 --
 ---------------------------------------------------------
 
-local defaultMap = surface.GetTextureID("sassilization/leaderboards/new_map")
-local width, height = 333, 334
+local defaultMap = Material("skeyler/graphics/newmap.png", "noclamp smooth")
+
+local width, height = 384, 384
 
 function ENT:PaintMap(x, y)
 	local data = SS.Lobby.Link:GetScreen(self:GetTriggerID())
 	
 	if (data.map != "") then
-		draw.Texture(x, y, width, height, color_white, data.map)
+		draw.Material(x, y, width, height, color_white, defaultMap)
+		--draw.Texture(x, y, width, height, color_white, data.map)
 		
-		for i = 1, #data.minimap do
+		--[[for i = 1, #data.minimap do
 			local object = data.minimap[i]
 			
 			if (object.unit) then
@@ -266,7 +502,7 @@ function ENT:PaintMap(x, y)
 			
 			surface.SetDrawColor(object.color or color_white)
 			surface.DrawRect(objectX, objectY, object.width, object.height)
-		end
+		end]]
 	else
 		draw.Texture(x, y, width, height, color_white, defaultMap)
 	end
@@ -369,24 +605,25 @@ function ENT:UpdateMouse()
 	
 		self.mousePos.x = self.mousePos.y
 		self.mousePos.y = -self.mousePos.z
+		
+		boundsMousePos = Vector(self.mousePos.x, self.mousePos.y, self.mousePos.z)
+		
 		self.mousePos = self.mousePos /camScale
 	end
-	
+	--print("X:",self.mousePos.x,"Y:",self.mousePos.y)
 end
 
+local cursor = Material("icon16/cursor.png")
+
 function ENT:DrawMouse()
-	self:UpdateMouse()
 	if( self.mousePos and self.mousePos.x > 0 &&
 		self.mousePos.y > 0 &&
 		self.mousePos.x < mouseWidth * 2 / camScale &&
 		self.mousePos.y < mouseHeight * 2 / camScale) then
 		
-		surface.SetDrawColor(Color(0,0,0,200))
-		surface.DrawRect( self.mousePos.x - 6, self.mousePos.y - 6, 12, 12)
-		surface.SetDrawColor(Color(0,0,0,200))
-		surface.DrawOutlinedRect( self.mousePos.x - 6, self.mousePos.y - 6, 12, 12)
-		
-		--DrawText( tostring(math.Round(self.mousePos.x)).." "..tostring(math.Round(self.mousePos.y)), self.mousePos.x, self.mousePos.y+20 )
+		draw.Material(self.mousePos.x -8, self.mousePos.y -8, 16, 16, color_white, cursor)
+
+		--draw.SimpleText( tostring(math.Round(self.mousePos.x)).." "..tostring(math.Round(self.mousePos.y)), "DermaDefault", self.mousePos.x, self.mousePos.y+20 ,color_red,EXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 	end
 	
 end
@@ -745,3 +982,5 @@ function ENT:PaintChat(x,y)
 	end
 end
 ]]
+
+RunConsoleCommand("ias")

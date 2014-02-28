@@ -263,38 +263,37 @@ function GM:HUDPaint()
 	surface.DrawText(Text) 
 end 
  
-function GM:PostPlayerDraw( ply ) --lol the offsets are from gmod wiki originally in an example code I'm ready to *twerk* later
- 
-	if !ply:Alive() then return end
-	
-	local index = ply:LookupBone("ValveBiped.Bip01_Head1")
-	
-	if (index and index > -1) then
-		local offset = Vector( 0, 0, 15 )
-		local ang = LocalPlayer():EyeAngles()
-		local pos = ply:GetBonePosition(index) + offset + ang:Up()
-	
-		ang:RotateAroundAxis( ang:Forward(), 90 )
-		ang:RotateAroundAxis( ang:Right(), 90 )
-	
-		local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
-		local a = 0
-		if(d <= 800) then
-			if((d-300)<0) then
-				a = 255
-			else
-				a = math.Round(math.min(255,((500-(d-300))/500)*255))
+function GM:PostDrawTranslucentRenderables()
+	for k, ply in pairs(player.GetAll()) do
+		if !ply:Alive() or ply == LocalPlayer() then return end
+		
+		local index = ply:LookupBone("ValveBiped.Bip01_Head1")
+		
+		if (index and index > -1) then
+			local offset = Vector( 0, 0, 15 )
+			local ang = LocalPlayer():EyeAngles()
+			local pos = ply:GetBonePosition(index) + offset + ang:Up()
+		
+			ang:RotateAroundAxis( ang:Forward(), 90 )
+			ang:RotateAroundAxis( ang:Right(), 90 )
+		
+			local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
+			local a = 0
+			if(d <= 800) then
+				if((d-300)<0) then
+					a = 255
+				else
+					a = math.Round(math.min(255,((500-(d-300))/500)*255))
+				end
+			end
+			if(a != 0) then
+				cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
+					local n = ply:Nick()
+ 					draw.SimpleText( n, "PLAYER_TEXT_BLUR", 0, 0, Color(0,0,0,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+ 					draw.SimpleText( n, "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255)*180), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+ 					draw.SimpleText( n, "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+				cam.End3D2D()
 			end
 		end
-		if(a != 0) then
-			cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-				local n = ply:Nick()
-				draw.SimpleText( n, "PLAYER_TEXT_BLUR", 0, 0, Color(0,0,0,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-				draw.SimpleText( n, "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255)*180), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-				draw.SimpleText( n, "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-			cam.End3D2D()
-		end
 	end
-	
-	--self.BaseClass:PostPlayerDraw(ply)
 end

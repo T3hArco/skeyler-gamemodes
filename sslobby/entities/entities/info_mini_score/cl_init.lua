@@ -64,17 +64,17 @@ function ENT:DrawInformation()
 			
 			local scores = SS.Lobby.Minigame:GetScores()
 			
-			draw.SimpleText(scores[TEAM_RED], "minigame.screen.normal", 758, 996, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_RED], "minigame.screen.normal", 756, 994, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_RED], "minigame.screen.normal", 758, 998, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_RED], "minigame.screen.normal", 756, 996, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		
-			draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.normal", 1511, 996, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.normal", 1509, 994, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.normal", 1511, 998, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.normal", 1509, 996, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			
-			draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.normal", 758, 1286, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.normal", 756, 1284, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.normal", 758, 1288, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.normal", 756, 1286, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			
-			draw.SimpleText(scores[TEAM_YELLOW], "minigame.screen.normal", 1511, 1286, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_YELLOW], "minigame.screen.normal", 1509, 1284, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_YELLOW], "minigame.screen.normal", 1511, 1288, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(scores[TEAM_YELLOW], "minigame.screen.normal", 1509, 1286, color_text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 	end
 end

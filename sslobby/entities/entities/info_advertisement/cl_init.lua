@@ -1,11 +1,11 @@
-----------
--- Lobby
-----------
-
 include("shared.lua")
 
 local texture = surface.GetTextureID("sassilization/adverts2/advert000")
 local textureWide = surface.GetTextureID("sassilization/adverts2/advert000_wide")
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function ENT:Draw()
 	local width, height = self:GetWidth(), self:GetHeight()

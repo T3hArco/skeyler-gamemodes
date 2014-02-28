@@ -94,6 +94,44 @@ if (CLIENT) then
 	end
 end
 
+function PLAYER_META:EyeTrace(distance, filter)
+	if (self.__lastTrace == CurTime()) then
+		return self.__EyeTrace
+	end
+	
+	local tr = {}
+	tr.start = self:GetShootPos()
+	tr.endpos = tr.start +(((CLIENT and vgui.CursorVisible() and gui.ScreenToVector(gui.MousePos())) or self:GetAimVector()) *(distance or 10 ^8))
+	tr.filter = filter or self
+	
+	self.__EyeTrace = util.TraceLine(tr)
+	self.__lastTrace = CurTime()
+	
+	return self.__EyeTrace
+end
+
+function util.RecursiveTraceLine( trace, func, recurse )
+	
+	recurse = recurse or 0
+	if recurse > 20 then return {} end
+	local tr = util.TraceLine( trace )
+	if IsValid(tr.Entity) and func( tr.Entity ) then
+		table.insert( trace.filter, tr.Entity )
+		return util.RecursiveTraceLine( trace, func, recurse )
+	else
+		return tr
+	end
+	
+end
+
+function angleBetween( v1, v2 )
+	
+	v1 = v1:GetNormal()
+	v2 = v2:GetNormal()
+	return math.acos( v1:Dot(v2) )
+	
+end
+
 function FindByPartial(PlayerName)
 	local t = string.lower(PlayerName)
 	local found = 0
@@ -133,6 +171,26 @@ function ArgConcat(args)
 	end
 
 	return reason
+end
+
+function intersectRayPlane( S1, S2, P, N ) --( startpoint, endpoinst, point on plane, plane's normal )
+	
+	local u = S2 - S1
+	local w = S1 - P
+	
+	local d = N:Dot( u )
+	local n = N:Dot( w )*-1
+	
+	if (math.abs( d ) < 0) then
+		ErrorNoHalt( "parralel! WTF\n" )
+		if (n == 0) then return end	--segment is in the plane
+		return				--no intersection
+	end
+	
+	local sI = n/d
+	if (sI < 0 || sI > 1) then return end	--no intersection
+	return S1 + sI * u
+	
 end
 
 function PLAYER_META:IsFakenamed()

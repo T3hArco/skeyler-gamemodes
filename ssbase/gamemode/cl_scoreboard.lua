@@ -279,11 +279,11 @@ local arrowTexture = Material("skeyler/arrow.png", "noclamp smooth")
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
-
+ 
 function GM:ScoreboardShow()
 	if (!ValidPanel(scoreboard)) then
 		scoreboard = vgui.Create("ss.scoreboard")
-		scoreboard:SetSize(math.Clamp(ScrW() *0.95, 800, 1280), 90)
+		scoreboard:SetSize(math.Clamp(ScrW() *0.95, 800, 1100), 90)
 		scoreboard:Center()
 		
 		SS.Scoreboard.RegisterRow("PLAYER", scoreboard:GetWide() *0.3, nil, SS.Scoreboard.ROW_LEFT, function(panel, player, row)
@@ -338,10 +338,10 @@ function GM:ScoreboardShow()
 					if (self.Hovered) then
 						local pingWidth = util.GetTextSize("skeyler.scoreboard.row", ping)
 						local width, height = pingWidth +58, h
-						local x, y = w -12, h /2 -height /2
+						local x, y = w +6, h /2 -height /2
 						
 						surface.DisableClipping(true)
-							draw.Material(x -13, y +height /2 -27 /2, 13, 27, Color(0, 0, 0, 225), arrowTexture)
+							draw.Material(x -32, y +height /2 -32 /2, 32, 32, Color(0, 0, 0, 230), arrowTexture)
 							draw.SimpleRect(x, y, width, height, Color(0, 0, 0, 200))
 							
 							draw.SimpleText(ping, "skeyler.scoreboard.row", x +24, y +height /2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)

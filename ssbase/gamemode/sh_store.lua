@@ -57,6 +57,16 @@ SS.STORE.MODEL.USIF = "models/mrgiggles/skeyler/playermodels/usifarmor.mdl"
 -- Third number -> What the bit.bor of the other numbers should equal to.
 
 ---------------------------------------------------------
+-- Item customization.
+---------------------------------------------------------
+
+SS.STORE.CUSTOM = {}
+
+SS.STORE.CUSTOM.SKIN = "skin"
+SS.STORE.CUSTOM.COLOR = "color"
+SS.STORE.CUSTOM.BODYGROUP = "bodygroup"
+
+---------------------------------------------------------
 --
 ---------------------------------------------------------
   
@@ -134,5 +144,19 @@ function PLAYER_META:CanAffordItem(id)
 	
 	if (item) then
 		return self:HasMoney(item.Price)
+	end
+end
+
+---------------------------------------------------------
+-- Returns customization data.
+---------------------------------------------------------
+
+function PLAYER_META:GetItemData(id, field)
+	local hasItem = self:HasStoreItem(id)
+	
+	if (hasItem) then
+		local item = SS.STORE.Items[id]
+		
+		return SERVER and self.storeItems[item.ID][field] or CLIENT and SS.STORE.INVENTORY[item.ID][field]
 	end
 end

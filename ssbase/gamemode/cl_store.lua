@@ -665,8 +665,18 @@ function PANEL:SetData(data)
 	local label = self.toolTip:Add("DLabel")
 	label:Dock(TOP)
 	label:DockMargin(0, 0, 0, 8)
-	label:SetText(data.Name)
+	label:SetText(SS.STORE.SLOT.NAME[data.Slot] .. " - " .. data.Name)
 	label:SetFont("ss.tooltip.name")
+	label:SetColor(color_white)
+	label:SizeToContents()
+	
+	local skinAmount = self.Entity:SkinCount()
+	
+	local label = self.toolTip:Add("DLabel")
+	label:Dock(TOP)
+	label:DockMargin(0, 0, 0, 8)
+	label:SetText("Skins: " .. skinAmount)
+	label:SetFont("ss.tooltip.options")
 	label:SetColor(color_white)
 	label:SizeToContents()
 	
@@ -907,7 +917,7 @@ function PANEL:Paint(w, h)
 							local modelData = item.Models[string.lower(self.Entity:GetModel())]
 							
 							if (modelData) then
-								local positionData
+								local positionData = modelData[1]
 								
 								for i = 1, #modelData do
 									local modelBodygroup = self.Entity:GetBodygroup(modelData[i][1])
@@ -1148,7 +1158,6 @@ function panel:Update()
 			
 			if (data and data.item and data.item != "") then
 				local item = SS.STORE.Items[data.item]
-				
 				if (item.Bone) then
 					self.preview:SetHat(item.Model, item)
 				end
@@ -1177,8 +1186,12 @@ function panel:Think()
 	if (model and model.item) then
 		model = SS.STORE.Items[model.item]
 		
-		if (model.Model and previewModel != model.Model) then
+		if (model.Model and self.previewModel != model.Model) then
 			self.preview:SetModel(model.Model, model)
+			
+			self.previewModel = model.Model
+			
+			self:Update()
 		end
 	end
 	
@@ -1305,9 +1318,13 @@ end )
 ---------------------------------------------------------
 
 net.Receive("ss.store.gtitms", function(bits)
-	local id = net.ReadString()
+	local count = net.ReadUInt(8)
 	
-	SS.STORE.INVENTORY[id] = {}
+	for i = 1, count do
+		local id = net.ReadString()
+		
+		SS.STORE.INVENTORY[id] = {}
+	end
 	
 	if (ValidPanel(SS.Hub)) then
 		local category = SS.Hub:GetCategory(3)
@@ -1351,31 +1368,59 @@ net.Receive("ss.gear.gtgrfull", function(bits)
 		cache[steamID][i] = {}
 
 		local unique = net.ReadString()
-		
+
 		if (unique != "") then
 			local item = SS.STORE.Items[unique]
 			
 			if (item) then
 				cache[steamID][item.Slot].item = item.ID
-				
+
 				if (item.Bone) then
 					if (IsValid(cache[steamID][i].entity)) then
 						cache[steamID][i].entity:Remove()
 					end
 	
-					cache[steamID][item.Slot].entity = ClientsideModel(item.Model)
+					local entity = ClientsideModel(item.Model)
 					
-					-- EFFECTS_BONEMERGE ?
+					-- Set rendermode for alpha/color support.
+					entity:SetRenderMode(RENDERMODE_TRANSALPHA)
+					
+					local skin = net.ReadUInt(8)
+					local color = net.ReadVector()
+		
+					color = Color(color.x, color.y, color.z)
+			
+					entity:SetSkin(skin)
+					entity:SetColor(color)
+					
+					local bodygroups = net.ReadUInt(8)
+
+					for i = 1, bodygroups do
+						local group = net.ReadUInt(8)
+						local value = net.ReadUInt(8)
+						
+						entity:SetBodygroup(group, value)
+					end
+
+					cache[steamID][i].entity = entity
+				end
+				
+				-- EFFECTS_BONEMERGE ?
 					--if (item.BoneMerge) then
 				--	end
-				end
 				
 				-- Call equip on client?
 			end
 		end
+		
+		if (steamID == LocalPlayer():SteamID() and SS.Hub) then
+			local category = SS.Hub:GetCategory(3)
+			
+			category:Update()
+		end
 	end
 end)
-
+ 
 ---------------------------------------------------------
 -- Single slot update.
 ---------------------------------------------------------
@@ -1402,7 +1447,29 @@ net.Receive("ss.gear.gtgrslot", function(bits)
 					cache[steamID][item.Slot].entity:Remove()
 				end
 				
-				cache[steamID][item.Slot].entity = ClientsideModel(item.Model)
+				local entity = ClientsideModel(item.Model)
+				
+				-- Set rendermode for alpha support.
+				entity:SetRenderMode(RENDERMODE_TRANSALPHA)
+				
+				local skin = net.ReadUInt(8)
+				local color = net.ReadVector()
+				
+				color = Color(color.x, color.y, color.z)
+			
+				entity:SetSkin(skin)
+				entity:SetColor(color)
+				
+				local bodygroups = net.ReadUInt(8)
+				
+				for i = 1, bodygroups do
+					local group = net.ReadUInt(8)
+					local value = net.ReadUInt(8)
+					
+					entity:SetBodygroup(group, value)
+				end
+				
+				cache[steamID][item.Slot].entity = entity
 			end
 			
 			-- EFFECTS_BONEMERGE ?
@@ -1412,7 +1479,7 @@ net.Receive("ss.gear.gtgrslot", function(bits)
 			-- Call equip on client?
 		end
 	end
-	
+
 	if (steamID == LocalPlayer():SteamID()) then
 		local category = SS.Hub:GetCategory(3)
 		
@@ -1434,12 +1501,22 @@ net.Receive("ss.gear.gtgrslotd", function(bits)
 	end
 end)
 
+hook.Add("PostDrawTranslucentRenderables","1",function()
+	for k, player in pairs(player.GetAll()) do
+		if (!player:Alive()) then
+			hook.Run("PostPlayerDraw", player, true)
+		end
+	end
+end)
+
 ---------------------------------------------------------
 -- Draws the gear.
 ---------------------------------------------------------
 
-hook.Add("PostPlayerDraw", "ss.gear.render", function(player)
+hook.Add("PostPlayerDraw", "ss.gear.render", function(player, isRagdoll)
 	local steamID = player:SteamID()
+	
+	local entity = isRagdoll and player:GetRagdollEntity() or player
 	
 	-- Request full update.
 	if (!cache[steamID]) then
@@ -1470,21 +1547,21 @@ hook.Add("PostPlayerDraw", "ss.gear.render", function(player)
 					if (IsValid(data.entity)) then
 					
 						-- Maybe cache this?
-						local index = player:LookupBone(item.Bone or "ValveBiped.Bip01_Head1")
+						local index = entity:LookupBone(item.Bone or "ValveBiped.Bip01_Head1")
 						
 						if (index and index > -1) then
 							
 							-- Using bone matrix fixes the hat from lagging behind when the player is getting shot. (lol)
-							local boneMatrix = player:GetBoneMatrix(index)
+							local boneMatrix = entity:GetBoneMatrix(index)
 							local position, angles = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
 							
-							local modelData = item.Models[string.lower(player:GetModel())]
+							local modelData = item.Models[string.lower(entity:GetModel())]
 							
 							if (modelData) then
-								local positionData
+								local positionData = modelData[1]
 								
 								for i = 1, #modelData do
-									local modelBodygroup = player:GetBodygroup(modelData[i][1])
+									local modelBodygroup = entity:GetBodygroup(modelData[i][1])
 									local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
 									
 									if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
@@ -1516,11 +1593,11 @@ hook.Add("PostPlayerDraw", "ss.gear.render", function(player)
 					
 					-- This is probably not the right place to call these, but whatever.
 					if (item.Hooks.Think) then
-						item.Hooks.Think(cache[steamID], player)
+						item.Hooks.Think(cache[steamID], entity)
 					end
 					
 					if (item.Hooks.PostDrawOpaqueRenderables) then
-						item.Hooks.PostDrawOpaqueRenderables(cache[steamID], player)
+						item.Hooks.PostDrawOpaqueRenderables(cache[steamID], entity)
 					end
 				end
 			end

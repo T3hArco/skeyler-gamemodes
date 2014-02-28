@@ -1,9 +1,9 @@
-surface.CreateFont("ss.tooltip.name", {font = "Arvil Sans", size = 24, weight = 400}) 
-surface.CreateFont("ss.tooltip.options", {font = "Tahoma", size = 18, weight = 400}) 
+surface.CreateFont("ss.slot.name", {font = "DeJaVu Sans", size = 9, weight = 400})
 
 local backgroundTexture = Material("skeyler/store/icon_base.png", "noclamp smooth") 
 local highlightTexture = Material("skeyler/store/icon_highlight.png", "noclamp smooth")
 
+local color_shadow = Color(0, 0, 0, 180)
 local color_background = Color(249, 249, 249, 250)
 
 ---------------------------------------------------------
@@ -157,28 +157,97 @@ function panel:Think()
 			colorMixer:DockMargin(0, 0, 0, 8)
 			colorMixer:SetTall(128)
 			
+			function colorMixer:ValueChanged(color)
+				self.nextUpdate = CurTime() +0.35
+			end
+			
+			function colorMixer:Think()
+				self:ConVarThink()
+				
+				if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+					local color = self:GetColor()
+					
+					color = Vector(color.r, color.g, color.b)
+					
+					net.Start("ss.store.stcstm")
+						net.WriteString(item.ID)
+						net.WriteString(SS.STORE.CUSTOM.COLOR)
+						net.WriteVector(color)
+					net.SendToServer()
+					
+					self.nextUpdate = nil
+				end
+			end
+			
 			if (item.Bone) then
 				local skinAmount = data.entity:SkinCount()
 				
-				local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
-				base:Dock(TOP)
-				base:SetTall(34)
-				
-				base.label:SetFont("ss.tooltip.options")
-				base.label:SizeToContents()
-				
-				slider:SetWide(125)
+				if (skinAmount > 1) then
+					local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
+					base:Dock(TOP)
+					base:SetTall(34)
+					
+					base.label:SetFont("ss.tooltip.options")
+					base.label:SizeToContents()
+					
+					slider:SetWide(125)
+					
+					slider:SetMin(1)
+					slider:SetMax(skinAmount)
+					slider:SetValue(data.entity:GetSkin())
+					
+					function slider:OnValueChanged(value)
+						self.nextUpdate = CurTime() +0.3
+					end
+					
+					function slider:Think()
+						if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+							local value = self:GetValue()
+							
+							net.Start("ss.store.stcstm")
+								net.WriteString(item.ID)
+								net.WriteString(SS.STORE.CUSTOM.SKIN)
+								net.WriteUInt(value, 8)
+							net.SendToServer()
+							
+							self.nextUpdate = nil
+						end
+					end
+				end
 			elseif (item.Model) then
 				local skinAmount = LocalPlayer():SkinCount()
 				
-				local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
-				base:Dock(TOP)
-				base:SetTall(34)
-				
-				base.label:SetFont("ss.tooltip.options")
-				base.label:SizeToContents()
-				
-				slider:SetWide(125)
+				if (skinAmount > 1) then
+					local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
+					base:Dock(TOP)
+					base:SetTall(34)
+					
+					base.label:SetFont("ss.tooltip.options")
+					base.label:SizeToContents()
+					
+					slider:SetWide(125)
+					slider:SetMin(1)
+					slider:SetMax(skinAmount)
+					slider:SetValue(LocalPlayer():GetSkin())
+					
+					function slider:OnValueChanged(value)
+						self.nextUpdate = CurTime() +0.3
+					end
+					
+					function slider:Think()
+						if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+							local value = self:GetValue()
+							
+							net.Start("ss.store.stcstm")
+								net.WriteString(item.ID)
+								net.WriteString(SS.STORE.CUSTOM.SKIN)
+								net.WriteUInt(value, 8)
+							net.SendToServer()
+							
+							self.nextUpdate = nil
+						end
+					end
+				end
 				
 				local bodyGroups = LocalPlayer():GetBodyGroups()
 				
@@ -188,11 +257,33 @@ function panel:Think()
 					local slider, base = util.SliderAndLabel(self.toolTip, "Bodygroup - " .. data.name)
 					base:Dock(TOP)
 					base:SetTall(34)
-					
+
 					base.label:SetFont("ss.tooltip.options")
 					base.label:SizeToContents()
 					
 					slider:SetWide(125)
+					slider:SetMin(0)
+					slider:SetMax(#data.submodels)
+					slider:SetValue(0)
+					
+					function slider:OnValueChanged(value)
+						self.nextUpdate = CurTime() +0.3
+					end
+					
+					function slider:Think()
+						if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+							local value = self:GetValue()
+							
+							net.Start("ss.store.stcstm")
+								net.WriteString(item.ID)
+								net.WriteString(SS.STORE.CUSTOM.BODYGROUP)
+								net.WriteUInt(data.id, 8)
+								net.WriteUInt(value, 8)
+							net.SendToServer()
+							
+							self.nextUpdate = nil
+						end
+					end
 				end
 			end
 			
@@ -237,6 +328,15 @@ function panel:PaintOver(w, h)
 	
 	if (self.green > 0) then
 		draw.SimpleRect(0, 0, w, h, Color(0, 200, 0, self.green))
+	end
+	
+	local name = SS.STORE.SLOT.NAME[self.m_iSlot]
+	
+	if (name) then
+		surface.DisableClipping(true)
+			draw.SimpleText(string.upper(name), "ss.slot.name", w +1, h +6, color_shadow, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(string.upper(name), "ss.slot.name", w, h +5, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		surface.DisableClipping(false)
 	end
 end
 

@@ -16,6 +16,7 @@ GM.HUDShowVel = false
 GM.HUDShowTimer = false 
 SS = {}
 PLAYER_META = FindMetaTable("Player")
+ENTITY_META = FindMetaTable("Entity")
 TEAM_SPEC = TEAM_SPECTATOR
 
 team.SetUp(TEAM_SPEC, "Spectator", Color(197, 197, 197), false) 

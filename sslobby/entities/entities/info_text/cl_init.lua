@@ -57,7 +57,7 @@ function ENT:Draw()
 		local angles = self:GetAngles()
 		local text, font = self:GetText(), "ss.infoText." .. self:GetTextSize()
 		
-		local color_text = Color(211, 211, 211, alpha)
+		local color_text = Color(255, 255, 255, alpha)
 		local color_shadow = Color(0, 0, 0, alpha)
 		
 		local camPosition = position +self:GetForward() *(0.1 +math.sin(CurTime() +self.offset)) +self:GetRight() +self:GetUp() *(math.cos(CurTime() +self.offset)) *self.upDown

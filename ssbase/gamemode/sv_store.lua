@@ -4,44 +4,56 @@ util.AddNetworkString("SS_ItemEquip")
 util.AddNetworkString("SS_ItemUnequip")
 util.AddNetworkString("SS_ItemSetColor")
 
+---------------------------------------------------------
+-- Single slot update.
+---------------------------------------------------------
+
+local noColor = Vector(255, 255, 255)
+
+function SS.STORE.UpdateSlot(slot, player, target)
+	local unique = target.storeEquipped[slot].unique
+	local remove = !unique or unique == ""
+	local steamID = target:SteamID()
+	local item = SS.STORE.Items[unique]
+
+	net.Start("ss.gear.gtgrslot")
+		net.WriteString(unique or target.storeEquipped[slot].last or "")
+		net.WriteString(steamID)
+		net.WriteBit(remove)
+		
+		if (!remove) then
+			local stored = target.storeItems[unique]
+			
+			local skin = stored[SS.STORE.CUSTOM.SKIN] or 0
+			local color = stored[SS.STORE.CUSTOM.COLOR] or noColor
+			local bodyGroups = stored[SS.STORE.CUSTOM.BODYGROUP] or {}
+			
+			net.WriteUInt(skin, 8)
+			net.WriteVector(color)
+			
+			local count = table.Count(bodyGroups) -- ugh
+			
+			net.WriteUInt(count, 8)
+			
+			for group, value in pairs(bodyGroups) do
+				net.WriteUInt(group, 8)
+				net.WriteUInt(value, 8)
+			end
+		end
+	if (IsValid(player)) then net.Send(player) else net.Broadcast() end
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function SS.STORE:Equip(player, id)
---[[
-	local i = self.Items[id] 
-	if !i then return end 
-	if(i.Bone) then
-		if(i.BoneMerge) then
-			self:AddBMModel(p,i)
-		else
-			self:AddCSModel(p,i)
-		end
-	elseif(i.Model) then
-		p:SetModel(i.Model)
-		SS.STORE.modelids[p] = id
-		net.Start("SS_SetModelID")
-		net.WriteEntity(p)
-		net.WriteString(id)
-		net.Broadcast()
-		if(i.Colorable) then
-			p:SetPlayerColor(p.CustomColor[id])
-		end
-	end
-	if(i.Functions["Equip"]) then
-		i.Functions["Equip"](p) --incase we ever need to do something special :P
-	end
-	if(!SS.STORE.Equipped[p]) then
-		SS.STORE.Equipped[p] = {}
-	end
-	table.insert(SS.STORE.Equipped[p],id)
-	net.Start("SS_EquipTable")
-	net.WriteEntity(p)
-	net.WriteTable(SS.STORE.Equipped[p])
-	net.Broadcast() -- we arent losing much (I hope)]]
-	
 	local item = self.Items[id]
 	
 	if (item) then
 		local slot = player.storeEquipped[item.Slot]
 		
+		-- Unequip the previos one.
 		if (slot.unique and slot.unique != "") then
 			local previous = self.Items[slot.unique]
 			
@@ -63,19 +75,21 @@ function SS.STORE:Equip(player, id)
 		net.Broadcast()
 
 		-- We need to force update to the player.
-		net.Start("ss.gear.gtgrslot")
-			net.WriteString(item.ID)
-			net.WriteString(steamID)
-			net.WriteBit(false)
-		net.Send(player)
+		SS.STORE.UpdateSlot(item.Slot, player, player)
 		
 		-- It's a player model.
 		if (item.Model and !item.Bone) then
 			player:SetModel(item.Model)
+		end
+		
+		-- Apply colors.
+		if (item.Colorable) then
+			local color = player:GetItemData(item.ID, "color")
 			
-			--if (item.Colorable) then
-			--	player:SetPlayerColor(player.CustomColor[id])
-			--end
+			-- It's a player model. (We set the color of an item clientside.)
+			if (color and item.Model and !item.Bone) then
+				player:SetPlayerColor(color)
+			end
 		end
 		
 		if (item.Functions.Equip) then
@@ -84,31 +98,11 @@ function SS.STORE:Equip(player, id)
 	end
 end
 
+---------------------------------------------------------
+-- 
+---------------------------------------------------------
+
 function SS.STORE:Unequip(player, id)
-	--[[local i = self.Items[id]
-	if(i.Bone) then
-		self:RemoveCSModel(p,i)
-	elseif(i.Model) then
-		p:SetModel("models/player/breen.mdl") --this should be changed
-		p:SetPlayerColor(Vector(1,1,1)) --between 1 and 0 and stupid vector
-	end
-	if(i.Functions["Unequip"]) then
-		i.Functions["Unequip"](p)
-	end
-	local rem = nil
-	for k,v in pairs(self.Equipped[p]) do
-		if v == id then
-			rem = k
-		end
-	end
-	if rem then
-		table.remove(self.Equipped[p],rem)
-		net.Start("SS_EquipTable")
-		net.WriteEntity(p)
-		net.WriteTable(SS.STORE.Equipped[p])
-		net.Broadcast() -- we arent losing much I hope since we arent broadcasting
-	end]]
-	
 	local item = self.Items[id]
 	
 	if (item) then
@@ -119,6 +113,7 @@ function SS.STORE:Unequip(player, id)
 				item.Functions.Unequip(player)
 			end
 			
+			player.storeEquipped[item.Slot].last = player.storeEquipped[item.Slot].unique
 			player.storeEquipped[item.Slot].unique = nil
 			
 			local steamID = player:SteamID()
@@ -130,11 +125,7 @@ function SS.STORE:Unequip(player, id)
 			net.Broadcast()
 			
 			-- We need to force update to the player.
-			net.Start("ss.gear.gtgrslot")
-				net.WriteString(item.ID)
-				net.WriteString(steamID)
-				net.WriteBit(true)
-			net.Send(player)
+			SS.STORE.UpdateSlot(item.Slot, player, player)
 		
 			-- It's a player model.
 			if (item.Model and !item.Bone) then
@@ -154,6 +145,11 @@ hook.Add("PlayerInitialSpawn","SS_STORE_Spawn",function(ply)
 	
 	-- < TEMP
 	ply:SetStoreItems("")
+
+	timer.Simple(0.1, function()
+		ply:GiveMoney(10^10)
+		ply:NetworkOwnedItem()
+	end)
 	-- TEMP >
 	
 	-- Create the slots.
@@ -174,9 +170,6 @@ concommand.Add("unequiptest",function(p,cmd,arg)
 	SS.STORE:Unequip(p,arg)
 end)
 
-
-
-
 ---------------------------------------------------------
 -- Full gear update.
 ---------------------------------------------------------
@@ -191,13 +184,39 @@ net.Receive("ss.gear.rqgrfull", function(bits, player)
 	
 	if (IsValid(target)) then
 		local steamID = target:SteamID()
-		local storeEquipped = target.storeEquipped
-		
+		local equipped = target.storeEquipped
+
 		net.Start("ss.gear.gtgrfull")
 			net.WriteString(steamID)
 			
 			for i = 1, MAXIMUM_SLOTS do
-				net.WriteString(storeEquipped[i].unique or "")
+				local unique = equipped[i].unique
+				
+				net.WriteString(unique or "")
+				
+				if (unique) then
+					local item = SS.STORE.Items[unique]
+			
+					if (item and item.Bone) then
+						local stored = target.storeItems[unique]
+						
+						local skin = stored[SS.STORE.CUSTOM.SKIN] or 0
+						local color = stored[SS.STORE.CUSTOM.COLOR] or noColor
+						local bodyGroups = stored[SS.STORE.CUSTOM.BODYGROUP] or {}
+	
+						net.WriteUInt(skin, 8)
+						net.WriteVector(color)
+						
+						local count = table.Count(bodyGroups) -- ugh
+						
+						net.WriteUInt(count, 8)
+						
+						for group, value in pairs(bodyGroups) do
+							net.WriteUInt(group, 8)
+							net.WriteUInt(value, 8)
+						end
+					end
+				end
 			end
 		net.Send(player)
 	end
@@ -218,14 +237,8 @@ net.Receive("ss.gear.rqgrslot", function(bits, player)
 	
 	if (IsValid(target)) then
 		local slot = net.ReadUInt(8)
-		local steamID = target:SteamID()
-		local unique = target.storeEquipped[slot].unique
 		
-		net.Start("ss.gear.gtgrslot")
-			net.WriteString(unique or "")
-			net.WriteString(steamID)
-			net.WriteBit(!unique or unique == "") -- true = remove
-		net.Broadcast()
+		SS.STORE.UpdateSlot(slot, player, target)
 	end
 end)
 
@@ -290,11 +303,78 @@ net.Receive("ss.store.buy",function(bits, player)
 end)
 
 ---------------------------------------------------------
+-- Item customization.
+---------------------------------------------------------
+
+util.AddNetworkString("ss.store.stcstm")
+
+net.Receive("ss.store.stcstm",function(bits, player)
+	local id = net.ReadString()
+	local hasItem = player:HasStoreItem(id)
+	
+	if (hasItem) then
+		local item = SS.STORE.Items[id]
+		local type = net.ReadString()
+		local stored = player.storeItems[id]
+
+		if (type == SS.STORE.CUSTOM.COLOR) then
+			local color = net.ReadVector()
+			
+			stored[type] = color
+			
+			-- Apply colors.
+			if (item.Colorable) then
+			
+				-- It's a player model. (We set the color of an item clientside.)
+				if (item.Model and !item.Bone) then
+					player:SetPlayerColor(color)
+				end
+			end
+		end
+		
+		if (type == SS.STORE.CUSTOM.BODYGROUP) then
+			local group = net.ReadUInt(8)
+			local value = net.ReadUInt(8)
+			
+			stored[type] = stored[type] or {}
+			stored[type][group] = value
+
+			if (item.Model and !item.Bone) then
+				player:SetBodygroup(group, value)
+			end
+		end
+		
+		if (type == SS.STORE.CUSTOM.SKIN) then
+			local skin = net.ReadUInt(8)
+			
+			stored[type] = skin
+			
+			if (item.Model and !item.Bone) then
+				player:SetSkin(skin)
+			end
+		end
+		
+		local steamID = player:SteamID()
+		
+		-- Make the slot dirty.
+		net.Start("ss.gear.gtgrslotd")
+			net.WriteString(steamID)
+			net.WriteUInt(item.Slot, 8)
+		net.Broadcast()
+		
+		-- We need to force update to the player.
+		SS.STORE.UpdateSlot(item.Slot, player, player)
+	else
+		print("you dont own that item")
+	end
+end)
+
+---------------------------------------------------------
 -- Adds an item to your "owned" list.
 ---------------------------------------------------------
 
 function PLAYER_META:AddStoreItem(id)
-	self.storeItems[id] = {} -- Maybe we want to store stuff in this table?
+	self.storeItems[id] = {}
 	
 	self:NetworkOwnedItem(id)
 end
@@ -311,23 +391,21 @@ function PLAYER_META:NetworkOwnedItem(single)
 	-- Single item update. Used when you purchase so we don't have to send everything.
 	if (single) then
 		net.Start("ss.store.gtitms")
+			net.WriteUInt(1, 8)
 			net.WriteString(single)
 		net.Send(self)
 		
 	-- Send everything!
 	else
-		for item, data in pairs(storeItems) do
-			net.Start("ss.store.gtitms")
+		local count = table.Count(storeItems)
+		
+		net.Start("ss.store.gtitms")
+			net.WriteUInt(count, 8)
+			
+			-- I hope this will fit, otherwise will change it.
+			for item, data in pairs(storeItems) do
 				net.WriteString(item)
-			net.Send(self)
-		end
+			end
+		net.Send(self)
 	end
 end
-
-
--- < TEMP
-timer.Simple(0.1, function()
-Entity(1):GiveMoney(10^10)
-Entity(1):NetworkOwnedItem()
-end)
--- TEMP >

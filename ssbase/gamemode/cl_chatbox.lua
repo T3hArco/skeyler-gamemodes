@@ -349,7 +349,7 @@ function theme:ParseData(data, list, isTitle)
 				
 				function tagPanel:Paint(w, h)
 					draw.Material(0, 0, w, h, color, TAG_MAT)
-					draw.SimpleRect(1, 1, w -9, h /2 -2, color_tag_white)
+					draw.SimpleRect(1, 2, w -10, h /2 -2, color_tag_white)
 					
 					draw.SimpleText(text, "ss.chat.tag", w /2 -3, h /2 +1, color_tag_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 					draw.SimpleText(text, "ss.chat.tag", w /2 -4, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
