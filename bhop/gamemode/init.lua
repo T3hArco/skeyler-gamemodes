@@ -12,6 +12,7 @@ include("sh_styles.lua")
 include("sh_maps.lua") 
 include("sh_viewoffsets.lua") 
 include("player_class/player_bhop.lua")
+include("sv_mapvote.lua")
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
@@ -21,11 +22,13 @@ AddCSLuaFile("sh_styles.lua")
 AddCSLuaFile("sh_viewoffsets.lua") 
 AddCSLuaFile("cl_records.lua") 
 AddCSLuaFile("cl_scoreboard.lua") 
+AddCSLuaFile("cl_mapvote.lua")
 
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
 
 local StoreFrames = {} --local is better
+local Frames = {}
 
 GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 GM.ACAreas = {}
@@ -269,8 +272,8 @@ function GM:PlayerSpawn(ply)
 				ply.AreaIgnore = false
 			elseif !ply.InSpawn then 
 				ply:StartTimer() 
-				ply.StoreFrames = nil
-				ply.Frames = 0
+				Frames[ply] = 0
+				StoreFrames[ply] = nil
 			end 
 
 			local oldhands = ply:GetHands()
@@ -467,9 +470,8 @@ function GM:PlayerWon(ply)
 		table.remove(self.RecordTable[ply.LevelData.id][ply.Style],k)
 		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],i)
 		table.SortByMember(self.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
-		if(self.RecordTable[ply.LevelData.id][ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && ply.StoreFrames) then
+		if(self.RecordTable[ply.LevelData.id][ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && StoreFrames[ply]) then
 			self.WRFr = StoreFrames[ply]
-			ply.StoreFrames = nil
 			self.WRFrames = #self.WRFr[1]
 			self.NewWR = true
 			file.Write("botfiles/"..game.GetMap()..".txt", "THISISABOTFILE\n")
@@ -490,6 +492,7 @@ function GM:PlayerWon(ply)
 	else
 		DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
 	end
+	StoreFrames[ply] = nil
 	print(ply.Payout) 
 	ply:GiveMoney(ply.Payout)
 end 
@@ -531,9 +534,9 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		data:SetOrigin(o)
 		ply:SetEyeAngles(a)
 		wrframes = wrframes + 1
-	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && ply.Frames) then
-		if(ply.Frames == 0) then
-			ply.Frames = 1
+	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && Frames[ply]) then
+		if(!StoreFrames[ply]) then
+			Frames[ply] = 0
 			StoreFrames[ply] = {}
 			StoreFrames[ply][1] = {}
 			StoreFrames[ply][2] = {}
@@ -543,12 +546,14 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		end
 		local o = data:GetOrigin()
 		local a = data:GetAngles()
-		StoreFrames[ply][1][ply.Frames] = o.x
-		StoreFrames[ply][2][ply.Frames] = o.y
-		StoreFrames[ply][3][ply.Frames] = o.z
-		StoreFrames[ply][4][ply.Frames] = a.p
-		StoreFrames[ply][5][ply.Frames] = a.y
+		StoreFrames[ply][1][Frames[ply]] = o.x
+		StoreFrames[ply][2][Frames[ply]] = o.y
+		StoreFrames[ply][3][Frames[ply]] = o.z
+		StoreFrames[ply][4][Frames[ply]] = a.p
+		StoreFrames[ply][5][Frames[ply]] = a.y
 		
-		ply.Frames = ply.Frames + 1
+		Frames[ply] = Frames[ply] + 1
+	elseif(ply:Team() == TEAM_BHOP && ply.InStart && StoreFrames[ply]) then
+		StoreFrames[ply] = nil
 	end
 end)

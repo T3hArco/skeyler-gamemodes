@@ -11,6 +11,7 @@ include("cl_difficulty_menu.lua")
 include("sh_styles.lua") 
 include("cl_records.lua") 
 include("cl_scoreboard.lua") 
+include("cl_mapvote.lua") 
 
 GM.RecordTable = {}
 
@@ -57,7 +58,7 @@ net.Receive("ModifyRT",function()
 		table.remove(GAMEMODE.RecordTable[l][s],r)
 	end
 	table.insert(GAMEMODE.RecordTable[l][s],{["name"] = n,["steamid"] = p,["time"] = t})
-	table.SortByMember(GAMEMODE.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
+	table.SortByMember(GAMEMODE.RecordTable[l][s], "time", function(a, b) return a > b end)
 end)
 
 timer.Create("HullstuffSadface",5,0,function()

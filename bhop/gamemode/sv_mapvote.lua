@@ -18,6 +18,7 @@ for k,v in pairs(file.Find("maps/*.bsp","GAME")) do
 	for _,pr in pairs(findprefix) do
 		if(string.sub(v,1,string.len(pr)) == pr) then
 			local m = string.gsub(v,".bsp","")
+			if(m == game.GetMap()) then continue end
 			table.insert(eligible,string.lower(m))
 		end
 	end
@@ -108,6 +109,7 @@ function GM:StartVote()
 	for k,v in pairs(player.GetAll()) do
 		v.hasrtved = false
 	end
+	rtvcount = 0
 	if(timer.Exists("MapChangeTimer")) then
 		timer.Remove("MapChangeTimer")
 	end

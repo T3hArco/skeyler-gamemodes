@@ -56,8 +56,6 @@ function ENT:EndTouch(ply)
 	if ply and ply:IsValid() and ply:IsPlayer() and !ply.AreaIgnore then 
 		if self:IsSpawn() and !ply.Winner then 
 			ply.InSpawn = false 
-			ply.StoreFrames = nil
-			ply.Frames = 0
 			ply:StartTimer() 
 		end 
 	end 
