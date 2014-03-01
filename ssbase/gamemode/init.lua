@@ -39,12 +39,17 @@ include("sv_timer.lua")
 include("sv_commands.lua")
 include("sv_gatekeeper.lua") 
 
+function ChatPrintAll(msg)
+  	if !msg or string.Trim(msg) == "" then return end 
+  
+  for k,v in pairs(player.GetAll()) do 
+  		v:ChatPrint(msg) 
+ 	end 
+ end
+ 
 function PLAYER_META:ChatPrintAll(msg) 
-	if !msg or string.Trim(msg) == "" then return end 
-	for k,v in pairs(player.GetAll()) do 
-		v:ChatPrint(msg) 
-	end 
-end 
+	ChatPrintAll(msg)
+ end 
  
 function GM:PlayerInitialSpawn(ply) 
 	ply:ProfileLoad() 
