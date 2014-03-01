@@ -55,13 +55,15 @@ surface.CreateFont("PortalScreenSmall", {
 	outline 	= false
 })
 
-local BackgroundTexture = surface.GetTextureID("sassilization/leaderboards/server_info")
+local backgroundTexture = surface.GetTextureID("skeyler/graphics/server_info_screen")
 
 local StatusMessages = {"Online", "Full", "Closed"}
 local StatusMessagesEx = {"You can join", "The server is full", "This server is not up at the moment"}
 local StatusTextures = {surface.GetTextureID("sassilization/ready"), surface.GetTextureID("sassilization/forbidden"), surface.GetTextureID("sassilization/closed")}
 
-ENT.PlayerList = {"Bentech", "Smitty", "GodKnows", "CookMunster", "FireKnight", "Snoipa", "Dick", "AGS£SVSD£SDFVSETT2", "AB!233C", "Spacetech", "Cold", "Sassafrass"}
+ENT.PlayerList = {"Bentech", "Smitty", "GodKnows", "CookMunster", "FireKnight", "Snoipa", "Dick", "Sassafrass"}
+
+local panelUnique = "sass_portal"
 
 function ENT:Initialize()
 	--self:SetStatus(CommLink.Status.CLOSED)
@@ -84,6 +86,100 @@ function ENT:Initialize()
 	
 	self.PlayerListPos = 0
 	self.NextPlayerListUpdate = CurTime()
+	
+	self:SetRenderBounds(self.Bounds * -1, self.Bounds)
+	
+	---------------------------------------------------------
+	--
+	---------------------------------------------------------
+	
+	local background = SS.WorldPanel.NewPanel(panelUnique, 0.1)
+	background:SetPos(0, 0)
+	background:SetSize(1280, 640)
+	
+	function background:Paint(screen, x, y, w, h)
+		draw.Texture(x, y, w, h, color_white, backgroundTexture)
+		
+		draw.SimpleRect(x +w /2 +32, y +h /2 -32, 2, h /2 -10, Color(69, 69, 69, 60))
+		draw.SimpleRect(x +w /2 +32 +96, y +h /2 -32, 2, h /2 -10, Color(69, 69, 69, 60))
+		
+		draw.SimpleRect(x +w /2 +32 +96 +96, y +h /2 -32, 2, h /2 -10, Color(69, 69, 69, 60))
+	end
+	
+	local button = SS.WorldPanel.NewPanel(panelUnique, 0.1)
+	button:SetParent(background)
+	button:SetSize(1280 *0.19 -4, 360)
+	button:SetPos(1280 *0.4 +384 +104, 240)
+	
+	function button:Paint(screen, x, y, w, h)
+		draw.SimpleRect(x +4, y +4, w -8, h -8, self.hovered and Color(39 +30, 207 +30, 255, 255) or Color(39, 207, 255, 255))
+	end
+	
+	function button:OnMousePressed()
+		net.Start("ss.lkngtplr")
+			net.WriteUInt(self.screen:GetTriggerID(), 8)
+		net.SendToServer()
+	end
+	
+	local statusPanel = SS.WorldPanel.NewPanel(panelUnique, 0.03)
+	statusPanel:SetParent(background)
+	statusPanel:SetSize(1280 *3.35, 640 *3.35)
+	statusPanel:SetPos(0, 0)
+	
+	function statusPanel:Paint(screen, x, y, w, h)
+	--[[	draw.SimpleText("[SS #1] SASSILIZATION SERVER 1", "ss.sass.screen.button", x +1164, y +164, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		
+		if (screen.StatusTexture) then
+			local status, players = screen:GetStatus(), SS.Lobby.Link:GetQueue(screen:GetTriggerID())
+			
+			if (status == STATUS_LINK_PREPARING) then
+				if (!screen.prepareTime) then
+					screen.prepareTime = CurTime() +4
+				end
+				
+				screen:DrawText(string.format(screen.StatusMessageEx, math.max(math.Round(screen.prepareTime -CurTime()), 0)), "ss.sass.screen.status", x +1164, y +306, preparingColor)
+			elseif (status == STATUS_LINK_UNAVAILABLE) then
+				screen:DrawText(screen.StatusMessageEx, "ss.sass.screen.status", x +1164, y +306, Color(243, 121, 142))
+			else
+				screen:DrawText(string.format(screen.StatusMessageEx, #players, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
+				
+				screen.prepareTime = nil
+			end
+		end
+		]]
+	end
+	
+	local labelsPanel = SS.WorldPanel.NewPanel(panelUnique, 0.02)
+	labelsPanel:SetParent(background)
+	labelsPanel:SetSize(1280 *5 +14, 640 *5 +14)
+	labelsPanel:SetPos(0, 0)
+	
+	function labelsPanel:Paint(screen, x, y, w, h)
+		draw.SimpleText("PLAYER NAME", "ss.sass.screen.button", x +w /2 -932, y +h /2 -354, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		
+		local infoY = 0
+		
+		for i = 1, #screen.PlayerList do
+			local name = screen.PlayerList[i]
+			
+			if (name) then
+				draw.SimpleText(name, "ss.sass.screen.button", x +w /2 -932, y +h /2 -144 +infoY, Color(39, 207, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			--	draw.SimpleText(data.gold, "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -144 +infoY, Color(69, 69, 69, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+				--draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -144 +infoY, Color(69, 69, 69, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+			--	draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -144 +infoY, Color(69, 69, 69, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+				
+				infoY = infoY +196
+			end
+		end
+		
+	--[[	draw.SimpleText("GOLD", "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText("FOOD", "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText("IRON", "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	
+		]]
+		
+		draw.SimpleText("JOIN SERVER", "ss.sass.screen.button", x +w -800, y +h /2 +400, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	end
 end
 
 function ENT:SetStatus(Status)
@@ -118,13 +214,36 @@ end
 
 
 function ENT:Draw()
-	self:SetRenderBounds(self.Bounds * -1, self.Bounds)
-	
 	cam.Start3D2D(self.CamPos, self.CamAng, 0.1)
-		surface.SetDrawColor(255, 255, 255, 255)
-		surface.SetTexture(BackgroundTexture)
-		surface.DrawTexturedRect(0, 0, 1280, 640)
-		--self:DrawPortalScreen()
+		render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+		render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+		
+		SS.WorldPanel.DrawPanels(panelUnique, self, 0.1)
+
+		--self:DrawMouse()
+		
+		render.PopFilterMin()
+		render.PopFilterMag()
+	cam.End3D2D()
+	
+	cam.Start3D2D(self.CamPos, self.CamAng, 0.02)
+		render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+		render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+		
+		SS.WorldPanel.DrawPanels(panelUnique, self, 0.02)
+		
+		render.PopFilterMin()
+		render.PopFilterMag()
+	cam.End3D2D()
+	
+	cam.Start3D2D(self.CamPos, self.CamAng, 0.03)
+		render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+		render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+		
+		SS.WorldPanel.DrawPanels(panelUnique, self, 0.03)
+		
+		render.PopFilterMin()
+		render.PopFilterMag()
 	cam.End3D2D()
 end
 

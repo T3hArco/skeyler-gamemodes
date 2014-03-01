@@ -1,7 +1,9 @@
 include("shared.lua")
 
-local texture = surface.GetTextureID("sassilization/adverts2/advert000")
-local textureWide = surface.GetTextureID("sassilization/adverts2/advert000_wide")
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+
+local texture = surface.GetTextureID("skeyler/graphics/ad_default")
+local textureWide = surface.GetTextureID("skeyler/graphics/ad_default_wide")
 
 ---------------------------------------------------------
 --

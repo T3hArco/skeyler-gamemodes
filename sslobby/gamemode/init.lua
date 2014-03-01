@@ -9,10 +9,12 @@ AddCSLuaFile("modules/cl_chairs.lua")
 AddCSLuaFile("modules/cl_worldpicker.lua")
 AddCSLuaFile("modules/sh_minigame.lua")
 AddCSLuaFile("modules/cl_minigame.lua")
+AddCSLuaFile("modules/cl_worldpanel.lua")
 
 include("shared.lua")
 include("player_class/player_lobby.lua")
 
+include("modules/sv_socket.lua")
 include("modules/sh_link.lua")
 include("modules/sv_link.lua")
 include("modules/sh_chairs.lua")
@@ -113,7 +115,9 @@ function GM:PlayerInitialSpawn(player)
 		end)
 	end]]
 	
+	timer.Simple(0.1,function()
 	self:SetupAds(player)
+	end)
 end
 
 --------------------------------------------------

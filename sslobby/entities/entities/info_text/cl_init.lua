@@ -1,32 +1,34 @@
 include("shared.lua")
 
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+
 surface.CreateFont("ss.infoText.1", {
-	font 		= "Calibri",
+	font 		= "Arvil Sans",
 	size 		= 50,
 	weight 		= 600
 })
 
 surface.CreateFont("ss.infoText.2", {
-	font 		= "Calibri",
+	font 		= "Arvil Sans",
 	size 		= 140,
 	weight 		= 400,
 	blursize 	= 1
 })
 
 surface.CreateFont("ss.infoText.3", {
-	font 		= "Calibri",
+	font 		= "Arvil Sans",
 	size 		= 160,
 	weight 		= 600
 })
 
 surface.CreateFont("ss.infoText.4", {
-	font 		= "Calibri",
+	font 		= "Arvil Sans",
 	size 		= 250,
 	weight 		= 600
 })
 
 surface.CreateFont("ss.infoText.5", {
-	font 		= "Calibri",
+	font 		= "Arvil Sans",
 	size 		= 300,
 	weight 		= 600
 })

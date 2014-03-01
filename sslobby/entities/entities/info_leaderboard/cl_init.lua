@@ -4,4 +4,4 @@
 
 include("shared.lua")
 
-ENT.BackdropTexture = surface.GetTextureID("sassilization/leaderboards/top10_leaders")
+ENT.BackdropTexture = surface.GetTextureID("skeyler/graphics/leaderboard_all-time")

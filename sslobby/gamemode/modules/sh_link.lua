@@ -5,7 +5,7 @@ SS.Lobby.Link = {}
 --------------------------------------------------
 
 SS.Lobby.Link.MinPlayers = 3
-SS.Lobby.Link.MaxPlayers = 7
+SS.Lobby.Link.MaxPlayers = 8
 
 --------------------------------------------------
 --

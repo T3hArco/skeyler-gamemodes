@@ -7,16 +7,20 @@ storedTriggers = storedTriggers or {}
 
 function SS.Lobby.Link:AddScreen(id)
 	storedTriggers[id] = {
-		map = surface.GetTextureID("sassilization/minimaps/sa_angelsarena"),
+		map = math.random(1,2) == 1 and surface.GetTextureID("sassilization/minimaps/sa_angelsarena") or nil,
 		chat = {},
+		queue = {},
 		players = {},
 		minimap = {}
 	}
+	for i =1, math.random(1,8) do
+		storedTriggers[id].players[i] = {name = "Chewgum",gold=math.random(1,500),food=math.random(1,500),iron=math.random(1,550)}
+	end
 	
 	for i = 1, 14 do
 		local unit = math.random(0, 1) == 1
 		
-		table.insert(storedTriggers[id].minimap, {x = math.random(0, 333), y = math.random(0, 334), width = unit and 3 or 8, height = unit and 3 or 8, unit = unit,color = Color(math.random(0,255), math.random(0,255), math.random(0,255)), dirx=math.random(0,332),diry=math.random(100,300)})
+		table.insert(storedTriggers[id].minimap, {x = math.random(0, 359), y = math.random(0, 359), width = unit and 3 or 8, height = unit and 3 or 8, unit = unit,color = Color(math.random(0,255), math.random(0,255), math.random(0,255)), dirx=math.random(0,332),diry=math.random(100,300)})
 	end
 end
 
@@ -39,13 +43,13 @@ net.Receive("ss.lkngtpl", function(bits)
 	local data = storedTriggers[id]
 	
 	if (data) then
-		local full = #data.players >= SS.Lobby.Link.MaxPlayers
+		local full = #data.queue >= SS.Lobby.Link.MaxPlayers
 		
 		if (!full) then
-			local hasPlayer = SS.Lobby.Link:HasPlayer(id, steamID)
+			local hasPlayer = SS.Lobby.Link:HasQueue(id, steamID)
 			
 			if (!hasPlayer) then
-				table.insert(data.players, steamID)
+				table.insert(data.queue, steamID)
 				
 				print("Added player '" .. tostring(steamID) .. "' from trigger: " .. id .. ".")
 			end
@@ -66,10 +70,10 @@ net.Receive("ss.lknrmpl", function(bits)
 	local data = storedTriggers[id]
 	
 	if (data) then
-		local hasPlayer, index = SS.Lobby.Link:HasPlayer(id, steamID)
+		local hasPlayer, index = SS.Lobby.Link:HasQueue(id, steamID)
 		
 		if (hasPlayer) then
-			table.remove(data.players, index)
+			table.remove(data.queue, index)
 			
 			print("Removed player '" .. tostring(steamID) .. "' from trigger: " .. id .. ".")
 		end
@@ -82,12 +86,12 @@ end)
 -- Checks if a screen/trigger has the player.
 ---------------------------------------------------------
 
-function SS.Lobby.Link:HasPlayer(id, steamID)
+function SS.Lobby.Link:HasQueue(id, steamID)
 	local data = storedTriggers[id]
 	
 	if (data) then
-		for i = 1, #data.players do
-			local info = data.players[i]
+		for i = 1, #data.queue do
+			local info = data.queue[i]
 			
 			if (steamID == info) then
 				return true, i
@@ -102,6 +106,14 @@ end
 -- Returns all the players in a screen/trigger.
 ---------------------------------------------------------
 
-function SS.Lobby.Link:GetPlayers(id)
+function SS.Lobby.Link:GetQueue(id)
+	return storedTriggers[id].queue
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Link:GetPlayerInfo(id)
 	return storedTriggers[id].players
 end

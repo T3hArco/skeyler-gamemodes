@@ -20,9 +20,9 @@ end
 ---------------------------------------------------------
 
 function ENT:StartTouch(entity)
-	if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer() and self.id) then
-		SS.Lobby.Link:AddPlayer(self.id, entity)
-	end
+	--if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer() and self.id) then
+	--	SS.Lobby.Link:AddPlayer(self.id, entity)
+	--end
 end
 
 ---------------------------------------------------------
@@ -30,7 +30,7 @@ end
 ---------------------------------------------------------
 
 function ENT:EndTouch(entity)
-	if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer() and self.id) then
-		SS.Lobby.Link:RemovePlayer(self.id, entity)
-	end
+	--if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer() and self.id) then
+		--SS.Lobby.Link:RemovePlayer(self.id, entity)
+	--end
 end

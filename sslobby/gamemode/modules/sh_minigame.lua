@@ -7,7 +7,7 @@ SS.Lobby.Minigame.Scores = {}
 SS.Lobby.Minigame.Scores[TEAM_RED] = math.random(1, 20)
 SS.Lobby.Minigame.Scores[TEAM_BLUE] = math.random(1, 20)
 SS.Lobby.Minigame.Scores[TEAM_GREEN] = math.random(1, 20)
-SS.Lobby.Minigame.Scores[TEAM_YELLOW] = math.random(1, 20)
+SS.Lobby.Minigame.Scores[TEAM_ORANGE] = math.random(1, 20)
 
 local stored = {}
 

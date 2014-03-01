@@ -3,6 +3,10 @@ AddCSLuaFile("cl_init.lua")
 
 include("shared.lua")
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function ENT:Initialize()
 	self:PhysicsInit(SOLID_NONE)
 	self:SetMoveType(MOVETYPE_NONE)
@@ -11,14 +15,22 @@ function ENT:Initialize()
 end
 
 concommand.Add("dicks",function()
-	local s=ents.FindByClass("info_weeklyleaderboard")
+
+	local tbl = {}
 	
-	for k, v in pairs(s) do
-		local d=ents.Create("info_weeklyleaderboard")
-		d:SetPos(v:GetPos())
-		d:SetAngles(v:GetAngles())
-		d:Spawn()
+	for k,v in pairs(ents.FindByClass("info_weeklyleaderboard")) do
+		local p,a=v:GetPos(),v:GetAngles()
+		
+		table.insert(tbl,{p,a})
 		
 		v:Remove()
+	end
+	
+	for i = 1, #tbl do
+	local v = tbl[i]
+	local n=ents.Create("info_weeklyleaderboard")
+		n:SetPos(v[1])
+		n:SetAngles(v[2])
+		n:Spawn()
 	end
 end)

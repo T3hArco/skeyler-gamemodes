@@ -55,7 +55,7 @@ concommand.Add("ias",function()
 		v:Remove()
 	end
 	
-	for i = 1, 3 do
+	for i = 1, 4 do
 	local v = tbl[i]
 	local n=ents.Create("info_sass_screen")
 		n:SetPos(v[1])

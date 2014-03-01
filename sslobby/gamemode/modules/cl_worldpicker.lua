@@ -69,6 +69,9 @@ function GM:GUIMouseReleased(player, trace)
 			net.WriteVector(position)
 			net.WriteAngle(angle)
 		net.SendToServer()
+
+		lastEntity:SetRenderOrigin()
+		lastEntity:SetRenderAngles()
 	end
 	
 	rotation = 0

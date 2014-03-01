@@ -1,44 +1,20 @@
-----------
--- Lobby
-----------
-
 include("shared.lua")
+
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
 surface.CreateFont("font_news", {
 	font 		= "Arial",
 	size 		= 48,
-	weight 		= 600,
-	blursize 	= 0,
-	scanlines 	= 0,
-	antialias 	= true,
-	underline 	= false,
-	italic 		= false,
-	strikeout 	= false,
-	symbol 		= false,
-	rotary 		= false,
-	shadow 		= false,
-	additive 	= false,
-	outline 	= false
+	weight 		= 600
 })
 surface.CreateFont("font_rules", {
 	font 		= "Arial",
 	size 		= 54,
-	weight 		= 600,
-	blursize 	= 0,
-	scanlines 	= 0,
-	antialias 	= true,
-	underline 	= false,
-	italic 		= false,
-	strikeout 	= false,
-	symbol 		= false,
-	rotary 		= false,
-	shadow 		= false,
-	additive 	= false,
-	outline 	= false
+	weight 		= 600
 })
 
-local texBulletin = surface.GetTextureID( "sassilization/leaderboards/bulletin" )
-local texRules = surface.GetTextureID( "sassilization/leaderboards/rules" )
+local texBulletin = surface.GetTextureID("skeyler/graphics/info_news")
+local texRules = surface.GetTextureID("skeyler/graphics/info_rules")
 local writez = Material("engine/writeZ")
 local info = {}
 
@@ -189,9 +165,6 @@ function ENT:Initialize()
 	local bounds = Vector(1, 1, 1) * 128
 	
 	self.Entity:SetRenderBounds(bounds * -1, bounds)
-	self.occlusionmesh = Mesh()
-	self.occlusionmesh:BuildFromTriangles(BuildRect(Vector(0,-32,-32), Vector(0,32,32)))
-	
 end
 
 function ENT:Think()
@@ -212,11 +185,13 @@ local function DrawText( txt, x, y, col )
 	surface.SetTextPos( x, y )
 	surface.SetTextColor( col.r, col.g, col.b, col.a )
 	surface.DrawText( txt )
+	
 end
 
 function ENT:Draw()
-	
+	info.rules = {"No Rules!"}
 	local ang = self:GetAngles()
+	
 	if( self:GetForward():Dot((self:GetPos() - EyePos()):GetNormal()) < 0 ) then
 		cam.Start3D2D(self:GetPos()+self:GetForward()*0.1+self:GetRight()*32+self:GetUp()*32,Angle( 0, ang.y+90, ang.p+90 ),0.05)
 			surface.SetDrawColor( 255, 255, 255, 255 )
@@ -239,22 +214,11 @@ function ENT:Draw()
 				surface.SetFont( "font_rules" )
 				local w, h = surface.GetTextSize("")
 				for i, line in pairs( info.rules ) do
-					DrawText( line, 175, 210 + i*h*1.05 )
+					DrawText( line, 175, 300 + i*h*1.05 )
 				end
 			end
 		cam.End3D2D()
 	end
-	
-	render.SetMaterial(writez)
-	
-	local matWorld = Matrix()
-	matWorld:Translate( self.Entity:GetPos() )
-	matWorld:Rotate( self.Entity:GetAngles() )
-	
-	cam.PushModelMatrix( matWorld )
-		self.occlusionmesh:Draw()
-	cam.PopModelMatrix()
-	
 end
 --[[
 hook.Add( "ShutDown", "bulletin.cachenews", function()

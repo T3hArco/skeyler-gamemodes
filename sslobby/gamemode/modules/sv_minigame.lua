@@ -46,7 +46,7 @@ function SS.Lobby.Minigame:ShiftGame()
 	local players = {}
 	local teamAmount = 0
 
-	for i = TEAM_RED, TEAM_YELLOW do
+	for i = TEAM_RED, TEAM_ORANGE do
 		local found = false
 		local teamPlayers = team.GetPlayers(i)
 		

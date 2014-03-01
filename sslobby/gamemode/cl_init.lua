@@ -9,6 +9,7 @@ include("modules/cl_chairs.lua")
 include("modules/cl_worldpicker.lua")
 include("modules/sh_minigame.lua")
 include("modules/cl_minigame.lua")
+include("modules/cl_worldpanel.lua")
 
 --surface.PlaySound("sassilization/lobby_music.mp3")
 

@@ -6,7 +6,19 @@ storedTriggers = storedTriggers or {}
 ---------------------------------------------------------
 
 function SS.Lobby.Link:AddServerTrigger(id)
-	storedTriggers[id] = {players = {}, sending = false}
+	storedTriggers[id] = {players = {}, queue = {}, sending = false}
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Link:AddPlayerInfo(id, unique, info)
+	local data = storedTriggers[id]
+	
+	if (data) then
+		data.players[unique] = data.players[unique] or info
+	end
 end
 
 ---------------------------------------------------------
@@ -14,15 +26,24 @@ end
 ---------------------------------------------------------
 
 util.AddNetworkString("ss.lkngtpl")
+util.AddNetworkString("ss.lkngtplr")
 
-function SS.Lobby.Link:AddPlayer(id, player)
+function SS.Lobby.Link:AddQueue(id, player)
+	
+	-- Remove the player from a previous screen.
+	for id2, data in pairs(storedTriggers) do
+		if (id != id2) then
+			SS.Lobby.Link:RemoveQueue(id2, player)
+		end
+	end
+	
 	local data = storedTriggers[id]
 	
 	if (data) then
-		local hasPlayer = self:HasPlayer(id, player)
+		local hasPlayer = self:HasQueue(id, player)
 		
 		if (!hasPlayer) then
-			table.insert(data.players, player)
+			table.insert(data.queue, player)
 			
 			local steamID = player:SteamID()
 			
@@ -37,21 +58,27 @@ function SS.Lobby.Link:AddPlayer(id, player)
 		print("Missing server trigger: " .. id .. "??")
 	end
 end
- 
+
+net.Receive("ss.lkngtplr", function(bits, player)
+	local id = net.ReadUInt(8)
+	
+	SS.Lobby.Link:AddQueue(id, player)
+end)
+
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
 util.AddNetworkString("ss.lknrmpl")
 
-function SS.Lobby.Link:RemovePlayer(id, player)
+function SS.Lobby.Link:RemoveQueue(id, player)
 	local data = storedTriggers[id]
 	
 	if (data) then
-		local hasPlayer, index = self:HasPlayer(id, player)
+		local hasPlayer, index = self:HasQueue(id, player)
 		
 		if (hasPlayer) then
-			table.remove(data.players, index)
+			table.remove(data.queue, index)
 			
 			local steamID = player:SteamID()
 			
@@ -71,12 +98,12 @@ end
 --
 ---------------------------------------------------------
 
-function SS.Lobby.Link:HasPlayer(id, player)
+function SS.Lobby.Link:HasQueue(id, player)
 	local data = storedTriggers[id]
 	
 	if (data) then
-		for i = 1, #data.players do
-			local info = data.players[i]
+		for i = 1, #data.queue do
+			local info = data.queue[i]
 			
 			if (player == info) then
 				return true, i
@@ -139,8 +166,8 @@ end
 --
 ---------------------------------------------------------
 
-function SS.Lobby.Link:GetPlayers(id)
-	return storedTriggers[id].players
+function SS.Lobby.Link:GetQueue(id)
+	return storedTriggers[id].queue
 end
 
 ---------------------------------------------------------
@@ -152,7 +179,7 @@ local nextTick = 0
 hook.Add("Tick", "SS.Lobby.Link", function()
 	if (nextTick <= CurTime()) then
 		for id, data in pairs(storedTriggers) do
-			local count = #data.players
+			local count = #data.queue
 			
 			if (count >= SS.Lobby.Link.MinPlayers) then
 				if (!data.sending) then
@@ -170,7 +197,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							end
 							
 							for i = 1, count do
-								local player = data.players[i]
+								local player = data.queue[i]
 								
 								player:Freeze(true)
 							end
@@ -182,7 +209,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 									print("SENDING")
 									
 									for i = 1, count do
-										local player = data.players[i]
+										local player = data.queue[i]
 	
 										-- priority on vip?
 										table.insert(send, player)
@@ -192,7 +219,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 									
 									-- we need to unfreeze players that didnt make it
 									for i = 1, count do
-										local player = data.players[i]
+										local player = data.queue[i]
 										
 										player:Freeze(false)
 									end
@@ -209,7 +236,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 					screen:SetStatus(STATUS_LINK_READY)
 					
 					for i = 1, count do
-						local player = data.players[i]
+						local player = data.queue[i]
 						
 						player:Freeze(false)
 					end
@@ -221,4 +248,45 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 		
 		nextTick = CurTime() +0.5
 	end
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+socket.AddCommand("sassinfo", function(sock, ip, port, buffer, errorCode)
+	local size = buffer:ReadLong()
+	local data = buffer:Read(size)
+	
+	data = util.Decompress(data)
+	
+	--[[
+	local _, id = buffer:ReadShort()
+	local _, unique = buffer:ReadShort()
+	local _, name = buffer:ReadString()
+	local _, food = buffer:ReadLong()
+	local _, gold = buffer:ReadLong()
+	local _, iron = buffer:ReadLong()
+	local _, cities = buffer:ReadLong()
+	
+	
+	local info = {
+		unique = unique,
+		name = name,
+		food = food,
+		gold = gold,
+		iron = iron,
+		cities = cities
+	}
+	
+	SS.Lobby.Link:AddPlayerInfo(id, unique, info)
+	]]
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+socket.AddCommand("sassmap", function(sock, ip, port, buffer, errorCode)
+	
 end)
