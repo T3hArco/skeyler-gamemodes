@@ -25,8 +25,7 @@ surface.CreateFont("HUD_Timer", {font="Century Gothic", size=40, weight=1000})
 surface.CreateFont("HUD_Timer_Small", {font="Century Gothic", size=24, weight=1000}) 
 
 surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550}) 
-surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=800}) 
-surface.CreateFont("PLAYER_TEXT_BLUR", {font="Arvil Sans", size=120, weight=800, blursize=8, antialias=false}) 
+surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=530}) 
 
 PLAYER_MASK = Material("skeyler/names/diagonals.png","noclamp smooth")
 
@@ -288,10 +287,8 @@ function GM:PostDrawTranslucentRenderables()
 			end
 			if(a != 0) then
 				cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-					local n = ply:Nick()
- 					draw.SimpleText( n, "PLAYER_TEXT_BLUR", 0, 0, Color(0,0,0,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
- 					draw.SimpleText( n, "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255)*180), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
- 					draw.SimpleText( n, "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+					draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255*200)), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+					draw.SimpleText( ply:Nick(), "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
 				cam.End3D2D()
 			end
 		end

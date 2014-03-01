@@ -1,23 +1,38 @@
-
 ENT.Base = "base_brush"
 ENT.Type = "brush"
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function ENT:Initialize()
 	self.count = 0
 	self.players = {}
 end
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function ENT:KeyValue(key, value)
 	self[key] = tonumber(value)
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function ENT:Reset()
 	self.count = 0
 	self.players = {}
 end
 
-function ENT:StartTouch( ent )
-	
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function ENT:StartTouch(entity)
+	--[[
 	if !IsValid(ent) then return end
 	if !ent:IsPlayer() then return end
 	
@@ -33,12 +48,16 @@ function ENT:StartTouch( ent )
 		end
 		if win then GAMEMODE.Arcade.EndMinigame( #team == 1 and ent or ent:Team() ) end
 	end
-	
+	]]
 end
 
-function ENT:EndTouch( ent )
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function ENT:EndTouch(entity)
 	
-	if !IsValid( ent ) then return end
+--[[	if !IsValid( ent ) then return end
 	if !ent:IsPlayer() then return end
 	
 	for _, pl in pairs( self.players ) do
@@ -50,5 +69,5 @@ function ENT:EndTouch( ent )
 	end
 	
 	if table.Count( self.players ) == 0 then self:Reset() end
-	
+	]]
 end

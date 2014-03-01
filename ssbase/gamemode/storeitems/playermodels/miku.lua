@@ -7,7 +7,7 @@ ITEM.Model = "models/mrgiggles/skeyler/playermodels/miku.mdl"			--Model used by 
 
 ITEM.Type = "model"								--Also works for stuff like "mask" and such. Used for item compatibility
 
-ITEM.Colorable = true							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
+ITEM.Colorable = false							--Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false							--Used if the model is colorable, but a translation is needed to $selfillumtint 
 
 ITEM.CamPos = Vector(50, 30, 64)						-- Used the modify the position of the camera on DModelPanels 

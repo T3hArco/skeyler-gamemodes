@@ -1,7 +1,3 @@
-----------
--- Lobby
-----------
-
 include("shared.lua")
 
-ENT.BackdropTexture = surface.GetTextureID("skeyler/graphics/leaderboard_all-time")
+ENT.texture = surface.GetTextureID("skeyler/graphics/leaderboard_all-time")

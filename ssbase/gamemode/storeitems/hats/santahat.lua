@@ -7,7 +7,7 @@ ITEM.Model = "models/mrgiggles/skeyler/hats/santa.mdl"		-- Model used by the ite
 
 ITEM.Type = "headcoverhalf"									-- Also works for stuff like "mask" and such. Used for item compatibility
 
-ITEM.Colorable = false										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
+ITEM.Colorable = true										-- Used if the model is colorable via setcolor (or in a models case, setplayercolor)
 ITEM.Tintable = false										-- Used if the model is colorable, but a translation is needed to $selfillumtint 
 
 ITEM.Rotate = 45

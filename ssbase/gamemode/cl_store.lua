@@ -413,6 +413,9 @@ function PANEL:Init()
 		self.search:SetPos(w /2 -self.search:GetWide() /2, h -62)
 	end
 	
+	self.Preview = self:Add("ss_hub_store_preview")
+	self.Preview:Dock(FILL)
+	
 	for k, v in pairs(SS.STORE.Categories) do 
 		StoreCats[v] = {} 
 		
@@ -453,16 +456,15 @@ function PANEL:Init()
 				Panel:SetFOV(v2.Fov)
 				Panel:SetData(v2)
 				
+				Panel.preview = self.Preview
+				
 				Panel.Rotate = v2.Rotate or 45 
 				Panel.PPanel = t.Panel 
 
 				if v2.Type == "model" then Panel.Model = true end
 			end 
 		end 
-	end 
-	
-	self.Preview = self:Add("ss_hub_store_preview")
-	self.Preview:Dock(FILL)
+	end
 end 
 
 function PANEL:Paint(w, h) 
@@ -556,8 +558,14 @@ function PANEL:Init()
 	self.InfoPnl = vgui.Create("DPanel", self) 
 	self.InfoPnl:Dock(FILL)
 	
+	function self.InfoPnl:OnMousePressed(code)
+		if (code == MOUSE_RIGHT) then
+			self.tooltip_ss:EnableButton()
+		end
+	end
+	
 	self.toolTip = self.InfoPnl:CreateToolTip()
-	self.toolTip:SetSize(200, 0)
+	self.toolTip:SetSize(300, 0)
 	self.toolTip:DockPadding(8, 8, 8, 8)
 	
 	self.InfoPnl.Offset = 0 
@@ -670,15 +678,110 @@ function PANEL:SetData(data)
 	label:SetColor(color_white)
 	label:SizeToContents()
 	
-	local skinAmount = self.Entity:SkinCount()
+	local this = self
 	
-	local label = self.toolTip:Add("DLabel")
-	label:Dock(TOP)
-	label:DockMargin(0, 0, 0, 8)
-	label:SetText("Skins: " .. skinAmount)
-	label:SetFont("ss.tooltip.options")
-	label:SetColor(color_white)
-	label:SizeToContents()
+	if (!this:GetInventoryIcon()) then
+		if (data.Colorable) then
+			local colorMixer = self.toolTip:Add("DColorMixer")
+			colorMixer:Dock(TOP)
+			colorMixer:DockMargin(0, 0, 0, 8)
+			colorMixer:SetTall(128)
+			colorMixer:SetAlphaBar(false)
+			
+			function colorMixer:ValueChanged(color)
+				self.nextUpdate = CurTime() +0.35
+			end
+			
+			function colorMixer:Think()
+				self:ConVarThink()
+				
+				if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+					local color = self:GetColor()
+					
+					if (data.Slot == SS.STORE.SLOT.MODEL) then
+						this.preview.Entity:SetColor(color)
+					else
+						this.preview.Entity.previews[data.Slot].entity:SetColor(color)
+					end
+					
+					self.nextUpdate = nil
+				end
+			end
+		end
+		
+		local skinAmount = this.Entity:SkinCount()
+		
+		if (skinAmount > 1) then
+			local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
+			base:Dock(TOP)
+			base:SetTall(34)
+			
+			base.label:SetFont("ss.tooltip.options")
+			base.label:SizeToContents()
+			
+			slider:SetWide(125)
+			
+			slider:SetMin(1)
+			slider:SetMax(skinAmount)
+			slider:SetValue(this.Entity:GetSkin())
+			
+			function slider:OnValueChanged(value)
+				self.nextUpdate = CurTime() +0.1
+			end
+			
+			function slider:Think()
+				if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+					local value = self:GetValue()
+					
+					if (data.Slot == SS.STORE.SLOT.MODEL) then
+						this.preview.Entity:SetSkin(value)
+					else
+						this.preview.Entity.previews[data.Slot].entity:SetSkin(value)
+					end
+					
+					self.nextUpdate = nil
+				end
+			end
+		end
+		
+		if (data.Model and !data.Bone) then
+			local bodyGroups = this.Entity:GetBodyGroups()
+			
+			for i = 1, #bodyGroups do
+				local info = bodyGroups[i]
+				
+				local slider, base = util.SliderAndLabel(self.toolTip, "Bodygroup - " .. info.name)
+				base:Dock(TOP)
+				base:SetTall(34)
+		
+				base.label:SetFont("ss.tooltip.options")
+				base.label:SizeToContents()
+				
+				slider:SetWide(125)
+				slider:SetMin(0)
+				slider:SetMax(#info.submodels)
+				slider:SetValue(0)
+				
+				function slider:OnValueChanged(value)
+					self.nextUpdate = CurTime() +0.3
+				end
+				
+				function slider:Think()
+					if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+						local value = self:GetValue()
+						
+						if (data.Slot == SS.STORE.SLOT.MODEL) then
+							this.preview.Entity:SetBodygroup(info.id, value)
+						else
+							this.preview.Entity.previews[data.Slot].entity:SetBodygroup(info.id, value)
+						end
+						
+						self.nextUpdate = nil
+					end
+				end
+			end
+		end
+	end
 	
 	self.toolTip:InvalidateLayout(true)
 	self.toolTip:SizeToChildren(false, true)
@@ -790,7 +893,10 @@ vgui.Register("ss_hub_store_icon", PANEL, "DModelPanel")
 -- Store preview model.
 ---------------------------------------------------------
 
-local PANEL = {} 
+local PANEL = {}
+
+AccessorFunc(PANEL, "m_bIsInventory", "IsInventory")
+
 function PANEL:Init() 
 	self.Entity = nil 
 	self.LastPaint = 0
@@ -947,6 +1053,21 @@ function PANEL:Paint(w, h)
 		
 							data.entity:SetPos(position)
 							data.entity:SetAngles(angles)
+							
+							if (self:GetIsInventory()) then
+								local gearEntity = SS.Gear.Get(LocalPlayer(), i).entity
+								local color = gearEntity:GetColor()
+								local skin = gearEntity:GetSkin()
+								
+								data.entity:SetSkin(skin)
+								
+								render.SetColorModulation(color.r /255, color.g /255, color.b /255)
+							else
+								local color = data.entity:GetColor()
+						
+								render.SetColorModulation(color.r /255, color.g /255, color.b /255)
+							end
+	
 							data.entity:DrawModel()
 							
 							if (item.Hooks.Think) then
@@ -1089,6 +1210,7 @@ function panel:Init()
 	self.preview = self:Add("ss_hub_store_preview")
 	self.preview:Dock(FILL)
 	self.preview.camZ = 125
+	self.preview:SetIsInventory(true)
 	
 	local headSlot = self.preview:Add("ss.slot")
 	headSlot:SetPos(21, 21)
@@ -1357,6 +1479,12 @@ function SS.Gear.GetCacheByPlayer(player)
 	return cache[steamID]
 end
 
+function SS.Gear.ShouldDraw()
+	if (GetViewEntity() == LocalPlayer() and !LocalPlayer():ShouldDrawLocalPlayer() and !LocalPlayer():GetObserverTarget()) then return false end
+	
+	return true
+end
+
 ---------------------------------------------------------
 -- Full gear update.
 ---------------------------------------------------------
@@ -1501,21 +1629,12 @@ net.Receive("ss.gear.gtgrslotd", function(bits)
 	end
 end)
 
-hook.Add("PostDrawTranslucentRenderables","1",function()
-	for k, player in pairs(player.GetAll()) do
-		if (!player:Alive()) then
-			hook.Run("PostPlayerDraw", player, true)
-		end
-	end
-end)
-
 ---------------------------------------------------------
 -- Draws the gear.
 ---------------------------------------------------------
 
 hook.Add("PostPlayerDraw", "ss.gear.render", function(player, isRagdoll)
 	local steamID = player:SteamID()
-	
 	local entity = isRagdoll and player:GetRagdollEntity() or player
 	
 	-- Request full update.
@@ -1601,6 +1720,62 @@ hook.Add("PostPlayerDraw", "ss.gear.render", function(player, isRagdoll)
 					end
 				end
 			end
+		end
+	end
+end)
+
+---------------------------------------------------------
+-- Hide the gear for the localplayer if we're not in
+-- 3rd person.
+---------------------------------------------------------
+
+local hidden = false
+
+hook.Add("Think", "ss.gear.render", function()
+	local steamID = LocalPlayer():SteamID()
+
+	if (cache[steamID]) then
+		local shouldDraw = SS.Gear.ShouldDraw()
+		
+		if (shouldDraw) then
+			if (hidden) then
+				for i = 1, MAXIMUM_SLOTS do
+					local data = cache[steamID][i]
+					
+					if (data and IsValid(data.entity)) then
+						data.entity:RemoveEffects(EF_NODRAW)
+					end
+				end
+				
+				hidden = false
+			end
+		else
+			if (!hidden) then
+				for i = 1, MAXIMUM_SLOTS do
+					local data = cache[steamID][i]
+					
+					if (data and IsValid(data.entity)) then
+						data.entity:AddEffects(EF_NODRAW)
+					end
+				end
+				
+				hidden = true
+			end
+		end
+	end
+end)
+
+---------------------------------------------------------
+-- A shitty hack to make it draw on the corpse.
+-- This might be a bad idea!
+---------------------------------------------------------
+
+hook.Add("PostDrawTranslucentRenderables", "ss.gear.render", function()
+	local players = player.GetAll()
+	
+	for k, player in pairs(players) do
+		if (!player:Alive()) then
+			hook.Run("PostPlayerDraw", player, true)
 		end
 	end
 end)

@@ -33,4 +33,22 @@ concommand.Add("dicks",function()
 		n:SetAngles(v[2])
 		n:Spawn()
 	end
+	
+		local tbl = {}
+	
+	for k,v in pairs(ents.FindByClass("info_leaderboard")) do
+		local p,a=v:GetPos(),v:GetAngles()
+		
+		table.insert(tbl,{p,a})
+		
+		v:Remove()
+	end
+	
+	for i = 1, #tbl do
+	local v = tbl[i]
+	local n=ents.Create("info_leaderboard")
+		n:SetPos(v[1])
+		n:SetAngles(v[2])
+		n:Spawn()
+	end
 end)

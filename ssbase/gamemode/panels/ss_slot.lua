@@ -152,30 +152,33 @@ function panel:Think()
 			label:SetColor(color_white)
 			label:SizeToContents()
 			
-			local colorMixer = self.toolTip:Add("DColorMixer")
-			colorMixer:Dock(TOP)
-			colorMixer:DockMargin(0, 0, 0, 8)
-			colorMixer:SetTall(128)
-			
-			function colorMixer:ValueChanged(color)
-				self.nextUpdate = CurTime() +0.35
-			end
-			
-			function colorMixer:Think()
-				self:ConVarThink()
+			if (item.Colorable) then
+				local colorMixer = self.toolTip:Add("DColorMixer")
+				colorMixer:Dock(TOP)
+				colorMixer:DockMargin(0, 0, 0, 8)
+				colorMixer:SetTall(128)
+				colorMixer:SetAlphaBar(false)
 				
-				if (self.nextUpdate and self.nextUpdate <= CurTime()) then
-					local color = self:GetColor()
+				function colorMixer:ValueChanged(color)
+					self.nextUpdate = CurTime() +0.35
+				end
+				
+				function colorMixer:Think()
+					self:ConVarThink()
 					
-					color = Vector(color.r, color.g, color.b)
-					
-					net.Start("ss.store.stcstm")
-						net.WriteString(item.ID)
-						net.WriteString(SS.STORE.CUSTOM.COLOR)
-						net.WriteVector(color)
-					net.SendToServer()
-					
-					self.nextUpdate = nil
+					if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+						local color = self:GetColor()
+						
+						color = Vector(color.r, color.g, color.b)
+						
+						net.Start("ss.store.stcstm")
+							net.WriteString(item.ID)
+							net.WriteString(SS.STORE.CUSTOM.COLOR)
+							net.WriteVector(color)
+						net.SendToServer()
+						
+						self.nextUpdate = nil
+					end
 				end
 			end
 			

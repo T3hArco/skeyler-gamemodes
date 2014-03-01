@@ -12,39 +12,20 @@ local team_color_yellow = Color(220, 220, 20, 255)
 local color_text = Color(86, 98, 106)
 local color_shadow = Color(0, 0, 0, 200)
 
-surface.CreateFont("minigame.screen", {
-	font 		= "Arial",
-	size 		= 80,
-	weight 		= 800,
-	blursize	= 1,
-	italic		= true
-})
-
-surface.CreateFont("minigame.screen.normal", {
-	font 		= "Arial",
-	size 		= 62,
-	weight 		= 400,
-	blursize	= 1
-})
-
-surface.CreateFont("minigame.screen.score", {
-	font 		= "Arial",
-	size 		= 72,
-	weight 		= 600,
-	blursize	= 1,
-	italic		= true
-})
+surface.CreateFont("minigame.screen", {font = "Arial", size = 80, weight = 800, blursize = 1, italic = true})
+surface.CreateFont("minigame.screen.normal", {font = "Arial", size = 62, weight = 400, blursize = 1})
+surface.CreateFont("minigame.screen.score", {font = "Arial", size = 72, weight = 600, blursize = 1, italic = true})
 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
 function ENT:Initialize()
-	self:SetRenderBounds(Vector(-64, -64, -64), Vector(64, 64, 64))
-	
 	local angles = self:GetAngles()
 	
 	self.cameraAngle = Angle(0, angles.y +90, angles.p +90)
+	
+	self:SetRenderBounds(Vector(-64, -64, -64), Vector(64, 64, 64))
 end
 
 ---------------------------------------------------------
@@ -95,18 +76,10 @@ function ENT:Draw()
 	local position = self:GetPos() +self:GetForward() *0.1 +self:GetRight() *32 +self:GetUp() *32
 	
 	cam.Start3D2D(position, self.cameraAngle, 0.1)
-		local ok, err = pcall(self.DrawBackground, self)
+		self:DrawBackground()
 	cam.End3D2D()
-	
-	if (!ok) then
-		Error(err, "\n")
-	end
 	
 	cam.Start3D2D(position, self.cameraAngle, 0.028)
-		local ok, err = pcall(self.DrawInformation, self)
+		self:DrawInformation()
 	cam.End3D2D()
-	
-	if (!ok) then
-		Error(err, "\n")
-	end
 end

@@ -135,22 +135,17 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 	bullet.Tracer	= 4									// Show a tracer on every x bullets 
 	bullet.Force	= 5									// Amount of force to give to phys objects
 	bullet.Damage	= dmg
-	
-	local owner = self.Owner
-	local slf = self
-	bullet.Callback = function(a,b,c)
-		if(SERVER && b.HitPos) then
-			local tracedata = {}
-			tracedata.start = b.StartPos
-			tracedata.endpos = b.HitPos + (b.Normal*2)
-			tracedata.filter = a
-			tracedata.mask = MASK_PLAYERSOLID
-			local trace = util.TraceLine(tracedata)
-				
-			if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
-				trace.Entity:TakeDamage(dmg,owner,slf)
-				trace.Entity:TakeDamage(dmg,owner,slf)
-					--[[if(game.GetMap() == "bhop_lost_world" && tonumber(trace.Entity:GetSaveTable().spawnflags) == 513 && trace.Entity:GetSaveTable().m_toggle_state == 1) then
+		local owner = self.Owner
+		bullet.Callback = function(a,b,c)
+			if(SERVER && b.HitPos) then
+				local tracedata = {}
+				tracedata.start = b.StartPos
+				tracedata.endpos = b.HitPos + (b.Normal*2)
+				tracedata.filter = self.Owner
+				tracedata.mask = MASK_PLAYERSOLID
+				local trace = util.TraceLine(tracedata)
+				if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
+					if(game.GetMap() == "bhop_lost_world" && tonumber(trace.Entity:GetSaveTable().spawnflags) == 513 && trace.Entity:GetSaveTable().m_toggle_state == 1) then
 						trace.Entity:TriggerOutput("OnPressed",owner)
 						trace.Entity:SetSaveValue("m_toggle_state",0)
 						timer.Simple(trace.Entity:GetSaveTable().m_flWait,function()
@@ -166,14 +161,15 @@ function SWEP:CSShootBullet( dmg, recoil, numbul, cone )
 								trace.Entity:SetSaveValue("m_toggle_state",1)
 							end
 						end)
-					end]]
-			elseif(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_breakable") then
-				if(game.GetMap() == "kz_bhop_yonkoma" && trace.Entity.TriggerOutput) then
-					trace.Entity:TriggerOutput("OnBreak",owner)
+					end
+				elseif(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_breakable") then
+					if(game.GetMap() == "kz_bhop_yonkoma" && trace.Entity.TriggerOutput) then
+						trace.Entity:TriggerOutput("OnBreak",owner)
+					end
 				end
 			end
+			--PenetrateCallback(1,a,b,c)
 		end
-	end
 	self.Owner:FireBullets( bullet )
 	self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK ) 		// View model animation
 	self.Owner:MuzzleFlash()								// Crappy muzzle light
@@ -291,7 +287,7 @@ SWEP.NextSecondaryAttack = 0
 /*---------------------------------------------------------
 	SecondaryAttack
 ---------------------------------------------------------*/
---[[function SWEP:SecondaryAttack()
+function SWEP:SecondaryAttack()
 
 	if ( !self.IronSightsPos ) then return end
 	if ( self.NextSecondaryAttack > CurTime() ) then return end
@@ -302,7 +298,7 @@ SWEP.NextSecondaryAttack = 0
 	
 	self.NextSecondaryAttack = CurTime() + 0.3
 	
-end]]
+end
 
 /*---------------------------------------------------------
 	DrawHUD
@@ -349,6 +345,14 @@ function SWEP:DrawHUD()
 	surface.DrawLine( x, y - length, x, y - gap )
 	surface.DrawLine( x, y + length, x, y + gap )
 
+end
+
+function SWEP:TranslateFOV(fov)
+	if(CLIENT && LocalPlayer():IsBot()) then
+		return 90
+	else
+		return fov
+	end
 end
 
 /*---------------------------------------------------------

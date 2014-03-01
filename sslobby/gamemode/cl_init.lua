@@ -10,6 +10,8 @@ include("modules/cl_worldpicker.lua")
 include("modules/sh_minigame.lua")
 include("modules/cl_minigame.lua")
 include("modules/cl_worldpanel.lua")
+include("modules/sh_leaderboard.lua")
+include("modules/cl_leaderboard.lua")
 
 --surface.PlaySound("sassilization/lobby_music.mp3")
 

@@ -2,16 +2,28 @@ include("shared.lua")
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function ENT:Initialize()
 	self.spinner_left = ClientsideModel("models/sam/spinner.mdl")
 	self.spinner_middle = ClientsideModel("models/sam/spinner.mdl")
 	self.spinner_right = ClientsideModel("models/sam/spinner.mdl")
 end
 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function ENT:Draw()
 	self:DrawModel()
 	self:FrameAdvance(FrameTime())
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function ENT:Spin(randomLeft, randomMiddle, randomRight, wasWin)
 	self.startLeft = math.random(-5048, -1024)
@@ -28,6 +40,10 @@ function ENT:Spin(randomLeft, randomMiddle, randomRight, wasWin)
 	self.stopMiddle = false
 	self.stopRight = false
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 local offsets = {
 	15, -- Clock.
@@ -107,6 +123,10 @@ function ENT:Think()
 		end
 	end
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 net.Receive("ss_pullslotmc", function(bits)
 	local randomLeft = net.ReadUInt(4)

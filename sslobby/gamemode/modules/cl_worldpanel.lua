@@ -23,7 +23,7 @@ function SS.WorldPanel.NewPanel(unique, scale)
 	panel:SetUnique(unique)
 	
 	table.insert(stored[unique][scale], panel)
-	
+
 	return panel
 end
 

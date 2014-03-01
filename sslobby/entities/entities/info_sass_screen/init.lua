@@ -32,8 +32,6 @@ function ENT:Initialize()
 	end)
 	
 	self:SetStatus(STATUS_LINK_READY)
-	
-	--self:SetStatus(STATUS_LINK_UNAVAILABLE)
 end
 
 ------------------------------------------------

@@ -2,25 +2,9 @@ include("shared.lua")
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
-surface.CreateFont("SassScreenChat", {
-	font 		= "Calibri",
-	size 		= 24,
-	weight 		= 600
-})
-
-surface.CreateFont("SassScreenGeneral", {font = "Calibri", size = 30, weight = 600})
-
-surface.CreateFont("SassScreenStatusMessage", {
-	font 		= "Calibri",
-	size 		= 46,
-	weight 		= 600
-})
-
-surface.CreateFont("SassScreenStatusMessageEx", {
-	font 		= "Calibri",
-	size 		= 32,
-	weight 		= 1000
-})
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 surface.CreateFont("ss.sass.screen", {font = "Arvil Sans", size = 152, weight = 400, blursize = 1})
 surface.CreateFont("ss.sass.screen.small", {font = "Helvetica", size = 52, weight = 400, blursize = 1})
@@ -33,159 +17,193 @@ surface.CreateFont("ss.sass.screen.logo.small", {font = "Arvil Sans", size = 62,
 
 local backgroundTexture = surface.GetTextureID("skeyler/graphics/sass_board")
 
-
-
-local ColInGame = Color(255, 38, 28, 255)
 local preparingColor = Color(128, 255, 128, 255)
+local unavailableColor = Color(243, 121, 142)
 
-local StatusMessages = {"Ready", "Closed", "In-Game", "Preparing"}
-local StatusMessagesEx = {"Waiting for enough players to join: %i / %i", "This server is not up at the moment", "Game In Progress, you cannot join", "The game will be initalized in %i seconds."}
-local StatusTextures = {surface.GetTextureID("sassilization/ready"),  surface.GetTextureID("sassilization/closed"), surface.GetTextureID("sassilization/forbidden"), surface.GetTextureID("sassilization/ready")}
+local color_blue = Color(39, 207, 255, 255)
+local color_blue_light = Color(39 +30, 207 +30, 255, 255)
+local color_grey_light = Color(69, 69, 69, 60)
+local color_text_dark = Color(69, 69, 69, 200)
 
-local mouseWidth, mouseHeight = 64, 32
-local camOffset = Vector(0.1, -mouseWidth, mouseHeight)
-local camScale = 0.1
+local statusMessages = {
+	"Waiting for enough players to join: %i / %i",
+	"This server is not up at the moment",
+	"Game In Progress, you cannot join",
+	"The game will be initalized in %i seconds."
+}
+
+local screenWidth, screenHeight = 64, 32
+local cameraOffset = Vector(0.1, -screenWidth, screenHeight)
+local cameraScale = 0.1
 
 local panelUnique = "sass_screen"
+ 
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+local background = SS.WorldPanel.NewPanel(panelUnique, 0.1)
+background:SetPos(0, 0)
+background:SetSize(1280, 640)
 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
-function ENT:Initialize()
-	local Width = 64
-	local Height = 32
+function background:Paint(screen, x, y, w, h)
+	draw.Texture(x, y, w, h, color_white, backgroundTexture)
 	
-	self.ID = 0
+	draw.SimpleRect(x +w /2 +32, y +h /2 -32, 2, h /2 -10, color_grey_light)
+	draw.SimpleRect(x +w /2 +32 +96, y +h /2 -32, 2, h /2 -10, color_grey_light)
 	
-	self.Pos = self:GetPos()
-	self.CamPos = self.Pos + (self:GetRight() * Width) + (self:GetUp() * Height) + (self:GetForward() *0.2)
-	
-	self.Ang = self:GetAngles()
-	self.CamAng = Angle(0, self.Ang.y + 90, self.Ang.p + 90)
-	
-	local bounds = Vector(1024, 1024, 1024)
+	draw.SimpleRect(x +w /2 +32 +96 +96, y +h /2 -32, 2, h /2 -10, color_grey_light)
+end
 
-	self:SetRenderBounds(bounds *-1, bounds)
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
-	self.intersectPoint = Vector()
-	self.projectionPos = self:LocalToWorld(camOffset)
-	self.mousePos = Vector()
-	
-	---------------------------------------------------------
-	--
-	---------------------------------------------------------
+local button = SS.WorldPanel.NewPanel(panelUnique, 0.1)
+button:SetParent(background)
+button:SetSize(1280 *0.19 -4, 75)
+button:SetPos(1280 *0.4 +384 +104, 640 *0.25 +366)
 
-	local background = SS.WorldPanel.NewPanel(panelUnique, 0.1)
-	background:SetPos(0, 0)
-	background:SetSize(1280, 640)
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function button:Paint(screen, x, y, w, h)
+	draw.SimpleRect(x +4, y +4, w -8, h -8, self.hovered and color_blue_light or color_blue)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function button:OnMousePressed()
+	net.Start("ss.lkngtplr")
+		net.WriteUInt(self.screen:GetTriggerID(), 8)
+	net.SendToServer()
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+local statusPanel = SS.WorldPanel.NewPanel(panelUnique, 0.03)
+statusPanel:SetParent(background)
+statusPanel:SetSize(1280 *3.35, 640 *3.35)
+statusPanel:SetPos(0, 0)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function statusPanel:Paint(screen, x, y, w, h)
+	draw.SimpleText("[SS #1] SASSILIZATION SERVER 1", "ss.sass.screen.button", x +1164, y +164, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 	
-	function background:Paint(screen, x, y, w, h)
-		draw.Texture(x, y, w, h, color_white, backgroundTexture)
+	if (screen.statusMessage) then
+		local status, players = screen:GetStatus(), SS.Lobby.Link:GetQueue(screen:GetTriggerID())
 		
-		draw.SimpleRect(x +w /2 +32, y +h /2 -32, 2, h /2 -10, Color(69, 69, 69, 60))
-		draw.SimpleRect(x +w /2 +32 +96, y +h /2 -32, 2, h /2 -10, Color(69, 69, 69, 60))
-		
-		draw.SimpleRect(x +w /2 +32 +96 +96, y +h /2 -32, 2, h /2 -10, Color(69, 69, 69, 60))
-	end
-	
-	local button = SS.WorldPanel.NewPanel(panelUnique, 0.1)
-	button:SetParent(background)
-	button:SetSize(1280 *0.19 -4, 75)
-	button:SetPos(1280 *0.4 +384 +104, 640 *0.25 +366)
-	
-	function button:Paint(screen, x, y, w, h)
-		draw.SimpleRect(x +4, y +4, w -8, h -8, self.hovered and Color(39 +30, 207 +30, 255, 255) or Color(39, 207, 255, 255))
-	end
-	
-	function button:OnMousePressed()
-		net.Start("ss.lkngtplr")
-			net.WriteUInt(self.screen:GetTriggerID(), 8)
-		net.SendToServer()
-	end
-	
-	local statusPanel = SS.WorldPanel.NewPanel(panelUnique, 0.03)
-	statusPanel:SetParent(background)
-	statusPanel:SetSize(1280 *3.35, 640 *3.35)
-	statusPanel:SetPos(0, 0)
-	
-	function statusPanel:Paint(screen, x, y, w, h)
-		draw.SimpleText("[SS #1] SASSILIZATION SERVER 1", "ss.sass.screen.button", x +1164, y +164, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-		
-		if (screen.StatusTexture) then
-			local status, players = screen:GetStatus(), SS.Lobby.Link:GetQueue(screen:GetTriggerID())
-			
-			if (status == STATUS_LINK_PREPARING) then
-				if (!screen.prepareTime) then
-					screen.prepareTime = CurTime() +4
-				end
-				
-				screen:DrawText(string.format(screen.StatusMessageEx, math.max(math.Round(screen.prepareTime -CurTime()), 0)), "ss.sass.screen.status", x +1164, y +306, preparingColor)
-			elseif (status == STATUS_LINK_UNAVAILABLE) then
-				screen:DrawText(screen.StatusMessageEx, "ss.sass.screen.status", x +1164, y +306, Color(243, 121, 142))
-			else
-				screen:DrawText(string.format(screen.StatusMessageEx, #players, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
-				
-				screen.prepareTime = nil
+		if (status == STATUS_LINK_PREPARING) then
+			if (!screen.prepareTime) then
+				screen.prepareTime = CurTime() +4
 			end
-		end
-	end
-	
-	local labelsPanel = SS.WorldPanel.NewPanel(panelUnique, 0.02)
-	labelsPanel:SetParent(background)
-	labelsPanel:SetSize(1280 *5 +14, 640 *5 +14)
-	labelsPanel:SetPos(0, 0)
-	
-	function labelsPanel:Paint(screen, x, y, w, h)
-		draw.SimpleText("PLAYER NAME", "ss.sass.screen.button", x +w /2 -932, y +h /2 -354, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-		draw.SimpleText("GOLD", "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-		draw.SimpleText("FOOD", "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-		draw.SimpleText("IRON", "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-		
-		draw.SimpleText("PLAYER QUEUE", "ss.sass.screen.button", x +w -1330, y +h /2 -354, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-		
-		local queue = SS.Lobby.Link:GetQueue(screen:GetTriggerID())
-		local nameY = 0
-		
-		for i = 1, 5 do
-			local steamID = queue[i]
 			
-			if (steamID) then
-				local player = util.FindPlayer(steamID)
-				
-				if (IsValid(player)) then
-					local name = player:Nick()
-					
-					draw.SimpleText(name, "ss.sass.screen.button", x +w -1330, y +h /2 -144 +nameY, Color(39, 207, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-					
-					nameY = nameY +198
-				end
-			end
-		end
-		
-		local information = SS.Lobby.Link:GetPlayerInfo(screen:GetTriggerID())
-		local infoY = 0
-		
-		for i = 1, 8 do
-			local data = information[i]
+			screen:DrawText(string.format(screen.statusMessage, math.max(math.Round(screen.prepareTime -CurTime()), 0)), "ss.sass.screen.status", x +1164, y +306, preparingColor)
+		elseif (status == STATUS_LINK_UNAVAILABLE) then
+			screen:DrawText(screen.statusMessage, "ss.sass.screen.status", x +1164, y +306, unavailableColor)
+		else
+			screen:DrawText(string.format(screen.statusMessage, #players, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
 			
-			if (data) then
-				draw.SimpleText(data.name, "ss.sass.screen.button", x +w /2 -932, y +h /2 -144 +infoY, Color(39, 207, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-				draw.SimpleText(data.gold, "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -144 +infoY, Color(69, 69, 69, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-				draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -144 +infoY, Color(69, 69, 69, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-				draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -144 +infoY, Color(69, 69, 69, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-				
-				infoY = infoY +196
-			end
+			screen.prepareTime = nil
 		end
-		
-		draw.SimpleText("JOIN QUEUE", "ss.sass.screen.button", x +w -800, y +h -462, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 	end
 end
 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
+
+local labelsPanel = SS.WorldPanel.NewPanel(panelUnique, 0.02)
+labelsPanel:SetParent(background)
+labelsPanel:SetSize(1280 *5 +14, 640 *5 +14)
+labelsPanel:SetPos(0, 0)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function labelsPanel:Paint(screen, x, y, w, h)
+	draw.SimpleText("PLAYER NAME", "ss.sass.screen.button", x +w /2 -932, y +h /2 -354, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText("GOLD", "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText("FOOD", "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText("IRON", "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -354, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	
+	draw.SimpleText("PLAYER QUEUE", "ss.sass.screen.button", x +w -1330, y +h /2 -354, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	
+	local queue = SS.Lobby.Link:GetQueue(screen:GetTriggerID())
+	local nameY = 0
+	
+	for i = 1, 5 do
+		local steamID = queue[i]
+		
+		if (steamID) then
+			local player = util.FindPlayer(steamID)
+			
+			if (IsValid(player)) then
+				local name = player:Nick()
+				
+				draw.SimpleText(name, "ss.sass.screen.button", x +w -1330, y +h /2 -144 +nameY, color_blue, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				
+				nameY = nameY +198
+			end
+		end
+	end
+	
+	local information = SS.Lobby.Link:GetPlayerInfo(screen:GetTriggerID())
+	local infoY = 0
+	
+	for i = 1, 8 do
+		local data = information[i]
+		
+		if (data) then
+			draw.SimpleText(data.name, "ss.sass.screen.button", x +w /2 -932, y +h /2 -144 +infoY, color_blue, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(data.gold, "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -144 +infoY, color_text_dark, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -144 +infoY, color_text_dark, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -144 +infoY, color_text_dark, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+			
+			infoY = infoY +196
+		end
+	end
+	
+	draw.SimpleText("JOIN QUEUE", "ss.sass.screen.button", x +w -800, y +h -462, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function ENT:Initialize()
+	local position = self:GetPos()
+	local angles = self:GetAngles()
+	local bounds = Vector(1024, 1024, 1024)
+	
+	self.cameraAngles = Angle(0, angles.y +90, angles.p +90)
+	self.cameraPosition = position +(self:GetRight() *screenWidth) +(self:GetUp() *screenHeight) +(self:GetForward() *0.2)
+	
+	self:SetRenderBounds(bounds *-1, bounds)
+
+	self.mousePosition = Vector(0, 0, 0)
+	self.projectionPos = self:LocalToWorld(cameraOffset)
+	self.intersectPoint = Vector(0, 0, 0)
+end
+	
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+local DrawPanels = SS.WorldPanel.DrawPanels
 
 function ENT:Draw()
 	if (!self.registered) then
@@ -198,27 +216,18 @@ function ENT:Draw()
 		local status = self:GetStatus()
 		
 		if (self.__status != status) then
-			self.StatusMessage = StatusMessages[status] or StatusMessages[STATUS_LINK_UNAVAILABLE]
-			self.StatusTexture = StatusTextures[status] or StatusTextures[STATUS_LINK_UNAVAILABLE]
-			self.StatusMessageEx = StatusMessagesEx[status] or StatusMessagesEx[STATUS_LINK_UNAVAILABLE]
-			
-			self.StatusCol = color_white
-			if (Status == STATUS_LINK_IN_PROGRESS) then
-				self.StatusCol = ColInGame
-			else
-				self.Chat = {}
-			end
-			
+			self.statusMessage = statusMessages[status] or statusMessages[STATUS_LINK_UNAVAILABLE]
+
 			self.__status = status
 		end
 		
 		self:UpdateMouse()
 		
-		cam.Start3D2D(self.CamPos, self.CamAng, 0.1)
+		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.1)
 			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 			
-			SS.WorldPanel.DrawPanels(panelUnique, self, 0.1)
+			DrawPanels(panelUnique, self, 0.1)
 	
 			self:PaintMap(40, 640 *0.25 +80)
 			self:PaintCartridge(321, 177)
@@ -228,21 +237,21 @@ function ENT:Draw()
 			render.PopFilterMag()
 		cam.End3D2D()
 		
-		cam.Start3D2D(self.CamPos, self.CamAng, 0.03)
+		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.03)
 			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 
-			SS.WorldPanel.DrawPanels(panelUnique, self, 0.03)
+			DrawPanels(panelUnique, self, 0.03)
 			
 			render.PopFilterMin()
 			render.PopFilterMag()
 		cam.End3D2D()
 		
-		cam.Start3D2D(self.CamPos, self.CamAng, 0.02)
+		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.02)
 			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 			
-			SS.WorldPanel.DrawPanels(panelUnique, self, 0.02)
+			DrawPanels(panelUnique, self, 0.02)
 
 			render.PopFilterMin()
 			render.PopFilterMag()
@@ -266,7 +275,7 @@ function ENT:PaintCartridge(x, y)
 	local status = self:GetStatus()
 	
 	if (status == STATUS_LINK_UNAVAILABLE) then
-		surface.SetDrawColor(243, 121, 142)
+		surface.SetDrawColor(unavailableColor)
 		surface.DrawRect(x, y -136, 14, 156)
 	else
 		local players = SS.Lobby.Link:GetQueue(self:GetTriggerID())
@@ -344,126 +353,37 @@ function ENT:PaintMap(x, y)
 	else
 		--draw.Texture(x, y, width, height, color_white, defaultMap)
 	end
-	
-
-	
-	
-	--[[
-	if SERVERS[self.ID].minimap.available then
-		if !matTable["sassilization/minimaps/"..SERVERS[self.ID].map] then
-			matTable["sassilization/minimaps/"..SERVERS[self.ID].map]=Material("sassilization/minimaps/"..SERVERS[self.ID].map)
-		end
-		if !texTable["sassilization/minimaps/"..SERVERS[self.ID].map] then
-			texTable["sassilization/minimaps/"..SERVERS[self.ID].map]=surface.GetTextureID("sassilization/minimaps/"..SERVERS[self.ID].map)
-		end
-		
-		surface.SetTexture( texTable["sassilization/minimaps/"..SERVERS[self.ID].map] )
-		surface.DrawTexturedRect( x, y, 320, 320 )
-		
-		//Draw the buildings
-		local items = SERVERS[self.ID].minimap.builtbldg
-		if items and table.Count(items)>0 then
-			for _, item in pairs( items ) do
-				if ValidItem( item ) then
-					if item.c then
-						surface.SetDrawColor(item.c.r,item.c.g,item.c.b,item.c.a)
-						surface.DrawRect(x+item.x*320/512-item.s*0.5,y+item.y*320/512-item.s*0.5,item.s,item.s)
-						if item.a == 1 then
-							surface.SetDrawColor(230, 0, 25,255*math.abs(math.sin(RealTime()*5)))
-							surface.DrawRect(x+item.x*320/512-item.s*0.5,y+item.y*320/512-item.s*0.5,item.s,item.s)
-						end
-					end
-				end
-			end
-		end
-			
-		//Draw the units
-		local items = SERVERS[self.ID].minimap.builtunit
-		if items and table.Count(items)>0 then
-			for _, item in pairs( items ) do
-				if ValidItem( item ) then
-					local dir = (Vector( item.x, item.y, 0 )-Vector( item.px, item.py, 0 )):GetNormal()
-					local dis = Vector( item.x, item.y, 0 ):Distance(Vector( item.px, item.py, 0 ))
-					if dis < .2 then
-						item.px = item.x
-						item.py = item.y
-					else
-						item.px = item.px + dir.x*0.05
-						item.py = item.py + dir.y*0.05
-					end
-					surface.SetDrawColor(item.c.r,item.c.g,item.c.b,item.c.a)
-					surface.DrawRect(x+item.px*320/512-item.s*0.5,y+item.py*320/512-item.s*0.5,item.s,item.s)
-					if item.a == 1 then
-						surface.SetDrawColor(230, 0, 25,255*math.abs(math.sin(RealTime()*5)))
-						surface.DrawRect(x+item.px*320/512-item.s*0.5,y+item.py*320/512-item.s*0.5,item.s,item.s)
-					end
-				end
-			end
-		end
-		
-	elseif SERVERS[self.ID].map then
-		
-		if !matTable["sassilization/mapicons/"..SERVERS[self.ID].map] then
-			if(file.Exists("../materials/sassilization/mapicons/"..SERVERS[self.ID].map..".vmt")) then
-				matTable["sassilization/mapicons/"..SERVERS[self.ID].map] = Material( "sassilization/mapicons/"..SERVERS[self.ID].map )
-			else
-				matTable["sassilization/mapicons/"..SERVERS[self.ID].map] = matNewMap
-			end
-		end
-		if !texTable["sassilization/mapicons/"..SERVERS[self.ID].map] then
-			if(file.Exists("../materials/sassilization/mapicons/"..SERVERS[self.ID].map..".vmt")) then
-				texTable["sassilization/mapicons/"..SERVERS[self.ID].map] = surface.GetTextureID("sassilization/mapicons/"..SERVERS[self.ID].map)
-			else
-				texTable["sassilization/mapicons/"..SERVERS[self.ID].map] = texNewMap
-			end
-		end
-		
-		surface.SetDrawColor(255,255,255,255)
-		surface.SetTexture( texTable["sassilization/mapicons/"..SERVERS[self.ID].map] )
-		surface.DrawTexturedRect( x, y, 320, 320 )
-		
-	end
-	if SERVERS[self.ID].map then
-		surface.SetFont("font_spray")
-		local mapname =  SERVERS[self.ID].map
-		mapname = mapname:gsub( "sa_", "" )
-		mapname = mapname:gsub( "_", " " )
-		DrawText( mapname, x + 10, y, Color( 60, 60, 60, 255 ), 0.75 )
-		surface.SetFont("Tb0")
-	end
-	]]
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 function ENT:UpdateMouse()
-	self.intersectPoint = false
-	self.intersectPoint = intersectRayPlane(EyePos(), EyePos() +(LocalPlayer():GetAimVector() *2000), self.CamPos, self:GetForward())
+	self.intersectPoint = intersectRayPlane(EyePos(), EyePos() +(LocalPlayer():GetAimVector() *2000), self.cameraPosition, self:GetForward())
 
-	if(self.intersectPoint)then
-		self.mousePos = self:WorldToLocal(self.intersectPoint) -camOffset
+	if (self.intersectPoint)then
+		self.mousePosition = self:WorldToLocal(self.intersectPoint) -cameraOffset
 	
-		self.mousePos.x = self.mousePos.y
-		self.mousePos.y = -self.mousePos.z
+		self.mousePosition.x = self.mousePosition.y
+		self.mousePosition.y = -self.mousePosition.z
 		
-		SS.WorldPanel.SetMouseBounds(panelUnique, Vector(self.mousePos.x, self.mousePos.y, self.mousePos.z))
+		SS.WorldPanel.SetMouseBounds(panelUnique, Vector(self.mousePosition.x, self.mousePosition.y, self.mousePosition.z))
 
-		self.mousePos = self.mousePos /camScale
+		self.mousePosition = self.mousePosition /cameraScale
 	end
-	--print("X:",self.mousePos.x,"Y:",self.mousePos.y)
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
 local cursor = Material("icon16/cursor.png")
 
 function ENT:DrawMouse()
-	if( self.mousePos and self.mousePos.x > 0 &&
-		self.mousePos.y > 0 &&
-		self.mousePos.x < mouseWidth * 2 / camScale &&
-		self.mousePos.y < mouseHeight * 2 / camScale) then
-		
-		draw.Material(self.mousePos.x -8, self.mousePos.y -8, 16, 16, color_white, cursor)
-
-		--draw.SimpleText( tostring(math.Round(self.mousePos.x)).." "..tostring(math.Round(self.mousePos.y)), "DermaDefault", self.mousePos.x, self.mousePos.y+20 ,color_red,EXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	if (self.mousePosition and self.mousePosition.x > 0 and self.mousePosition.y > 0 and self.mousePosition.x < screenWidth *2 /cameraScale and self.mousePosition.y < screenHeight *2 /cameraScale) then
+		draw.Material(self.mousePosition.x -8, self.mousePosition.y -8, 16, 16, color_white, cursor)
 	end
-	
 end
 
 --[[
@@ -641,7 +561,7 @@ function AddServerChat( server, speaker, chat, wrap )
 	SERVERS[server].chat[ #SERVERS[server].chat+1 ] = {n=(wrap==0 and speaker),c=colour,msg=txt,time=os.clock()}
 end
 
-local function MousePos(self,scale)
+local function mousePosition(self,scale)
 	
 	scale = scale or 10
 	local pl = LocalPlayer()

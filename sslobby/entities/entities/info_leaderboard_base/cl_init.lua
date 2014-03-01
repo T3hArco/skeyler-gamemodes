@@ -5,32 +5,19 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 surface.CreateFont("ss.leaderboard", {font = "Arvil Sans", size = 152, weight = 400, blursize = 1})
 surface.CreateFont("ss.leaderboard.shadow", {font = "Arvil Sans", size = 152, weight = 400, blursize = 4, antialias = false})
 
-local Leaders = {}
-
-Leaders[true] = {}
-
-for i =1,5 do
-Leaders[true][i] = {"Chewgum", math.random(100, 10000)}
-end
-
-ENT.Weekly = false
-
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
 function ENT:Initialize()
-	local Width, Height = 128, 64
-	
-	self.CamPos = self:GetPos() + self:GetForward() * 0.1 + self:GetRight() * Width * 0.5 + self:GetUp() * Height * 0.5
-	
-	local Ang = self:GetAngles()
-	self.CamAng = Angle(0, Ang.y + 90, Ang.p + 90)
-	
-	self.Weekly = self:GetClass() == "info_weeklyleaderboard"
+	local angles = self:GetAngles()
+	local bounds = Vector(1024, 1024, 1024)
+	local width, height = 128, 64
 
-	local bounds = Vector(Width, Width, Width)
-	
+	self.weekly = self:GetClass() == "info_weeklyleaderboard"
+	self.cameraAngle = Angle(0, angles.y +90, angles.p +90)
+	self.cameraPosition = self:GetPos() +self:GetForward() *0.1 +self:GetRight() *width *0.5 +self:GetUp() *height *0.5
+
 	self:SetRenderBounds(bounds *-1, bounds)
 end
 
@@ -42,17 +29,13 @@ local color_text = Color(39, 207, 255, 255)
 local color_shadow = Color(0, 0, 0, 120)
 
 function ENT:Draw()
-	cam.Start3D2D(self.CamPos, self.CamAng, 0.1)
-		surface.SetDrawColor(255, 255, 255, 255)
-		
-		if(self.BackdropTexture) then
-			surface.SetTexture(self.BackdropTexture)
+	cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
+		if (self.texture) then
+			draw.Texture(0, 0, 1280, 640, color_white, self.texture)
 		end
-		
-		surface.DrawTexturedRect(0, 0, 1280, 640)
 	cam.End3D2D()
 	
-	cam.Start3D2D(self.CamPos, self.CamAng, 0.02)
+	cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.02)
 		self:PaintLeaderboard()
 	cam.End3D2D()
 end
@@ -62,33 +45,104 @@ end
 ---------------------------------------------------------
 
 function ENT:PaintLeaderboard()
-	if (self.BackdropTexture and Leaders[self.Weekly]) then
-		local spacing = 0
+	if (self.weekly) then
+		local leaderBoard = SS.Lobby.LeaderBoard.Get(LEADERBOARD_WEEKLY)
 		
-		for k,v in ipairs(Leaders[self.Weekly]) do
-			if(v[2] > 0) then
-				draw.SimpleText(v[1], "ss.leaderboard.shadow", 3680, 662 +spacing, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-				draw.SimpleText(v[1], "ss.leaderboard", 3680, 662 +spacing, color_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		if (leaderBoard) then
+			local spacing = 0
+			
+			for i = 1, 5 do
+				local data = leaderBoard[i]
 				
-				draw.SimpleText(v[2], "ss.leaderboard.shadow", 5930, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-				draw.SimpleText(v[2], "ss.leaderboard", 5930, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+				if (data) then
+					draw.SimpleText(data.name, "ss.leaderboard.shadow", 3680, 662 +spacing, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.name, "ss.leaderboard", 3680, 662 +spacing, color_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				
+					draw.SimpleText(data.games, "ss.leaderboard.shadow", 5300, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.games, "ss.leaderboard", 5300, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					draw.SimpleText(data.wins, "ss.leaderboard.shadow", 5930, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.wins, "ss.leaderboard", 5930, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					spacing = spacing +195
+				end
 			end
-			spacing = spacing +195
+		end
+		
+		local leaderBoard = SS.Lobby.LeaderBoard.Get(LEADERBOARD_MONTHLY)
+		
+		if (leaderBoard) then
+			local spacing = 0
+			
+			for i = 1, 10 do
+				local data = leaderBoard[i]
+				
+				if (data) then
+					draw.SimpleText(data.name, "ss.leaderboard.shadow", 280, 662 +spacing, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.name, "ss.leaderboard", 280, 662 +spacing, color_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				
+					draw.SimpleText(data.games, "ss.leaderboard.shadow", 2506, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.games, "ss.leaderboard", 2506, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					draw.SimpleText(data.wins, "ss.leaderboard.shadow", 3156, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.wins, "ss.leaderboard", 3156, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					spacing = spacing +195
+				end
+			end
+		end
+		
+		local leaderBoard = SS.Lobby.LeaderBoard.Get(LEADERBOARD_DAILY)
+		
+		if (leaderBoard) then
+			local spacing = 0
+			
+			for i = 1, 3 do
+				local data = leaderBoard[i]
+				
+				if (data) then
+					draw.SimpleText(data.name, "ss.leaderboard.shadow", 3680, 2046 +spacing, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.name, "ss.leaderboard", 3680, 2046 +spacing, color_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				
+					draw.SimpleText(data.games, "ss.leaderboard.shadow", 5300, 2046 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.games, "ss.leaderboard", 5300, 2046 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					draw.SimpleText(data.wins, "ss.leaderboard.shadow", 5930, 2046 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.wins, "ss.leaderboard", 5930, 2046 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					spacing = spacing +195
+				end
+			end
+		end
+	else
+		local leaderBoard = SS.Lobby.LeaderBoard.Get(LEADERBOARD_ALLTIME_10)
+		
+		if (leaderBoard) then
+			local spacing = 0
+			
+			for i = 1, 10 do
+				local data = leaderBoard[i]
+				
+				if (data) then
+					draw.SimpleText(data.name, "ss.leaderboard.shadow", 278, 662 +spacing, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.name, "ss.leaderboard", 278, 662 +spacing, color_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				
+					draw.SimpleText(data.empires, "ss.leaderboard.shadow", 3682, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.empires, "ss.leaderboard", 3682, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					draw.SimpleText(data.hours, "ss.leaderboard.shadow", 4532, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.hours, "ss.leaderboard", 4532, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					draw.SimpleText(data.games, "ss.leaderboard.shadow", 5330, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.games, "ss.leaderboard", 5330, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					draw.SimpleText(data.wins, "ss.leaderboard.shadow", 5976, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.wins, "ss.leaderboard", 5976, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					
+					spacing = spacing +195
+				end
+			end
 		end
 	end
 end
-
-net.Receive("Leaderboard.Update", function(bits)
-	local ID = tobool(net.ReadBit())
-	
-	Leaders[ID] = {}
-	
-	for i = 1,10 do
-		local Name = net.ReadString()
-		local Wins = net.ReadShort()
-		
-		Leaders[ID][i] = {Name, Wins}
-	end
-end)
-
 --RunConsoleCommand("dicks")
