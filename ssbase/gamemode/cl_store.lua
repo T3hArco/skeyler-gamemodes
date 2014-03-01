@@ -45,7 +45,7 @@ surface.CreateFont("ss_hub_close_tip.blur", {font="Calibri", size=16, weight=400
 surface.CreateFont("ss_hub_store_purchase", {font = "Arvil Sans", size = 36, weight = 400}) 
 surface.CreateFont("ss_hub_store_purchase_blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 6}) 
 
-surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 29, weight = 200}) 
+surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 30, weight = 400}) 
 
 ---------------------------------------------------------
 -- The HUB's main panel.
@@ -1362,22 +1362,27 @@ function panel:Init()
 	
 	util.ReplaceScrollbar(self.list)
 	
-	local test, testBase = util.CheckboxAndLabel(nil, "This is a test checkbox")
-	testBase:Dock(TOP)
+	local checkbox, base = util.CheckboxAndLabel(nil, "Toggle thirdperson")
+	base:Dock(TOP)
 	
-	self.list:AddItem(testBase)
+	checkbox:SetConVar("ss_thirdperson")
 	
-	local slider, base = util.SliderAndLabel(nil, "This is a test slider.")
+	self.list:AddItem(base)
+	
+	local slider, base = util.SliderAndLabel(nil, "Thirdperson distance")
 	base:Dock(TOP)
 	
 	base.autoSize = true
 	
+	slider:SetMin(16)
+	slider:SetMax(1024)
+	slider:SetValue(SS.ThirdPersonDistance:GetInt())
+	
+	function slider:OnValueChanged(value)
+		RunConsoleCommand("ss_thirdperson_distance", value)
+	end
+	
 	self.list:AddItem(base)
-	
-		local test, testBase = util.CheckboxAndLabel(nil, "This is a test checkbox")
-	testBase:Dock(TOP)
-	
-		self.list:AddItem(testBase)
 end
 
 function panel:Paint(w, h)

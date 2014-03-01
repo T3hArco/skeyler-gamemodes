@@ -96,3 +96,34 @@ function GM:PostDrawViewModel( ViewModel, Player, Weapon )
 	return Weapon:PostDrawViewModel( ViewModel, Weapon, Player )
 
 end 
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+SS.ThirdPerson = CreateClientConVar("ss_thirdperson", 0, true)
+SS.ThirdPersonDistance = CreateClientConVar("ss_thirdperson_distance", 128, true)
+
+function GM:CalcView(player, origin, angle, fov, nearZ, farZ)
+	if (SS.ThirdPerson:GetBool()) then
+		local trace = {}
+		trace.start = origin
+		trace.endpos = trace.start -angle:Forward() *SS.ThirdPersonDistance:GetInt()
+		trace.filter = player
+		trace.mask = bit.bor(MASK_SOLID, MASK_SOLID_BRUSHONLY)
+		
+		trace = util.TraceLine(trace)
+		
+		return self.BaseClass:CalcView(player, trace.HitPos +trace.HitNormal *2.25, angle, fov, nearZ, farZ)
+	end
+	
+	return self.BaseClass:CalcView(player, origin, angle, fov, nearZ, farZ)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function GM:ShouldDrawLocalPlayer(player)
+	return SS.ThirdPerson:GetBool()
+end
