@@ -167,13 +167,16 @@ function PANEL:DrawBackground(x, y, width, height)
 	surface.DrawRect(x, y, width, height)
 end
 
+local qeTabLarge = Material("sassilization/q_e_tab_large.png")
+local qeTabSmall = Material("sassilization/q_e_tab_small.png")
+
 function PANEL:DrawTabBox(Panel, Font, TWidth, THeight, x, y, width, height, NoBottomBorder)
 
 	surface.SetDrawColor(255, 255, 255, 255)
 	if Font == "TabSelected" then
-		surface.SetMaterial(Material("sassilization/q_e_tab_large.png"))
+		surface.SetMaterial(qeTabLarge)
 	else
-		surface.SetMaterial(Material("sassilization/q_e_tab_small.png"))
+		surface.SetMaterial(qeTabSmall)
 	end
 	surface.DrawTexturedRect( x, y, width, height )
 	
@@ -182,9 +185,11 @@ function PANEL:DrawTabBox(Panel, Font, TWidth, THeight, x, y, width, height, NoB
 	surface.DrawText(Panel.Tab)
 end
 
+local qeBackground = Material("sassilization/q_e_background.png")
+
 function PANEL:Paint()
 	surface.SetDrawColor(255, 255, 255, 255)
-	surface.SetMaterial(Material("sassilization/q_e_background.png"))
+	surface.SetMaterial(qeBackground)
 	surface.DrawTexturedRect( 0, self.OffsetY, self.InitWidth, self.InitNoTabHeight )
 	
 	surface.SetTextColor(255, 255, 255, 255)

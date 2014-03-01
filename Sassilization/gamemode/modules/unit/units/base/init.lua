@@ -133,6 +133,8 @@ function UNIT:HullPhysicsSimulate( hull, phys )
 		
 		if( cmd.pos and self:CanMove() ) then
 			
+			self.targetPosition = cmd.pos
+			
 			local disp = cmd.pos - hull:GetPos()
 			HullDirVector.x = disp.x
 			HullDirVector.y = disp.y

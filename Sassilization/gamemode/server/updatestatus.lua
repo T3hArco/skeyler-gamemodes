@@ -44,6 +44,125 @@ function ResetServerStatus()
 	
 end
 
+-- send every 12 seconds
+function GM:UpdateScoreboard()
+	local data = ""
+	local empires = empire.GetAll()
+	
+	for id, empire in pairs(empires) do
+		if (ValidEmpire(empire)) then
+			local name = empire:GetName()
+			local cities = empire:GetCities()
+			local food = empire:GetFood()
+			local iron = empire:GetIron()
+			local gold = empire:GetGold()
+
+			data = data .. "|" .. "id=" .. id .. ",n=" .. name .. ",c=" .. cities .. ",f=" .. food .. ",i=" .. iron .. ",g=" .. gold
+		end
+	end
+
+	data = util.Compress(data)
+	
+	--socket.Send(ip, port, "sassinfo", function(buffer)
+	--	buffer:WriteLong(string.len(data))
+	--	buffer:WriteData(data)
+	--end)
+end
+
+-- send every 20 seconds
+function GM:UpdateMinimap()
+	local data = ""
+	local empires = empire.GetAll()
+	
+	local world = game.GetWorld()
+	local saveTable = world:GetSaveTable()
+	local mins, maxs = saveTable.m_WorldMins, saveTable.m_WorldMaxs
+	
+	for id, empire in pairs(empires) do
+		if (ValidEmpire(empire)) then
+			data = data .. "id=" .. id .. "u{"
+			
+			local units = empire:GetUnits()
+			local buildings = empire:GetBuildings()
+
+			for k, unit in pairs(units) do
+				if (unit and unit:IsValid()) then
+					local position = unit:GetPos()
+					local direction = unit.targetPosition or vector_origin
+					
+					position.x = math.Round((position.x /maxs.x) *359)
+					position.y = math.Round((position.y /maxs.y) *360)
+					
+					local size = math.Round(math.ceil(unit.OBBMaxs.x *0.8))
+					local directionX = math.Round((direction.x /maxs.x) *359)
+					local directionY = math.Round((direction.y /maxs.y) *359)
+					
+					data = data .. "|x=" .. position.x .. ",y=" .. position.y .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
+				end
+			end
+			
+			data = data .. "}b{"
+			
+			for k, building in pairs(buildings) do
+				if (building and building:IsValid()) then
+					local position = building:GetPos()
+					
+					position.x = math.Round((position.x /maxs.x) *359)
+					position.y = math.Round((position.y /maxs.y) *360)
+					
+					local size = math.Round(math.ceil(building:OBBMaxs().x *0.4))
+					
+					data = data .. "|x=" .. position.x .. ",y=" .. position.y .. ",s=" .. size
+				end
+			end
+		end
+		
+		data = data .. "}"
+	end
+	
+	--[[
+	data = data .. "id=" .. 2 .. "u{"
+	data = data .. "}b{"
+	data = data .. "}"
+	
+	data = data .. "id=" .. 3 .. "u{"
+	data = data .. "}b{"
+	data = data .. "}"
+	
+	local s=string.Explode("id=",data)
+	if (s[1] == "") then table.remove(s, 1) end
+	
+	for k, v in pairs(s) do
+		print("")
+		print("id:", string.sub(v, 1, 1))
+		print("")
+		local c = string.match(v, "u{(.*)}b")
+		
+		print("units:")
+		print(c)
+		
+		local j = string.Explode("|", c)
+		PrintTable(j)
+		
+		local g = string.match(v, "b{(.*)}")
+		
+		print("")
+		print("buildings:")
+		print(g)
+		
+		local h = string.Explode("|", g)
+		
+	end
+	]]
+	
+	data = util.Compress(data)
+	
+--	socket.Send(ip, port, "sassmap", function(buffer)
+--		buffer:WriteLong(string.len(data))
+--		buffer:WriteData(data)
+--	end)
+end
+
 --[[ THIS IS VERY OLD CODE
 function GM:UpdateScoreboard()
 	
