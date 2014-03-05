@@ -283,9 +283,6 @@ function ENT:PaintCartridge(x, y)
 		self.approachC = self.approachC or 0
 		self.approachC = math.Approach(self.approachC, #players, 0.05)
 		
-		surface.SetDrawColor(60, 60, 60, 220)
-		surface.DrawRect(x, y -(SS.Lobby.Link.MinPlayers /SS.Lobby.Link.MaxPlayers) *136, 14, 2)
-		
 		local percent = self.approachC /SS.Lobby.Link.MaxPlayers
 		
 		if (percent > 0) then
@@ -344,8 +341,8 @@ function ENT:PaintMap(x, y)
 				end
 			end
 			
-			local objectX = x +((object.x /width) *width) -object.width /2
-			local objectY = y +((object.y /height) *height) -object.height /2
+			local objectX = 20+x +((object.x /width) *(width-43)) -object.width /2
+			local objectY = 26+y +((object.y /height) *(height-24)) -object.height /2
 			
 			surface.SetDrawColor(object.color or color_white)
 			surface.DrawRect(objectX, objectY, object.width, object.height)

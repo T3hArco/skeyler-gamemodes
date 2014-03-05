@@ -138,38 +138,6 @@ function SS.STORE:Unequip(player, id)
 	end
 end
 
-
-
-
-hook.Add("PlayerInitialSpawn","SS_STORE_Spawn",function(ply)
-	
-	-- < TEMP
-	ply:SetStoreItems("")
-
-	timer.Simple(0.1, function()
-		ply:GiveMoney(10^10)
-		ply:NetworkOwnedItem()
-	end)
-	-- TEMP >
-	
-	-- Create the slots.
-	ply.storeEquipped = {}
-	
-	for i = 1, MAXIMUM_SLOTS do
-		ply.storeEquipped[i] = {}
-	end
-end)
-
-concommand.Add("equiptest",function(p,cmd,arg)
-	arg = arg[1]
-	SS.STORE:Equip(p,arg)
-end)
-
-concommand.Add("unequiptest",function(p,cmd,arg)
-	arg = arg[1]
-	SS.STORE:Unequip(p,arg)
-end)
-
 ---------------------------------------------------------
 -- Full gear update.
 ---------------------------------------------------------

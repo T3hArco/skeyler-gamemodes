@@ -7,7 +7,7 @@ storedTriggers = storedTriggers or {}
 
 function SS.Lobby.Link:AddScreen(id)
 	storedTriggers[id] = {
-		map = math.random(1,2) == 1 and surface.GetTextureID("sassilization/minimaps/sa_angelsarena") or nil,
+		map = surface.GetTextureID("sassilization/minimaps/sa_orbit"),
 		chat = {},
 		queue = {},
 		players = {},
@@ -16,14 +16,34 @@ function SS.Lobby.Link:AddScreen(id)
 	for i =1, math.random(1,8) do
 		storedTriggers[id].players[i] = {name = "Chewgum",gold=math.random(1,500),food=math.random(1,500),iron=math.random(1,550)}
 	end
-	
-	for i = 1, 14 do
-		local unit = math.random(0, 1) == 1
-		
-		table.insert(storedTriggers[id].minimap, {x = math.random(0, 359), y = math.random(0, 359), width = unit and 3 or 8, height = unit and 3 or 8, unit = unit,color = Color(math.random(0,255), math.random(0,255), math.random(0,255)), dirx=math.random(0,332),diry=math.random(100,300)})
-	end
 end
 
+net.Receive("ss.gtminmp", function(bits)
+	local unitCount = net.ReadUInt(8)
+	
+	storedTriggers[1].minimap = {}
+	
+	for i = 1, unitCount do
+		local x = net.ReadUInt(16)
+		local y = net.ReadUInt(16)
+		local dx = net.ReadUInt(16)
+		local dy = net.ReadUInt(16)
+		local size = net.ReadUInt(8)
+
+		table.insert(storedTriggers[1].minimap, {x = x, y = y, dirx = dx, diry = dy, width = size, height = size, unit = true, color = Color(math.random(0,255), math.random(0,255), math.random(0,255))})
+	end
+	
+	local buildingCount = net.ReadUInt(8)
+	
+	for i = 1, buildingCount do
+		local x = net.ReadUInt(16)
+		local y = net.ReadUInt(16)
+		local size = net.ReadUInt(8)
+		print(x,y,size)
+		table.insert(storedTriggers[1].minimap, {x = x, y = y, width = size, height = size, color = Color(math.random(0,255), math.random(0,255), math.random(0,255))})
+	end
+end)
+	
 ---------------------------------------------------------
 --
 ---------------------------------------------------------

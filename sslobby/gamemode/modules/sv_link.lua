@@ -250,13 +250,18 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 	end
 end)
 
+concommand.Add("cn",function()
+socket.SetupHost("62.220.184.236", 58017)
+socket.AddAllowedClient("62.220.184.236")
+socket.AddAllowedClient("192.168.1.1")
+socket.Connect("62.220.184.236", 58015)
+end)
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
 socket.AddCommand("sassinfo", function(sock, ip, port, buffer, errorCode)
-	local size = buffer:ReadLong()
-	local data = buffer:Read(size)
+	local _, data = buffer:Read(buffer:Size())
 	
 	data = util.Decompress(data)
 	
@@ -287,6 +292,84 @@ end)
 --
 ---------------------------------------------------------
 
+util.AddNetworkString("ss.gtminmp")
+
 socket.AddCommand("sassmap", function(sock, ip, port, buffer, errorCode)
+	local _, data = buffer:Read(buffer:Size())
 	
+	data = util.Decompress(data)
+	
+	local exploded = string.Explode("id=", data)
+	
+	if (exploded[1] == "") then table.remove(exploded, 1) end
+	
+	local final = {}
+	
+	for k, v in pairs(exploded) do
+		local id = string.sub(v, 1, 1)
+
+		final[id] = {units = {}, buildings = {}}
+		
+		local units =  string.match(v, "u{(.*)}b")
+		units = string.Explode("|", units)
+		
+		if (units[1] == "") then table.remove(units, 1) end
+		
+		for k, info in pairs(units) do
+			local data = string.Explode(",", info)
+
+			final[id].units[k] = {}
+
+			for k2, v2 in pairs(data) do
+				local key, value = string.match(v2, "(.+)=(.+)")
+
+				final[id].units[k][key] = tonumber(value)
+			end
+		end
+		
+		local buildings =  string.match(v, "b{(.*)}")
+		buildings = string.Explode("|", buildings)
+		
+		if (buildings[1] == "") then table.remove(buildings, 1) end
+		
+		for k, info in pairs(buildings) do
+			local data = string.Explode(",", info)
+			
+			final[id].buildings[k] = {}
+			
+			for k2, v2 in pairs(data) do
+				local key, value = string.match(v2, "(.+)=(.+)")
+				
+				final[id].buildings[k][key] = tonumber(value)
+			end
+		end
+	end
+	
+	net.Start("ss.gtminmp")
+		for id, data in pairs(final) do
+			local unitCount = table.Count(data.units)
+			
+			net.WriteUInt(unitCount, 8)
+			
+			for k, v in pairs(data.units) do
+				net.WriteUInt(v.x, 16)
+				net.WriteUInt(v.y, 16)
+				net.WriteUInt(v.dx, 16)
+				net.WriteUInt(v.dy, 16)
+				net.WriteUInt(v.s, 8)
+			end
+			
+			local buildingCount = table.Count(data.buildings)
+			
+			net.WriteUInt(buildingCount, 8)
+			
+			for k, v in pairs(data.buildings) do
+				net.WriteUInt(v.x, 16)
+				net.WriteUInt(v.y, 16)
+				net.WriteUInt(v.s, 8)
+			end
+		end
+	net.Broadcast()
+	
+	PrintTable(final)
 end)

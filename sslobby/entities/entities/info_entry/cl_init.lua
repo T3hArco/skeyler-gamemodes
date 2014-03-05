@@ -1,37 +1,40 @@
-----------
--- Lobby
-----------
-
 include("shared.lua")
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
 local no_entry = Material("overlays/vip_entry")
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
 function ENT:Initialize()
-	self.MatPos = self:GetPos() + self:GetUp() * 54
-	self.MatDir = self:GetForward()
-	self.MatColor = Color(255, 255, 255, 255)
-	self:SetRenderBounds(Vector(1, 1, 1) * -64, Vector(1, 1, 1) * 64)
+	local bounds = Vector(512, 512, 512)
+	
+	self.color = Color(255, 255, 255)
+	
+	self:SetRenderBounds(bounds *-1, bounds)
 end
 
-function ENT:HasPermission()
-	return player.HasFlag && player.HasFlag(LocalPlayer(), self:GetFlag("perm"))
-end
+--------------------------------------------------
+--
+--------------------------------------------------
 
 function ENT:Draw()
-	--if(self:HasPermission()) then
-	--	return
-	--end
+	local hasAccess = self:PlayerHasAccess(LocalPlayer())
 	
-	local Distance = LocalPlayer():EyePos():Distance(self.MatPos)
-	
-	if(Distance >= 500) then
-		return
+	if (!hasAccess) then
+		local position = self:GetPos() +self:GetUp() *54
+		local distance = LocalPlayer():EyePos():Distance(position)
+		
+		if (distance <= 500) then
+			local direction = self:GetForward()
+			
+			self.color.a = 255 *(500 -distance) /500
+			
+			render.SetMaterial(no_entry)
+			render.DrawQuadEasy(position, direction, 64, 64, self.color)
+			render.DrawQuadEasy(position, direction *-1, 64, 64, self.color)
+		end
 	end
-	
-	self.MatColor.a = 255 * (500 - Distance) / 500
-	
-	render.SetMaterial(no_entry)
-	render.DrawQuadEasy(self.MatPos, self.MatDir, 64, 64, self.MatColor)
 end

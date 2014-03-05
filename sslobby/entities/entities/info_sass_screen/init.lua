@@ -13,25 +13,20 @@ function ENT:Initialize()
 	self:DrawShadow(false)
 	self:SetNotSolid(true)
 
-	timer.Simple(0.1, function()
-		if (IsValid(self)) then
-			local trigger, distance, triggers = false, false, SS.Lobby.Link:GetTriggers()
-
-			for k, entity in pairs(triggers) do
-				local triggerDistance = self:GetPos():Distance(entity:LocalToWorld(entity:OBBCenter()))
-				
-				if (distance == false or triggerDistance <= distance) then
-					trigger, distance = entity, triggerDistance
-				end
-			end
-		
-			if (trigger and trigger.id) then
-				self:SetTriggerID(trigger.id)
-			end
-		end
-	end)
-	
+	self:SetTriggerID(self.id)
 	self:SetStatus(STATUS_LINK_READY)
+end
+
+------------------------------------------------
+--
+------------------------------------------------
+
+function ENT:KeyValue(key, value)
+	if (key == "location") then
+		self.id = tonumber(value)
+		
+		SS.Lobby.Link:AddServerTrigger(self.id)
+	end
 end
 
 ------------------------------------------------

@@ -160,3 +160,11 @@ function PLAYER_META:GetItemData(id, field)
 		return SERVER and self.storeItems[item.ID][field] or CLIENT and SS.STORE.INVENTORY[item.ID][field]
 	end
 end
+
+---------------------------------------------------------
+-- Returns customization data.
+---------------------------------------------------------
+
+function PLAYER_META:GetSlotData(id)
+	return SERVER and self.storeEquipped[id] or CLIENT and SS.STORE.INVENTORY[id]
+end

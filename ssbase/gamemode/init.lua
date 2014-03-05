@@ -8,9 +8,15 @@ DB_DEVS = false
 -- DB_USER = "aaron" 
 -- DB_PASS = "wpNHCUnmxAMM93vG" 
 
-DB_HOST = "162.213.209.3"
-DB_USER = "servers_gmod"
-DB_PASS = "wdXWciNSRsh2CA1jJ3Kdt"
+if (game.IsDedicated()) then
+	DB_HOST = "162.213.209.3"
+	DB_USER = "servers_gmod"
+	DB_PASS = "wdXWciNSRsh2CA1jJ3Kdt"
+else
+	DB_HOST = "127.0.0.1"
+	DB_USER = "root"
+	DB_PASS = ""
+end
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
@@ -97,14 +103,6 @@ function GM:PlayerSpawn(ply)
 		hands:Spawn()
 	end
 	
-	local model = ply.storeEquipped[SS.STORE.SLOT.MODEL].unique
-	
-	if (model) then
-		local item = SS.STORE.Items[model]
-		
-		ply:SetModel(item.Model)
-	end
-	
 	-- TEMP
 	for steamID, _ in pairs(self.AllowedList) do
 		if (ply:SteamID() == steamID) then
@@ -112,6 +110,20 @@ function GM:PlayerSpawn(ply)
 		end
 	end
 end 
+
+function GM:PlayerSetModel(player)
+	if (player.storeEquipped) then
+		local model = player:GetSlotData(SS.STORE.SLOT.MODEL)
+		
+		if (model) then
+			model = SS.STORE.Items[model.unique]
+			
+			if (model) then
+				player:SetModel(model.Model)
+			end
+		end
+	end
+end
 
 function GM:GetPlayers(b_alive, filter)  
 	local players = player.GetAll() 

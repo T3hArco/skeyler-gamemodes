@@ -15,6 +15,7 @@ AddCSLuaFile("modules/cl_leaderboard.lua")
 
 include("shared.lua")
 include("player_class/player_lobby.lua")
+include("player_extended.lua")
 
 include("modules/sv_socket.lua")
 include("modules/sh_link.lua")
@@ -39,41 +40,12 @@ function GM:InitPostEntity()
 	for k, entity in pairs(spawns) do
 		if (entity.lounge) then
 			table.insert(self.spawnPoints.lounge, entity)
-		elseif (entity.minigames) then
 		else
-			table.insert(self.spawnPoints, entity)
-		end
-	end
-	
---[[	self.EnterSpawns = {}
-	self.SpawnPoints = {}
-	
-	for k,v in pairs(ents.FindByClass("info_player_spawn")) do
-		if(v.lounge) then
-			table.insert(self.EnterSpawns, v)
-		elseif v.gamemode and MINIGAMES then
-			for k2, v2 in pairs( v.gamemode ) do
-				if( MINIGAMES[v2] && MINIGAMES[v2].spawns ) then
-					table.insert( MINIGAMES[v2].spawns, v)
-				end
+			if (!entity.minigames) then
+				table.insert(self.spawnPoints, entity)
 			end
-		else
-			table.insert(self.SpawnPoints, v)
 		end
 	end
-	
-	for k,v in pairs(ents.FindByClass("info_lounge")) do
-		self.LoungeOrigin = v
-		break
-	end
-	
-	
-	if(self.InitVendors) then
-		self:InitVendors()
-		self:SetupVendors()
-	end
-	
-	]]
 	
 	--local pokerTable = ents.Create("poker_table")
 --	pokerTable:SetPos(Vector(-1193.461914, -9.690007, 176.031250))
@@ -134,11 +106,15 @@ end
 --
 --------------------------------------------------
 
-function GM:PlayerSelectSpawn(player)
+function GM:PlayerSelectSpawn(player, minigame)
 	local spawnPoint = self.spawnPoints.lounge
 	
 	if (player:Team() > TEAM_READY) then
-		spawnPoint = self.spawnPoints
+		if (minigame) then
+			spawnPoint = minigame:GetSpawnPoints()
+		else
+			spawnPoint = self.spawnPoints
+		end
 	end
 	
 	for i = 1, #spawnPoint do
@@ -153,4 +129,38 @@ function GM:PlayerSelectSpawn(player)
 	spawnPoint = table.Random(spawnPoint)
 	
 	return spawnPoint
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:KeyPress(player, key)
+	local trace = player:EyeTrace(200)
+	
+	if (IsValid(trace.Entity) and trace.Entity:IsPlayer()) then
+		local canSlap = player:CanSlap()
+		
+		if (canSlap) then
+			player:Slap(trace.Entity)
+		end
+	end
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:PlayerDeath(victim, inflictor, attacker)
+	local minigame = SS.Lobby.Minigame:GetCurrentGame()
+	
+	minigame = SS.Lobby.Minigame:Get(minigame)
+	
+	if (minigame) then
+		local hasPlayer = minigame:HasPlayer(victim)
+		
+		if (hasPlayer) then
+			SS.Lobby.Minigame.Call("PlayerDeath", victim, inflictor, attacker)
+		end
+	end
 end

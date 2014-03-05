@@ -15,3 +15,31 @@ include("modules/cl_leaderboard.lua")
 
 --surface.PlaySound("sassilization/lobby_music.mp3")
 
+local camHeight =1778
+
+function GM:HUDPaint()
+	self.BaseClass:HUDPaint()
+	
+--[[
+render.RenderView({
+        x = 0,
+        y = 0,
+        w = 0,
+        h = 0,
+        dopostprocess = false,
+        drawhud = false,
+        drawmonitors = false,
+        drawviewmodel = false,
+        ortho = true,
+        ortholeft = -camHeight/2,
+        orthobottom = camHeight/2,
+        orthoright = camHeight/2,
+        orthotop = -camHeight/2,
+        origin = EyePos(),
+        angles = Angle(90, 0, 0),
+        aspectratio = 1,
+        znear = 288,
+        zfar = 100000
+    })
+	]]
+end

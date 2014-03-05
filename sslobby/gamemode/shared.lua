@@ -21,3 +21,15 @@ team.SetUp(TEAM_RED, "Red", Color(200, 20, 20, 255))
 team.SetUp(TEAM_BLUE, "Blue", Color(20, 20, 200, 255))
 team.SetUp(TEAM_GREEN, "Green", Color(20, 200, 20, 255))
 team.SetUp(TEAM_ORANGE, "Orange", Color(200, 200, 20, 255))
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:ShouldCollide(entity1, entity2)
+	local class = entity1:GetClass()
+	
+	if (entity2:IsPlayer() and (class == "info_entry" or class == "info_entry_team")) then
+		return !entity1:PlayerHasAccess(entity2)
+	end
+end

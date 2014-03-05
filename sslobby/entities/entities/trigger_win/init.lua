@@ -16,6 +16,8 @@ end
 
 function ENT:KeyValue(key, value)
 	self[key] = tonumber(value)
+	
+	print(self,key,value)
 end
 
 ---------------------------------------------------------
@@ -32,6 +34,7 @@ end
 ---------------------------------------------------------
 
 function ENT:StartTouch(entity)
+print(entity)
 	--[[
 	if !IsValid(ent) then return end
 	if !ent:IsPlayer() then return end

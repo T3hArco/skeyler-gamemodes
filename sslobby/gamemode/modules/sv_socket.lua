@@ -1,12 +1,18 @@
 local os = os
 local Msg = Msg
+local math = math
+local type = type
 local file = file
 local print = print
+local unpack = unpack
+local string = string
 local require = require
 local tonumber = tonumber
 local tostring = tostring
 local PrintTable = PrintTable
 local ErrorNoHalt = ErrorNoHalt
+local GetConVarNumber = GetConVarNumber
+local GetConVarString = GetConVarString
 
 require("glsock2")
 
@@ -129,7 +135,7 @@ local function HandleSocketData(sock, ip, port, buffer, errorCode)
 		Log("HandleSocketData Parsing " .. tonumber(buffer:Size()) .. " bytes. IP: " .. tostring(ip) .. " PORT: " .. port)
 		
 		local _, command = buffer:ReadString()
-		
+
 		if (command) then
 			if (command == "connect") then
 				if (socketData.allowedClients[ip]) then
@@ -217,7 +223,7 @@ function AddCommand(command, callback)
 end
 
 function Send(ip, port, command, callback)
-	if (socketData.commands[command]) then
+	--if (socketData.commands[command]) then
 		local buffer = GLSockBuffer()
 		buffer:WriteString(command)
 		
@@ -226,5 +232,36 @@ function Send(ip, port, command, callback)
 		end
 		
 		socketData.host.sock:SendTo(buffer, ip, port, HandleSocketSending)
-	end
+	--end
+end
+
+--[[ Automatic IP Locator ]]--
+local serverport = GetConVarNumber("hostport");
+local serverip;
+do -- Thanks raBBish! http://www.facepunch.com/showpost.php?p=23402305&postcount=1382
+    local function band( x, y )
+        local z, i, j = 0, 1
+        for j = 0,31 do
+            if ( x%2 == 1 and y%2 == 1 ) then
+                z = z + i
+            end
+            x = math.floor( x/2 )
+            y = math.floor( y/2 )
+            i = i * 2
+        end
+        return z
+    end
+    local hostip = tonumber(string.format("%u", GetConVarString("hostip")))
+    local parts = {
+        band( hostip / 2^24, 0xFF );
+        band( hostip / 2^16, 0xFF );
+        band( hostip / 2^8, 0xFF );
+        band( hostip, 0xFF );
+    }
+    
+    serverip = string.format( "%u.%u.%u.%u", unpack( parts ) )
+end
+
+function GetServerIP()
+	return serverip
 end

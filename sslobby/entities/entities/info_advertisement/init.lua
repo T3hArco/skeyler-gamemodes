@@ -9,12 +9,9 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self:PhysicsInit(SOLID_NONE)
-	self:SetMoveType(MOVETYPE_NONE)
 	self:SetSolid(SOLID_BBOX)
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
-	self:SetAngles(self:GetAngles())
 	self:SetUseType(SIMPLE_USE)
-	
 	self:DrawShadow(false)
 end
 

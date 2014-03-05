@@ -3,7 +3,7 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store"} 
+local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped"} 
 local update_filter = {"id", "steamId", "rank"}
 
 SS.Profiles = {} 
@@ -43,6 +43,13 @@ end
 
 function PLAYER_META:ProfileLoaded(res) 
 	local steamid = self:SteamID()
+	
+	self.storeEquipped = {}
+	
+	for i = 1, SS.STORE.SLOT.MAXIMUM do
+		self.storeEquipped[i] = {}
+	end
+
 	if res and res[1] then 
 		if res[2] then Error("Duplicate profile! Contact a developer! ("..steam..")") return end 
 		self.profile = res[1] 
@@ -53,6 +60,10 @@ function PLAYER_META:ProfileLoaded(res)
 		self:SetMoney(self.profile.money) 
 		self:SetExp(self.profile.exp)
 		self:SetStoreItems(self.profile.store)
+		self:SetEquipped(self.profile.equipped)
+		
+		self:NetworkOwnedItem()
+		
 		self.profile.lastLoginIp = self:IPAddress() 
 		self.profile.lastLoginTimestamp = os.time() 
 		self.playtimeStart = os.time() 
@@ -72,6 +83,7 @@ function PLAYER_META:ProfileLoaded(res)
 		self:SetMoney(100) 
 		self:SetExp(1)
 		self:SetStoreItems("")
+		self:SetEquipped("")
 		self:ChatPrint("We had problems loading your profile and have created a temporary one for you.") 
 	end 
 	timer.Create(self:SteamID().."_ProfileUpdate", 120, 0, function() 
@@ -84,6 +96,9 @@ function PLAYER_META:ProfileLoaded(res)
 			timer.Destroy(steamid.."_ProfileUpdate") 
 		end 
 	end )
+	
+	hook.Run("PlayerSetModel", self)
+	
 	self:SetNetworkedBool("ss_profileloaded", true) 
 end 
 
@@ -93,7 +108,9 @@ function PLAYER_META:ProfileSave()
 	local profile = SS.Profiles[self:SteamID()]
 	profile.money = self.money 
 	profile.exp = self.exp 
-	profile.playtime = profile.playtime+(os.time()-self.playtimeStart) 
+	profile.playtime = profile.playtime+(os.time()-self.playtimeStart)
+	profile.store = util.TableToJSON(self.storeItems)
+	profile.equipped = util.TableToJSON(self.storeEquipped)
 	self.playtimeStart = os.time() 
 
 	local Query = "UPDATE users SET " 
@@ -117,6 +134,18 @@ function PLAYER_META:ProfileUpdate(col, val) -- Don't be an idiot with this
 	DB_Query("UPDATE users SET "..tostring(col).."='"..tostring(val).."' WHERE steamid='"..string.sub(self:SteamID(), 7).."'" ) 
 end 
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
 function PLAYER_META:SetStoreItems(data)
-	self.storeItems = von.deserialize(data) -- using von might be a bad idea for this. don't save this often.
+	self.storeItems = util.JSONToTable(data) or {}
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function PLAYER_META:SetEquipped(data)
+	self.storeEquipped = util.JSONToTable(data) or {}
 end

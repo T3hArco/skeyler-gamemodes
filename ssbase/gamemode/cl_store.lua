@@ -770,10 +770,12 @@ function PANEL:SetData(data)
 					if (self.nextUpdate and self.nextUpdate <= CurTime()) then
 						local value = self:GetValue()
 						
-						if (data.Slot == SS.STORE.SLOT.MODEL) then
-							this.preview.Entity:SetBodygroup(info.id, value)
-						else
-							this.preview.Entity.previews[data.Slot].entity:SetBodygroup(info.id, value)
+						if (IsValid(this.preview.Entity)) then
+							if (data.Slot == SS.STORE.SLOT.MODEL) then
+								this.preview.Entity:SetBodygroup(info.id, value)
+							else
+								this.preview.Entity.previews[data.Slot].entity:SetBodygroup(info.id, value)
+							end
 						end
 						
 						self.nextUpdate = nil
@@ -1490,6 +1492,20 @@ function SS.Gear.ShouldDraw()
 	return true
 end
 
+local hidden = false
+
+local function HideGear(steamID)
+	if (!hidden and steamID == LocalPlayer():SteamID()) then
+		for i = 1, MAXIMUM_SLOTS do
+			local data = cache[steamID][i]
+			
+			if (data and IsValid(data.entity)) then
+				data.entity:AddEffects(EF_NODRAW)
+			end
+		end
+	end
+end
+
 ---------------------------------------------------------
 -- Full gear update.
 ---------------------------------------------------------
@@ -1537,6 +1553,10 @@ net.Receive("ss.gear.gtgrfull", function(bits)
 
 					cache[steamID][i].entity = entity
 				end
+				
+				hidden = false
+				
+				HideGear(steamID)
 				
 				-- EFFECTS_BONEMERGE ?
 					--if (item.BoneMerge) then
@@ -1604,6 +1624,8 @@ net.Receive("ss.gear.gtgrslot", function(bits)
 				
 				cache[steamID][item.Slot].entity = entity
 			end
+			
+			HideGear(steamID)
 			
 			-- EFFECTS_BONEMERGE ?
 			--if (item.BoneMerge) then
@@ -1734,14 +1756,12 @@ end)
 -- 3rd person.
 ---------------------------------------------------------
 
-local hidden = false
-
 hook.Add("Think", "ss.gear.render", function()
 	local steamID = LocalPlayer():SteamID()
 
 	if (cache[steamID]) then
 		local shouldDraw = SS.Gear.ShouldDraw()
-		
+
 		if (shouldDraw) then
 			if (hidden) then
 				for i = 1, MAXIMUM_SLOTS do

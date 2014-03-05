@@ -4,10 +4,10 @@ AccessorFunc(SS.Lobby.Minigame, "CurrentGame", "CurrentGame", FORCE_STRING)
 
 SS.Lobby.Minigame.Scores = {}
 
-SS.Lobby.Minigame.Scores[TEAM_RED] = math.random(1, 20)
-SS.Lobby.Minigame.Scores[TEAM_BLUE] = math.random(1, 20)
-SS.Lobby.Minigame.Scores[TEAM_GREEN] = math.random(1, 20)
-SS.Lobby.Minigame.Scores[TEAM_ORANGE] = math.random(1, 20)
+SS.Lobby.Minigame.Scores[TEAM_RED] = 0
+SS.Lobby.Minigame.Scores[TEAM_BLUE] = 0
+SS.Lobby.Minigame.Scores[TEAM_GREEN] = 0
+SS.Lobby.Minigame.Scores[TEAM_ORANGE] = 0
 
 local stored = {}
 
@@ -121,8 +121,33 @@ local function derive(unique, from)
 	stored[unique].BaseClass = base
 end
 
+-- Split up the description text.
+local maxLength = 36
+
 for unique, data in pairs(stored) do
 	if (data.Base) then
 		derive(unique, data.Base)
+		
+		local length = string.len(data.Description)
+		
+		if (length > 66) then
+			local exploded, current, final = string.Explode(" ", data.Description), 1, ""
+			
+			for i = 1, #exploded do
+				local text = table.concat(exploded, " ", current, i)
+				
+				if (string.len(text) > 66) then
+					final = final .. table.concat(exploded, " ", current, i -1) .. "\n"
+					
+					current = i
+				else
+					if (i == #exploded) then
+						final = final .. text
+					end
+				end
+			end
+			
+			data.Description = final
+		end
 	end
 end

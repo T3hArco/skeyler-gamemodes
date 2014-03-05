@@ -125,5 +125,11 @@ end
 ---------------------------------------------------------
 
 function GM:ShouldDrawLocalPlayer(player)
-	return SS.ThirdPerson:GetBool()
+	local thirdPerson = SS.ThirdPerson:GetBool()
+	
+	if (thirdPerson) then
+		return true
+	end
+	
+	return self.BaseClass:ShouldDrawLocalPlayer(player)
 end

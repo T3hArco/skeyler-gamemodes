@@ -1,3 +1,4 @@
+ENT.Base = "base_point"
 ENT.Type = "point"
 
 ---------------------------------------------------------
@@ -12,17 +13,8 @@ end
 ---------------------------------------------------------
 
 function ENT:KeyValue(key, value)
-	if (key == "gamemode") then
-		local data = string.Explode(" ", value)
-		
-		self.minigames = {}
-		
-		for k, v in pairs(data) do
-			table.insert(self.minigames, v)
-		end
-	else
-		self[key] = tonumber(value)
-	end
-	
-	print(key,value)
+--	if (key == "boundingbox") then
+--		self.min = Vector(value *-1, value *-1, 0)
+--		self.max = Vector(value, value, 0)
+--	end
 end

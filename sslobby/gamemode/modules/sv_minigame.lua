@@ -25,6 +25,18 @@ function SS.Lobby.Minigame:SetCurrentGame(unique)
 	
 	self.Call("Start")
 	
+	local players = minigame:GetPlayers()
+
+	for i = 1, #players do
+		local player = players[i]
+		
+		if (IsValid(player)) then
+			local spawnPoint = hook.Run("PlayerSelectSpawn", player, minigame)
+		
+			player:SetPos(spawnPoint:GetPos())
+		end
+	end
+	
 	self:UpdateScreen()
 	self:SendQueueTime()
 end
@@ -113,7 +125,7 @@ end
 ---------------------------------------------------------
 
 function SS.Lobby.Minigame:AddScore(teamID, amount)
-	self.Scores[teamID] = self.Scores[teamID] +score
+	self.Scores[teamID] = self.Scores[teamID] +amount
 	
 	self:UpdateScreen()
 end
@@ -188,14 +200,38 @@ end
 --
 ---------------------------------------------------------
 
+util.AddNetworkString("ss.lbmgjt")
+
+net.Receive("ss.lbmgjt", function(bits, player)
+	local id = net.ReadUInt(8)
+	
+	player:SetTeam(id)
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 hook.Add("Think", "SS.Lobby.Minigame", function()
 	if (queueTime <= CurTime()) then
-		SS.Lobby.Minigame.Call("Finish")
+		SS.Lobby.Minigame.Call("Finish", true)
 		
 		SS.Lobby.Minigame:ShiftGame()
 	end
 	
 	SS.Lobby.Minigame.Call("Think")
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+hook.Add("InitPostEntity", "SS.Lobby.Minigame", function()
+	for i = 1, #storedSequential do
+		local minigame = storedSequential[i]
+		
+		minigame:Initialize()
+	end
 end)
 
 SS.Lobby.Minigame:ShiftGame()
