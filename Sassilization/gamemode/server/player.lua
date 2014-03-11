@@ -111,6 +111,7 @@ function GM:PlayerInitialSpawn(pl)
 	if pl:SteamID() == "STEAM_0:0:12454744" or game.SinglePlayer() then sass = pl end
 
 	if !self.Started then
+		pl:Lock()
 		for k,v in pairs(SA.LoadingPlayers) do
 			if v[2] == pl:SteamID() then
 				table.remove(SA.LoadingPlayers, k)
