@@ -11,6 +11,37 @@ local CivModels = {
 	"models/player/%group%/male_08.mdl"
 }
 
+util.AddNetworkString( "PlayerLoadingTime" )
+util.AddNetworkString( "PlayerLoadingList" )
+util.AddNetworkString( "PlayerLoadingFinish" )
+
+function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
+	if table.HasValue(SA.AuthedPlayers, sid) then
+		if !timer.Exists("Player Loading") then
+			timer.Create("Player Loading", 90, 1, function()
+				self:StartGame()
+				for k,v in pairs(player.GetAll()) do
+					net.Start("PlayerLoadingFinish")
+						net.WriteString("Game starting.")
+					net.Send(v)
+				end
+			end)
+			SA.StartTime = CurTime() + 90
+		end
+		if !self.Started then
+			table.insert(SA.LoadingPlayers, {username, sid})
+			for k,v in pairs(player.GetAll()) do
+				net.Start("PlayerLoadingList")
+					net.WriteTable(SA.LoadingPlayers)
+				net.Send(v)
+			end
+		end
+		return true
+	else
+		return false, "Please connect to the Lobby (IP HERE) in order to play Sassilization."
+	end
+end
+
 function GM:CanPlayerSuicide( pl )
 	if (!GameTime()) then
 		return false
@@ -78,6 +109,38 @@ end
 
 function GM:PlayerInitialSpawn(pl)
 	if pl:SteamID() == "STEAM_0:0:12454744" or game.SinglePlayer() then sass = pl end
+
+	if !self.Started then
+		for k,v in pairs(SA.LoadingPlayers) do
+			if v[2] == pl:SteamID() then
+				table.remove(SA.LoadingPlayers, k)
+			end
+		end
+		if #SA.LoadingPlayers >= 1 then
+			net.Start("PlayerLoadingTime")
+				net.WriteInt(SA.StartTime)
+			net.Send(pl)
+			net.Start("PlayerLoadingList")
+				net.WriteTable(SA.LoadingPlayers)
+			net.Send(pl)
+		else
+			if timer.Exists("Player Loading") then
+				timer.Destroy("Player Loading")
+				SA.StartTime = CurTime() + 5
+				for k,v in pairs(player.GetAll()) do
+					net.Start("PlayerLoadingTime")
+						net.WriteInt(SA.StartTime)
+					net.Send(v)
+					net.Start("PlayerLoadingFinish")
+						net.WriteString("All players loaded. Game starting.")
+					net.Send(v)
+				end
+				timer.Simple(5, function()
+					self:StartGame()
+				end)
+			end
+		end
+	end
 	
 	pl:SetJumpPower(280)
 	pl:SetTeam(SA.TEAM_PLAYERS)
@@ -108,7 +171,6 @@ function GM:PlayerInitialSpawn(pl)
 	end
 	
 	--if (SA.DEV and !pl:IsBot()) then
-		self:StartGame()
 	--else
 	--	pl:Lock()
 	--end
