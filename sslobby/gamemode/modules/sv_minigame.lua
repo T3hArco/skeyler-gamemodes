@@ -1,10 +1,10 @@
 local queue = {}
-local queueTime = CurTime()
+local gameTime, queueTime = CurTime(), CurTime()
 
 local gameIndex = 0
 local storedSequential = {}
 
-for unique, minigame in pairs(SS.Lobby.Minigame:GetStored()) do
+for unique, minigame in pairs(SS.Lobby.Minigame.GetStored()) do
 	if (unique != "base" and !minigame.Disabled) then
 		table.insert(storedSequential, minigame)
 	end
@@ -17,28 +17,35 @@ end
 util.AddNetworkString("ss.lbmggtim")
 
 function SS.Lobby.Minigame:SetCurrentGame(unique)
-	local minigame = SS.Lobby.Minigame:Get(unique)
-	
-	queueTime = CurTime() +minigame.Time
+	local minigame = SS.Lobby.Minigame.Get(unique)
+
+	gameTime = CurTime() +minigame.Time
 	
 	self.CurrentGame = unique
-	
-	self.Call("Start")
-	
+
 	local players = minigame:GetPlayers()
 
 	for i = 1, #players do
 		local player = players[i]
 		
+		self:RemovePlayer(player)
+		
 		if (IsValid(player)) then
 			local spawnPoint = hook.Run("PlayerSelectSpawn", player, minigame)
-		
+			
+			player:Freeze(true)
 			player:SetPos(spawnPoint:GetPos())
+			player:SetNetworkedBool("ss.playingminigame", true)
+			player:Freeze(false)
+			
+			hook.Run("PlayerLoadout", player)
 		end
 	end
+
+	self.Call("Start")
 	
 	self:UpdateScreen()
-	self:SendQueueTime()
+	self:SendQueueTime(nil, true)
 end
 
 ---------------------------------------------------------
@@ -53,8 +60,7 @@ function SS.Lobby.Minigame:ShiftGame()
 	end
 
 	local minigame = storedSequential[gameIndex]
-	
-	
+
 	local players = {}
 	local teamAmount = 0
 
@@ -85,10 +91,14 @@ function SS.Lobby.Minigame:ShiftGame()
 	
 	if (hasRequirements) then
 		minigame.players = players
-		
+
 		self:SetCurrentGame(minigame.Unique)
 	else
-		self:ShiftGame()
+		queueTime = CurTime() +10
+		
+		self:SendQueueTime(nil, false)
+		
+		Msg("[MINIGAME] The minigame '" .. minigame.Name .. "' did not meet its requirements.\n")
 	end
 end
 
@@ -102,7 +112,7 @@ function SS.Lobby.Minigame:UpdateScreen(player)
 	local current = self:GetCurrentGame()
 	
 	net.Start("ss.lbmgup")
-		net.WriteString(current)
+		net.WriteString(current or "")
 		
 		for teamID, score in pairs(self.Scores) do
 			net.WriteUInt(score, 8)
@@ -142,7 +152,9 @@ function SS.Lobby.Minigame:AddPlayer(player)
 	if (!hasPlayer) then
 		player.minigameTime = CurTime()
 		
-		-- add vip time
+		if (player:GetRank() >= 1) then
+			player.minigameTime = player.minigameTime -20
+		end
 		
 		table.insert(queue, player)
 		
@@ -190,10 +202,85 @@ end
 --
 ---------------------------------------------------------
 
-function SS.Lobby.Minigame:SendQueueTime(player)
+function SS.Lobby.Minigame:SendQueueTime(player, inProgress)
 	net.Start("ss.lbmggtim")
-		net.WriteFloat(queueTime)
+		net.WriteFloat(gameTime and gameTime or queueTime)
+		net.WriteBit(inProgress)
 	if (IsValid(player)) then net.Send(player) else net.Broadcast() end
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Minigame:FinishGame()
+	gameTime, queueTime = nil, CurTime() +10
+	
+	SS.Lobby.Minigame:SendQueueTime(nil, false)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Minigame:CallWithPlayer(name, player, ...)
+	local minigame = self:GetCurrentGame()
+	
+	minigame = SS.Lobby.Minigame.Get(minigame)
+	
+	if (minigame) then
+		local hasPlayer = minigame:HasPlayer(player)
+		
+		if (hasPlayer) then
+			local a, b, c, d, e = SS.Lobby.Minigame.Call(name, player, ...)
+			
+			if (a != nil) then
+				return a, b, c, d, e
+			end
+		end
+	end
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Minigame.BestAutoJoinTeam(prefer)
+	local teams = team.GetAllTeams()
+	local selected = prefer
+	local preferAmount = team.NumPlayers(prefer)
+	
+	-- Check if the prefered team has more players than any other.
+	for id, _ in pairs(teams) do
+		if (id >= TEAM_RED and id <= TEAM_ORANGE) then
+			local amount = team.NumPlayers(id)
+			
+			if (preferAmount > amount) then
+				selected = id
+			end
+		end
+	end
+	
+	-- If it does, select the smallest.
+	if (selected != prefer) then
+		local smallestTeam = TEAM_RED
+		local smallestPlayers = 1000
+		
+		for id, tm in pairs(teams) do
+			if (id >= TEAM_RED and id <= TEAM_ORANGE) then
+				local count = team.NumPlayers(id)
+				
+				if (count < smallestPlayers or (count == smallestPlayers and id < smallestTeam)) then
+					smallestTeam = id
+					smallestPlayers = count
+				end
+			end
+		end
+	
+		selected = smallestTeam
+	end
+	
+	return selected
 end
 
 ---------------------------------------------------------
@@ -204,8 +291,17 @@ util.AddNetworkString("ss.lbmgjt")
 
 net.Receive("ss.lbmgjt", function(bits, player)
 	local id = net.ReadUInt(8)
+	local autoJoin = SS.Lobby.Minigame.BestAutoJoinTeam(id)
 	
-	player:SetTeam(id)
+	if (autoJoin != id) then
+		player:ChatPrint("That team is full so we placed you on the " .. team.GetName(autoJoin) .. " team instead!")
+		
+		player:SetTeam(autoJoin)
+	else
+		player:SetTeam(id)
+		
+		player:ChatPrint("You have joined the " .. team.GetName(autoJoin) .. " team!")
+	end
 end)
 
 ---------------------------------------------------------
@@ -213,8 +309,15 @@ end)
 ---------------------------------------------------------
 
 hook.Add("Think", "SS.Lobby.Minigame", function()
-	if (queueTime <= CurTime()) then
+	if (gameTime and gameTime <= CurTime()) then
+		gameTime, queueTime = nil, CurTime() +10
+
 		SS.Lobby.Minigame.Call("Finish", true)
+		SS.Lobby.Minigame:SendQueueTime(nil, false)
+	end
+	
+	if (queueTime and queueTime <= CurTime()) then
+		queueTime = nil
 		
 		SS.Lobby.Minigame:ShiftGame()
 	end
@@ -232,6 +335,6 @@ hook.Add("InitPostEntity", "SS.Lobby.Minigame", function()
 		
 		minigame:Initialize()
 	end
+	
+	timer.Simple(1, function() SS.Lobby.Minigame:ShiftGame() end)
 end)
-
-SS.Lobby.Minigame:ShiftGame()

@@ -37,7 +37,7 @@ function ENT:PhysicsCollide(data, physicsObject)
 		for k, player in pairs(players) do
 			local distance = player:GetPos():Distance(position)
 			
-			if (distance <= 64) then
+			if (distance <= 92) then
 				player:Kill()
 			end
 		end

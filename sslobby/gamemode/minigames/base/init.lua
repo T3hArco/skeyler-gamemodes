@@ -1,5 +1,4 @@
-MINIGAME.Time = 10
-MINIGAME.Disabled = false
+MINIGAME.Time = 60
 
 ---------------------------------------------------------
 --
@@ -13,9 +12,33 @@ function MINIGAME:Initialize()
 	
 	for k, entity in pairs(spawnPoints) do
 		if (entity.minigames) then
-			for k2, unique in pairs(entity.minigames) do
-				if (unique == self.Unique) then
-					table.insert(self.spawnPoints, entity)
+			if (entity.team) then
+				for k2, unique in pairs(entity.minigames) do
+					if (unique == self.Unique) then
+						self.spawnPoints.team = self.spawnPoints.team or {}
+						
+						local teamID
+					
+						if (entity.team == "blue") then
+							teamID = TEAM_BLUE
+						elseif (entity.team == "red") then
+							teamID = TEAM_RED
+						elseif (entity.team == "green") then
+							teamID = TEAM_GREEN
+						elseif (entity.team == "orange") then
+							teamID = TEAM_ORANGE
+						end
+						
+						self.spawnPoints.team[teamID] = self.spawnPoints.team[teamID] or {}
+					
+						table.insert(self.spawnPoints.team[teamID], entity)
+					end
+				end
+			else
+				for k2, unique in pairs(entity.minigames) do
+					if (unique == self.Unique) then
+						table.insert(self.spawnPoints, entity)
+					end
 				end
 			end
 		end
@@ -27,6 +50,9 @@ end
 ---------------------------------------------------------
 
 function MINIGAME:Start()
+	for k, player in pairs(self.players) do
+		player:ChatPrint(self.Name .. " - " .. self.Description)
+	end
 end
 
 ---------------------------------------------------------
@@ -36,14 +62,20 @@ end
 function MINIGAME:Finish(timeLimit)
 	local players = self:GetPlayers()
 
+	self.players = {}
+	
 	for k, player in pairs(players) do
 		self:RespawnPlayer(player)
 	end
+
+	local players = player.GetAll()
 	
-	self.players = {}
+	for k, player in pairs(players) do
+		player:SetNetworkedBool("ss.playingminigame", false)
+	end
 	
 	if (!timeLimit) then
-		SS.Lobby.Minigame:ShiftGame()
+		SS.Lobby.Minigame:FinishGame()
 	end
 end
 
@@ -51,10 +83,14 @@ end
 --
 ---------------------------------------------------------
 
-function MINIGAME:RemovePlayer(player)
+function MINIGAME:RemovePlayer(player, noRespawn)
 	for k, v in pairs(self.players) do
 		if (v == player) then
-			table.remove(self.players, k)
+			self.players[k] = nil
+
+			if (!noRespawn) then
+				self:RespawnPlayer(player)
+			end
 		end
 	end
 end
@@ -65,9 +101,13 @@ end
 
 function MINIGAME:RespawnPlayer(player)
 	local spawnPoint = hook.Run("PlayerSelectSpawn", player)
-	
+
 	player:Spawn()
 	player:SetPos(spawnPoint:GetPos())
+	
+	if (player:IsBot()) then
+		player:Freeze(true)
+	end
 end
 
 ---------------------------------------------------------
@@ -81,8 +121,14 @@ end
 --
 ---------------------------------------------------------
 
-function MINIGAME:PlayerDeath(victim, inflictor, attacker)
-print(self.Name)
+function MINIGAME:KeyPress(player, key)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function MINIGAME:DoPlayerDeath(victim, inflictor, dmginfo)
 end
 
 ---------------------------------------------------------
@@ -90,7 +136,6 @@ end
 ---------------------------------------------------------
 
 function MINIGAME:CanPlayerSlap(player, target, nextSlap)
-	return nextSlap
 end
 
 ---------------------------------------------------------
@@ -99,6 +144,21 @@ end
 
 function MINIGAME:PlayerSlap(player, target, nextSlap)
 	return nextSlap
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function MINIGAME:CanPlayerSuicide(player)
+	return true
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function MINIGAME:PlayerLoadout(player)
 end
 
 ---------------------------------------------------------
@@ -135,8 +195,14 @@ end
 --
 ---------------------------------------------------------
 
-function MINIGAME:GetSpawnPoints()
-	return self.spawnPoints
+function MINIGAME:GetSpawnPoints(player)
+	if (self.spawnPoints.team) then
+		local teamID = player:Team()
+		
+		return self.spawnPoints.team[teamID]
+	else
+		return self.spawnPoints
+	end
 end
 
 ---------------------------------------------------------
@@ -144,14 +210,62 @@ end
 ---------------------------------------------------------
 
 function MINIGAME:AnnounceWin(player)
-	local teamID = player:Team()
+	if (IsValid(player)) then
+		local teamID = player:Team()
+		
+		if (teamID > TEAM_READY) then
+			local nick = player:Nick()
+			local teamName = team.GetName(teamID)
+			
+			SS.Lobby.Minigame:AddScore(teamID, 1)
+			
+			util.PrintAll("[MINIGAME] " .. nick .. " has won the game for the " .. teamName .. " team!")
+		end
+	else
+		local teams = {}
+		
+		for k, player in pairs(self.players) do
+			if (IsValid(player)) then
+				local id = player:Team()
+				local exists = false
+				
+				for i = 1, #teams do
+					if (teams[i].id == id) then
+						exists = true
+						
+						break
+					end
+				end
+				
+				if (!exists) then
+					table.insert(teams, {id = id, players = {}})
+				end
+				
+				for i = 1, #teams do
+					if (teams[i].id == id) then
+						table.insert(teams[i].players, player)
+					end
+				end
+			end
+		end
+		PrintTable(teams)
+		if (#teams == 1) then
+			local players = teams[1].players
+			local teamName = team.GetName(teams[1].id)
+			
+			if (#players > 1) then
+				util.PrintAll("[MINIGAME] The " .. teamName .. " team has won the game!")
+			else
+				local nick = players[1]:Nick()
 	
-	if (teamID > TEAM_READY) then
-		local nick = player:Nick()
-		local teamName = team.GetName(teamID)
+				util.PrintAll("[MINIGAME] " .. nick .. " has won the game for the " .. teamName .. " team!")
+			end
+			
+			SS.Lobby.Minigame:AddScore(teams[1].id, 1)
+			
+			return true
+		end
 		
-		SS.Lobby.Minigame:AddScore(teamID, 1)
-		
-		util.PrintAll("[MINIGAME] " .. nick .. " has won the game for team " .. teamName .. "!")
+		return false
 	end
 end

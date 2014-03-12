@@ -12,10 +12,24 @@ include("modules/cl_minigame.lua")
 include("modules/cl_worldpanel.lua")
 include("modules/sh_leaderboard.lua")
 include("modules/cl_leaderboard.lua")
+include("modules/sh_sound.lua")
 
---surface.PlaySound("sassilization/lobby_music.mp3")
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
-local camHeight =1778
+function GM:InitPostEntity()
+	local music = SS.Lobby.Sound.New("lobby_music", LocalPlayer(), "sassilization/lobby_music.mp3", true)
+	music:SetVolume(0.4)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+--local camHeight =1778
+
+
 
 function GM:HUDPaint()
 	self.BaseClass:HUDPaint()
@@ -42,4 +56,6 @@ render.RenderView({
         zfar = 100000
     })
 	]]
+	
+
 end

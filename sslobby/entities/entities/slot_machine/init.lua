@@ -33,11 +33,11 @@ function ENT:Use(player)
 		local randomMiddle = math.random(1, 6)
 		local randomRight = math.random(1, 6)
 		
-		local winCount = 0
-		local winRequired = 0
 		local winMultiply = 0
 		
 		for k, data in pairs(self.winDefines) do
+			local winCount, winRequired = 0, 0
+	
 			if (data.slots[1] > 0) then
 				winRequired = winRequired +1
 				
@@ -61,10 +61,16 @@ function ENT:Use(player)
 					winCount = winCount +1
 				end
 			end
-			
-			if (winCount >= winRequired) then
+	
+			if (winCount >= winRequired and data.win > winMultiply) then
 				winMultiply = data.win
 			end
+		end
+	
+		player:TakeMoney(5)
+		
+		if (winMultiply > 0) then
+			timer.Simple(2.5, function() player:GiveMoney(5 *winMultiply) end)
 		end
 		
 		net.Start("ss_pullslotmc")
@@ -72,10 +78,7 @@ function ENT:Use(player)
 			net.WriteUInt(randomMiddle, 4)
 			net.WriteUInt(randomRight, 4)
 			net.WriteEntity(self)
-		net.SendPVS(self:GetPos() +Vector(0, 0, 5)) --net.Broadcast()
-		
-		self:EmitSound("testslot/pull_lever.mp3")
-		self:EmitSound("testslot/spinning_" .. math.random(1, 3) .. ".mp3")
+		net.SendPVS(self:GetPos() +Vector(0, 0, 5))
 		
 		self.nextPull = CurTime() +5
 	end

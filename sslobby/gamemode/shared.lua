@@ -17,10 +17,10 @@ TEAM_ORANGE = 5
 
 team.SetUp(TEAM_JOINING, "Joining", Color(20, 20, 20, 255))
 team.SetUp(TEAM_READY, "Ready", Color(80, 80, 80, 255))
-team.SetUp(TEAM_RED, "Red", Color(200, 20, 20, 255))
-team.SetUp(TEAM_BLUE, "Blue", Color(20, 20, 200, 255))
-team.SetUp(TEAM_GREEN, "Green", Color(20, 200, 20, 255))
-team.SetUp(TEAM_ORANGE, "Orange", Color(200, 200, 20, 255))
+team.SetUp(TEAM_RED, "Red", Color(255, 85, 85, 255))
+team.SetUp(TEAM_BLUE, "Blue", Color(69, 192, 255, 255))
+team.SetUp(TEAM_GREEN, "Green", Color(143, 230, 101, 255))
+team.SetUp(TEAM_ORANGE, "Orange", Color(255, 191, 54, 255))
 
 --------------------------------------------------
 --

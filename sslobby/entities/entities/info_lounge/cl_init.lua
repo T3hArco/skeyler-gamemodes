@@ -93,6 +93,10 @@ function ENT:Initialize()
 	self.rulesPosition = position+ self:GetForward() *-0.1 -self:GetRight() *32 +self:GetUp() *32
 	
 	self:SetRenderBounds(bounds *-1, bounds)
+	
+--	http.Fetch("http://skeyler.com/blog.php", function(body, length, headers, code)
+
+--	end)
 end
 
 ---------------------------------------------------------

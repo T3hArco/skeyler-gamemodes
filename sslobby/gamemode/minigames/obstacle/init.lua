@@ -1,4 +1,4 @@
-MINIGAME.Time = 120
+MINIGAME.Time = 60
 
 ---------------------------------------------------------
 --
@@ -14,8 +14,12 @@ end
 --
 ---------------------------------------------------------
 
-function MINIGAME:Finish(timeLimit)
+function MINIGAME:Finish(timeLimit, winner)
 	self.BaseClass.Finish(self, timeLimit)
+	
+	if (IsValid(winner)) then
+		self:AnnounceWin(winner)
+	end
 	
 	print(self.Name .. " has finished.")
 end
@@ -26,34 +30,6 @@ end
 
 function MINIGAME:HasRequirements(players, teams)
 	return teams > 1
-end
-
----------------------------------------------------------
---
----------------------------------------------------------
-
-function MINIGAME:CanPlayerSlap(player, target, nextSlap)
-	if (target:Team() == player:Team()) then
-		return false
-	end
-end
-
----------------------------------------------------------
---
----------------------------------------------------------
-
-function MINIGAME:PlayerSlap(player, target, nextSlap)
-	timer.Simple(0, function()
-		self:RemovePlayer(target)
-
-		local won = self:AnnounceWin()
-		
-		if (won) then
-			self:Finish()
-		end
-	end)
-	
-	return nextSlap
 end
 
 ---------------------------------------------------------

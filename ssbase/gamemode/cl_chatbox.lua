@@ -46,10 +46,16 @@ theme.messageSpacing = 8
 -- Chat fonts.
 ---------------------------------------------------------
 
-surface.CreateFont("ss.chat.tag", {font = "Myriad Pro", size = 14, weight = 800})
-surface.CreateFont("ss.chat.prefix", {font = "Arial", size = 14, weight = 1000})
+surface.CreateFont("ss.chat.tag", {font = "Helvetica LT Std Cond", size = 12, weight = 400})
+surface.CreateFont("ss.chat.prefix", {font = "Arvil Sans", size = 20, weight = 400})
+surface.CreateFont("ss.chat.close", {font = "Tahoma", size = 18, weight = 800})
 
-atlaschat.CreateFont("Skeyler Servers ChatFont", "ss.chatFont", "Arial", 16, 1000)
+surface.CreateFont("ss.chat.button", {font = "Helvetica", size = 18, weight = 1000})
+surface.CreateFont("atlaschat.theme.generic", {font = "Helvetica LT Std Light", size = 16, weight = 400})
+surface.CreateFont("atlaschat.theme.version", {font = "Helvetica LT Std Light", size = 10, weight = 400, italic = true})
+surface.CreateFont("atlaschat.theme.checkbox", {font = "Roboto Lt", size = 16, weight = 400})
+
+atlaschat.CreateFont("Skeyler Servers ChatFont", "ss.chatFont", "Open Sans", 16, 800)
 
 ---------------------------------------------------------
 -- Called when the chatbox should be created.
@@ -58,7 +64,11 @@ atlaschat.CreateFont("Skeyler Servers ChatFont", "ss.chatFont", "Arial", 16, 100
 function theme:Initialize()
 	self.baseClass.Initialize(self)
 
+	self.panel.listContainer:SetVisible(false)
 	self.panel.entry:SetFont("ss.chatFont")
+	self.panel:RemoveIcon(self.informationIcon)
+	
+	self.settingsIcon:SetImage("skeyler/graphics/settings.png")
 end
 
 ---------------------------------------------------------
@@ -66,11 +76,35 @@ end
 ---------------------------------------------------------
 
 function theme:OnThemeChange()
-	self.panel:DockPadding(0, 4, 0, 4)
+	self.panel:DockPadding(0, 4, 0, 0)
 
 	self.panel.bottom:DockMargin(0, 6, 0, 0)
+	self.panel.bottom:SetTall(24)
 	self.panel.entry:DockMargin(0, 0, 0, 0)
-	self.panel.prefix:DockMargin(0, 0, 0, 0)
+	self.panel.iconHolder:DockMargin(0, 0, 0, 0)
+
+	self.panel.prefix:SetParent()
+	self.panel.prefix:Dock(NODOCK)
+	
+	local oldThink = self.panel.Think
+	
+	function self.panel:Think()
+		oldThink(self)
+		
+		local x, y = self.entry:LocalToScreen()
+		local w, h = self.entry:GetSize()
+	
+		self.prefix:SetPos(0, y)
+		self.prefix:SetSize(x, h)
+	end
+	
+	local oldVisible = self.panel.SetVisible
+	
+	function self.panel:SetVisible(bool)
+		self.prefix:SetVisible(bool)
+		
+		oldVisible(self, bool)
+	end
 	
 	self.panel:InvalidateLayout()
 end
@@ -79,14 +113,17 @@ end
 -- Paints a generic background.
 ---------------------------------------------------------
 
-theme.color.generic_background = Color(10, 10, 10, 160)
-theme.color.generic_background_dark = Color(69, 69, 69, 220)
+theme.color.generic_background = Color(20, 20, 20, 200)
+theme.color.generic_background_dark = Color(0, 0, 0, 230)
+theme.color.generic_background_top = Color(35, 150, 229, 204)
 
 function theme:PaintGenericBackground(panel, w, h, text, x, y, xAlign, yAlign)
 	draw.SimpleRect(0, 0, w, h, panel.dark and self.color.generic_background_dark or self.color.generic_background)
-	
+	draw.SimpleRect(0, 0, w, 5, self.color.generic_background_top)
+
+
 	if (text) then
-		draw.SimpleText(text, "atlaschat.theme.userlist", x or 6, y or 8, self.color.generic_label, xAlign or TEXT_ALIGN_LEFT, yAlign or TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(text, "atlaschat.theme.generic", x or 14, y or 20, self.color.generic_label, xAlign or TEXT_ALIGN_LEFT, yAlign or TEXT_ALIGN_BOTTOM)
 	end
 end
 
@@ -116,7 +153,6 @@ end
 theme.color.background = Color(69, 69, 69, 160)
 
 function theme:PaintPanel(w, h)
-	self:PaintSnowFlakes(w, h)
 end
 
 ---------------------------------------------------------
@@ -135,21 +171,18 @@ end
 -- Paints the chatbox prefix.
 ---------------------------------------------------------
 
-theme.color.prefix_background = Color(255, 255, 255, 230)
+theme.color.prefix_background = Color(0, 0, 0, 230)
 theme.color.prefix_background_inner = Color(10, 10, 10, 240)
 theme.color.prefix_background_white = Color(255, 255, 255, 255 *0.05)
 
 function theme:PaintPrefix(w, h)
 	draw.SimpleRect(0, 0, w, h, self.color.prefix_background)
-	
-	draw.SimpleRect(2, 2, w -4, h -4, self.color.prefix_background_inner)
-	draw.SimpleRect(3, 3, w -6, h /2 -6, self.color.prefix_background_white)
-	
+
 	local prefix = self.panel.prefix:GetPrefix()
 	
 	if (prefix) then
-		draw.SimpleText(prefix, "ss.chat.prefix", w /2 +1, h /2 +1, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText(prefix, "ss.chat.prefix", w /2, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(prefix, "ss.chat.prefix", w -5, h /2 +1, color_black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+		draw.SimpleText(prefix, "ss.chat.prefix", w -6, h /2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 	end
 end
 
@@ -290,10 +323,11 @@ end
 --
 ---------------------------------------------------------
 
-theme.color.icon_hold_background = Color(10, 10, 10, 160)
+theme.color.icon_hold_background = Color(35, 150, 229, 204)
+theme.color.icon_hold_background_hover = Color(71, 71, 71)
 
 function theme:PaintIconHolder(panel, w, h)
-	draw.SimpleRect(0, 0, w, h, self.color.icon_hold_background)
+	draw.SimpleRect(0, 0, w, h, self.settingsIcon.Hovered and self.color.icon_hold_background_hover or self.color.icon_hold_background)
 end
 
 ---------------------------------------------------------
@@ -310,6 +344,340 @@ function theme:PaintExpressionRow(panel, w, h, offset)
 end
 
 ---------------------------------------------------------
+--
+---------------------------------------------------------
+
+local color_line = Color(255, 255, 255, 5)
+
+local function ParseConfig(sorted, list, sliderList, admin)
+	local chatFonts = atlaschat.GetFonts()
+	
+	for i = 1, #sorted do
+		local info = sorted[i]
+		local object = atlaschat.config.Get(info.name)
+		local text = object:GetText()
+
+		local base = vgui.Create("Panel")
+		base:Dock(TOP)
+		
+		base.admin = admin
+		
+		if (info.index == 1) then
+			local value = object:GetBool()
+			
+			local checkBox = atlaschat.LabelAndCheckbox(base, text)
+			checkBox:SetChecked(value)
+			
+			checkBox.object = object
+			
+			function checkBox:OnChange(value)
+				if (admin) then
+					net.Start("atlaschat.gtcfg")
+						net.WriteString(self.object:GetName())
+						net.WriteType(value)
+					net.SendToServer()
+				else
+					self.object:SetBool(value)
+				end
+			end
+		end
+		
+		if (info.index == 2) then
+			base:DockMargin(0, 0, 0, 4)
+			
+			local value = object:GetInt()
+			
+			local slider = atlaschat.LabelAndNumSlider(base, text)
+			slider:SetMinMax(0, 1000)
+			slider:SetValue(value)
+			
+			slider.object = object
+			
+			function slider:OnValueChanged(value)
+				if (admin) then
+					self.nextUpdate = CurTime() +0.5
+				else
+					self.object:SetInt(math.Round(value))
+				end
+			end
+			
+			if (admin) then
+				function slider:Think()
+					if (self.nextUpdate and self.nextUpdate <= CurTime()) then
+						local value = self:GetValue()
+						
+						net.Start("atlaschat.gtcfg")
+							net.WriteString(self.object:GetName())
+							net.WriteType(value)
+						net.SendToServer()
+						
+						self.nextUpdate = nil
+					end
+				end
+			end
+			
+			base:SizeToContentsY()
+			
+			sliderList:AddItem(base)
+		end
+
+		if (info.index == 3) then
+			base:Remove()
+		end
+		
+		if (info.index != 2 and info.index != 3) then
+			base:SizeToContentsY()
+		
+			list:AddItem(base)
+		end
+	end
+end
+
+local color_version = Color(255, 255, 255, 75)
+local closeTexture = surface.GetTextureID("gui/close_32")
+local color_blue = Color(35, 150, 229, 224)
+local color_blue_light = Color(35 +20, 150 +20, 229 +20, 224)
+
+function theme:ToggleConfigPanel()
+	if (!ValidPanel(self.config)) then
+		self.config = vgui.Create("DFrame")
+		self.config:SetSize(374, 560)
+		self.config:Center()
+		self.config:DockPadding(6, 52, 6, 6)
+		self.config:SetTitle("")
+		self.config:SetDeleteOnClose(false)
+		self.config:MakePopup()
+	
+		self.config.dark = true
+		
+		self.config.btnMaxim:Remove()
+		self.config.btnMinim:Remove()
+		self.config.btnClose:SetSize(16, 16)
+		
+		function self.config.btnClose:Paint(w, h)
+			draw.SimpleText("x", "ss.chat.close", w /2, h /2, self.Hovered and color_red or color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
+		
+		function self.config:PerformLayout()
+			local w = self:GetWide()
+			
+			self.btnClose:SetPos(w -22, 12)
+		end
+		
+		function self.config:Paint(w, h)
+			atlaschat.theme.Call("PaintGenericBackground", self, w, h, "Chatbox Configuration")
+			
+			draw.SimpleText("Chat Version: " .. atlaschat.version:GetString(), "atlaschat.theme.version", 14, 39, color_version, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		end
+		
+		self.config.list = self.config:Add("atlaschat.chat.list")
+		self.config.list:Dock(TOP)
+		self.config.list:SetScrollbarWidth(12)
+		self.config.list:DockMargin(0, 0, 0, 2)
+		self.config.list:GetCanvas():DockPadding(8, 12, 8, 0)
+		
+		function self.config.list:Paint(w, h)
+			surface.SetDrawColor(color_line)
+			surface.DrawLine(9, 2, w -9, 2)
+		end
+		
+		self.config.sliderList = self.config:Add("atlaschat.chat.list")
+		self.config.sliderList:Dock(TOP)
+		self.config.sliderList:SetScrollbarWidth(12)
+		self.config.sliderList:GetCanvas():DockPadding(8, 16, 8, 0)
+	
+		function self.config.sliderList:Paint(w, h)
+			surface.SetDrawColor(color_line)
+			surface.DrawLine(9, 0, w -9, 0)
+		end
+		
+		local config = atlaschat.config.GetStored()
+		local sorted = {}
+		
+		local function int(v) return type(tonumber(v)) == "number" end
+		local function bool(v) return v == true or v == false or v == "true" or v == "false" end
+		
+		for name, object in pairs(config) do
+			if (object:GetText() and !object.server) then
+				local value = object:GetValue()
+				local isNumber, isBool = int(value), bool(value)
+				local index
+				
+				if (isBool) then index = 1 end
+				if (isNumber) then index = 2 end
+				
+				-- It has to be a string!
+				if (!isBool and !isNumber) then index = 3 end
+				
+				table.insert(sorted, {name = name, index = index})
+			end
+		end
+		
+		table.sort(sorted, function(a, b) return a.index < b.index end)
+		
+		ParseConfig(sorted, self.config.list, self.config.sliderList)
+		
+		local buttonBase = self.config:Add("Panel")
+		buttonBase:Dock(TOP)
+		buttonBase:SetTall(28)
+		buttonBase:DockMargin(7, 12, 7, 7)
+		
+		---------------------------------------------------------
+		-- Reset your own configuration.
+		---------------------------------------------------------
+		
+		local button = buttonBase:Add("atlaschat.chat.button")
+		button:SetText("RESET")
+		button:SetFont("ss.chat.button")
+		button:SetSize(170, 28)
+		button:SetColor(color_white)
+		button:Dock(LEFT)
+		button:DockMargin(0, 0, 0, 0)
+		
+		function  button:Paint(w, h)
+			draw.SimpleRect(0, 0, w, h, self.Hovered and Color(91, 91, 91) or  Color(71, 71, 71))
+		end
+		
+		function button:DoClick()
+			if (LocalPlayer():IsAdmin()) then
+				local menu = DermaMenu()
+					local players = player.GetAll()
+					
+					for k, v in pairs(players) do
+						menu:AddOption(v:Nick(), function()
+							local steamID = v:SteamID()
+				
+							net.Start("atlaschat.rqclrcfg")
+								net.WriteString(steamID)
+							net.SendToServer()
+						end)
+					end
+				menu:Open()
+			else
+				local steamID = LocalPlayer():SteamID()
+				
+				net.Start("atlaschat.rqclrcfg")
+					net.WriteString(steamID)
+				net.SendToServer()
+			end
+		end
+		
+		self.config.resetButton = button
+
+		---------------------------------------------------------
+		-- Save button.
+		---------------------------------------------------------
+	
+		self.config.saveButton = buttonBase:Add("atlaschat.chat.button")
+		self.config.saveButton:SetText("SAVE")
+		self.config.saveButton:SetFont("ss.chat.button")
+		self.config.saveButton:SetColor(color_white)
+		self.config.saveButton:SetTall(28)
+		self.config.saveButton:Dock(FILL)
+		self.config.saveButton:DockMargin(4, 0, 0, 0)
+
+		function self.config.saveButton:Paint(w, h)
+			draw.SimpleRect(0, 0, w, h, self.Hovered and color_blue_light or color_blue)
+		end
+		
+		function self.config.saveButton.DoClick()
+			self.config:SetVisible(false)
+		end
+		
+		---------------------------------------------------------
+		--
+		---------------------------------------------------------
+		
+		if (LocalPlayer():IsSuperAdmin()) then
+			local sorted = {}
+		
+			for name, object in pairs(config) do
+				if (object:GetText() and object.server) then
+					local value = object:GetValue()
+					local isNumber, isBool = int(value), bool(value)
+					local index
+					
+					if (isBool) then index = 1 end
+					if (isNumber) then index = 2 end
+					
+					-- It has to be a string!
+					if (!isBool and !isNumber) then index = 3 end
+					
+					table.insert(sorted, {name = name, index = index})
+				end
+			end
+			
+			if (#sorted > 0) then
+				self.config.adminLabel = vgui.Create("DLabel")
+				self.config.adminLabel:Dock(TOP)
+				self.config.adminLabel:DockMargin(0, 12, 0, 8)
+				self.config.adminLabel:SetFont("atlaschat.theme.userlist")
+				self.config.adminLabel:SetText("Global Values")
+				self.config.adminLabel:SizeToContents()
+				
+				self.config.adminLabel.admin = true
+				
+				self.config.list:AddItem(self.config.adminLabel)
+				
+				table.sort(sorted, function(a, b) return a.index < b.index end)
+				
+				ParseConfig(sorted, self.config.list, self.config.sliderList, true)
+			end
+		end
+		
+		self.config.list:GetCanvas():InvalidateLayout(true)
+		self.config.sliderList:GetCanvas():InvalidateLayout(true)
+		
+		timer.Simple(FrameTime() *2, function()
+			self.config.list:InvalidateLayout(true)
+			self.config.list:SizeToChildren(false, true)
+			
+			self.config.sliderList:InvalidateLayout(true)
+			self.config.sliderList:SizeToChildren(false, true)
+			
+			self.config:SetTall(self.config.list:GetTall() +self.config.sliderList:GetTall() +106)
+			self.config:Center()
+		end)
+	else
+		self.config:SetVisible(!self.config:IsVisible())
+		
+		if (LocalPlayer():IsSuperAdmin()) then
+		else
+			local children = self.config.list:GetCanvas():GetChildren()
+			
+			for k, child in pairs(children) do
+				if (ValidPanel(child) and child.admin) then
+					child:Remove()
+				end
+			end
+
+			self.config.list:GetCanvas():InvalidateLayout(true)
+			
+			local children = self.config.sliderList:GetCanvas():GetChildren()
+			
+			for k, child in pairs(children) do
+				if (ValidPanel(child) and child.admin) then
+					child:Remove()
+				end
+			end
+
+			self.config.sliderList:GetCanvas():InvalidateLayout(true)
+			
+			timer.Simple(FrameTime() *2, function()
+				self.config.list:InvalidateLayout(true)
+				self.config.list:SizeToChildren(false, true)
+				
+				self.config.sliderList:InvalidateLayout(true)
+				self.config.sliderList:SizeToChildren(false, true)
+				
+				self.config:SetTall(self.config.list:GetTall() +self.config.sliderList:GetTall() +106)
+				self.config:Center()
+			end)
+		end
+	end
+end
+
+---------------------------------------------------------
 -- This is where we add all the panels.
 ---------------------------------------------------------
 
@@ -320,8 +688,7 @@ local unpack = unpack
 local GetType = type
 local parseX, parseColor, titleColor, parseBase = nil, nil, nil, nil
 
-local color_tag_white = Color(255, 255, 255, 25.5)
-local color_tag_shadow = Color(0, 0, 0, 127.5)
+local color_tag_shadow = Color(0, 0, 0, 200)
 
 function theme:ParseData(data, list, isTitle)
 	local realColor = isTitle and titleColor or parseColor
@@ -331,31 +698,43 @@ function theme:ParseData(data, list, isTitle)
 
 		if (type == "Player") then
 			if (value.GetRank and value:GetRank() > 0 and ((value.fakerank and value.fakerank > 0) or !value.fakerank)) then
-				local tagPanel = parseBase:Add("Panel")
-				tagPanel:SetPos(parseX, 0)
-				tagPanel:SetSize(64, 16)
+				local tagPanel = vgui.Create("Panel")
+				
+				tagPanel.base = self.panel
+				tagPanel.parseBase = parseBase
 				
 				local text, color, fakeRank = nil, nil, value.fakerank
 		
 				if (fakeRank == 50) then
 					text, color = "ADMIN", Color(255, 72, 72)
 				elseif (fakeRank == 20) then
-					text, color = "DEV", Color(87, 198, 255)
+					text, color = "DEVeloper", Color(87, 198, 255)
 				elseif (fakeRank == 1) then
 					text, color = "VIP", Color(255, 216, 0)
 				else
 					text, color = string.upper(value:GetRankName()), value:GetRankColor()
 				end
 				
-				function tagPanel:Paint(w, h)
-					draw.Material(0, 0, w, h, color, TAG_MAT)
-					draw.SimpleRect(1, 2, w -10, h /2 -2, color_tag_white)
-					
-					draw.SimpleText(text, "ss.chat.tag", w /2 -3, h /2 +1, color_tag_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-					draw.SimpleText(text, "ss.chat.tag", w /2 -4, h /2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-				end
+				text = string.upper(text)
 				
-				parseX = parseX +tagPanel:GetWide()
+				function tagPanel:Paint(w, h)
+					local renderX, renderY = self.base.list:LocalToScreen()
+					local renderW, renderH = self.base.list:GetSize()
+					
+					self:SetAlpha(self.parseBase:GetAlpha())
+					
+					render.SetScissorRect(0, renderY, renderX +renderW, renderY +renderH, true)
+						local x, y = self.parseBase:LocalToScreen()
+						
+						self:SetPos(0, y)
+						self:SetSize(x -4, 16)
+	
+						draw.SimpleRect(0, 0, w, h, Color(color.r, color.g, color.b, 200))
+						
+						draw.SimpleText(text, "ss.chat.tag", w -3, h /2 +1, color_tag_shadow, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+						draw.SimpleText(text, "ss.chat.tag", w -4, h /2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+					render.SetScissorRect(0, 0, 0, 0, false)
+				end
 			end
 			
 			local avatarsEnabled = atlaschat.enableAvatars:GetBool()
@@ -825,6 +1204,85 @@ function theme:ParseText(list, ...)
 	parseX, parseColor, titleColor, parseBase = nil, nil, nil, nil
 end
 
+---------------------------------------------------------
+-- When we close and open the chatbox.
+---------------------------------------------------------
+
+function theme:OnToggle(show)
+	self.panel:SetVisible(show)
+	
+	local list = self.panel:GetActiveList()
+	
+	if (show) then
+		local x, y = 85, ScrH() -545
+		local w, h = atlaschat.chat_w:GetInt(), atlaschat.chat_h:GetInt()
+		
+		if (atlaschat.chat_w:GetInt() == 0) then w = atlaschat.ScaleSize(200, true)	atlaschat.chat_w:SetInt(w) end
+		if (atlaschat.chat_h:GetInt() == 0) then h = atlaschat.ScaleSize(150) 		atlaschat.chat_h:SetInt(h) end
+		
+		self.panel:SetPos(x, y)
+		self.panel:SetSize(w, h)
+
+		list:SetParent(self.panel)
+		list:Dock(FILL)
+		list:SetMouseInputEnabled(true)
+		list:SetKeyboardInputEnabled(true)
+		list:ScrollToBottom()
+		
+		self.panel.listContainer:SetVisible(false)
+		--self.panel.listContainer:SetPos(x, y +h)
+		--self.panel.listContainer:SetSize(w, 18)
+		
+		self.panel:MakePopup()
+		self.panel.entry:RequestFocus()
+		
+		local children = list:GetCanvas():GetChildren()
+		
+		for k, child in pairs(children) do
+			if (ValidPanel(child)) then
+				child:SetAlpha(255)
+				
+				child.m_AnimList = nil
+			end
+		end
+	else
+		local x, y = self.panel:LocalToScreen(list:GetPos())
+		local w, h = list:GetSize()
+		
+		self.panel.listContainer:SetVisible(false)
+		
+		list:SetParent()
+		list:Dock(NODOCK)
+		list:SetPos(x, y )
+		list:SetSize(w, h)
+		list:SetMouseInputEnabled(false)
+		list:SetKeyboardInputEnabled(false)
+		list:ScrollToBottom()
+		
+		local children = list:GetCanvas():GetChildren()
+		
+		for k, child in pairs(children) do
+			if (ValidPanel(child) and (child.fade and child.fade <= CurTime()) or !child.fade) then
+				child:SetAlpha(0)
+			end
+		end
+	end
+	
+	if (self.panel.entry.key) then
+		self.panel.prefix:SetPrefix("PM")
+	else
+		if (self.panel.team) then
+			self.panel.prefix:SetPrefix("TEAM")
+		else
+			self.panel.prefix:SetPrefix("CHAT")
+		end
+	end
+	
+	if (ValidPanel(self.userListBase) and self.userListBase:IsVisible()) then
+		self.userListBase:SetVisible(show)
+	end
+end
+
 atlaschat.theme.Register(theme)
 
 -- Let's force a theme.
@@ -861,14 +1319,73 @@ hook.Add("OnReloaded", "ss.chat.OnReloaded", function()
 	end)
 end)
 
---[[
-TIMESTAMPS = CreateClientConVar("ss_chat_timestamps", 0, true, false) 
-TIMESTAMPS24 = CreateClientConVar("ss_chat_timestamps_24", 0, true, false)
+---------------------------------------------------------
+-- Creates a label and a DCheckBox.
+---------------------------------------------------------
 
-TAG_MAT = Material("skeyler/tag_bg") 
+local color_blue = Color(35, 150, 229, 224)
+local color_blue_inner = Color(35, 150, 229, 64)
+local color_knob_inner = Color(39, 207, 255, 255)
+local checkedTexture = Material("icon16/tick.png")
 
-surface.CreateFont("ChatLabel", {font="Arial", size=18, weight=1000})
-surface.CreateFont("ChatLabel_Time", {font="Arial", size=15, weight=500})
-surface.CreateFont("ChatFont", {font="Open Sans", size=18, weight=500})
-surface.CreateFont("TagFont", {font="Myriad Pro", size=14, weight=800})
-]]
+function atlaschat.LabelAndCheckbox(parent, name)
+	local base = parent:Add("Panel")
+	base:SetTall(16)
+	base:Dock(TOP)
+	base:DockMargin(0, 0, 0, 10)
+	
+	local checkbox = base:Add("DCheckBox")
+	checkbox:Dock(LEFT)
+	
+	function checkbox:Paint(w, h)
+		local checked = self:GetChecked()
+		
+		draw.SimpleRect(1, 1, w -2, h -2, color_white)
+		draw.SimpleOutlined(1, 1, w -2, h -2, color_blue)
+		draw.SimpleOutlined(2, 2, w -4, h -4, color_blue_inner)
+		
+		if (checked) then
+			draw.Material(w /2 -5, h /2 -5, 10, 10, color_white, checkedTexture)
+		end
+	end
+	
+	local label = base:Add("DLabel")
+	label:SetText(name)
+	label:SetFont("atlaschat.theme.checkbox")
+	label:SizeToContents()
+	label:Dock(LEFT)
+	label:DockMargin(10, 0, 8, 0)
+	label:SetSkin("atlaschat")
+	
+	return checkbox
+end
+
+---------------------------------------------------------
+-- Creates a label and a Slider.
+---------------------------------------------------------
+
+function atlaschat.LabelAndNumSlider(parent, name)
+	local slider, base = util.SliderAndLabel(parent, name)
+	base:Dock(TOP)
+
+	base.label:SetFont("atlaschat.theme.checkbox")
+	base.label:SizeToContents()
+	
+	slider.Knob:SetSize(8, 8)
+	
+	function slider.Knob:Paint(w, h)
+		draw.RoundedBox(4, 0, 0, w, h, color_white)
+		draw.RoundedBox(4, 1, 1, w -2, h -2, color_knob_inner)
+	end
+	
+	function base:PerformLayout()
+		local w, h = self:GetSize()
+		
+		self.label:SetPos(0, h /2 -self.label:GetTall() /2)
+
+		self.slider:SetWide(w /2)
+		self.slider:SetPos(w -self.slider:GetWide(), h /2 -self.slider:GetTall() /2)
+	end
+	
+	return slider
+end

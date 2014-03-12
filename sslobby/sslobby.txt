@@ -2,6 +2,6 @@
 {
 	"title"		"SSLobby"
 	"base"		"ssbase"
-	"maps"		"^lounge_*"
+	"maps"		"^ss_lounge_*"
 	"menusystem"	"1"
 }

@@ -119,7 +119,7 @@ function object:__Paint(screen)
 	self.hovered = inBounds(mouseBounds, self.x, self.y, self.w, self.h, self.scale)
 	
 	if (self.hovered) then
-		if (input.IsMouseDown(MOUSE_LEFT)) then
+		if (input.IsKeyDown(KEY_E)) then
 			if (!self.triggered) then
 				self:OnMousePressed()
 				

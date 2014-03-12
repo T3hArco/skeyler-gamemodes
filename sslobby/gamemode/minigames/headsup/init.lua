@@ -1,4 +1,4 @@
-MINIGAME.Time = 70
+MINIGAME.Time = 60
 
 ---------------------------------------------------------
 --
@@ -24,6 +24,8 @@ end
 function MINIGAME:Start()
 	print(self.Name .. " has started.")
 	
+	self.BaseClass.Start(self)
+	
 	self.nextDrop = CurTime() +1
 	self.bombVelocity = 0.1
 end
@@ -42,13 +44,41 @@ end
 --
 ---------------------------------------------------------
 
+function MINIGAME:HasRequirements(players, teams)
+	return teams > 1
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function MINIGAME:Think()
 	if (self.nextDrop <= CurTime() and self.spawnOrigin) then
 		local data = self.spawnOrigin
 		
 		self.bombVelocity = math.Clamp(self.bombVelocity -0.5, -15, 0)
 	
-		for i = 4, math.random(10, 16) do
+		for k, player in pairs(self.players) do
+			if (IsValid(player)) then
+				local position = player:GetPos()
+				
+				position = position +Vector(0, 0, data[1].z)
+				
+				local entity = ents.Create("info_minigame_bomb")
+				entity:SetPos(position)
+				entity:Spawn()
+	
+				timer.Simple(0, function()
+					local physicsObject = entity:GetPhysicsObject()
+			
+					if (IsValid(physicsObject)) then
+						physicsObject:SetVelocity(Vector(0, 0, self.bombVelocity))
+					end
+				end)
+			end
+		end
+		
+		for i = 1, math.random(4, 8) do
 			local position = Vector(data[1].x +math.random(data[2].x, data[3].x), data[1].y +math.random(data[2].y, data[3].y), data[1].z)
 			
 			local entity = ents.Create("info_minigame_bomb")
@@ -72,19 +102,14 @@ end
 --
 ---------------------------------------------------------
 
-function MINIGAME:PlayerDeath(victim, inflictor, attacker)
-	timer.Simple(0.1, function()
-		local alive = 0
+function MINIGAME:DoPlayerDeath(victim, inflictor, dmginfo)
+	timer.Simple(0, function()
+		self:RemovePlayer(victim)
+
+		local won = self:AnnounceWin()
 		
-		for k, player in pairs(self.players) do
-			if (IsValid(player) and player:Alive()) then
-				alive = alive +1
-			end
-		end
-		
-		if (alive <= 0) then
+		if (won) then
 			self:Finish()
-			self:AnnounceWin(victim)
 		end
 	end)
 end
@@ -93,7 +118,6 @@ end
 --
 ---------------------------------------------------------
 
-function MINIGAME:HasRequirements(players, teams)
-	return true
-	--return teams >= 2
+function MINIGAME:CanPlayerSuicide(player)
+	return false
 end

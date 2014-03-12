@@ -1,5 +1,14 @@
 local inQueue = false
 local queueTime = 0
+local gameProgress = false
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Minigame.IsInQueue()
+	return inQueue
+end
 
 ---------------------------------------------------------
 --
@@ -15,7 +24,9 @@ net.Receive("ss.lbmgup", function(bits)
 		scores[teamID] = score
 	end
 	
-	SS.Lobby.Minigame:SetCurrentGame(game)
+	if (game != "") then
+		SS.Lobby.Minigame:SetCurrentGame(game)
+	end
 end)
 
 ---------------------------------------------------------
@@ -34,27 +45,44 @@ end)
 
 net.Receive("ss.lbmggtim", function(bits)
 	local time = net.ReadFloat()
+	local inProgress = tobool(net.ReadBit())
 	
 	queueTime = time
+	gameProgress = inProgress
 end)
 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
-surface.CreateFont("minigame.timer", {font = "Arial", size = 32, weight = 1000})
+surface.CreateFont("minigame.timer", {font = "Arvil Sans", size = 36, weight = 400})
 
 local color_shadow = Color(0, 0, 0, 200)
 
 hook.Add("HUDPaint", "SS.Lobby.Minigame", function()
 	if (inQueue) then
-		draw.RoundedBox(8, ScrW() /2 -216, 36, 432, 60, color_shadow)
+		local seconds = math.Round(queueTime -CurTime())
+		local minigame = SS.Lobby.Minigame.Get(SS.Lobby.Minigame:GetCurrentGame())
+		local offsetX, offsetY = 0, 0
 		
-		draw.SimpleText("NEXT GAME IN " .. math.Round(queueTime -CurTime()) .. " seconds", "minigame.timer", ScrW() /2 +1, 85, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-		draw.SimpleText("NEXT GAME IN " .. math.Round(queueTime -CurTime()) .. " seconds", "minigame.timer", ScrW() /2, 84, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		if (minigame) then
+			offsetX, offsetY = minigame.TimerX or 0, minigame.TimerY or 0
+		end
+		
+		draw.RoundedBox(8, ScrW() /2 -392 /2, 36 +offsetY, 392, 60, color_shadow)
+		
+		if (gameProgress) then
+			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX, 84 +offsetY, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		else
+			draw.SimpleText("THE NEXT GAME BEGINS IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("THE NEXT GAME BEGINS IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX, 84 +offsetY, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		end
 	end
 	
-	if (LocalPlayer():IsPlayingMinigame()) then
+	local shouldPaint = SS.Lobby.Minigame.Call("ShouldHUDPaint")
+	
+	if (shouldPaint) then
 		SS.Lobby.Minigame.Call("HUDPaint")
 	end
 end)

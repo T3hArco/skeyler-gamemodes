@@ -182,8 +182,8 @@ function panel:Think()
 				end
 			end
 			
-			if (item.Bone) then
-				local skinAmount = data.entity:SkinCount()
+			if (item.Model) then
+				local skinAmount = !item.Bone and LocalPlayer():SkinCount() or data.entity:SkinCount()
 				
 				if (skinAmount > 1) then
 					local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
@@ -197,41 +197,7 @@ function panel:Think()
 					
 					slider:SetMin(1)
 					slider:SetMax(skinAmount)
-					slider:SetValue(data.entity:GetSkin())
-					
-					function slider:OnValueChanged(value)
-						self.nextUpdate = CurTime() +0.3
-					end
-					
-					function slider:Think()
-						if (self.nextUpdate and self.nextUpdate <= CurTime()) then
-							local value = self:GetValue()
-							
-							net.Start("ss.store.stcstm")
-								net.WriteString(item.ID)
-								net.WriteString(SS.STORE.CUSTOM.SKIN)
-								net.WriteUInt(value, 8)
-							net.SendToServer()
-							
-							self.nextUpdate = nil
-						end
-					end
-				end
-			elseif (item.Model) then
-				local skinAmount = LocalPlayer():SkinCount()
-				
-				if (skinAmount > 1) then
-					local slider, base = util.SliderAndLabel(self.toolTip, "Model Skin")
-					base:Dock(TOP)
-					base:SetTall(34)
-					
-					base.label:SetFont("ss.tooltip.options")
-					base.label:SizeToContents()
-					
-					slider:SetWide(125)
-					slider:SetMin(1)
-					slider:SetMax(skinAmount)
-					slider:SetValue(LocalPlayer():GetSkin())
+					slider:SetValue(!item.Bone and LocalPlayer():GetSkin() or data.entity:GetSkin())
 					
 					function slider:OnValueChanged(value)
 						self.nextUpdate = CurTime() +0.3
@@ -252,7 +218,7 @@ function panel:Think()
 					end
 				end
 				
-				local bodyGroups = LocalPlayer():GetBodyGroups()
+				local bodyGroups = !item.Bone and LocalPlayer():GetBodyGroups() or data.entity:GetBodyGroups()
 				
 				for i = 1, #bodyGroups do
 					local data = bodyGroups[i]

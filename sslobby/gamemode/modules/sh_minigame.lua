@@ -15,7 +15,7 @@ local stored = {}
 --
 ---------------------------------------------------------
 
-function SS.Lobby.Minigame:GetStored()
+function SS.Lobby.Minigame.GetStored()
 	return stored
 end
 
@@ -23,7 +23,7 @@ end
 --
 ---------------------------------------------------------
 
-function SS.Lobby.Minigame:Get(unique)
+function SS.Lobby.Minigame.Get(unique)
 	return stored[unique]
 end
 
@@ -41,7 +41,7 @@ end
 
 function SS.Lobby.Minigame.Call(name, ...)
 	local current = SS.Lobby.Minigame:GetCurrentGame()
-	
+
 	if (current) then
 		local data = stored[current]
 		

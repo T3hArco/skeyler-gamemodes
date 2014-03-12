@@ -25,7 +25,6 @@ function panel:Paint(w, h)
 	
 	if (checked) then
 		draw.Material(w /2 -8, h /2 -8, 16, 16, color_white, checkedTexture)
-	else
 	end
 end
 

@@ -19,7 +19,7 @@ local cameraScale = 0.1
 surface.CreateFont("minigame.screen", {font = "Arial", size = 80, weight = 800, blursize = 1, italic = true})
 surface.CreateFont("minigame.screen.normal", {font = "Arial", size = 62, weight = 400, blursize = 1})
 surface.CreateFont("minigame.screen.score", {font = "Arial", size = 72, weight = 600, blursize = 1, italic = true})
-surface.CreateFont("minigame.screen.join", {font = "Arial", size = 18, weight = 400})
+surface.CreateFont("minigame.screen.join", {font = "Arial", size = 18, weight = 800})
 
 local panelUnique = "minigame_screen"
 
@@ -38,7 +38,11 @@ local function AddButton(teamID, x, y)
 	
 	function button:Paint(screen, x, y, w, h)
 		if (self.hovered) then
-			draw.SimpleText("CLICK TO JOIN", "minigame.screen.join", x +w /2, y +h /2, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			if (self.team == TEAM_GREEN or self.team == TEAM_RED) then
+				draw.SimpleText("CLICK TO JOIN", "minigame.screen.join", x -(w -20), y +h, color_black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+			else
+				draw.SimpleText("CLICK TO JOIN", "minigame.screen.join", x +w +15, y +h, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			end
 		end
 	end
 end
@@ -81,28 +85,28 @@ function ENT:DrawInformation()
 	local current = SS.Lobby.Minigame:GetCurrentGame()
 
 	if (current) then
-		local minigame = SS.Lobby.Minigame:Get(current)
+		local minigame = SS.Lobby.Minigame.Get(current)
 		
 		if (minigame) then
 			draw.SimpleText(string.upper(minigame.Name), "minigame.screen", 342, 1344, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 			
 			draw.DrawText(minigame.Description, "minigame.screen.normal", 342, 1454, color_text)
-			
-			local scores = SS.Lobby.Minigame:GetScores()
-		
-			draw.SimpleText(scores[TEAM_ORANGE], "minigame.screen.score", 364, 728, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_ORANGE], "minigame.screen.score", 362, 726, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			
-			draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.score", 364, 998, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.score", 362, 996, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	
-			draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.score", 1917, 988, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.score", 1915, 986, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			
-			draw.SimpleText(scores[TEAM_RED], "minigame.screen.score", 1917, 738, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(scores[TEAM_RED], "minigame.screen.score", 1915, 736, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 	end
+	
+	local scores = SS.Lobby.Minigame:GetScores()
+	
+	draw.SimpleText(scores[TEAM_ORANGE], "minigame.screen.score", 364, 728, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(scores[TEAM_ORANGE], "minigame.screen.score", 362, 726, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	
+	draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.score", 364, 998, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(scores[TEAM_BLUE], "minigame.screen.score", 362, 996, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	
+	draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.score", 1917, 988, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(scores[TEAM_GREEN], "minigame.screen.score", 1915, 986, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	
+	draw.SimpleText(scores[TEAM_RED], "minigame.screen.score", 1917, 738, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(scores[TEAM_RED], "minigame.screen.score", 1915, 736, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
 ---------------------------------------------------------

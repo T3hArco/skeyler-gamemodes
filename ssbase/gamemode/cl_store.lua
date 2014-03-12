@@ -24,10 +24,6 @@ local MAXIMUM_SLOTS = SS.STORE.SLOT.MAXIMUM
 local HubWidth = math.max(ScrW()*0.6, 800) 
 local HubHeight = math.max(ScrH()*0.725, 600)
 
-if (ValidPanel(SS.Hub)) then
-	SS.Hub:Remove()
-end
-
 SS.Hub = false 
 SS.HubTabs = {} 
 local StoreCats = {} 
@@ -54,7 +50,7 @@ surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 30, weight 
 local PANEL = {} 
 function PANEL:Init() 
 	self:DockPadding(0, 75, 0, 30)
-	self:SetFocusTopLevel(true)
+	--self:SetFocusTopLevel(true)
 	self:SetDrawOnTop(true)
 	
 	self.nav = vgui.Create("ss_hub_nav", self) 
@@ -66,6 +62,12 @@ function PANEL:Init()
 	self:InvalidateLayout(true)
 	self.container:InvalidateLayout(true)
 	
+	GAMEMODE:SetGUIBlur(true) 
+	
+	self:MakePopup()
+end 
+
+function PANEL:AddCategories()
 	for k, v in pairs(SS.HubTabs) do
 		
 		-- Create the category panel.
@@ -79,11 +81,7 @@ function PANEL:Init()
 	end
 	
 	self:SetTab(#SS.HubTabs, SS.HubTabs[#SS.HubTabs].button) 
-
-	GAMEMODE:SetGUIBlur(true) 
-	
-	self:MakePopup()
-end 
+end
 
 function PANEL:GetCategory(id)
 	return self.container:GetCategory(id)
@@ -744,7 +742,7 @@ function PANEL:SetData(data)
 			end
 		end
 		
-		if (data.Model and !data.Bone) then
+		if (data.Model) then
 			local bodyGroups = this.Entity:GetBodyGroups()
 			
 			for i = 1, #bodyGroups do
@@ -763,7 +761,7 @@ function PANEL:SetData(data)
 				slider:SetValue(0)
 				
 				function slider:OnValueChanged(value)
-					self.nextUpdate = CurTime() +0.3
+					self.nextUpdate = CurTime() +0.15
 				end
 				
 				function slider:Think()
@@ -774,7 +772,9 @@ function PANEL:SetData(data)
 							if (data.Slot == SS.STORE.SLOT.MODEL) then
 								this.preview.Entity:SetBodygroup(info.id, value)
 							else
-								this.preview.Entity.previews[data.Slot].entity:SetBodygroup(info.id, value)
+								if (this.preview.Entity.previews[data.Slot]) then
+									this.preview.Entity.previews[data.Slot].entity:SetBodygroup(info.id, value)
+								end
 							end
 						end
 						
@@ -957,6 +957,17 @@ function PANEL:SetHat(model, data)
 		self.Entity.previews[data.Slot].item = data.ID
 		self.Entity.previews[data.Slot].entity = ClientsideModel(model)
 		self.Entity.previews[data.Slot].entity:SetNoDraw(true)
+		
+		if (self:GetIsInventory()) then
+			local info = SS.Gear.Get(LocalPlayer(), data.Slot)
+			local bodyGroups = info.entity:GetNumBodyGroups()
+			
+			for i = 1, bodyGroups do
+				local id = info.entity:GetBodygroup(i)
+				
+				self.Entity.previews[data.Slot].entity:SetBodygroup(i, id)
+			end
+		end
 	end
 end 
 
@@ -1245,6 +1256,8 @@ function panel:Init()
 	end
 	
 	self:SetCategory(1)
+	
+	SS.Hub.InventoryPreview = self.preview
 end 
 
 function panel:Update()
@@ -1412,34 +1425,39 @@ SS:AddHubTab("Inventory", "skeyler/icons/profile.png", "ss_hub_inventory")
 SS:AddHubTab("Settings", "skeyler/icons/settings.png", "ss_hub_settings") 
 SS:AddHubTab("Help", "skeyler/icons/help.png", "ss_hub_help") 
 
-concommand.Add("ss_store", function()  
-	if ValidPanel(SS.Hub) then 
-		if !SS.Hub:IsVisible() then 
-			SS.Hub:SetVisible(true) 
-			SS.Hub:SetAlpha(0)
-			GAMEMODE:SetGUIBlur(true) 
-			gui.EnableScreenClicker(true)
-		else 
-			GAMEMODE:SetGUIBlur(false)
-			gui.EnableScreenClicker(false)
-			--SS.Hub:SetVisible(false) 
-		end 
-		return 
-	else
+concommand.Add("ss_store", function()
+	if (!ValidPanel(SS.Hub)) then
+		SS.Hub = vgui.Create("ss_hub")
+		SS.Hub:AddCategories()
+		SS.Hub:SetVisible(false)
+		
 		local cache = SS.Gear.GetCache()
 		local steamID = LocalPlayer():SteamID()
 		
 		-- Request full update.
 		if (!cache[steamID]) then
-			
 			cache[steamID] = {}
 		
 			net.Start("ss.gear.rqgrfull")
 				net.WriteString(steamID)
 			net.SendToServer()
 		end
-	end 
-	SS.Hub = vgui.Create("ss_hub")  
+	end
+	
+	if (ValidPanel(SS.Hub)) then 
+		if (!SS.Hub:IsVisible()) then 
+			SS.Hub:SetVisible(true) 
+			SS.Hub:SetAlpha(0)
+			
+			GAMEMODE:SetGUIBlur(true) 
+			
+			gui.EnableScreenClicker(true)
+		else 
+			GAMEMODE:SetGUIBlur(false)
+			
+			gui.EnableScreenClicker(false)
+		end 
+	end
 end )
 
 ---------------------------------------------------------
@@ -1552,15 +1570,28 @@ net.Receive("ss.gear.gtgrfull", function(bits)
 					end
 
 					cache[steamID][i].entity = entity
+				elseif (item.Model and !item.Bone and SS.Hub and steamID == LocalPlayer():SteamID()) then
+					local entity = SS.Hub.InventoryPreview.Entity
+					
+					if (IsValid(entity)) then
+						local skin = net.ReadUInt(8)
+						local color = net.ReadVector()
+						
+						color = Color(color.x, color.y, color.z)
+					
+						entity:SetSkin(skin)
+						entity:SetColor(color)
+						
+						local bodygroups = net.ReadUInt(8)
+						
+						for i = 1, bodygroups do
+							local group = net.ReadUInt(8)
+							local value = net.ReadUInt(8)
+							
+							entity:SetBodygroup(group, value)
+						end
+					end
 				end
-				
-				hidden = false
-				
-				HideGear(steamID)
-				
-				-- EFFECTS_BONEMERGE ?
-					--if (item.BoneMerge) then
-				--	end
 				
 				-- Call equip on client?
 			end
@@ -1623,14 +1654,29 @@ net.Receive("ss.gear.gtgrslot", function(bits)
 				end
 				
 				cache[steamID][item.Slot].entity = entity
+			elseif (item.Model and !item.Bone and SS.Hub and steamID == LocalPlayer():SteamID()) then
+				local entity = SS.Hub.InventoryPreview.Entity
+				
+				if (IsValid(entity)) then
+					local skin = net.ReadUInt(8)
+					local color = net.ReadVector()
+					
+					color = Color(color.x, color.y, color.z)
+				
+					entity:SetSkin(skin)
+					entity:SetColor(color)
+					
+					local bodygroups = net.ReadUInt(8)
+					
+					for i = 1, bodygroups do
+						local group = net.ReadUInt(8)
+						local value = net.ReadUInt(8)
+						
+						entity:SetBodygroup(group, value)
+					end
+				end
 			end
-			
-			HideGear(steamID)
-			
-			-- EFFECTS_BONEMERGE ?
-			--if (item.BoneMerge) then
-			--end
-			
+		
 			-- Call equip on client?
 		end
 	end
@@ -1699,41 +1745,44 @@ hook.Add("PostPlayerDraw", "ss.gear.render", function(player, isRagdoll)
 							
 							-- Using bone matrix fixes the hat from lagging behind when the player is getting shot. (lol)
 							local boneMatrix = entity:GetBoneMatrix(index)
-							local position, angles = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
 							
-							local modelData = item.Models[string.lower(entity:GetModel())]
-							
-							if (modelData) then
-								local positionData = modelData[1]
+							if (boneMatrix) then
+								local position, angles = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
 								
-								for i = 1, #modelData do
-									local modelBodygroup = entity:GetBodygroup(modelData[i][1])
-									local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
+								local modelData = item.Models[string.lower(entity:GetModel())]
+								
+								if (modelData) then
+									local positionData = modelData[1]
 									
-									if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
-										positionData = modelData[i]
-									end
-								end
-								
-								if (positionData) then
-									if positionData.pos then
-										local up, right, forward = angles:Up(), angles:Right(), angles:Forward()
+									for i = 1, #modelData do
+										local modelBodygroup = entity:GetBodygroup(modelData[i][1])
+										local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
 										
-										position = position + up*positionData.pos.z + right*positionData.pos.y + forward*positionData.pos.x -- NOTE: y and x could be wrong way round
-									end 
-				
-									if positionData.ang then 
-										angles:RotateAroundAxis(angles:Up(), positionData.ang.p) 
-										angles:RotateAroundAxis(angles:Forward(), positionData.ang.y) 
-										angles:RotateAroundAxis(angles:Right(), positionData.ang.r) 
+										if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
+											positionData = modelData[i]
+										end
 									end
 									
-									if positionData.scale then data.entity:SetModelScale(positionData.scale, 0) end 
+									if (positionData) then
+										if positionData.pos then
+											local up, right, forward = angles:Up(), angles:Right(), angles:Forward()
+											
+											position = position + up*positionData.pos.z + right*positionData.pos.y + forward*positionData.pos.x -- NOTE: y and x could be wrong way round
+										end 
+					
+										if positionData.ang then 
+											angles:RotateAroundAxis(angles:Up(), positionData.ang.p) 
+											angles:RotateAroundAxis(angles:Forward(), positionData.ang.y) 
+											angles:RotateAroundAxis(angles:Right(), positionData.ang.r) 
+										end
+										
+										if positionData.scale then data.entity:SetModelScale(positionData.scale, 0) end 
+									end
 								end
+			
+								data.entity:SetPos(position)
+								data.entity:SetAngles(angles)
 							end
-		
-							data.entity:SetPos(position)
-							data.entity:SetAngles(angles)
 						end
 					end
 					
@@ -1802,5 +1851,27 @@ hook.Add("PostDrawTranslucentRenderables", "ss.gear.render", function()
 		if (!player:Alive()) then
 			hook.Run("PostPlayerDraw", player, true)
 		end
+	end
+end)
+
+---------------------------------------------------------
+-- Remove the players gear entities.
+---------------------------------------------------------
+
+gameevent.Listen("player_disconnect")
+
+hook.Add("player_disconnect", "ss.gear.player_disonnect", function(data)
+	local steamID = data.networkid
+	
+	if (cache[steamID]) then
+		for i = 1, MAXIMUM_SLOTS do
+			local data = cache[steamID][i]
+			
+			if (data and IsValid(data.entity)) then
+				data.entity:Remove()
+			end
+		end
+		
+		cache[steamID] = nil
 	end
 end)

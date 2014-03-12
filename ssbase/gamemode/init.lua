@@ -18,6 +18,8 @@ else
 	DB_PASS = ""
 end
 
+include("player_class/player_ssbase.lua")
+
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
@@ -72,46 +74,14 @@ function GM:PlayerInitialSpawn(ply)
 end 
 
 function GM:PlayerSpawn(ply)
-	self.BaseClass:PlayerSpawn(ply)
-	player_manager.OnPlayerSpawn( ply )
-	player_manager.RunClass( ply, "Spawn" ) 
-
-	local oldhands = ply:GetHands()
-	if ( IsValid( oldhands ) ) then oldhands:Remove() end
-
-	local hands = ents.Create( "gmod_hands" )
-	if ( IsValid( hands ) ) then
-		ply:SetHands( hands )
-		hands:SetOwner( ply )
-
-		-- Which hands should we use?
-		local cl_playermodel = ply:GetInfo( "cl_playermodel" )
-		local info = player_manager.TranslatePlayerHands( cl_playermodel )
-		if ( info ) then
-			hands:SetModel( info.model )
-			hands:SetSkin( info.skin )
-			hands:SetBodyGroups( info.body )
-		end
-
-		-- Attach them to the viewmodel
-		local vm = ply:GetViewModel( 0 )
-		hands:AttachToViewmodel( vm )
-
-		vm:DeleteOnRemove( hands )
-		ply:DeleteOnRemove( hands )
-
-		hands:Spawn()
-	end
+	player_manager.SetPlayerClass(ply, "player_ssbase")
 	
-	-- TEMP
-	for steamID, _ in pairs(self.AllowedList) do
-		if (ply:SteamID() == steamID) then
-			ply:SetRank(100)
-		end
-	end
+	self.BaseClass:PlayerSpawn(ply)
 end 
 
 function GM:PlayerSetModel(player)
+	self.BaseClass:PlayerSetModel(player)
+
 	if (player.storeEquipped) then
 		local model = player:GetSlotData(SS.STORE.SLOT.MODEL)
 		

@@ -25,29 +25,36 @@ end
 ---------------------------------------------------------
 
 function ENT:StartTouch(entity)
-	if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer()) then
-		local exists = false
-		
-		for i = 1, #self.players do
-			local player = self.players[i]
+	if (!self.removed) then
+		if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer()) then
+			local position = self:GetPos()
+			local playerPosition = entity:GetPos()
 			
-			if (player == entity) then
-				exists = true
+			if (playerPosition.z >= position.z) then
+				local exists = false
 				
-				break
+				for i = 1, #self.players do
+					local player = self.players[i]
+					
+					if (player == entity) then
+						exists = true
+						
+						break
+					end
+				end
+			
+				if (!exists) then
+					table.insert(self.players, entity)
+				end
 			end
 		end
-
-		if (!exists) then
-			table.insert(self.players, entity)
+		
+		local physicsObject = self:GetPhysicsObject()
+		
+		if (IsValid(physicsObject)) then
+			physicsObject:Sleep()
+			physicsObject:EnableMotion(false)
 		end
-	end
-	
-	local physicsObject = self:GetPhysicsObject()
-	
-	if (IsValid(physicsObject)) then
-		physicsObject:Sleep()
-		physicsObject:EnableMotion(false)
 	end
 end
 
@@ -56,14 +63,16 @@ end
 ---------------------------------------------------------
 
 function ENT:EndTouch(entity)
-	if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer()) then
-		for i = 1, #self.players do
-			local player = self.players[i]
-			
-			if (player == entity) then
-				table.remove(self.players, i)
+	if (!self.removed) then
+		if (IsValid(entity) and entity.IsPlayer and entity:IsPlayer()) then
+			for i = 1, #self.players do
+				local player = self.players[i]
 				
-				break
+				if (player == entity) then
+					table.remove(self.players, i)
+					
+					break
+				end
 			end
 		end
 	end
@@ -74,16 +83,19 @@ end
 ---------------------------------------------------------
 
 function ENT:Think()
-	if (#self.players > 0) then
+	if (#self.players > 0 and !self.removed) then
 		self.color.g = math.Clamp((self.life /255) *255, 0, 255)
 		self.color.b = math.Clamp((self.life /255) *255, 0, 255)
 		
 		self:SetColor(self.color)
 		
-		self.life = self.life -7
+		self.life = self.life -11
 		
 		if (self.life <= 0) then
-			timer.Simple(0, function() self:Remove() end)
+			self.removed = true
+			
+			self:SetNoDraw(true)
+			self:SetNotSolid(true)
 		end
 	end
 	

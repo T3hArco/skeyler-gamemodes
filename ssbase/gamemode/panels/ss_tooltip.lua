@@ -57,6 +57,12 @@ function registry.Panel:CreateToolTip()
 				
 				self:SetPos(x, (y +h /2) -64)
 			end
+			
+			if (self.stay) then
+				if (!self:HasFocus()) then
+					self:MakePopup()
+				end
+			end
 		else
 			self:Remove()
 		end
@@ -65,6 +71,8 @@ function registry.Panel:CreateToolTip()
 	function self.tooltip_ss:EnableButton()
 		if (!self.stay) then
 			self:MakePopup()
+			self:SetDrawOnTop(true)
+			self:SetFocusTopLevel(true)
 			
 			self.button = self:Add("DImageButton")
 			self.button:SetSize(16, 16)

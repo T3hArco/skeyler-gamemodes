@@ -1,9 +1,13 @@
+MINIGAME.Time = 120
+
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
 function MINIGAME:Start()
 	print(self.Name .. " has started.")
+	
+	self.BaseClass.Start(self)
 	
 	self:SpawnIce()
 end
@@ -18,29 +22,38 @@ function MINIGAME:Finish(timeLimit)
 	self:RemoveIce()
 	
 	print(self.Name .. " has finished.")
-	
-	--hook.Run("PlayerSelectSpawn", Entity(1))
 end
 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
-function MINIGAME:PlayerDeath(victim, inflictor, attacker)
-	timer.Simple(0.1, function()
-		local alive = 0
+function MINIGAME:HasRequirements(players, teams)
+	return teams > 1
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function MINIGAME:DoPlayerDeath(victim, inflictor, dmginfo)
+	timer.Simple(0, function()
+		self:RemovePlayer(victim)
 		
-		for k, player in pairs(self.players) do
-			if (IsValid(player) and player:Alive()) then
-				alive = alive +1
-			end
-		end
+		local won = self:AnnounceWin()
 		
-		if (alive <= 0) then
+		if (won) then
 			self:Finish()
-			self:AnnounceWin(victim)
 		end
 	end)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function MINIGAME:CanPlayerSuicide(player)
+	return false
 end
 
 ---------------------------------------------------------

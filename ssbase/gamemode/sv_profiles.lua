@@ -44,12 +44,6 @@ end
 function PLAYER_META:ProfileLoaded(res) 
 	local steamid = self:SteamID()
 	
-	self.storeEquipped = {}
-	
-	for i = 1, SS.STORE.SLOT.MAXIMUM do
-		self.storeEquipped[i] = {}
-	end
-
 	if res and res[1] then 
 		if res[2] then Error("Duplicate profile! Contact a developer! ("..steam..")") return end 
 		self.profile = res[1] 
@@ -139,7 +133,11 @@ end
 --------------------------------------------------
 
 function PLAYER_META:SetStoreItems(data)
-	self.storeItems = util.JSONToTable(data) or {}
+	if (!data or data == "" or data == "[]") then
+		self.storeItems = {}
+	else
+		self.storeItems = util.JSONToTable(data)
+	end
 end
 
 --------------------------------------------------
@@ -147,5 +145,13 @@ end
 --------------------------------------------------
 
 function PLAYER_META:SetEquipped(data)
-	self.storeEquipped = util.JSONToTable(data) or {}
+	if (!data or data == "" or data == "[]") then
+		self.storeEquipped = {}
+		
+		for i = 1, SS.STORE.SLOT.MAXIMUM do
+			self.storeEquipped[i] = {}
+		end
+	else
+		self.storeEquipped = util.JSONToTable(data) 
+	end
 end

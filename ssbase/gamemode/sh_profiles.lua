@@ -10,9 +10,9 @@ function SS.AddRank(id, name, color)
 	SS.Ranks[id] = {name=name, color=color} 
 end 
 
-SS.AddRank(100, "Owner", Color(79, 79, 79)) 
+SS.AddRank(100, "Owner", Color(39, 39, 39)) 
 SS.AddRank(50, "Admin", Color(212, 109, 109)) 
-SS.AddRank(20, "Dev", Color(115, 183, 205)) 
+SS.AddRank(20, "Developer", Color(115, 183, 205)) 
 SS.AddRank(1, "VIP", Color(212, 189, 98)) 
 SS.AddRank(0, "Regular", Color(0, 0, 0, 0)) 
 

@@ -25,8 +25,8 @@ surface.CreateFont("HUD_Timer", {font="Century Gothic", size=40, weight=1000})
 surface.CreateFont("HUD_Timer_Small", {font="Century Gothic", size=24, weight=1000}) 
 
 surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550}) 
-surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=800}) 
-surface.CreateFont("PLAYER_TEXT_BLUR", {font="Arvil Sans", size=120, weight=800, blursize=8, antialias=false}) 
+surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=400}) 
+surface.CreateFont("PLAYER_TEXT_BLUR", {font="Arvil Sans", size=120, weight=400, blursize=8, antialias=false}) 
 
 PLAYER_MASK = Material("skeyler/names/diagonals.png","noclamp smooth")
 
@@ -265,34 +265,40 @@ end
  
 function GM:PostDrawTranslucentRenderables()
 	for k, ply in pairs(player.GetAll()) do
-		if !ply:Alive() or ply == LocalPlayer() then return end
+		if (ply != LocalPlayer() and ply:Alive()) then
+			local index = ply:LookupBone("ValveBiped.Bip01_Head1")
 		
-		local index = ply:LookupBone("ValveBiped.Bip01_Head1")
-		
-		if (index and index > -1) then
-			local offset = Vector( 0, 0, 15 )
-			local ang = LocalPlayer():EyeAngles()
-			local pos = ply:GetBonePosition(index) + offset + ang:Up()
-		
-			ang:RotateAroundAxis( ang:Forward(), 90 )
-			ang:RotateAroundAxis( ang:Right(), 90 )
-		
-			local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
-			local a = 0
-			if(d <= 800) then
-				if((d-300)<0) then
-					a = 255
-				else
-					a = math.Round(math.min(255,((500-(d-300))/500)*255))
+			if (index and index > -1) then
+				local offset = Vector(0, 0, 15 )
+				local ang = LocalPlayer():EyeAngles()
+				local pos = ply:GetBonePosition(index) + offset + ang:Up()
+			
+				ang:RotateAroundAxis( ang:Forward(), 90 )
+				ang:RotateAroundAxis( ang:Right(), 90 )
+			
+				local d = (ply:GetPos()-LocalPlayer():GetPos()):Length()
+				local a = 0
+				if(d <= 800) then
+					if((d-300)<0) then
+						a = 255
+					else
+						a = math.Round(math.min(255,((500-(d-300))/500)*255))
+					end
 				end
-			end
-			if(a != 0) then
-				cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-					local n = ply:Nick()
-					draw.SimpleText( n, "PLAYER_TEXT_BLUR", 0, 0, Color(0,0,0,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-					draw.SimpleText( n, "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255)*180), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-					draw.SimpleText( n, "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
-				cam.End3D2D()
+				if(a != 0) then
+					ply.name_pixvis = ply.name_pixvis or util.GetPixelVisibleHandle()
+					
+					if (util.PixelVisible(ply:EyePos(), 16, ply.name_pixvis) > 0) then
+						cam.IgnoreZ(true)
+							cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.05 )
+								local n = ply:Nick()
+								draw.SimpleText( n, "PLAYER_TEXT_BLUR", 0, 0, Color(0,0,0,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+								draw.SimpleText( n, "PLAYER_TEXT", 4, 4, Color(0,0,0,(a/255)*180), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+								draw.SimpleText( n, "PLAYER_TEXT", 0, 0, Color(255,255,255,a), TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER )
+							cam.End3D2D()
+						cam.IgnoreZ(false)
+					end
+				end
 			end
 		end
 	end

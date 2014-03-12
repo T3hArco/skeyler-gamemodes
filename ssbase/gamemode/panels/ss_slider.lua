@@ -44,6 +44,15 @@ end
 --
 ---------------------------------------------------------
 
+function panel:SetMinMax(min, max)
+	self:SetMin(min)
+	self:SetMax(max)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function panel:SetValue(value)
 	value = math.Round(math.Clamp(tonumber(value) or 0, self:GetMin(), self:GetMax()), self.m_iDecimals)
 	
@@ -101,8 +110,8 @@ end
 
 function panel:PaintOver(w, h)
 	surface.DisableClipping(true)
-		draw.SimpleText(self:GetValue(), "ss.slider.text", self.Knob.x -1 +self.Knob:GetWide() /2 +1, self.Knob.y -11, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText(self:GetValue(), "ss.slider.text", self.Knob.x -1 +self.Knob:GetWide() /2, self.Knob.y -12, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(self:GetValue(), "ss.slider.text", self.Knob.x -1 +self.Knob:GetWide() /2 +1, self.Knob.y -9, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(self:GetValue(), "ss.slider.text", self.Knob.x -1 +self.Knob:GetWide() /2, self.Knob.y -10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	surface.DisableClipping(false)
 end
 
@@ -143,7 +152,13 @@ function util.SliderAndLabel(parent, text)
 		local w, h = self:GetSize()
 		
 		self.label:SetPos(0, h /2 -self.label:GetTall() /2)
-		self.slider:SetPos(w -(self.slider:GetWide() +(self.autoSize and 28 or 0)), h /2 -self.slider:GetTall() /2)
+
+		if (self.autoSize) then
+			self.slider:SetPos(w -(self.slider:GetWide() +28), h /2 -self.slider:GetTall() /2)
+		else
+			self.slider:SetWide(w -(self.label:GetWide() +8))
+			self.slider:SetPos(self.label:GetWide() +8, h /2 -self.slider:GetTall() /2)
+		end
 	end
 	
 	return base.slider, base

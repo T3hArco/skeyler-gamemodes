@@ -1,8 +1,10 @@
-include("shared.lua")
+ENT.Type = "anim"
+ENT.Base = "base_anim"
 
 ------------------------------------------------
 --
 ------------------------------------------------
 
-function ENT:Draw()
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "ID")
 end

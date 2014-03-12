@@ -12,6 +12,7 @@ AddCSLuaFile("modules/cl_minigame.lua")
 AddCSLuaFile("modules/cl_worldpanel.lua")
 AddCSLuaFile("modules/sh_leaderboard.lua")
 AddCSLuaFile("modules/cl_leaderboard.lua")
+AddCSLuaFile("modules/sh_sound.lua")
 
 include("shared.lua")
 include("player_class/player_lobby.lua")
@@ -27,6 +28,8 @@ include("modules/sh_minigame.lua")
 include("modules/sv_minigame.lua")
 include("modules/sh_leaderboard.lua")
 include("modules/sv_leaderboard.lua")
+include("modules/sv_elevator.lua")
+include("modules/sh_sound.lua")
 
 --------------------------------------------------
 --
@@ -46,12 +49,7 @@ function GM:InitPostEntity()
 			end
 		end
 	end
-	
-	--local pokerTable = ents.Create("poker_table")
---	pokerTable:SetPos(Vector(-1193.461914, -9.690007, 176.031250))
-	--pokerTable:SetAngles(Angle(0, 89.546 *2, 0.000))
-	--pokerTable:Spawn()
-	
+
 	local slotMachines = ents.FindByClass("prop_physics_multiplayer")
 	
 	for k, entity in pairs(slotMachines) do
@@ -85,6 +83,8 @@ function GM:PlayerInitialSpawn(player)
 		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
 			SS.Lobby.LeaderBoard.Network(i, player)
 		end
+		
+		SS.Lobby.Minigame:UpdateScreen(player)
 	end)
 end
 
@@ -95,11 +95,53 @@ end
 function GM:PlayerSpawn(player)
 	self.BaseClass:PlayerSpawn(player)
 	
-	--self:InitSpeed(ply)
-	-- ply:SetRunSpeed(300)
-	-- ply:SetWalkSpeed(300)
-	
 	player:SetJumpPower(205)
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:PlayerLoadout(player)
+	player:StripWeapons()
+	player:RemoveAllAmmo()
+
+	SS.Lobby.Minigame:CallWithPlayer("PlayerLoadout", player)
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:IsSpawnpointSuitable( pl, spawnpointent, bMakeSuitable )
+
+	local Pos = spawnpointent:GetPos()
+	
+	-- Note that we're searching the default hull size here for a player in the way of our spawning.
+	-- This seems pretty rough, seeing as our player's hull could be different.. but it should do the job
+	-- (HL2DM kills everything within a 128 unit radius)
+	local Ents = ents.FindInBox( Pos + Vector( -14, -14, 0 ), Pos + Vector( 14, 14, 64 ) )
+	
+	if ( pl:Team() == TEAM_SPECTATOR ) then return true end
+	
+	local Blockers = 0
+	
+	for k, v in pairs( Ents ) do
+		if ( IsValid( v ) && v:GetClass() == "player" && v:Alive() ) then
+		
+			Blockers = Blockers + 1
+			
+			if ( bMakeSuitable ) then
+				v:Kill()
+			end
+			
+		end
+	end
+
+	if ( bMakeSuitable ) then return true end
+	if ( Blockers > 0 ) then return false end
+	return true
+
 end
 
 --------------------------------------------------
@@ -111,21 +153,21 @@ function GM:PlayerSelectSpawn(player, minigame)
 	
 	if (player:Team() > TEAM_READY) then
 		if (minigame) then
-			spawnPoint = minigame:GetSpawnPoints()
+			spawnPoint = minigame:GetSpawnPoints(player)
 		else
 			spawnPoint = self.spawnPoints
 		end
 	end
-	
+
 	for i = 1, #spawnPoint do
 		local entity = spawnPoint[i]
-		local suitAble = self:IsSpawnpointSuitable(player, entity, i == #spawnPoint)
-		
+		local suitAble = self:IsSpawnpointSuitable(player, entity, false)
+
 		if (suitAble) then
 			return entity
 		end
 	end
-	
+-- IS THIS SHIT SPAWNING THE PLAYER AT THE QUEUE AGAIN????
 	spawnPoint = table.Random(spawnPoint)
 	
 	return spawnPoint
@@ -136,31 +178,67 @@ end
 --------------------------------------------------
 
 function GM:KeyPress(player, key)
-	local trace = player:EyeTrace(200)
-	
-	if (IsValid(trace.Entity) and trace.Entity:IsPlayer()) then
-		local canSlap = player:CanSlap()
+	if (key == IN_USE) then
+		local trace = player:EyeTrace(84)
 		
-		if (canSlap) then
-			player:Slap(trace.Entity)
+		if (IsValid(trace.Entity) and trace.Entity:IsPlayer()) then
+			local canSlap = player:CanSlap(trace.Entity)
+			
+			if (canSlap) then
+				player:Slap(trace.Entity)
+			end
 		end
 	end
+	
+	SS.Lobby.Minigame:CallWithPlayer("KeyPress", player, key)
 end
 
 --------------------------------------------------
 --
 --------------------------------------------------
 
-function GM:PlayerDeath(victim, inflictor, attacker)
-	local minigame = SS.Lobby.Minigame:GetCurrentGame()
+function GM:DoPlayerDeath(victim, inflictor, dmginfo)
+	SS.Lobby.Minigame:CallWithPlayer("DoPlayerDeath", victim, inflictor, dmginfo)
 	
-	minigame = SS.Lobby.Minigame:Get(minigame)
+	return self.BaseClass:DoPlayerDeath(victim, inflictor, dmginfo)
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:CanPlayerSuicide(player)
+	local bool = SS.Lobby.Minigame:CallWithPlayer("CanPlayerSuicide", player)
+
+	if (bool != nil) then
+		return bool
+	end
 	
-	if (minigame) then
-		local hasPlayer = minigame:HasPlayer(victim)
+	return true
+end
+
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:EntityKeyValue(entity, key, value)
+	if (IsValid(entity)) then
+		local class = entity:GetClass()
 		
-		if (hasPlayer) then
-			SS.Lobby.Minigame.Call("PlayerDeath", victim, inflictor, attacker)
+		if (class == "func_door" and key == "hammerid") then
+			entity.id = tonumber(value)
 		end
 	end
 end
+
+-- dev
+concommand.Add("poo",function()
+RunConsoleCommand("bot")
+timer.Simple(0,function()
+for k, bot in pairs(player.GetBots()) do
+bot:SetTeam(math.random(TEAM_RED,TEAM_ORANGE))
+bot:SetPos(Vector(-607.938110, -447.018799, 16.031250))
+bot:Freeze(true)
+end
+end)
+end)
