@@ -31,6 +31,15 @@ function GM:InitPostEntity()
 	self.SpawnPoints = ents.FindByClass("info_player_start")
 	self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass("gmod_player_start") )	
 	
+	timer.Simple(5,function()
+		socket.SetupHost("192.168.1.152", 40001)
+		
+		timer.Simple(2,function()
+			socket.AddServer("192.168.1.152", 40000)
+		end)
+	end)
+	
+	self.ServerID = 1
 end
 
 function GM:Think()

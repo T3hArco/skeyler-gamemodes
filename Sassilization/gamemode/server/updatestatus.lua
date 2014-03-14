@@ -1,75 +1,59 @@
-local function GeneratePassword()
-	
-	local str = ""
-	
-	while string.len(str) < 6 do
-		
-		local int = math.random(97,122)
-		local stradd = string.char(int)
-		str = str .. stradd
-		
-	end
-	
-	str = "~_~"..str
-	
-	GAMEMODE.password = str
-	
-	return str
-	
+LOBBY_IP = "192.168.1.152"
+LOBBY_PORT = 40000
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function GM:SocketConnected(ip, port, buffer)
+	local id = self.ServerID
+	local map = game.GetMap()
+
+	socket.Send(LOBBY_IP, LOBBY_PORT, "smap", function(buffer)
+		buffer:WriteShort(id)
+		buffer:WriteString(map)
+	end)
 end
 
-function ResetPassword()
-	
-	local pass = GeneratePassword()
-	
-	MsgN("Changing the server's Password to: "..pass)
-	
-	RunConsoleCommand("sv_password",pass)
-	
-	libsass.mysqlDatabase:Query("UPDATE "..DB_SERVER_TABLE.." SET password=\'"..pass.."\' WHERE ip=\'"..HOSTIP.."\' AND port=\'"..HOSTPORT.."\'" )
-	
-end
+---------------------------------------------------------
+--
+---------------------------------------------------------
 
-function ResetServerStatus()
-	
-	for _, pl in pairs( player.GetAll() ) do
-		
-		pl:ConCommand("connect "..LOBBYIP.. ":"..LOBBYPORT)
-		
-	end
-	
-	ResetPassword()
-	libsass.mysqlDatabase:Query("UPDATE "..DB_SERVER_TABLE.." SET status=\'ready\' WHERE ip=\'"..HOSTIP.."\' AND port=\'"..HOSTPORT.."\'" )
-	tcpSend( LOBBYIP, DATAPORT, tostring("UPDATESTATUS:"..Json.Encode({SERVERID,"ready",game.GetMap()}).."\n") )
-	
-end
-
--- send every 12 seconds
 function GM:UpdateScoreboard()
-	local data = ""
+	local data = {server = self.ServerID}
 	local empires = empire.GetAll()
 	
-	for id, empire in pairs(empires) do
+	for k, empire in pairs(empires) do
 		if (ValidEmpire(empire)) then
+			local id = empire:GetColorID()
 			local name = empire:GetName()
 			local cities = empire:GetCities()
 			local food = empire:GetFood()
 			local iron = empire:GetIron()
 			local gold = empire:GetGold()
 
-			data = data .. "|" .. "id=" .. id .. ",n=" .. name .. ",c=" .. cities .. ",f=" .. food .. ",i=" .. iron .. ",g=" .. gold
+			table.insert(data, {id = id, name = name, cities = cities, food = food, iron = iron, gold = gold})
 		end
 	end
 
+	data = von.serialize(data)
 	data = util.Compress(data)
-	
-	--socket.Send(ip, port, "sassinfo", function(buffer)
-	--	buffer:WriteLong(string.len(data))
-	--	buffer:WriteData(data)
-	--end)
+
+	socket.Send(LOBBY_IP, LOBBY_PORT, "sif", function(buffer)
+		buffer:Write(data)
+	end)
 end
 
--- send every 20 seconds
+timer.Create("SA.UpdateScoreboard", 10, 0, function()
+	if (GAMEMODE.Started) then
+		GAMEMODE:UpdateScoreboard()
+	end
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function GM:UpdateMinimap()
 	local data = ""
 	local empires = empire.GetAll()
@@ -78,9 +62,12 @@ function GM:UpdateMinimap()
 	local saveTable = world:GetSaveTable()
 	local mins, maxs = saveTable.m_WorldMins, saveTable.m_WorldMaxs
 	
-	for id, empire in pairs(empires) do
+	local x = math.abs(maxs.x)
+	local y = math.abs(mins.y)
+
+	for k, empire in pairs(empires) do
 		if (ValidEmpire(empire)) then
-			data = data .. "id=" .. id .. "u{"
+			data = data .. "id=" .. empire:GetColorID() .. "u{"
 			
 			local units = empire:GetUnits()
 			local buildings = empire:GetBuildings()
@@ -88,16 +75,16 @@ function GM:UpdateMinimap()
 			for k, unit in pairs(units) do
 				if (unit and unit:IsValid()) then
 					local position = unit:GetPos()
-					local direction = unit.targetPosition or vector_origin
+					local direction = unit.targetPosition or position
 					
-					position.x = math.Round((position.x /maxs.x) *359)
-					position.y = math.Round((position.y /maxs.y) *360)
+					local positionX = math.Round((math.abs(position.x) /x) *359)
+					local positionY = math.Round((math.abs(position.y) /y) *360)
 					
 					local size = math.Round(math.ceil(unit.OBBMaxs.x *0.8))
-					local directionX = math.Round((direction.x /maxs.x) *359)
-					local directionY = math.Round((direction.y /maxs.y) *359)
-					
-					data = data .. "|x=" .. position.x .. ",y=" .. position.y .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
+					local directionX = math.Round((math.abs(direction.x) /x) *359)
+					local directionY = math.Round((math.abs(direction.y) /y) *360)
+
+					data = data .. "|x=" .. positionX .. ",y=" .. positionY .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
 				end
 			end
 			
@@ -107,12 +94,12 @@ function GM:UpdateMinimap()
 				if (building and building:IsValid()) then
 					local position = building:GetPos()
 					
-					position.x = math.Round((position.x /maxs.x) *359)
-					position.y = math.Round((position.y /maxs.y) *360)
+					local positionX = math.Round((math.abs(position.x) /x) *359)
+					local positionY = math.Round((math.abs(position.y) /y) *360)
 					
 					local size = math.Round(math.ceil(building:OBBMaxs().x *0.4))
 					
-					data = data .. "|x=" .. position.x .. ",y=" .. position.y .. ",s=" .. size
+					data = data .. "|x=" .. positionX .. ",y=" .. positionY .. ",s=" .. size
 				end
 			end
 		end
@@ -120,48 +107,39 @@ function GM:UpdateMinimap()
 		data = data .. "}"
 	end
 	
-	--[[
-	data = data .. "id=" .. 2 .. "u{"
-	data = data .. "}b{"
-	data = data .. "}"
-	
-	data = data .. "id=" .. 3 .. "u{"
-	data = data .. "}b{"
-	data = data .. "}"
-	
-	local s=string.Explode("id=",data)
-	if (s[1] == "") then table.remove(s, 1) end
-	
-	for k, v in pairs(s) do
-		print("")
-		print("id:", string.sub(v, 1, 1))
-		print("")
-		local c = string.match(v, "u{(.*)}b")
-		
-		print("units:")
-		print(c)
-		
-		local j = string.Explode("|", c)
-		PrintTable(j)
-		
-		local g = string.match(v, "b{(.*)}")
-		
-		print("")
-		print("buildings:")
-		print(g)
-		
-		local h = string.Explode("|", g)
-		
-	end
-	]]
-	
 	data = util.Compress(data)
 	
---	socket.Send(ip, port, "sassmap", function(buffer)
---		buffer:WriteLong(string.len(data))
---		buffer:WriteData(data)
---	end)
+	socket.Send(LOBBY_IP, LOBBY_PORT, "smp", function(buffer)
+		buffer:WriteShort(self.ServerID)
+		buffer:Write(data)
+	end)
 end
+
+timer.Create("SA.UpdateMinimap", 20, 0, function()
+	if (GAMEMODE.Started) then
+		GAMEMODE:UpdateMinimap()
+	end
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+socket.AddCommand("spl", function(sock, ip, port, buffer, errorCode)
+	local _, data = buffer:Read(buffer:Size())
+	
+	data = util.Decompress(data)
+	data = von.deserialize(data)
+	
+	SA.AuthedPlayers = data
+end)
+
+
+
+
+
+
+
 
 --[[ THIS IS VERY OLD CODE
 function GM:UpdateScoreboard()
