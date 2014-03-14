@@ -4,8 +4,10 @@
 --	By Sassafrass / Spacetech / LuaPineapple
 ----------------------------------------
 
+/*
 local LOADED = game.SinglePlayer()
 local loadingScreen
+
 
 surface.CreateFont("Loading", {
 	font = "coolvetica",
@@ -13,32 +15,53 @@ surface.CreateFont("Loading", {
 	weight = 500
 })
 
-net.Receive( "PlayerLoadingFinish", function()
-	local text = net.ReadString()
-	LOADED = true
-	self.Text = text
-end)
-
-net.Receive( "PlayerLoadingTime", function()
-	local time = net.ReadInt()
-	local string = "The game will start in: " .. math.Round(time - CurTime()) .. " seconds."
-	self.Timer = string
-end)
-
-net.Receive( "PlayerLoadingList", function()
-	local players = net.ReadTable()
-	local string = "Waiting for all players to load: "
-	for k,v in pairs(players) do
-		if k == (#players - 1) then
-			string = string + (v[1] .. " & ")
-		elseif k != #players then
-			string = string + (v[1] .. ", ")
-		elseif k == #players then
-			string = string + (v[1] .. ".")
-		end
+net.Receive( "load.empires", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "Empires" )
 	end
-	self.Text = string
+end )
+
+net.Receive( "load.structs.walls", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "City Walls" )
+	end
+end )
+
+net.Receive( "load.structs.houses", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "City Houses" )
+	end
+end )
+
+net.Receive( "load.structs.ownership", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "Building Ownership" )
+	end
+end )
+
+net.Receive( "load.units", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "Units" )
+	end
+end )
+
+net.Receive( "load.territories", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "Territories" )
+	end
+end )
+
+net.Receive( "loaded", function()
+	if (not LOADED) then
+		loadingScreen:AddMessage( "Loaded Successfully" )
+		LOADED = true
+	end
 end)
+
+if (LOADED) then
+	loadingScreen = nil
+	return
+end
 
 local PANEL = {}
 
@@ -51,10 +74,7 @@ function PANEL:Init()
 	self.alpha = 255
 	self:MouseCapture( true )
 	self:DoModal()
-
-	self.Text = "Waiting for all players to load: "
-	self.Timer = "The game will start in: 0 seconds."
-	self.startTime = 0
+	self.messages = {"Loading..."}
 	
 end
 
@@ -66,8 +86,18 @@ function PANEL:Think()
 		self:SetSize( sw, sh )
 	end
 	
+	if (LOADED and self.alpha <= 25) then
+		self:Remove()
+		loadingScreen = nil
+	end
+	
 end
 
+function PANEL:AddMessage( msg )
+	
+	table.insert( self.messages, 1, msg )
+	
+end
 
 function PANEL:Paint()
 	
@@ -83,24 +113,19 @@ function PANEL:Paint()
 			self.alpha = Lerp( 4*FrameTime(), self.alpha, 0 )
 		end
 	end
-
-	if self.alpha == 0 then
-		self:Remove()
-	end
 	
 	surface.SetFont( "Loading" )
 	surface.SetTextColor( 255, 255, 255, math.max(self.alpha-(56/self.alpha)*self.alpha,0) )
 	
-	local width, height = surface.GetTextSize( self.Text )
-	surface.SetTextPos( w/2 - width/2, h/2 )
-	surface.DrawText( self.Text )
-
-	local width, height = surface.GetTextSize( self.Timer )
-	surface.SetTextPos( w/2 - width/2, h/2 - height )
-	surface.DrawText( self.Timer )
+	for k, v in ipairs( self.messages ) do
+		local width, height = surface.GetTextSize( v )
+		surface.SetTextPos( w - width - 10, h - (height+5)*k - 10 )
+		surface.DrawText( v )
+	end
 	
 end
 
 vgui.Register( "LoadingScreen", PANEL, "Panel" )
 
 loadingScreen = vgui.Create( "LoadingScreen" )
+*/

@@ -15,9 +15,4 @@ if SA.DEV then
 	SA.START_RES_FOOD = 300
 	SA.START_RES_IRON = 300
 end
-
 SA.MAX_ENTITIES = 1500   --Last resort effort to prevent Edict crashes
-
-SA.AuthedPlayers = {}
-SA.LoadingPlayers = {}
-SA.StartTime = 0

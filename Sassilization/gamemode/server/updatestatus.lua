@@ -44,14 +44,6 @@ function ResetServerStatus()
 	
 end
 
---socket.Connect(ip, port, password)
-
-socket.SetupHost("62.220.184.236", 58015)
-socket.AddAllowedClient("62.220.184.236")
-socket.AddAllowedClient("192.168.1.1")
-concommand.Add("cn",function()
-socket.Connect("62.220.184.236", 58017)
-end)
 -- send every 12 seconds
 function GM:UpdateScoreboard()
 	local data = ""
@@ -70,10 +62,11 @@ function GM:UpdateScoreboard()
 	end
 
 	data = util.Compress(data)
-
-	socket.Send("62.220.184.236", 58017, "sassinfo", function(buffer)
-		buffer:Write(data)
-	end)
+	
+	--socket.Send(ip, port, "sassinfo", function(buffer)
+	--	buffer:WriteLong(string.len(data))
+	--	buffer:WriteData(data)
+	--end)
 end
 
 -- send every 20 seconds
@@ -85,9 +78,6 @@ function GM:UpdateMinimap()
 	local saveTable = world:GetSaveTable()
 	local mins, maxs = saveTable.m_WorldMins, saveTable.m_WorldMaxs
 	
-	local x = math.abs(maxs.x)
-	local y = math.abs(mins.y)
-
 	for id, empire in pairs(empires) do
 		if (ValidEmpire(empire)) then
 			data = data .. "id=" .. id .. "u{"
@@ -98,16 +88,16 @@ function GM:UpdateMinimap()
 			for k, unit in pairs(units) do
 				if (unit and unit:IsValid()) then
 					local position = unit:GetPos()
-					local direction = unit.targetPosition or position
+					local direction = unit.targetPosition or vector_origin
 					
-					local positionX = math.Round((math.abs(position.x) /x) *359)
-					local positionY = math.Round((math.abs(position.y) /y) *360)
+					position.x = math.Round((position.x /maxs.x) *359)
+					position.y = math.Round((position.y /maxs.y) *360)
 					
 					local size = math.Round(math.ceil(unit.OBBMaxs.x *0.8))
-					local directionX = math.Round((math.abs(direction.x) /x) *359)
-					local directionY = math.Round((math.abs(direction.y) /y) *360)
-
-					data = data .. "|x=" .. positionX .. ",y=" .. positionY .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
+					local directionX = math.Round((direction.x /maxs.x) *359)
+					local directionY = math.Round((direction.y /maxs.y) *359)
+					
+					data = data .. "|x=" .. position.x .. ",y=" .. position.y .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
 				end
 			end
 			
@@ -117,12 +107,12 @@ function GM:UpdateMinimap()
 				if (building and building:IsValid()) then
 					local position = building:GetPos()
 					
-					local positionX = math.Round((math.abs(position.x) /x) *359)
-					local positionY = math.Round((math.abs(position.y) /y) *360)
+					position.x = math.Round((position.x /maxs.x) *359)
+					position.y = math.Round((position.y /maxs.y) *360)
 					
 					local size = math.Round(math.ceil(building:OBBMaxs().x *0.4))
 					
-					data = data .. "|x=" .. positionX .. ",y=" .. positionY .. ",s=" .. size
+					data = data .. "|x=" .. position.x .. ",y=" .. position.y .. ",s=" .. size
 				end
 			end
 		end
@@ -130,11 +120,47 @@ function GM:UpdateMinimap()
 		data = data .. "}"
 	end
 	
+	--[[
+	data = data .. "id=" .. 2 .. "u{"
+	data = data .. "}b{"
+	data = data .. "}"
+	
+	data = data .. "id=" .. 3 .. "u{"
+	data = data .. "}b{"
+	data = data .. "}"
+	
+	local s=string.Explode("id=",data)
+	if (s[1] == "") then table.remove(s, 1) end
+	
+	for k, v in pairs(s) do
+		print("")
+		print("id:", string.sub(v, 1, 1))
+		print("")
+		local c = string.match(v, "u{(.*)}b")
+		
+		print("units:")
+		print(c)
+		
+		local j = string.Explode("|", c)
+		PrintTable(j)
+		
+		local g = string.match(v, "b{(.*)}")
+		
+		print("")
+		print("buildings:")
+		print(g)
+		
+		local h = string.Explode("|", g)
+		
+	end
+	]]
+	
 	data = util.Compress(data)
 	
-	socket.Send("62.220.184.236", 58017, "sassmap", function(buffer)
-		buffer:Write(data)
-	end)
+--	socket.Send(ip, port, "sassmap", function(buffer)
+--		buffer:WriteLong(string.len(data))
+--		buffer:WriteData(data)
+--	end)
 end
 
 --[[ THIS IS VERY OLD CODE

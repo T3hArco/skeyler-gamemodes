@@ -29,10 +29,20 @@ MAPS.List = {
 --end
 
 function MAPS.GetNextMap()
+	local PLAYERS = #player.GetAll()
 	local CURRENTMAP = game.GetMap()
-	local NEXTMAP = MAPS.List[math.random(1, table.Count(MAPS.List))]
-	while NEXTMAP == CURRENTMAP do
-		NEXTMAP = MAPS.List[math.random(1, table.Count(MAPS.List))]
+	local NEXTMAP = MAPS.List[1]
+	local num = 0
+	for i=1, #MAPS.List do
+		if CURRENTMAP == MAPS.List[i] then
+			NEXTMAP = MAPS.List[i+1]
+			num = i+1
+			if num > #MAPS.List then
+				NEXTMAP = MAPS.List[1]
+				num = 1
+			end
+			break
+		end
 	end
 	return NEXTMAP
 end
