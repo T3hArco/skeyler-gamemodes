@@ -1,5 +1,4 @@
--- make this a local
-storedTriggers = storedTriggers or {}
+local storedTriggers = {}
 
 local colorTable = {
 	Color(200, 60, 60, 255),     -- Red

@@ -1,5 +1,4 @@
--- make this a local
-storedTriggers = storedTriggers or {}
+local storedTriggers = {}
 
 ---------------------------------------------------------
 --
@@ -7,6 +6,17 @@ storedTriggers = storedTriggers or {}
 
 function SS.Lobby.Link:AddServerTrigger(id)
 	storedTriggers[id] = {players = {}, queue = {}, sending = false, map = nil}
+	
+	-- FIX THIS LATER
+	if (id == 1) then
+		storedTriggers[id].ip = "208.115.236.184"
+		storedTriggers[id].dataPort = 40001
+		storedTriggers[id].connectPort = 27015
+	elseif (id == 2) then
+		storedTriggers[id].ip = "208.115.236.184"
+		storedTriggers[id].dataPort = 40002
+		storedTriggers[id].connectPort = 27016
+	end
 end
 
 ---------------------------------------------------------
@@ -214,7 +224,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 								end
 							end
 							
-							socket.Send("192.168.1.152", 40001, "spl", function(buffer)
+							socket.Send(data.ip, data.dataPort, "spl", function(buffer)
 								authed = von.serialize(authed)
 								authed = util.Compress(authed)
 								
@@ -227,7 +237,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 										local player = send[i]
 										
 										if (IsValid(player)) then
-											player:SendLua("LocalPlayer():ConCommand(\"connect 62.220.184.22:27016\")")
+											player:SendLua("LocalPlayer():ConCommand(\"connect " .. tostring(data.ip) .. ":" .. data.connectPort .. \")")
 										end
 									end
 									
