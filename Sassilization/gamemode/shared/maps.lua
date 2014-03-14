@@ -7,7 +7,11 @@
 
 MAPS = {}
 MAPS.List = {
-	"sa_orbit",
+	"sa_orbit"
+}
+
+/*
+	Maps currently removed until we get their minimaps working properly.
 	"sa_bridges",
 	"sa_olympia",
 	"sa_surf_remnants",
@@ -20,7 +24,7 @@ MAPS.List = {
 	"sa_highland",
 	"sa_arcticsummit",
 	"sa_exodus"
-}
+*/
 
 --for _, map in pairs( MAPS.List ) do
 	
@@ -31,8 +35,10 @@ MAPS.List = {
 function MAPS.GetNextMap()
 	local CURRENTMAP = game.GetMap()
 	local NEXTMAP = MAPS.List[math.random(1, table.Count(MAPS.List))]
+	/*
 	while NEXTMAP == CURRENTMAP do
 		NEXTMAP = MAPS.List[math.random(1, table.Count(MAPS.List))]
 	end
+	*/
 	return NEXTMAP
 end

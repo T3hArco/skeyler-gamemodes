@@ -137,7 +137,7 @@ function GM:RestartGame(NextMap)
 	end
 
 	for k,v in pairs(player.GetAll()) do
-		v:ConCommand("connect 208.115.236.184:40000")
+		v:ConCommand("connect 208.115.236.184:27017")
 	end
 	
 	game.ConsoleCommand( "changelevel "..NextMap.."\n" )
