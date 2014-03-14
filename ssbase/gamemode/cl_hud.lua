@@ -203,64 +203,68 @@ function GM:HUDPaint()
 	end 
 
 	/* Right HUD (Ammo) */
-	surface.SetDrawColor(255, 255, 255, self.HudAlpha)
-	surface.SetMaterial(HUD_RIGHT_CIRCLE) 
-	surface.DrawTexturedRect(w -(256 -46), h-173, 256, 256) 
-	
-	surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
-	surface.SetMaterial(HUD_RIGHT) 
-	surface.DrawTexturedRect(w -(256 +131), h-106, 256, 64) 
-
-	Text = "" 
 	wep = LocalPlayer():GetActiveWeapon() 
-	if !wep or !wep:IsValid() or !wep.Clip1 or wep:Clip1() == -1 or GetPrimaryClipSize(wep) == 0 then 
-		if GetPrimaryClipSize(wep) then 
-			Text = tostring(GetPrimaryClipSize(wep)).." / "
-		else 
-			Text = "0 / " 
-		end 
-		frac = math.Approach(frac, 1, 0.01)
-		if wep and wep:IsValid() then 
-			Text = Text..tostring(LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType())) 
-		else 
-			Text = Text.."0"
-		end 
-	else 
-		Text = tostring(wep:Clip1()).." / "..tostring(LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType()))
-		frac = math.Approach(frac, wep:Clip1()/GetPrimaryClipSize(wep), 0.01) 
-	end 
-
-	render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, true)
-	surface.SetDrawColor(255, 255, 255, self.HudAlpha*0.85) 
-	surface.SetMaterial(HUD_AMMO) 
-	surface.DrawTexturedRect(w -(256 +108), h-87, 256, 16)
-	render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, false)
-
-	surface.SetFont("HUD_CENTER") 
-	surface.SetTextColor(255, 255, 255, self.HudAlpha) 
-	surface.SetTextPos(w-364, h-116) 
-	surface.DrawText(Text) 
 	
-	Text = "a"
-	if LocalPlayer():Alive() and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().GetHoldType and weaponImgs[LocalPlayer():GetActiveWeapon():GetHoldType()] then 
-		Text = weaponImgs[LocalPlayer():GetActiveWeapon():GetHoldType()] 
-	end 
-	surface.SetFont("HUD_WEPS") 
-	tw, th = surface.GetTextSize(Text) 
-	surface.SetTextColor(35, 35, 35, self.HudAlpha) 
-	surface.SetTextPos(w-125-tw/2, h-95-th/2)
-	surface.DrawText(Text) 
-
-	Text = "None" 
-	if LocalPlayer():Alive() and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().GetPrintName then 
-		Text = LocalPlayer():GetActiveWeapon():GetPrintName() 
-	end 
-
-	surface.SetFont("HUD_CENTER") 
-	surface.SetTextColor(35, 35, 35, self.HudAlpha) 
-	tw, th = surface.GetTextSize(Text) 
-	surface.SetTextPos(w-125-tw/2, h-60-th/2) 
-	surface.DrawText(Text) 
+	if (IsValid(wep)) then
+		surface.SetDrawColor(255, 255, 255, self.HudAlpha)
+		surface.SetMaterial(HUD_RIGHT_CIRCLE) 
+		surface.DrawTexturedRect(w -(256 -46), h-173, 256, 256) 
+		
+		surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
+		surface.SetMaterial(HUD_RIGHT) 
+		surface.DrawTexturedRect(w -(256 +131), h-106, 256, 64) 
+		
+		Text = "" 
+		
+		if !wep or !wep:IsValid() or !wep.Clip1 or wep:Clip1() == -1 or GetPrimaryClipSize(wep) == 0 then 
+			if GetPrimaryClipSize(wep) then 
+				Text = tostring(GetPrimaryClipSize(wep)).." / "
+			else 
+				Text = "0 / " 
+			end 
+			frac = math.Approach(frac, 1, 0.01)
+			if wep and wep:IsValid() then 
+				Text = Text..tostring(LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType())) 
+			else 
+				Text = Text.."0"
+			end 
+		else 
+			Text = tostring(wep:Clip1()).." / "..tostring(LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType()))
+			frac = math.Approach(frac, wep:Clip1()/GetPrimaryClipSize(wep), 0.01) 
+		end 
+		
+		render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, true)
+		surface.SetDrawColor(255, 255, 255, self.HudAlpha*0.85) 
+		surface.SetMaterial(HUD_AMMO) 
+		surface.DrawTexturedRect(w -(256 +108), h-87, 256, 16)
+		render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, false)
+		
+		surface.SetFont("HUD_CENTER") 
+		surface.SetTextColor(255, 255, 255, self.HudAlpha) 
+		surface.SetTextPos(w-364, h-116) 
+		surface.DrawText(Text) 
+		
+		Text = "a"
+		if LocalPlayer():Alive() and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().GetHoldType and weaponImgs[LocalPlayer():GetActiveWeapon():GetHoldType()] then 
+			Text = weaponImgs[LocalPlayer():GetActiveWeapon():GetHoldType()] 
+		end 
+		surface.SetFont("HUD_WEPS") 
+		tw, th = surface.GetTextSize(Text) 
+		surface.SetTextColor(35, 35, 35, self.HudAlpha) 
+		surface.SetTextPos(w-125-tw/2, h-95-th/2)
+		surface.DrawText(Text) 
+		
+		Text = "None" 
+		if LocalPlayer():Alive() and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().GetPrintName then 
+			Text = LocalPlayer():GetActiveWeapon():GetPrintName() 
+		end 
+		
+		surface.SetFont("HUD_CENTER") 
+		surface.SetTextColor(35, 35, 35, self.HudAlpha) 
+		tw, th = surface.GetTextSize(Text) 
+		surface.SetTextPos(w-125-tw/2, h-60-th/2) 
+		surface.DrawText(Text) 
+	end
 end 
  
 function GM:PostDrawTranslucentRenderables()

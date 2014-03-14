@@ -121,7 +121,7 @@ function object:__Paint(screen)
 	if (self.hovered) then
 		if (input.IsKeyDown(KEY_E)) then
 			if (!self.triggered) then
-				self:OnMousePressed()
+				self:OnMousePressed(screen)
 				
 				self.triggered = true
 			end

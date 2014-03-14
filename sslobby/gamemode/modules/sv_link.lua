@@ -6,7 +6,7 @@ storedTriggers = storedTriggers or {}
 ---------------------------------------------------------
 
 function SS.Lobby.Link:AddServerTrigger(id)
-	storedTriggers[id] = {players = {}, queue = {}, sending = false}
+	storedTriggers[id] = {players = {}, queue = {}, sending = false, map = nil}
 end
 
 ---------------------------------------------------------
@@ -29,40 +29,48 @@ util.AddNetworkString("ss.lkngtpl")
 util.AddNetworkString("ss.lkngtplr")
 
 function SS.Lobby.Link:AddQueue(id, player)
+	local screen = SS.Lobby.Link:GetScreenByID(id)
 	
-	-- Remove the player from a previous screen.
-	for id2, data in pairs(storedTriggers) do
-		if (id != id2) then
-			SS.Lobby.Link:RemoveQueue(id2, player)
+	if (screen:GetStatus() != STATUS_LINK_UNAVAILABLE) then
+		-- Remove the player from a previous screen.
+		for id2, data in pairs(storedTriggers) do
+			if (id != id2) then
+				SS.Lobby.Link:RemoveQueue(id2, player)
+			end
 		end
-	end
-	
-	local data = storedTriggers[id]
-	
-	if (data) then
-		local hasPlayer = self:HasQueue(id, player)
 		
-		if (!hasPlayer) then
-			table.insert(data.queue, player)
+		local data = storedTriggers[id]
+		
+		if (data) then
+			local hasPlayer = self:HasQueue(id, player)
 			
-			local steamID = player:SteamID()
-			
-			net.Start("ss.lkngtpl")
-				net.WriteUInt(id, 8)
-				net.WriteString(steamID)
-			net.Broadcast()
-			
-			print("Added player '" .. tostring(player) .. "' from trigger: " .. id .. ".")
+			if (!hasPlayer) then
+				table.insert(data.queue, player)
+				
+				local steamID = player:SteamID()
+				
+				net.Start("ss.lkngtpl")
+					net.WriteUInt(id, 8)
+					net.WriteString(steamID)
+				net.Broadcast()
+				
+				print("Added player '" .. tostring(player) .. "' from trigger: " .. id .. ".")
+			end
+		else
+			print("Missing server trigger: " .. id .. "??")
 		end
-	else
-		print("Missing server trigger: " .. id .. "??")
 	end
 end
 
 net.Receive("ss.lkngtplr", function(bits, player)
 	local id = net.ReadUInt(8)
-	
-	SS.Lobby.Link:AddQueue(id, player)
+	local hasQueue = SS.Lobby.Link:HasQueue(id, player)
+
+	if (!hasQueue) then
+		SS.Lobby.Link:AddQueue(id, player)
+	else
+		SS.Lobby.Link:RemoveQueue(id, player)
+	end
 end)
 
 ---------------------------------------------------------
@@ -132,30 +140,6 @@ end
 --
 ---------------------------------------------------------
 
-function SS.Lobby.Link:GetTriggerByID(id)
-	local triggers = self:GetTriggers()
-	
-	for k, trigger in pairs(triggers) do
-		if (trigger.id == id) then
-			return trigger
-		end
-	end
-end
-
----------------------------------------------------------
---
----------------------------------------------------------
-
-function SS.Lobby.Link:GetTriggers()
-	local triggers = ents.FindByClass("trigger_server_sass")
-	
-	return triggers
-end
-
----------------------------------------------------------
---
----------------------------------------------------------
-
 function SS.Lobby.Link:GetScreens()
 	local screens = ents.FindByClass("info_sass_screen")
 	
@@ -199,29 +183,63 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							for i = 1, count do
 								local player = data.queue[i]
 								
-								player:Freeze(true)
+								if (IsValid(player)) then
+									player:Freeze(true)
+								end
 							end
-					
+							
+							local send = {}
+
+							print("SENDING")
+							
+							for i = 1, count do
+								local player = data.queue[i]
+	
+								if (IsValid(player)) then
+								
+									-- priority on vip?
+									table.insert(send, player)
+								end
+							end
+							
+							local authed = {}
+							
+							for i = 1, #send do
+								local player = send[i]
+	
+								if (IsValid(player)) then
+									local steamID = player:SteamID()
+									
+									table.insert(authed, steamID)
+								end
+							end
+							
+							socket.Send("192.168.1.152", 40001, "spl", function(buffer)
+								authed = von.serialize(authed)
+								authed = util.Compress(authed)
+								
+								buffer:Write(authed)
+							end)
+							
 							timer.Simple(4.5, function()
 								if (data.sending) then
-									local send = {}
-									
-									print("SENDING")
-									
-									for i = 1, count do
-										local player = data.queue[i]
-	
-										-- priority on vip?
-										table.insert(send, player)
+									for i = 1, #send do
+										local player = send[i]
+										
+										if (IsValid(player)) then
+											player:SendLua("LocalPlayer():ConCommand(\"connect 62.220.184.22:27016\")")
+										end
 									end
 									
-									-- send here
+									screen:SetStatus(STATUS_LINK_IN_PROGRESS)
 									
 									-- we need to unfreeze players that didnt make it
 									for i = 1, count do
 										local player = data.queue[i]
 										
-										player:Freeze(false)
+										if (IsValid(player)) then
+											player:Freeze(false)
+										end
 									end
 								end
 							end)
@@ -238,7 +256,9 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 					for i = 1, count do
 						local player = data.queue[i]
 						
-						player:Freeze(false)
+						if (IsValid(player)) then
+							player:Freeze(false)
+						end
 					end
 					
 					timer.Remove("SS.Lobby.Link.Send." .. id)
@@ -250,42 +270,52 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 	end
 end)
 
-concommand.Add("cn",function()
-socket.SetupHost("62.220.184.236", 58017)
-socket.AddAllowedClient("62.220.184.236")
-socket.AddAllowedClient("192.168.1.1")
-socket.Connect("62.220.184.236", 58015)
-end)
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
-socket.AddCommand("sassinfo", function(sock, ip, port, buffer, errorCode)
+util.AddNetworkString("ss.lbgtscr")
+
+net.Receive("ss.lbgtscr", function(bits, player)
+	local id = net.ReadUInt(8)
+	local data = storedTriggers[id]
+	
+	if (data and data.map) then
+		net.Start("ss.lbgtsmap")
+			net.WriteUInt(id, 8)
+			net.WriteString(data.map)
+		net.Send(player)
+	end
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+util.AddNetworkString("ss.lbgtssin")
+
+socket.AddCommand("sif", function(sock, ip, port, buffer, errorCode)
 	local _, data = buffer:Read(buffer:Size())
 	
 	data = util.Decompress(data)
+	data = von.deserialize(data)
 	
-	--[[
-	local _, id = buffer:ReadShort()
-	local _, unique = buffer:ReadShort()
-	local _, name = buffer:ReadString()
-	local _, food = buffer:ReadLong()
-	local _, gold = buffer:ReadLong()
-	local _, iron = buffer:ReadLong()
-	local _, cities = buffer:ReadLong()
-	
-	
-	local info = {
-		unique = unique,
-		name = name,
-		food = food,
-		gold = gold,
-		iron = iron,
-		cities = cities
-	}
-	
-	SS.Lobby.Link:AddPlayerInfo(id, unique, info)
-	]]
+	local count = table.Count(data)
+
+	net.Start("ss.lbgtssin")
+		net.WriteUInt(data.server, 8)
+		net.WriteUInt(count, 8)
+		
+		for k, info in pairs(data) do
+			if (k != "server") then
+				net.WriteUInt(info.id, 8)
+				net.WriteString(info.name)
+				net.WriteUInt(info.food, 16)
+				net.WriteUInt(info.iron, 16)
+				net.WriteUInt(info.gold, 16)
+			end
+		end
+	net.Broadcast()
 end)
 
 ---------------------------------------------------------
@@ -294,7 +324,8 @@ end)
 
 util.AddNetworkString("ss.gtminmp")
 
-socket.AddCommand("sassmap", function(sock, ip, port, buffer, errorCode)
+socket.AddCommand("smp", function(sock, ip, port, buffer, errorCode)
+	local _, server = buffer:ReadShort()
 	local _, data = buffer:Read(buffer:Size())
 	
 	data = util.Decompress(data)
@@ -345,10 +376,16 @@ socket.AddCommand("sassmap", function(sock, ip, port, buffer, errorCode)
 		end
 	end
 	
+	local finalCount = table.Count(final)
+
 	net.Start("ss.gtminmp")
+		net.WriteUInt(server, 8)
+		net.WriteUInt(finalCount, 8)
+		
 		for id, data in pairs(final) do
 			local unitCount = table.Count(data.units)
 			
+			net.WriteUInt(id, 8)
 			net.WriteUInt(unitCount, 8)
 			
 			for k, v in pairs(data.units) do
@@ -370,6 +407,25 @@ socket.AddCommand("sassmap", function(sock, ip, port, buffer, errorCode)
 			end
 		end
 	net.Broadcast()
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+util.AddNetworkString("ss.lbgtsmap")
+
+socket.AddCommand("smap", function(sock, ip, port, buffer, errorCode)
+	local _, id = buffer:ReadShort()
+	local _, map = buffer:ReadString()
+
+	local screen = SS.Lobby.Link:GetScreenByID(id)
+	screen:SetStatus(STATUS_LINK_READY)
+
+	storedTriggers[id].map = map
 	
-	PrintTable(final)
+	net.Start("ss.lbgtsmap")
+		net.WriteUInt(id, 8)
+		net.WriteString(map)
+	net.Broadcast()
 end)

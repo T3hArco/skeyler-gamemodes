@@ -68,6 +68,14 @@ function GM:InitPostEntity()
 			end
 		end
 	end
+	
+	timer.Simple(5,function()
+		socket.SetupHost("192.168.1.152", 40000)
+	
+		timer.Simple(2,function()
+			socket.AddServer("192.168.1.152", 40001)
+		end)
+	end)
 end
 
 --------------------------------------------------
@@ -79,11 +87,11 @@ function GM:PlayerInitialSpawn(player)
 	
 	player:SetTeam(TEAM_READY)
 	
-	timer.Simple(0.1,function()
+	timer.Simple(0.4,function()
 		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
 			SS.Lobby.LeaderBoard.Network(i, player)
 		end
-		
+
 		SS.Lobby.Minigame:UpdateScreen(player)
 	end)
 end

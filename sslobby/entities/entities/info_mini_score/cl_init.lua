@@ -39,9 +39,9 @@ local function AddButton(teamID, x, y)
 	function button:Paint(screen, x, y, w, h)
 		if (self.hovered) then
 			if (self.team == TEAM_GREEN or self.team == TEAM_RED) then
-				draw.SimpleText("CLICK TO JOIN", "minigame.screen.join", x -(w -20), y +h, color_black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+				draw.SimpleText("PRESS E TO JOIN", "minigame.screen.join", x -(w -20), y +h, color_black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 			else
-				draw.SimpleText("CLICK TO JOIN", "minigame.screen.join", x +w +15, y +h, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+				draw.SimpleText("PRESS E TO JOIN", "minigame.screen.join", x +w +15, y +h, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
 		end
 	end
@@ -116,21 +116,26 @@ end
 local DrawPanels = SS.WorldPanel.DrawPanels
 
 function ENT:Draw()
-	self:UpdateMouse()
-
-	cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
-		self:DrawBackground()
-		
-		if (self:GetSelector() == 1) then
-			DrawPanels(panelUnique, self, 0.1)
-			
-			self:DrawMouse()
-		end
-	cam.End3D2D()
+	local distance = LocalPlayer():EyePos():Distance(self.cameraPosition)
+	local maxDistance = SS.Lobby.ScreenDistance:GetInt()
 	
-	cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.028)
-		self:DrawInformation()
-	cam.End3D2D()
+	if (distance <= maxDistance) then
+		self:UpdateMouse()
+		
+		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
+			self:DrawBackground()
+			
+			if (self:GetSelector() == 1) then
+				DrawPanels(panelUnique, self, 0.1)
+				
+				self:DrawMouse()
+			end
+		cam.End3D2D()
+		
+		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.028)
+			self:DrawInformation()
+		cam.End3D2D()
+	end
 end
 
 ---------------------------------------------------------

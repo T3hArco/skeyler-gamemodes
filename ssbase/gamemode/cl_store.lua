@@ -1398,7 +1398,24 @@ function panel:Init()
 	end
 	
 	self.list:AddItem(base)
-end
+	
+	if (SS.Lobby) then
+		local slider, base = util.SliderAndLabel(nil, "3D screen distance")
+		base:Dock(TOP)
+		
+		base.autoSize = true
+		
+		slider:SetMin(16)
+		slider:SetMax(8000)
+		slider:SetValue(SS.Lobby.ScreenDistance:GetInt())
+		
+		function slider:OnValueChanged(value)
+			RunConsoleCommand("sslobby_screendistance", value)
+		end
+		
+		self.list:AddItem(base)
+	end
+end	
 
 function panel:Paint(w, h)
 	local children = self.list:GetCanvas():GetChildren()

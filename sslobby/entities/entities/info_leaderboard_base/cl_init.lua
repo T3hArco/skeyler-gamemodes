@@ -29,15 +29,20 @@ local color_text = Color(39, 207, 255, 255)
 local color_shadow = Color(0, 0, 0, 120)
 
 function ENT:Draw()
-	cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
-		if (self.texture) then
-			draw.Texture(0, 0, 1280, 640, color_white, self.texture)
-		end
-	cam.End3D2D()
+	local distance = LocalPlayer():EyePos():Distance(self.cameraPosition)
+	local maxDistance = SS.Lobby.ScreenDistance:GetInt()
 	
-	cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.02)
-		self:PaintLeaderboard()
-	cam.End3D2D()
+	if (distance <= maxDistance) then
+		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
+			if (self.texture) then
+				draw.Texture(0, 0, 1280, 640, color_white, self.texture)
+			end
+		cam.End3D2D()
+		
+		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.02)
+			self:PaintLeaderboard()
+		cam.End3D2D()
+	end
 end
 
 ---------------------------------------------------------

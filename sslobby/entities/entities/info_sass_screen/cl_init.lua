@@ -80,7 +80,7 @@ end
 --
 ---------------------------------------------------------
 
-function button:OnMousePressed()
+function button:OnMousePressed(screen)
 	net.Start("ss.lkngtplr")
 		net.WriteUInt(self.screen:GetTriggerID(), 8)
 	net.SendToServer()
@@ -177,7 +177,13 @@ function labelsPanel:Paint(screen, x, y, w, h)
 		end
 	end
 	
-	draw.SimpleText("JOIN QUEUE", "ss.sass.screen.button", x +w -800, y +h -462, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	local hasQueue = SS.Lobby.Link:HasQueue(screen:GetTriggerID(), LocalPlayer():SteamID())
+	
+	if (hasQueue) then
+		draw.SimpleText("LEAVE QUEUE", "ss.sass.screen.button", x +w -800, y +h -462, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	else
+		draw.SimpleText("JOIN QUEUE", "ss.sass.screen.button", x +w -800, y +h -462, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	end
 end
 
 ---------------------------------------------------------
@@ -211,6 +217,10 @@ function ENT:Draw()
 
 		SS.Lobby.Link:AddScreen(id)
 		
+		net.Start("ss.lbgtscr")
+			net.WriteUInt(id, 8)
+		net.SendToServer()
+		
 		self.registered = true
 	else
 		local status = self:GetStatus()
@@ -221,41 +231,46 @@ function ENT:Draw()
 			self.__status = status
 		end
 		
-		self:UpdateMouse()
-		
-		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.1)
-			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-			
-			DrawPanels(panelUnique, self, 0.1)
+		local distance = LocalPlayer():EyePos():Distance(self.cameraPosition)
+		local maxDistance = SS.Lobby.ScreenDistance:GetInt()
 	
-			self:PaintMap(40, 640 *0.25 +80)
-			self:PaintCartridge(321, 177)
-			self:DrawMouse()
+		if (distance <= maxDistance) then
+			self:UpdateMouse()
 			
-			render.PopFilterMin()
-			render.PopFilterMag()
-		cam.End3D2D()
-		
-		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.03)
-			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-
-			DrawPanels(panelUnique, self, 0.03)
+			cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.1)
+				render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+				render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+				
+				DrawPanels(panelUnique, self, 0.1)
 			
-			render.PopFilterMin()
-			render.PopFilterMag()
-		cam.End3D2D()
-		
-		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.02)
-			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+				self:PaintMap(40, 640 *0.25 +80)
+				self:PaintCartridge(321, 177)
+				self:DrawMouse()
+				
+				render.PopFilterMin()
+				render.PopFilterMag()
+			cam.End3D2D()
 			
-			DrawPanels(panelUnique, self, 0.02)
-
-			render.PopFilterMin()
-			render.PopFilterMag()
-		cam.End3D2D()
+			cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.03)
+				render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+				render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+			
+				DrawPanels(panelUnique, self, 0.03)
+				
+				render.PopFilterMin()
+				render.PopFilterMag()
+			cam.End3D2D()
+			
+			cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.02)
+				render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+				render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+				
+				DrawPanels(panelUnique, self, 0.02)
+			
+				render.PopFilterMin()
+				render.PopFilterMag()
+			cam.End3D2D()
+		end
 	end
 end
 
@@ -274,7 +289,7 @@ end
 function ENT:PaintCartridge(x, y)
 	local status = self:GetStatus()
 	
-	if (status == STATUS_LINK_UNAVAILABLE) then
+	if (status == STATUS_LINK_UNAVAILABLE or status == STATUS_LINK_IN_PROGRESS) then
 		surface.SetDrawColor(unavailableColor)
 		surface.DrawRect(x, y -136, 14, 156)
 	else
@@ -342,7 +357,7 @@ function ENT:PaintMap(x, y)
 			end
 			
 			local objectX = 20+x +((object.x /width) *(width-43)) -object.width /2
-			local objectY = 26+y +((object.y /height) *(height-24)) -object.height /2
+			local objectY = 9+y +((object.y /height) *(height-4)) -object.height /2
 			
 			surface.SetDrawColor(object.color or color_white)
 			surface.DrawRect(objectX, objectY, object.width, object.height)

@@ -14,6 +14,8 @@ include("modules/sh_leaderboard.lua")
 include("modules/cl_leaderboard.lua")
 include("modules/sh_sound.lua")
 
+SS.Lobby.ScreenDistance = CreateClientConVar("sslobby_screendistance", "2048", true)
+
 ---------------------------------------------------------
 --
 ---------------------------------------------------------

@@ -14,7 +14,7 @@ function ENT:Initialize()
 	self:SetNotSolid(true)
 
 	self:SetTriggerID(self.id)
-	self:SetStatus(STATUS_LINK_READY)
+	self:SetStatus(STATUS_LINK_UNAVAILABLE)
 end
 
 ------------------------------------------------
