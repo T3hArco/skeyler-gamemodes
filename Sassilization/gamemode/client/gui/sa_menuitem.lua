@@ -164,6 +164,8 @@ function PANEL:OnCursorEntered()
 
 		x = x + hoverPanel.name:GetWide() +17
 		
+
+		color_red = Color(255, 0, 0, 255)
 		-- Food cost.
 		if (data.Food and data.Food > 0) then
 			surface.SetMaterial(tex2)
@@ -172,7 +174,11 @@ function PANEL:OnCursorEntered()
 			surface.DrawTexturedRect(x, y, w * scale, h * scale)
 			
 			draw.SimpleText(data.Food, "sa_itemInfo_Requirements", x +36 *scale, y +20 *scale, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-			draw.SimpleText(data.Food, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			if LocalPlayer():GetEmpire():GetFood() >= data.Food then
+				draw.SimpleText(data.Food, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			else
+				draw.SimpleText(data.Food, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			end
 			
 			surface.SetFont("sa_itemInfo_Requirements")
 	
@@ -188,7 +194,11 @@ function PANEL:OnCursorEntered()
 			surface.DrawTexturedRect(x, y, w * scale, h * scale)
 			
 			draw.SimpleText(data.Iron, "sa_itemInfo_Requirements", x +36 *scale, y +20 *scale, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-			draw.SimpleText(data.Iron, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			if LocalPlayer():GetEmpire():GetIron() >= data.Iron then
+				draw.SimpleText(data.Iron, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			else
+				draw.SimpleText(data.Iron, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			end
 			
 			surface.SetFont("sa_itemInfo_Requirements")
 	
@@ -204,7 +214,11 @@ function PANEL:OnCursorEntered()
 			surface.DrawTexturedRect(x, y, w * scale, h * scale)
 			
 			draw.SimpleText(data.Gold, "sa_itemInfo_Requirements", x +36 *scale, y +20 *scale, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-			draw.SimpleText(data.Gold, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			if LocalPlayer():GetEmpire():GetGold() >= data.Gold then
+				draw.SimpleText(data.Gold, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			else
+				draw.SimpleText(data.Gold, "sa_itemInfo_Requirements", x +35 *scale, y +19 *scale, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			end
 			
 			surface.SetFont("sa_itemInfo_Requirements")
 	
@@ -221,7 +235,11 @@ function PANEL:OnCursorEntered()
 			surface.DrawTexturedRect(x, y, w * scale, h * scale)
 			
 			draw.SimpleText(data.Supply, "sa_itemInfo_Requirements", x +36 *scale, y +23, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-			draw.SimpleText(data.Supply, "sa_itemInfo_Requirements", x +35 *scale, y +22, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			if (LocalPlayer():GetEmpire():GetSupply() - LocalPlayer():GetEmpire():GetSupplied()) >= data.Supply then
+				draw.SimpleText(data.Supply, "sa_itemInfo_Requirements", x +35 *scale, y +22, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			else
+				draw.SimpleText(data.Supply, "sa_itemInfo_Requirements", x +35 *scale, y +22, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+			end
 			
 			surface.SetFont("sa_itemInfo_Requirements")
 	

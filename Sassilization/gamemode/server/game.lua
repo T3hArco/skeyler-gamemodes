@@ -135,6 +135,10 @@ function GM:RestartGame(NextMap)
 	if(SA.DEV) then
 		return
 	end
+
+	for k,v in pairs(player.GetAll()) do
+		v:ConCommand("connect 208.115.236.184:40000")
+	end
 	
 	game.ConsoleCommand( "changelevel "..NextMap.."\n" )
 

@@ -15,7 +15,13 @@ surface.CreateFont("Loading", {
 
 net.Receive( "PlayerLoadingFinish", function()
 	local text = net.ReadString()
-	LOADED = true
+	if text == "All players loaded. Game starting." then
+		timer.Simple(5, function()
+			LOADED = true
+		end)
+	else
+		LOADED = true
+	end
 	loadingScreen.Text = text
 end)
 
@@ -80,7 +86,7 @@ function PANEL:Paint()
 	else
 		self.color = 0
 		if (LOADED) then
-			self.alpha = Lerp( 4*FrameTime(), self.alpha, 0 )
+			self.alpha = Lerp( 2*FrameTime(), self.alpha, 0 )
 		end
 	end
 

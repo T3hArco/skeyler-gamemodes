@@ -140,6 +140,9 @@ function GM:Think()
 	if !unitMenu and !buildingMenu and !TabOpen then
 		HideMouse()
 	end
+	if !self.BottomBar then
+		self.BottomBar = vgui.Create("sa_bottombar")
+	end
 end
 
 --Using this rather than Q/E for players who happen to be on a different keyboard layout from QWERTY (Specifically because Arco wanted AZERTY support.) //Hateful
@@ -180,13 +183,6 @@ function GM:PostRenderVGUI()
 	if (not self.RenderedVGUI) then
 		self.RenderedVGUI = true
 	end
-end
-
-function GM:OnEmpireCreated( pl, empire )
-	-- self.TopBar = vgui.Create("sa_topbar") remove when new hud is done (this is the really old hud) // Chewgum
-	
-	-- This is the Q and E menu. // Chewgum
-	self.BottomBar = vgui.Create("sa_bottombar")
 end
 
 vgui.GetWorldPanel():SetCursor("blank")

@@ -19,18 +19,23 @@ function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
 	local steamID = util.SteamIDFrom64(sid)
 	
 	if table.HasValue(SA.AuthedPlayers, steamID) then
-		if !timer.Exists("Player Loading") then
-			timer.Create("Player Loading", 90, 1, function()
-				self:StartGame()
-				for k,v in pairs(player.GetAll()) do
-					net.Start("PlayerLoadingFinish")
-						net.WriteString("Game starting.")
-					net.Send(v)
-				end
-			end)
-			SA.StartTime = CurTime() + 90
-		end
 		if !self.Started then
+			if !timer.Exists("Player Loading") then
+				timer.Create("Player Loading", 90, 1, function()
+					if #players.GetAll() > 0 then
+						self:StartGame()
+						for k,v in pairs(player.GetAll()) do
+							net.Start("PlayerLoadingFinish")
+								net.WriteString("Game starting.")
+							net.Send(v)
+						end
+					else
+						self:RestartGame()
+					end
+				end)
+				SA.StartTime = CurTime() + 90
+			end
+			
 			table.insert(SA.LoadingPlayers, {username, steamID})
 			for k,v in pairs(player.GetAll()) do
 				net.Start("PlayerLoadingList")
@@ -40,7 +45,7 @@ function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
 		end
 		return true
 	else
-		return false, "Please connect to the Lobby (IP HERE) in order to play Sassilization."
+		return false, "Please connect to the Lobby (208.115.236.184:40000) in order to play Sassilization."
 	end
 end
 
@@ -189,7 +194,9 @@ function GM:PlayerDisconnected(pl)
 
 	Msg( pl:Nick().." has disconnected" )
 	
-	if #player.GetAll()-1 == 0 and START and not ENDROUND then self:RestartGame() end
+	if #player.GetAll()-1 == 0 and self.Started then
+		self:RestartGame()
+	end
 end
 
 function GM:PlayerSpawn(pl)
