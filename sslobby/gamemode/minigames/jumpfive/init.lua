@@ -22,8 +22,10 @@ end
 
 function MINIGAME:Finish(timeLimit)
 	for k, player in pairs(self.players) do
-		player.jumps = nil
-		player.jumpVelocity = nil
+		if (IsValid(player)) then
+			player.jumps = nil
+			player.jumpVelocity = nil
+		end
 	end
 	
 	self.BaseClass.Finish(self, timeLimit)

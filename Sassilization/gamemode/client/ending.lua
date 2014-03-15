@@ -92,3 +92,7 @@ function SetWinners(len)
 	end
 end
 net.Receive("SetWinners", SetWinners)
+
+net.Receive("sa.connectlobby", function(bits)
+	LocalPlayer():ConCommand("connect 208.115.236.184:27017")
+end)

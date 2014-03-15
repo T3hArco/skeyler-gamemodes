@@ -131,13 +131,16 @@ function GM:EndGame( empire )
 	end
 end
 
+util.AddNetworkString("sa.connectlobby")
+
 function GM:RestartGame(NextMap)
 	if(SA.DEV) then
 		return
 	end
 
 	for k,v in pairs(player.GetAll()) do
-		v:ConCommand("connect 208.115.236.184:27017")
+		net.Start("sa.connectlobby")
+		net.Send(v)
 	end
 	
 	game.ConsoleCommand( "changelevel "..NextMap.."\n" )

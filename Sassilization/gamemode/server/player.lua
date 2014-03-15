@@ -124,6 +124,7 @@ function GM:PlayerInitialSpawn(pl)
 				table.remove(SA.LoadingPlayers, k)
 			end
 		end
+		PrintTable(SA.LoadingPlayers)
 		if #SA.LoadingPlayers >= 1 then
 			net.Start("PlayerLoadingTime")
 				net.WriteInt(SA.StartTime, 16)
@@ -142,6 +143,8 @@ function GM:PlayerInitialSpawn(pl)
 					net.Start("PlayerLoadingFinish")
 						net.WriteString("All players loaded. Game starting.")
 					net.Send(v)
+					
+					v:ChatPrint("All players loaded. Game starting.")
 				end
 				timer.Simple(5, function()
 					self:StartGame()
