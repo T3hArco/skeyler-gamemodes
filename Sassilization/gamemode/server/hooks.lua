@@ -31,11 +31,13 @@ function GM:InitPostEntity()
 	self.SpawnPoints = ents.FindByClass("info_player_start")
 	self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass("gmod_player_start") )	
 	
+	local ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
+	
 	timer.Simple(5,function()
-		socket.SetupHost("192.168.1.152", 40001)
+		socket.SetupHost(ip, 40001)
 		
 		timer.Simple(2,function()
-			socket.AddServer("192.168.1.152", 40000)
+			socket.AddServer(ip, 40000)
 		end)
 	end)
 	

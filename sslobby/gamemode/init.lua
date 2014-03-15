@@ -70,11 +70,13 @@ function GM:InitPostEntity()
 		end
 	end
 	
+	local ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
+	
 	timer.Simple(5,function()
-		socket.SetupHost("192.168.1.152", 40000)
+		socket.SetupHost(ip, 40000)
 	
 		timer.Simple(2,function()
-			socket.AddServer("192.168.1.152", 40001)
+			socket.AddServer(ip, 40001)
 		end)
 	end)
 end
