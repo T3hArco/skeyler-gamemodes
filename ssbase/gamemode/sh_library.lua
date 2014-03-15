@@ -214,11 +214,7 @@ function PLAYER_META:GetFakeRankColor()
 end
 
 function PLAYER_META:Nick()
-	if self:IsFakenamed() then
-		return self:GetFakename()
-	else
-		return self:Name()
-	end
+	return self:IsFakenamed() and self:GetFakename() or self:Name()
 end
 
 SS.Fakenamers = {}
@@ -241,7 +237,7 @@ function PLAYER_META:SetFake(name, id)
 		self:SetNWInt("ss_fakerank", id)
 		self:SetNWString("ss_fakename", name)
 		self:SetNWBool("ss_bfakename", true)
-		self:ChatPrint("[FAKENAME]: "..self:Name().." is now "..self:GetFakename()..". Fakerank: "..self:GetFakeRankName()..".\n")
+		SS.PrintToAdmins("[FAKENAME]: "..self:Name().." is now "..self:GetFakename()..". Fakerank: "..self:GetFakeRankName()..".\n")
 
 		SS.Fakenamers[self:SteamID()] = {name = name, id = id, b = true}
 	end
@@ -255,6 +251,15 @@ end
 function PLAYER_META:SetSSMuted(b)
 	SS.Muted[self:SteamID()] = b
 end
+
+function SS.PrintToAdmins(msg)
+	for _, ply in pairs(player.GetAll()) do
+		if ply:GetRank() >= 50 then
+			ply:ChatPrint(msg)
+		end
+	end
+end
+
 
 color_white 		= Color(255, 255, 255, 255)
 color_black 		= Color(0, 0, 0, 255)
