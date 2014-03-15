@@ -9,7 +9,7 @@ function SS.Lobby.Link:AddServerTrigger(id)
 	
 	-- FIX THIS LATER
 	if (id == 1) then
-		storedTriggers[id].ip = "192.168.1.152"
+		storedTriggers[id].ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
 		storedTriggers[id].dataPort = 40001
 		storedTriggers[id].connectPort = 27015
 	--elseif (id == 2) then
