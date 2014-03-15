@@ -174,16 +174,19 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 	if (nextTick <= CurTime()) then
 		for id, data in pairs(storedTriggers) do
 			local count = #data.queue
+			local screen = SS.Lobby.Link:GetScreenByID(id)
 			
 			if (count >= SS.Lobby.Link.MinPlayers) then
 				if (!data.sending) then
 					data.sending = true
-				
-					local screen = SS.Lobby.Link:GetScreenByID(id)
+	
 					screen:SetStatus(STATUS_LINK_PREPARING)
+					
+					local id = id
 					
 					timer.Create("SS.Lobby.Link.Send." .. id, 4, 1, function()
 						if (data.sending) then
+							local data = storedTriggers[id]
 							local pitch, position = math.random(85, 110), screen:GetPos()
 					
 							for i = 1, 5 do
@@ -230,6 +233,8 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							
 							timer.Simple(4.5, function()
 								if (data.sending) then
+									local data = storedTriggers[id]
+									PrintTable(send)
 									for i = 1, #send do
 										local player = send[i]
 										
@@ -256,10 +261,9 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 					end)
 				end
 			else
-				if (data.sending) then
+				if (data.sending and screen:GetStatus() != STATUS_LINK_IN_PROGRESS) then
 					data.sending = false
-					
-					local screen = SS.Lobby.Link:GetScreenByID(id)
+
 					screen:SetStatus(STATUS_LINK_READY)
 					
 					for i = 1, #data.queue do
