@@ -86,8 +86,6 @@ function GM:PlayerInitialSpawn(player)
 	self.BaseClass:PlayerInitialSpawn(player)
 	
 	player:SetTeam(TEAM_READY)
-	
-	player:SetCollideWithTeammates(true) 
 	player:SetModel("models/player/group01/male_01.mdl")
 	
 	timer.Simple(0.4,function()
@@ -104,6 +102,8 @@ end
 --------------------------------------------------
 
 function GM:PlayerSpawn(player)
+	player_manager.SetPlayerClass(ply, "player_sslobby")
+	
 	self.BaseClass:PlayerSpawn(player)
 	
 	player:SetJumpPower(205)
