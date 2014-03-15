@@ -109,6 +109,7 @@ function MINIGAME:RespawnPlayer(player)
 
 	player:Spawn()
 	player:SetPos(spawnPoint:GetPos())
+	player:SetEyeAngles(spawnPoint:GetAngles()) 
 	
 	if (player:IsBot()) then
 		player:Freeze(true)
