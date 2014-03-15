@@ -133,7 +133,7 @@ function angleBetween( v1, v2 )
 end
 
 function FindByPartial(PlayerName)
-	local t = string.lower(PlayerName)
+	local t = string.lower(tostring(PlayerName))
 	local found = 0
 	local name
 

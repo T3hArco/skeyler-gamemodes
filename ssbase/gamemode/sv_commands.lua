@@ -34,7 +34,7 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 		return
 	end
 
-	local PlayerName = tostring(args[1])
+	local PlayerName = args[1]
 	args[2] = tonumber(args[2])
 	local Time = args[2]
 	local Reason = ArgConcat(args)
@@ -96,7 +96,7 @@ concommand.Add("ss_kick", function(ply, cmd, args)
 		return
 	end
 
-	local PlayerName = tostring(args[1])
+	local PlayerName = args[1]
 	local Reason = ArgConcat(args)
 
 	if (!PlayerName) then
@@ -133,7 +133,7 @@ concommand.Add("ss_mute", function(ply, cmd, args)
 		return
 	end
 
-	local PlayerName = tostring(args[1])
+	local PlayerName = args[1]
 
 	if (!PlayerName) then
 		ply:ChatPrint("Syntax is ss_mute PlayerName.\n")
@@ -168,7 +168,7 @@ concommand.Add("ss_slay", function(ply, cmd, args)
 		return
 	end
 
-	local PlayerName = tostring(args[1])
+	local PlayerName = args[1]
 	local Reason = ArgConcat(args)
 
 	if !PlayerName then
