@@ -21,7 +21,7 @@ local GetConVarString = GetConVarString
 local luasocket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
 
 if(!luasocket) then
-        luasocket = luasocket_stuff.luaopen_socket_core()
+	luasocket = luasocket_stuff.luaopen_socket_core()
 end
 
 module("socket")
@@ -51,7 +51,7 @@ end
 local function HandleSocketData(sock, data, ip, port)
 	Log("HandleSocketData Parsing data from: '" .. tostring(ip) .. ":" .. port .. "' Size: " .. data:len())
 
-	local data = string.Explode("¨", data)
+	local data = string.Explode("*&*", data)
 	local command = data[1]
 
 	-- Remove the command.
@@ -141,7 +141,7 @@ end
 ---------------------------------------------------------
 
 function Send(ip, port, command, callback)
-	command = command .. "¨"
+	command = command .. "*&*"
 	
 	if (callback) then command = callback(command) end
 
