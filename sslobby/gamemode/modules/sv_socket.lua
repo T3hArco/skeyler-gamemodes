@@ -18,7 +18,11 @@ local ErrorNoHalt = ErrorNoHalt
 local GetConVarNumber = GetConVarNumber
 local GetConVarString = GetConVarString
 
-local socket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
+local luasocket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
+
+if(!luasocket) then
+        luasocket = luasocket_stuff.luaopen_socket_core()
+end
 
 module("socket")
 
