@@ -243,6 +243,15 @@ function GM:EntityKeyValue(entity, key, value)
 	end
 end
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:ShowTeam(player)
+	player:SetTeam(TEAM_READY)
+	player:Spawn()
+end
+
 -- dev
 concommand.Add("poo",function()
 RunConsoleCommand("bot")
