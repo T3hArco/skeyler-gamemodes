@@ -202,7 +202,7 @@ hook.Add("PlayerSay","MAPRTV_SS",function(ply,text,p)
 				nominations[ply:UniqueID()] = eligible[tonumber(t[1])]
 				ChatPrintAll(ply:Nick().." has nominated "..eligible[tonumber(t[1])]..".")
 			elseif(table.HasValue(eligible,t[1])) then
-				if(table.HasValue(nominations,eligible[tonumber(t[1])])) then
+				if(table.HasValue(nominations,t[1])) then
 					ply:ChatPrint(t[1].." has already been nominated.")
 					return ""
 				end
