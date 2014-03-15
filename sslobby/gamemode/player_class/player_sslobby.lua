@@ -13,4 +13,4 @@ PLAYER.JumpPower			= 268.4     -- How powerful our jump should be
 PLAYER.AvoidPlayers			= false
 PLAYER.TeammateNoCollide 	= false		-- Do we collide with teammates or run straight through them
 
-player_manager.RegisterClass( "player_lobby", PLAYER, "player_default" )
+player_manager.RegisterClass( "player_sslobby", PLAYER, "player_default" )
