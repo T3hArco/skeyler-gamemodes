@@ -86,6 +86,9 @@ function GM:PlayerInitialSpawn(player)
 	self.BaseClass:PlayerInitialSpawn(player)
 	
 	player:SetTeam(TEAM_READY)
+
+	player:SetCollideWithTeammates(true) 
+	player:SetModel("models/player/group01/male_01.mdl")
 	
 	timer.Simple(0.4,function()
 		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
