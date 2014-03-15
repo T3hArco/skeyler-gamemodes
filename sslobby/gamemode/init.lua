@@ -86,7 +86,6 @@ function GM:PlayerInitialSpawn(player)
 	self.BaseClass:PlayerInitialSpawn(player)
 	
 	player:SetTeam(TEAM_READY)
-	player:SetModel("models/player/group01/male_01.mdl")
 	
 	timer.Simple(0.4,function()
 		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
@@ -105,6 +104,8 @@ function GM:PlayerSpawn(player)
 	player_manager.SetPlayerClass(ply, "player_sslobby")
 	
 	self.BaseClass:PlayerSpawn(player)
+
+	player:SetModel("models/player/group01/male_01.mdl")
 	
 	player:SetJumpPower(205)
 	player:SetRunSpeed(350)
