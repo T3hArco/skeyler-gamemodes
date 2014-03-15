@@ -258,6 +258,18 @@ function GM:PlayerCanPickupItem( player, entity )
 	return false
 end
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:AllowPlayerPickup(ply, entity) 
+	if ply:GetRank() == 100 then 
+		return true 
+	else 
+		return false 
+	end 
+end 
+
 -- dev
 concommand.Add("poo",function()
 RunConsoleCommand("bot")
