@@ -237,7 +237,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 										local player = send[i]
 										
 										if (IsValid(player)) then
-											player:SendLua("LocalPlayer():ConCommand(\"connect " .. tostring(data.ip) .. ":" .. data.connectPort .. \")")
+											player:SendLua("LocalPlayer():ConCommand(\"connect " .. tostring(data.ip) .. ":" .. data.connectPort .. "\")")
 										end
 									end
 									
