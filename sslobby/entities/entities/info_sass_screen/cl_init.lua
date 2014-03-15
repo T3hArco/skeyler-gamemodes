@@ -212,66 +212,66 @@ end
 local DrawPanels = SS.WorldPanel.DrawPanels
 
 function ENT:Draw()
-	if (!self.registered) then
-		local id = self:GetTriggerID()
+	-- if (!self.registered) then
+	-- 	local id = self:GetTriggerID()
 
-		SS.Lobby.Link:AddScreen(id)
+	-- 	SS.Lobby.Link:AddScreen(id)
 		
-		net.Start("ss.lbgtscr")
-			net.WriteUInt(id, 8)
-		net.SendToServer()
+	-- 	net.Start("ss.lbgtscr")
+	-- 		net.WriteUInt(id, 8)
+	-- 	net.SendToServer()
 		
-		self.registered = true
-	else
-		local status = self:GetStatus()
+	-- 	self.registered = true
+	-- else
+	-- 	local status = self:GetStatus()
 		
-		if (self.__status != status) then
-			self.statusMessage = statusMessages[status] or statusMessages[STATUS_LINK_UNAVAILABLE]
+	-- 	if (self.__status != status) then
+	-- 		self.statusMessage = statusMessages[status] or statusMessages[STATUS_LINK_UNAVAILABLE]
 
-			self.__status = status
-		end
+	-- 		self.__status = status
+	-- 	end
 		
-		local distance = LocalPlayer():EyePos():Distance(self.cameraPosition)
-		local maxDistance = SS.Lobby.ScreenDistance:GetInt()
+	-- 	local distance = LocalPlayer():EyePos():Distance(self.cameraPosition)
+	-- 	local maxDistance = SS.Lobby.ScreenDistance:GetInt()
 	
-		if (distance <= maxDistance) then
-			self:UpdateMouse()
+	-- 	if (distance <= maxDistance) then
+	-- 		self:UpdateMouse()
 			
-			cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.1)
-				render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-				render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+	-- 		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.1)
+	-- 			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+	-- 			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 				
-				DrawPanels(panelUnique, self, 0.1)
+	-- 			DrawPanels(panelUnique, self, 0.1)
 			
-				self:PaintMap(40, 640 *0.25 +80)
-				self:PaintCartridge(321, 177)
-				self:DrawMouse()
+	-- 			self:PaintMap(40, 640 *0.25 +80)
+	-- 			self:PaintCartridge(321, 177)
+	-- 			self:DrawMouse()
 				
-				render.PopFilterMin()
-				render.PopFilterMag()
-			cam.End3D2D()
+	-- 			render.PopFilterMin()
+	-- 			render.PopFilterMag()
+	-- 		cam.End3D2D()
 			
-			cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.03)
-				render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-				render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+	-- 		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.03)
+	-- 			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+	-- 			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 			
-				DrawPanels(panelUnique, self, 0.03)
+	-- 			DrawPanels(panelUnique, self, 0.03)
 				
-				render.PopFilterMin()
-				render.PopFilterMag()
-			cam.End3D2D()
+	-- 			render.PopFilterMin()
+	-- 			render.PopFilterMag()
+	-- 		cam.End3D2D()
 			
-			cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.02)
-				render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-				render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+	-- 		cam.Start3D2D(self.cameraPosition, self.cameraAngles, 0.02)
+	-- 			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+	-- 			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 				
-				DrawPanels(panelUnique, self, 0.02)
+	-- 			DrawPanels(panelUnique, self, 0.02)
 			
-				render.PopFilterMin()
-				render.PopFilterMag()
-			cam.End3D2D()
-		end
-	end
+	-- 			render.PopFilterMin()
+	-- 			render.PopFilterMag()
+	-- 		cam.End3D2D()
+	-- 	end
+	-- end
 end
 
 ---------------------------------------------------------
