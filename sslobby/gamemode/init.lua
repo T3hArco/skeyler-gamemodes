@@ -15,7 +15,7 @@ AddCSLuaFile("modules/cl_leaderboard.lua")
 AddCSLuaFile("modules/sh_sound.lua")
 
 include("shared.lua")
-include("player_class/player_lobby.lua")
+include("player_class/player_sslobby.lua")
 include("player_extended.lua")
 
 include("modules/sv_socket.lua")
