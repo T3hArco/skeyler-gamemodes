@@ -29,8 +29,6 @@ function SS.Lobby.Minigame:SetCurrentGame(unique)
 		local player = players[i]
 		
 		if (IsValid(player)) then
-			local spawnPoint = hook.Run("PlayerSelectSpawn", player, minigame)
-			
 			player:Freeze(true)
 			player:KillSilent()
 			player:SetNetworkedBool("ss.playingminigame", true)

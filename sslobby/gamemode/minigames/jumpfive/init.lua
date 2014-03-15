@@ -51,7 +51,7 @@ function MINIGAME:KeyPress(player, key)
 		local velocity = player:GetVelocity()
 		local jumpVector = Vector(0, 0, velocity.z + player.jumpVelocity)
 
-		//Divide velocity by 10 to keep players from jumping like a mile away
+		-- Divide velocity by 10 to keep players from jumping like a mile away
 		player:SetVelocity((velocity/10) +jumpVector)
 		
 		if (player.jumps >= 5) then

@@ -164,7 +164,7 @@ function GM:PlayerSelectSpawn(player)
 	local spawnPoint = self.spawnPoints.lounge
 	
 	if (player:Team() > TEAM_READY) then
-		if (player:GetNetworkedBool("ss.playingminigame") && player.minigame) then
+		if (player:IsPlayingMinigame() && player.minigame) then
 			spawnPoint = player.minigame:GetSpawnPoints(player)
 		else
 			spawnPoint = self.spawnPoints
@@ -179,7 +179,7 @@ function GM:PlayerSelectSpawn(player)
 			return entity
 		end
 	end
--- IS THIS SHIT SPAWNING THE PLAYER AT THE QUEUE AGAIN????
+
 	spawnPoint = table.Random(spawnPoint)
 	
 	return spawnPoint

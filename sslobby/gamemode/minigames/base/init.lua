@@ -86,6 +86,7 @@ function MINIGAME:RemovePlayer(player, noRespawn)
 	for k, v in pairs(self.players) do
 		if (v == player) then
 			self.players[k] = nil
+			
 			v:SetNetworkedBool("ss.playingminigame", false)
 			v.minigame = nil
 
@@ -102,6 +103,7 @@ end
 
 function MINIGAME:RespawnPlayer(player)
 	local spawnPoint = hook.Run("PlayerSelectSpawn", player)
+	
 	player:SetNetworkedBool("ss.playingminigame", false)
 	player.minigame = nil
 
@@ -251,7 +253,7 @@ function MINIGAME:AnnounceWin(player)
 				end
 			end
 		end
-		PrintTable(teams)
+		
 		if (#teams == 1) then
 			local players = teams[1].players
 			local teamName = team.GetName(teams[1].id)
