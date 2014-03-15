@@ -9,13 +9,13 @@ function SS.Lobby.Link:AddServerTrigger(id)
 	
 	-- FIX THIS LATER
 	if (id == 1) then
-		storedTriggers[id].ip = "208.115.236.184"
+		storedTriggers[id].ip = "192.168.1.152"
 		storedTriggers[id].dataPort = 40001
 		storedTriggers[id].connectPort = 27015
-	elseif (id == 2) then
-		storedTriggers[id].ip = "208.115.236.184"
-		storedTriggers[id].dataPort = 40002
-		storedTriggers[id].connectPort = 27016
+	--elseif (id == 2) then
+		--storedTriggers[id].ip = "208.115.236.184"
+		--storedTriggers[id].dataPort = 40002
+		--storedTriggers[id].connectPort = 27016
 	end
 end
 
@@ -200,8 +200,6 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							
 							local send = {}
 
-							print("SENDING")
-							
 							for i = 1, count do
 								local player = data.queue[i]
 	
@@ -224,11 +222,10 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 								end
 							end
 							
-							socket.Send(data.ip, data.dataPort, "spl", function(buffer)
-								authed = von.serialize(authed)
-								authed = util.Compress(authed)
+							socket.Send(data.ip, data.dataPort, "spl", function(data)
+								authed = util.Compress(von.serialize(authed))
 								
-								buffer:Write(authed)
+								return data .. authed
 							end)
 							
 							timer.Simple(4.5, function()
@@ -304,12 +301,9 @@ end)
 
 util.AddNetworkString("ss.lbgtssin")
 
-socket.AddCommand("sif", function(sock, ip, port, buffer, errorCode)
-	local _, data = buffer:Read(buffer:Size())
-	
-	data = util.Decompress(data)
-	data = von.deserialize(data)
-	
+socket.AddCommand("sif", function(sock, ip, port, data)
+	data = von.deserialize(util.Decompress(data[1]))
+
 	local count = table.Count(data)
 
 	net.Start("ss.lbgtssin")
@@ -334,12 +328,9 @@ end)
 
 util.AddNetworkString("ss.gtminmp")
 
-socket.AddCommand("smp", function(sock, ip, port, buffer, errorCode)
-	local _, server = buffer:ReadShort()
-	local _, data = buffer:Read(buffer:Size())
-	
-	data = util.Decompress(data)
-	
+socket.AddCommand("smp", function(sock, ip, port, data)
+	local server = tonumber(data[1])
+	local data = util.Decompress(data[2])
 	local exploded = string.Explode("id=", data)
 	
 	if (exploded[1] == "") then table.remove(exploded, 1) end
@@ -425,9 +416,9 @@ end)
 
 util.AddNetworkString("ss.lbgtsmap")
 
-socket.AddCommand("smap", function(sock, ip, port, buffer, errorCode)
-	local _, id = buffer:ReadShort()
-	local _, map = buffer:ReadString()
+socket.AddCommand("smap", function(sock, ip, port, data)
+	local id = tonumber(data[1])
+	local map = data[2]
 
 	local screen = SS.Lobby.Link:GetScreenByID(id)
 	screen:SetStatus(STATUS_LINK_READY)
