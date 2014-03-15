@@ -64,8 +64,10 @@ end)
 
 local allowedids = {0, 5, 10, 50, 70, 90, 100}
 concommand.Add("ss_fakename", function(ply, cmd, args)
-	if !ply:IsAdmin() then return end
-
+	if !ply:IsAdmin() then 
+		ply:ChatPrint("You do not have access to this command.\n")
+		return
+	end
 
 	local NewName = args[1]
 	local id = tonumber(args[2])
