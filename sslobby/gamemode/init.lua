@@ -263,11 +263,7 @@ end
 --------------------------------------------------
 
 function GM:AllowPlayerPickup(ply, entity) 
-	if ply:GetRank() == 100 then 
-		return true 
-	else 
-		return false 
-	end 
+	return false 
 end 
 
 -- dev
