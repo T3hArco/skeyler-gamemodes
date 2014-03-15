@@ -13,6 +13,7 @@ AddCSLuaFile("modules/cl_worldpanel.lua")
 AddCSLuaFile("modules/sh_leaderboard.lua")
 AddCSLuaFile("modules/cl_leaderboard.lua")
 AddCSLuaFile("modules/sh_sound.lua")
+AddCSLuaFile("player_class/player_sslobby.lua")
 
 include("shared.lua")
 include("player_class/player_sslobby.lua")

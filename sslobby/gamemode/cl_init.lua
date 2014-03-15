@@ -1,5 +1,5 @@
 include("shared.lua")
-include("player_class/player_lobby.lua")
+include("player_class/player_sslobby.lua")
 include("cl_scoreboard.lua") 
 
 include("modules/sh_link.lua")
