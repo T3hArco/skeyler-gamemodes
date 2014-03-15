@@ -66,8 +66,11 @@ function MINIGAME:Think()
 		for k, player in pairs(self.players) do
 			if (IsValid(player)) then
 				local position = player:GetPos()
-				
-				position = position +Vector(0, 0, data[1].z)
+				local posx = math.Clamp(position.x, data[1].x + data[2].x, data[1].x + data[3].x)
+				local posy = math.Clamp(position.y, data[1].y + data[2].y, data[1].y + data[3].y)
+
+				position = Vector(posx, posy, data[1].z)
+
 				
 				local entity = ents.Create("info_minigame_bomb")
 				entity:SetPos(position)
