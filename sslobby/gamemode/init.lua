@@ -242,6 +242,14 @@ function GM:EntityKeyValue(entity, key, value)
 	end
 end
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:AllowPlayerPickup( ply, object )
+	return false
+end
+
 -- dev
 concommand.Add("poo",function()
 RunConsoleCommand("bot")
