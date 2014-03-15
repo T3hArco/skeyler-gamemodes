@@ -190,7 +190,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 								sound.Play("vo/k_lab/kl_initializing02.wav", position, 75, pitch, 1)
 							end
 							
-							for i = 1, count do
+							for i = 1, #data.queue do
 								local player = data.queue[i]
 								
 								if (IsValid(player)) then
@@ -200,7 +200,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							
 							local send = {}
 
-							for i = 1, math.min(count, SS.Lobby.Link.MaxPlayers) do
+							for i = 1, math.min(#data.queue, SS.Lobby.Link.MaxPlayers) do
 								local player = data.queue[i]
 	
 								if (IsValid(player)) then
@@ -230,7 +230,6 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							
 							timer.Simple(4.5, function()
 								if (data.sending) then
-								print(count,#send)
 									for i = 1, #send do
 										local player = send[i]
 										
@@ -263,7 +262,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 					local screen = SS.Lobby.Link:GetScreenByID(id)
 					screen:SetStatus(STATUS_LINK_READY)
 					
-					for i = 1, count do
+					for i = 1, #data.queue do
 						local player = data.queue[i]
 						
 						if (IsValid(player)) then

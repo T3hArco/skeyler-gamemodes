@@ -207,7 +207,7 @@ function GM:PlayerSay( ply, text, public )
 end
 
 function GM:PlayerDisconnected(ply) 
-	self:ProfileSave() 
+	ply:ProfileSave() 
 end 
 
 function GM:AllowPlayerPickup( ply, object )

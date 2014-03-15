@@ -22,7 +22,7 @@ function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
 		if !self.Started then
 			if !timer.Exists("Player Loading") then
 				timer.Create("Player Loading", 90, 1, function()
-					if #players.GetAll() > 0 then
+					if #player.GetAll() > 0 then
 						self:StartGame()
 						for k,v in pairs(player.GetAll()) do
 							net.Start("PlayerLoadingFinish")
