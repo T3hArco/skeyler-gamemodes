@@ -44,7 +44,7 @@ function PLAYER_META:HasMoney(amt)
 end 
 
 function PLAYER_META:GetRank() 
-	return self:GetNetworkedInt("ss_rankid", 0)  
+	return SS.Ranks[self:GetNetworkedInt("ss_rankid", 0)] and self:GetNetworkedInt("ss_rankid", 0) or 0
 end 
 
 function PLAYER_META:SetRank(id) 
