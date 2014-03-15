@@ -50,8 +50,9 @@ end
 ---------------------------------------------------------
 
 function MINIGAME:Start()
+	local String = self.Name.." - "..self.Description
 	for k, player in pairs(self.players) do
-		player:ChatPrint(self.Name .. " - " .. self.Description)
+		player:ChatPrint(String)
 	end
 end
 
