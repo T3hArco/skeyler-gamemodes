@@ -1,4 +1,4 @@
-local os = os
+﻿local os = os
 local Msg = Msg
 local hook = hook
 local math = math
@@ -18,7 +18,7 @@ local ErrorNoHalt = ErrorNoHalt
 local GetConVarNumber = GetConVarNumber
 local GetConVarString = GetConVarString
 
-local luasocket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
+local socket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
 
 module("socket")
 
@@ -107,7 +107,7 @@ end
 ---------------------------------------------------------
 
 function SetupHost(ip, port)
-	local sock = luasocket.udp()
+	local sock = socket.udp()
 	local success, errorMessage = sock:setsockname(ip, port)
 	
 	if (success == 1) then
