@@ -9,11 +9,10 @@ include("shared.lua")
 include("sh_library.lua")
 include("sh_profiles.lua") 
 include("sh_store.lua") 
+include("cl_scoreboard.lua")
+include("cl_store.lua") 
 include("cl_chatbox.lua") 
 include("cl_hud.lua") 
-
-include("cl_store.lua") 
-include("cl_scoreboard.lua")
 
 include("panels/ss_slot.lua")
 include("panels/ss_slider.lua")
