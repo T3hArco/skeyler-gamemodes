@@ -3,6 +3,8 @@
 -- Created by xAaron113x --
 --------------------------- 
 
+resource.AddWorkshop("238392145")
+
 DB_DEVS = false 
 -- DB_HOST = "162.213.209.3" 
 -- DB_USER = "aaron" 
@@ -227,7 +229,7 @@ function GM:ShowSpare2(ply)
 end 
 
 function GM:PlayerNoClip(ply) 
-	return ply:IsSuperAdmin() 
+	return ply:GetRank() >= 70 
 end 
 
 /* Get a list of SpawnPoints */
