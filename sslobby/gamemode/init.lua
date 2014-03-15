@@ -104,8 +104,6 @@ function GM:PlayerSpawn(player)
 	player_manager.SetPlayerClass(ply, "player_sslobby")
 	
 	self.BaseClass:PlayerSpawn(player)
-
-	player:SetModel("models/player/group01/male_01.mdl")
 	
 	player:SetJumpPower(205)
 	player:SetRunSpeed(350)
