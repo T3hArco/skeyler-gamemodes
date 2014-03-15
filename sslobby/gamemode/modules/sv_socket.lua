@@ -111,7 +111,7 @@ end
 ---------------------------------------------------------
 
 function SetupHost(ip, port)
-	local sock = socket.udp()
+	local sock = luasocket.udp()
 	local success, errorMessage = sock:setsockname(ip, port)
 	
 	if (success == 1) then
