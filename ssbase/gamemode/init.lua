@@ -47,7 +47,10 @@ include("sv_profiles.lua")
 include("sv_store.lua") 
 include("sv_timer.lua")
 include("sv_commands.lua")
-include("sv_gatekeeper.lua") 
+
+if (!game.IsDedicated()) then
+	include("sv_gatekeeper.lua") 
+end
 
 function ChatPrintAll(msg)
 	if !msg or string.Trim(msg) == "" then return end 
