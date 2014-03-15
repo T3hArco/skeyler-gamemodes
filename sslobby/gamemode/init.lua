@@ -250,6 +250,14 @@ function GM:AllowPlayerPickup( ply, object )
 	return false
 end
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:PlayerCanPickupItem( player, entity )
+	return false
+end
+
 -- dev
 concommand.Add("poo",function()
 RunConsoleCommand("bot")
