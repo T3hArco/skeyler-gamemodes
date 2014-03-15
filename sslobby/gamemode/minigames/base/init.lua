@@ -64,14 +64,13 @@ function MINIGAME:Finish(timeLimit)
 
 	self.players = {}
 	
-	for k, player in pairs(players) do
-		self:RespawnPlayer(player)
+	for k, player in pairs(player.GetAll()) do
+		player:SetNetworkedBool("ss.playingminigame", false)
+		player.minigame = nil
 	end
 
-	local players = player.GetAll()
-	
 	for k, player in pairs(players) do
-		player:SetNetworkedBool("ss.playingminigame", false)
+		self:RespawnPlayer(player)
 	end
 	
 	if (!timeLimit) then
@@ -87,6 +86,8 @@ function MINIGAME:RemovePlayer(player, noRespawn)
 	for k, v in pairs(self.players) do
 		if (v == player) then
 			self.players[k] = nil
+			v:SetNetworkedBool("ss.playingminigame", false)
+			v.minigame = nil
 
 			if (!noRespawn) then
 				self:RespawnPlayer(player)
@@ -101,6 +102,8 @@ end
 
 function MINIGAME:RespawnPlayer(player)
 	local spawnPoint = hook.Run("PlayerSelectSpawn", player)
+	player:SetNetworkedBool("ss.playingminigame", false)
+	player.minigame = nil
 
 	player:Spawn()
 	player:SetPos(spawnPoint:GetPos())

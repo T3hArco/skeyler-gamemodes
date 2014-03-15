@@ -11,7 +11,7 @@ function MINIGAME:Initialize()
 
 	if (IsValid(entity)) then
 		local position = entity:GetPos()
-		local min, max = Vector(-472, -472, 0), Vector(472, 472, 0)
+		local min, max = Vector(-460, -460, 0), Vector(460, 460, 0)
 		
 		self.spawnOrigin = {position, min, max}
 	end
@@ -28,6 +28,11 @@ function MINIGAME:Start()
 	
 	self.nextDrop = CurTime() +1
 	self.bombVelocity = 0.1
+
+	self.minDrop = 4
+	self.maxDrop = 8
+
+	self.nextDrop = CurTime() + 3
 end
 
 ---------------------------------------------------------
@@ -78,7 +83,7 @@ function MINIGAME:Think()
 			end
 		end
 		
-		for i = 1, math.random(4, 8) do
+		for i = 1, math.random(self.minDrop, self.maxDrop) do
 			local position = Vector(data[1].x +math.random(data[2].x, data[3].x), data[1].y +math.random(data[2].y, data[3].y), data[1].z)
 			
 			local entity = ents.Create("info_minigame_bomb")
@@ -93,8 +98,11 @@ function MINIGAME:Think()
 				end
 			end)
 		end
+
+		self.minDrop = self.minDrop + 2
+		self.maxDrop = self.maxDrop + 2
 		
-		self.nextDrop = CurTime() +5
+		self.nextDrop = CurTime() + 3
 	end
 end
 

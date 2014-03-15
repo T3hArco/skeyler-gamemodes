@@ -69,14 +69,23 @@ hook.Add("HUDPaint", "SS.Lobby.Minigame", function()
 			offsetX, offsetY = minigame.TimerX or 0, minigame.TimerY or 0
 		end
 		
-		draw.RoundedBox(8, ScrW() /2 -392 /2, 36 +offsetY, 392, 60, color_shadow)
+		surface.SetFont("minigame.timer")
+		if (gameProgress) then
+			width, height = surface.GetTextSize("THE GAME WILL END IN " .. seconds .. " SECONDS")
+		else
+			width, height = surface.GetTextSize("THE NEXT GAME BEGINS IN " .. seconds .. " SECONDS")
+		end
+		//5 pixel buffer on each side
+		width = width + 10
+		height = height + 10
+		draw.RoundedBox(8, ScrW() /2 - width /2,  89 + offsetY - height, width, height, color_shadow)
 		
 		if (gameProgress) then
-			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX, 84 +offsetY, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " SECONDS", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " SECONDS", "minigame.timer", ScrW() /2 +offsetX, 84 +offsetY, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 		else
-			draw.SimpleText("THE NEXT GAME BEGINS IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			draw.SimpleText("THE NEXT GAME BEGINS IN " .. seconds .. " seconds", "minigame.timer", ScrW() /2 +offsetX, 84 +offsetY, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("THE NEXT GAME BEGINS IN " .. seconds .. " SECONDS", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("THE NEXT GAME BEGINS IN " .. seconds .. " SECONDS", "minigame.timer", ScrW() /2 +offsetX, 84 +offsetY, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 		end
 	end
 	

@@ -1,5 +1,5 @@
 MINIGAME.Time = 60
-MINIGAME.Weapons = {"weapon_frag", "weapon_smg1", "weapon_pistol", "weapon_shotgun"}
+MINIGAME.Weapons = {"weapon_crowbar", "weapon_frag", "weapon_smg1", "weapon_pistol", "weapon_shotgun"}
 
 ---------------------------------------------------------
 --

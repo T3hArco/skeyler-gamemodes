@@ -28,14 +28,14 @@ function SS.Lobby.Minigame:SetCurrentGame(unique)
 	for i = 1, #players do
 		local player = players[i]
 		
-		self:RemovePlayer(player)
-		
 		if (IsValid(player)) then
 			local spawnPoint = hook.Run("PlayerSelectSpawn", player, minigame)
 			
 			player:Freeze(true)
-			player:SetPos(spawnPoint:GetPos())
+			player:KillSilent()
 			player:SetNetworkedBool("ss.playingminigame", true)
+			player.minigame = minigame
+			player:Spawn()
 			player:Freeze(false)
 			
 			hook.Run("PlayerLoadout", player)

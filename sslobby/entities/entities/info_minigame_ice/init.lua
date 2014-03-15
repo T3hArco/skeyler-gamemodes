@@ -44,13 +44,19 @@ function ENT:StartTouch(entity)
 				end
 			
 				if (!exists) then
-					table.insert(self.players, entity)
+					timer.Simple(0.6, function()
+						if IsValid(entity) then
+							if self.life != 0 then
+								self.life = 0
+							end
+						end
+					end)
+					//table.insert(self.players, entity)
 				end
 			end
 		end
-		
+
 		local physicsObject = self:GetPhysicsObject()
-		
 		if (IsValid(physicsObject)) then
 			physicsObject:Sleep()
 			physicsObject:EnableMotion(false)
@@ -83,6 +89,7 @@ end
 ---------------------------------------------------------
 
 function ENT:Think()
+	/*
 	if (#self.players > 0 and !self.removed) then
 		self.color.g = math.Clamp((self.life /255) *255, 0, 255)
 		self.color.b = math.Clamp((self.life /255) *255, 0, 255)
@@ -91,6 +98,16 @@ function ENT:Think()
 		
 		self.life = self.life -11
 		
+		if (self.life <= 0) then
+			self.removed = true
+			
+			self:SetNoDraw(true)
+			self:SetNotSolid(true)
+		end
+	end
+	*/
+
+	if !self.removed then
 		if (self.life <= 0) then
 			self.removed = true
 			

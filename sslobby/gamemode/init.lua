@@ -86,7 +86,7 @@ function GM:PlayerInitialSpawn(player)
 	self.BaseClass:PlayerInitialSpawn(player)
 	
 	player:SetTeam(TEAM_READY)
-
+	
 	player:SetCollideWithTeammates(true) 
 	player:SetModel("models/player/group01/male_01.mdl")
 	
@@ -107,6 +107,7 @@ function GM:PlayerSpawn(player)
 	self.BaseClass:PlayerSpawn(player)
 	
 	player:SetJumpPower(205)
+	player:SetRunSpeed(350)
 end
 
 --------------------------------------------------
@@ -159,12 +160,12 @@ end
 --
 --------------------------------------------------
 
-function GM:PlayerSelectSpawn(player, minigame)
+function GM:PlayerSelectSpawn(player)
 	local spawnPoint = self.spawnPoints.lounge
 	
 	if (player:Team() > TEAM_READY) then
-		if (minigame) then
-			spawnPoint = minigame:GetSpawnPoints(player)
+		if (player:GetNetworkedBool("ss.playingminigame") && player.minigame) then
+			spawnPoint = player.minigame:GetSpawnPoints(player)
 		else
 			spawnPoint = self.spawnPoints
 		end
