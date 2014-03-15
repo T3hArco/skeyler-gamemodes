@@ -9,9 +9,9 @@ DB_DEVS = false
 -- DB_PASS = "wpNHCUnmxAMM93vG" 
 
 if (game.IsDedicated()) then
-	DB_HOST = "162.213.209.3"
-	DB_USER = "servers_gmod"
-	DB_PASS = "wdXWciNSRsh2CA1jJ3Kdt"
+	DB_HOST = "127.0.0.1"
+	DB_USER = "root"
+	DB_PASS = "4a5ruxeMatRAhERe"
 else
 	DB_HOST = "127.0.0.1"
 	DB_USER = "root"
@@ -48,11 +48,11 @@ include("sv_commands.lua")
 include("sv_gatekeeper.lua") 
 
 function ChatPrintAll(msg)
-  	if !msg or string.Trim(msg) == "" then return end 
+	if !msg or string.Trim(msg) == "" then return end 
   
   for k,v in pairs(player.GetAll()) do 
-  		v:ChatPrint(msg) 
- 	end 
+		v:ChatPrint(msg) 
+	end 
  end
  
 function PLAYER_META:ChatPrintAll(msg) 
@@ -291,30 +291,30 @@ hook.Add("InitPostEntity", "SpawnPoints", function()
 end )
 
 function GM:EntityKeyValue( ent, key, value )
-     
-    if !GAMEMODE.BaseStoreOutput or !GAMEMODE.BaseTriggerOutput then
-     
-        local e = scripted_ents.Get( "base_entity" )
-        GAMEMODE.BaseStoreOutput = e.StoreOutput
-        GAMEMODE.BaseTriggerOutput = e.TriggerOutput
-         
-    end
+	 
+	if !GAMEMODE.BaseStoreOutput or !GAMEMODE.BaseTriggerOutput then
+	 
+		local e = scripted_ents.Get( "base_entity" )
+		GAMEMODE.BaseStoreOutput = e.StoreOutput
+		GAMEMODE.BaseTriggerOutput = e.TriggerOutput
+		 
+	end
  
-    if key:lower():sub( 1, 2 ) == "on" then
-         
-        if !ent.StoreOutput or !ent.TriggerOutput then -- probably an engine entity
-         
-            ent.StoreOutput = GAMEMODE.BaseStoreOutput
-            ent.TriggerOutput = GAMEMODE.BaseTriggerOutput
-            
+	if key:lower():sub( 1, 2 ) == "on" then
+		 
+		if !ent.StoreOutput or !ent.TriggerOutput then -- probably an engine entity
+		 
+			ent.StoreOutput = GAMEMODE.BaseStoreOutput
+			ent.TriggerOutput = GAMEMODE.BaseTriggerOutput
+			
 		end
 		
-        if ent.StoreOutput then
-                 
-            ent:StoreOutput( key, value )
-                 
-        end
-         
-    end
-     
+		if ent.StoreOutput then
+				 
+			ent:StoreOutput( key, value )
+				 
+		end
+		 
+	end
+	 
 end
