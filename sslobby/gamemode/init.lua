@@ -101,7 +101,7 @@ end
 --------------------------------------------------
 
 function GM:PlayerSpawn(player)
-	player_manager.SetPlayerClass(ply, "player_sslobby")
+	player_manager.SetPlayerClass(player, "player_sslobby")
 	
 	self.BaseClass:PlayerSpawn(player)
 	
