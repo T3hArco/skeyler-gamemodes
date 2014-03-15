@@ -50,7 +50,9 @@ function PLAYER_META:ProfileLoaded(res)
 
 		MsgN("[PROFILE] Loaded ", self) 
 
+		print(self, self.profile.rank, self:GetRank())
 		self:SetRank(self.profile.rank) 
+		print(self:GetRank()) 
 		self:SetMoney(self.profile.money) 
 		self:SetExp(self.profile.exp)
 		self:SetStoreItems(self.profile.store)
