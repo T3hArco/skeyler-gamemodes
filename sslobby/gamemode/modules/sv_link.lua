@@ -200,7 +200,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							
 							local send = {}
 
-							for i = 1, count do
+							for i = 1, math.min(count, SS.Lobby.Link.MaxPlayers) do
 								local player = data.queue[i]
 	
 								if (IsValid(player)) then
@@ -230,10 +230,13 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							
 							timer.Simple(4.5, function()
 								if (data.sending) then
+								print(count,#send)
 									for i = 1, #send do
 										local player = send[i]
 										
 										if (IsValid(player)) then
+											SS.Lobby.Link:RemoveQueue(id, player)
+											
 											player:SendLua("LocalPlayer():ConCommand(\"connect " .. tostring(data.ip) .. ":" .. data.connectPort .. "\")")
 										end
 									end
@@ -241,7 +244,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 									screen:SetStatus(STATUS_LINK_IN_PROGRESS)
 									
 									-- we need to unfreeze players that didnt make it
-									for i = 1, count do
+									for i = 1, #data.queue do
 										local player = data.queue[i]
 										
 										if (IsValid(player)) then

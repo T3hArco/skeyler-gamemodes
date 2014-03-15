@@ -35,7 +35,7 @@ function GM:UpdateScoreboard()
 		end
 	end
 
-	data = util.Compress(von.serialize(info))
+	info = util.Compress(von.serialize(info))
 
 	socket.Send(LOBBY_IP, LOBBY_PORT, "sif", function(data)
 		return data .. info
