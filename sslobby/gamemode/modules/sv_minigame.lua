@@ -162,6 +162,11 @@ function SS.Lobby.Minigame:AddPlayer(player)
 			net.WriteBit(true)
 		net.Send(player)
 		
+		if player.minigame then
+			player.minigame:RemovePlayer(player)
+			player:StripWeapons()
+		end
+
 		print("Added player '" .. tostring(player) .. "' to minigame queue.")
 	end
 end
