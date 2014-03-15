@@ -309,8 +309,7 @@ util.AddNetworkString("ss.lbgtssin")
 
 socket.AddCommand("sif", function(sock, ip, port, data)
 	data = von.deserialize(util.Decompress(data[1]))
-print("PLAYER INFO:")
-PrintTable(data)
+
 	local count = table.Count(data)
 
 	net.Start("ss.lbgtssin")

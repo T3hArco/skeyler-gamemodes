@@ -80,7 +80,7 @@ net.Receive("ss.lbgtssin", function(bits)
 		local iron = net.ReadUInt(16)
 		local gold = net.ReadUInt(16)
 		
-		storedTriggers[server].players[teamID] = {name = name, gold = gold, food = food, iron = iron}
+		table.insert(storedTriggers[server].players, {teamID = teamID, name = name, gold = gold, food = food, iron = iron})
 	end
 end)
 
