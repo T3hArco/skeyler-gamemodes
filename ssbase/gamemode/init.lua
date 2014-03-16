@@ -4,9 +4,6 @@
 --------------------------- 
 
 DB_DEVS = false 
--- DB_HOST = "162.213.209.3" 
--- DB_USER = "aaron" 
--- DB_PASS = "wpNHCUnmxAMM93vG" 
 
 if (game.IsDedicated()) then
 	DB_HOST = "127.0.0.1"
