@@ -66,7 +66,10 @@ function theme:Initialize()
 
 	self.panel.listContainer:SetVisible(false)
 	self.panel.entry:SetFont("ss.chatFont")
-	self.panel:RemoveIcon(self.informationIcon)
+	
+	if (ValidPanel(self.informationIcon)) then
+		self.panel:RemoveIcon(self.informationIcon)
+	end
 	
 	self.settingsIcon:SetImage("skeyler/graphics/settings.png")
 end
