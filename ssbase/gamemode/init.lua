@@ -20,6 +20,8 @@ end
 
 include("player_class/player_ssbase.lua")
 
+resource.AddFile("resource/fonts/Arvil_Sans_0.ttf") 
+
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
