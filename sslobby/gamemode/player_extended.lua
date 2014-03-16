@@ -24,8 +24,6 @@ end
 --------------------------------------------------
 
 function PLAYER_META:CanSlap(target)
-	if target.NoSlap then return false end 
-
 	self.nextSlap = self.nextSlap or 0
 	
 	local minigameSlap = SS.Lobby.Minigame:CallWithPlayer("CanPlayerSlap", self, target, self.nextSlap)
@@ -33,6 +31,10 @@ function PLAYER_META:CanSlap(target)
 	if (minigameSlap != nil) then
 		return minigameSlap
 	end
+
+	if target.NoSlap then
+		return false
+	end 
 	
 	return self.nextSlap <= CurTime()
 end
