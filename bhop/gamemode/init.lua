@@ -13,6 +13,7 @@ include("sh_maps.lua")
 include("sh_viewoffsets.lua") 
 include("player_class/player_bhop.lua")
 include("sv_mapvote.lua")
+include("sv_gatekeeper.lua") 
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
