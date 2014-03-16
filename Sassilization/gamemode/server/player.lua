@@ -200,10 +200,6 @@ function GM:PlayerDisconnected(pl)
 	table.Empty(pl.Alliance)
 
 	Msg( pl:Nick().." has disconnected" )
-	
-	if #player.GetAll()-1 == 0 and self.Started then
-		self:RestartGame()
-	end
 end
 
 function GM:PlayerSpawn(pl)
