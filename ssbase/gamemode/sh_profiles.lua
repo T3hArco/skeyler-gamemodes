@@ -96,6 +96,11 @@ function PLAYER_META:IsSuperAdmin()
 	return self:GetRank() >= 90 
 end 
 
+function PLAYER_META:IsMod()
+	if !self:IsValid() then return true end
+	return self:GetRank() >= 10
+end
+
 function PLAYER_META:IsVIP() 
 	if !self:IsValid() then return true end 
 	return self:GetRank() >= 5 
