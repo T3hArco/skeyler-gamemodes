@@ -1,3 +1,6 @@
+resource.AddWorkshop("238392145")
+resource.AddWorkshop("238759748")
+
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_scoreboard.lua") 

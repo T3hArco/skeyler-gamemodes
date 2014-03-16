@@ -3,8 +3,6 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-resource.AddWorkshop("238392145")
-
 DB_DEVS = false 
 -- DB_HOST = "162.213.209.3" 
 -- DB_USER = "aaron" 

@@ -9,6 +9,8 @@ if( not libsass ) then
 end
 */
 
+resource.AddWorkshop("238759748")
+
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 include("shared.lua")
