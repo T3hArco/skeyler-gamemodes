@@ -1,4 +1,4 @@
-LOBBY_IP = "192.168.1.152"
+﻿LOBBY_IP = "208.115.236.184"
 LOBBY_PORT = 40000
 
 ---------------------------------------------------------
@@ -10,7 +10,7 @@ function GM:SocketConnected(ip, port, data)
 	local map = game.GetMap()
 
 	socket.Send(LOBBY_IP, LOBBY_PORT, "smap", function(data)
-		return data .. self.ServerID .. "¨" .. map
+		return data .. self.ServerID .. "*&*" .. map
 	end)
 end
 
@@ -108,7 +108,7 @@ function GM:UpdateMinimap()
 	info = util.Compress(info)
 	
 	socket.Send(LOBBY_IP, LOBBY_PORT, "smp", function(data)
-		return data .. self.ServerID .. "¨" .. info
+		return data .. self.ServerID .. "*&*" .. info
 	end)
 end
 

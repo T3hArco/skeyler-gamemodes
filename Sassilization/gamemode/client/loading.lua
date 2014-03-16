@@ -5,7 +5,7 @@
 ----------------------------------------
 
 local LOADED = game.SinglePlayer()
-local loadingScreen
+local loadingScreen = nil
 
 surface.CreateFont("Loading", {
 	font = "coolvetica",
@@ -86,7 +86,7 @@ function PANEL:Paint()
 	else
 		self.color = 0
 		if (LOADED) then
-			self.alpha = Lerp( 2*FrameTime(), self.alpha, 0 )
+			self.alpha = math.Approach(self.alpha, 0, 4)
 		end
 	end
 
