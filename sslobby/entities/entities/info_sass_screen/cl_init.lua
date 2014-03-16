@@ -243,7 +243,7 @@ function ENT:Draw()
 			
 	 			DrawPanels(panelUnique, self, 0.1)
 		
-	 			self:PaintMap(40, 640 *0.25 +80)
+	 			self:PaintMap(42, 640 *0.25 +82)
 	 			self:PaintCartridge(321, 177)
 	 			self:DrawMouse()
 			
@@ -329,7 +329,7 @@ end
 ---------------------------------------------------------
 
 local defaultMap = surface.GetTextureID("skeyler/graphics/icon_newmap")
-local width, height = 359, 360
+local width, height = 356, 356
 
 function ENT:PaintMap(x, y)
 	local data = SS.Lobby.Link:GetScreen(self:GetTriggerID())

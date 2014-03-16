@@ -75,12 +75,12 @@ function GM:UpdateMinimap()
 					local position = unit:GetPos()
 					local direction = unit.targetPosition or position
 					
-					local positionX = math.Round((math.abs(position.x) /x) *359)
-					local positionY = math.Round((math.abs(position.y) /y) *360)
+					local positionX = math.Round((math.abs(position.x) /x) *356)
+					local positionY = math.Round((math.abs(position.y) /y) *356)
 					
 					local size = math.Round(math.ceil(unit.OBBMaxs.x *0.8))
-					local directionX = math.Round((math.abs(direction.x) /x) *359)
-					local directionY = math.Round((math.abs(direction.y) /y) *360)
+					local directionX = math.Round((math.abs(direction.x) /x) *356)
+					local directionY = math.Round((math.abs(direction.y) /y) *356)
 
 					info = info .. "|x=" .. positionX .. ",y=" .. positionY .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
 				end
@@ -92,8 +92,8 @@ function GM:UpdateMinimap()
 				if (building and building:IsValid()) then
 					local position = building:GetPos()
 					
-					local positionX = math.Round((math.abs(position.x) /x) *359)
-					local positionY = math.Round((math.abs(position.y) /y) *360)
+					local positionX = math.Round((math.abs(position.x) /x) *356)
+					local positionY = math.Round((math.abs(position.y) /y) *356)
 					
 					local size = math.Round(math.ceil(building:OBBMaxs().x *0.4))
 					
