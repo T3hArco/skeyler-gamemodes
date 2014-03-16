@@ -318,7 +318,7 @@ util.AddNetworkString("ss.lbgtssin")
 socket.AddCommand("sif", function(sock, ip, port, data)
 	data = von.deserialize(util.Decompress(data[1]))
 
-	local count = table.Count(data)
+	local count = table.Count(data) -1
 
 	net.Start("ss.lbgtssin")
 		net.WriteUInt(data.server, 8)
