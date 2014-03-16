@@ -4,6 +4,14 @@ local storedTriggers = {}
 --
 ---------------------------------------------------------
 
+function SS.Lobby.Link.GetStored()
+	return storedTriggers
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function SS.Lobby.Link:AddServerTrigger(id)
 	storedTriggers[id] = {players = {}, queue = {}, sending = false, map = nil}
 	
