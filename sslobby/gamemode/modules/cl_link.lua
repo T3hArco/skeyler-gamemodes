@@ -122,6 +122,8 @@ net.Receive("ss.gtminmp", function(bits)
 			table.insert(storedTriggers[server].minimap, {x = x, y = y, width = size, height = size, color = color})
 		end
 	end
+	
+	print("Got minimap data")
 end)
 
 ---------------------------------------------------------

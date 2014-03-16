@@ -242,7 +242,7 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 							timer.Simple(4.5, function()
 								if (data.sending) then
 									local data = storedTriggers[id]
-									PrintTable(send)
+									
 									for i = 1, #send do
 										local player = send[i]
 										

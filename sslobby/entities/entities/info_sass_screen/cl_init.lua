@@ -351,8 +351,8 @@ function ENT:PaintMap(x, y)
 					object.x = object.dirx
 					object.y = object.diry
 				else
-					object.x = object.x +direction.x *0.1
-					object.y = object.y +direction.y *0.1
+					object.x = object.x +direction.x *0.04
+					object.y = object.y +direction.y *0.04
 				end
 			end
 			
