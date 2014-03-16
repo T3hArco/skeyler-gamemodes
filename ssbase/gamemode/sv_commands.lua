@@ -186,6 +186,19 @@ concommand.Add("ss_mute", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("ss_password", function(ply, cmd, args)
+	if ply:GetRank() < 70 then
+		ply:ChatPrint("You do not have access to this command.\n")
+		return
+	end
+
+	local pass = args[1]
+
+	PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the server password.")
+	SS.PrintToAdmins("[ADMINS] ("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the password to '"..pass.."'.\n")
+	RunConsoleCommand("sv_password", pass)
+end)
+
 concommand.Add("ss_restart", function(ply, cmd, args)
 	if !ply:IsAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
