@@ -92,7 +92,7 @@ net.Receive("ss.lkngtplr", function(bits, player)
 end)
 
 ---------------------------------------------------------
---
+-- 
 ---------------------------------------------------------
 
 util.AddNetworkString("ss.lknrmpl")
@@ -433,10 +433,15 @@ util.AddNetworkString("ss.lbgtsmap")
 socket.AddCommand("smap", function(sock, ip, port, data)
 	local id = tonumber(data[1])
 	local map = data[2]
-
+	local data = storedTriggers[id]
+	
 	local screen = SS.Lobby.Link:GetScreenByID(id)
 	screen:SetStatus(STATUS_LINK_READY)
 
+	data.sending = false
+	
+	timer.Remove("SS.Lobby.Link.Send." .. id)
+	
 	storedTriggers[id].map = map
 	
 	net.Start("ss.lbgtsmap")

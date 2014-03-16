@@ -257,6 +257,20 @@ function GM:ShowTeam(player)
 	player:Spawn()
 end
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:PlayerDisconnected(player)
+	self.BaseClass:PlayerDisconnected(player)
+	
+	local storedTriggers = SS.Lobby.Link.GetStored()
+	
+	for id, data in pairs(storedTriggers) do
+		SS.Lobby.Link:RemoveQueue(id, player)
+	end
+end
+
 -- dev
 concommand.Add("poo",function()
 RunConsoleCommand("bot")

@@ -41,7 +41,7 @@ function SS.Lobby.Link:AddScreen(id)
 end
 	
 ---------------------------------------------------------
---
+-- 
 ---------------------------------------------------------
 
 function SS.Lobby.Link:GetScreen(id)
@@ -72,6 +72,8 @@ end)
 net.Receive("ss.lbgtssin", function(bits)
 	local server = net.ReadUInt(8)
 	local count = net.ReadUInt(8)
+	
+	storedTriggers[server].players = {}
 	
 	for i = 1, count do
 		local teamID = net.ReadUInt(8)
