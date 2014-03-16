@@ -151,6 +151,10 @@ function GM:PlayerInitialSpawn(pl)
 				end)
 			end
 		end
+	else
+		net.Start("PlayerLoadingFinish")
+			net.WriteString("Game starting.")
+		net.Send(pl)
 	end
 	
 	pl:SetJumpPower(280)

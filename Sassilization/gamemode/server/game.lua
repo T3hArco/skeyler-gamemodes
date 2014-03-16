@@ -143,7 +143,9 @@ function GM:RestartGame(NextMap)
 		net.Send(v)
 	end
 	
-	game.ConsoleCommand( "changelevel "..NextMap.."\n" )
+	timer.Simple(5, function()
+		game.ConsoleCommand( "changelevel "..NextMap.."\n" )
+	end)
 
 	/*
 	gatekeeper.DropAllClients("Join Lobby to Play Again")
