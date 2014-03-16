@@ -76,10 +76,6 @@ function GM:CheckGame()
 			end
 		end
 	end
-
-	if #player.GetAll() == 0 and self.Started then
-		self:RestartGame()
-	end
 end
 
 function GM:EndGame( empire )
