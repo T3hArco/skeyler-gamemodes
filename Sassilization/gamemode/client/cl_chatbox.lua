@@ -792,7 +792,7 @@ function theme:ParseData(data, list, isTitle)
 				end
 			end
 			
-			local color, text = ((!DarkRP and i != 4) or (DarkRP and i == 1)) and team.GetColor(value:Team()) or realColor, value:Nick()
+			local color, text = ((!DarkRP and i != 4) or (DarkRP and i == 1)) and value:GetPlayerChatColor() or realColor, value:Nick()
 			
 			local label = atlaschat.GenericLabel()
 			label:SetParent(parseBase)
