@@ -43,13 +43,13 @@ end)
 surface.CreateFont("skeyler.scoreboard.title", {font = "Arvil Sans", size = 62, weight = 400})
 surface.CreateFont("skeyler.scoreboard.title.blur", {font = "Arvil Sans", size = 62, weight = 400, antialias = false, blursize = 4})
 
-surface.CreateFont("skeyler.scoreboard.row", {font = "Arvil Sans", size = 32, weight = 400})
-surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Arvil Sans", size = 32, weight = 400, antialias = false, blursize = 4})
+surface.CreateFont("skeyler.scoreboard.row", {font = "Arvil Sans", size = 24, weight = 400})
+surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Arvil Sans", size = 24, weight = 400, antialias = false, blursize = 4})
 
 surface.CreateFont("skeyler.scoreboard.row.title", {font = "Arvil Sans", size = 36, weight = 400})
 surface.CreateFont("skeyler.scoreboard.row.title.blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 2})
 
-surface.CreateFont("skeyler.scoreboard.ping.small", {font = "Arvil Sans", size = 20, weight = 400})
+surface.CreateFont("skeyler.scoreboard.ping.small", {font = "Arvil Sans", size = 18, weight = 400})
 
 local panel = {}
 
@@ -85,7 +85,7 @@ function panel:Resize()
 	
 	for k, child in pairs(children) do
 		if (ValidPanel(child)) then
-			height = height +50
+			height = height +32
 			
 			if (index % 2 == 1) then
 				child:SetAltLine(true)
@@ -110,7 +110,7 @@ end
 function panel:AddRow(name, width, x_align, rowType, callback)
 	rowType = rowType or SS.Scoreboard.ROW_RIGHT
 	
-	local id = table.insert(self.rows[rowType], {name = name, width = width, x = (rowType == SS.Scoreboard.ROW_LEFT and 71 or rowType == SS.Scoreboard.ROW_RIGHT and (self:GetWide() -8) -width), x_align = x_align or TEXT_ALIGN_LEFT, rowType = rowType, callback = callback})
+	local id = table.insert(self.rows[rowType], {name = name, width = width, x = (rowType == SS.Scoreboard.ROW_LEFT and 51 or rowType == SS.Scoreboard.ROW_RIGHT and (self:GetWide() -8) -width), x_align = x_align or TEXT_ALIGN_LEFT, rowType = rowType, callback = callback})
 	local rows = self.rows[rowType]
 	
 	for i = 1, id -1 do
@@ -134,7 +134,7 @@ function panel:AddPlayer(player)
 	local base = self
 	
 	local panel = vgui.Create("Panel")
-	panel:SetTall(50)
+	panel:SetTall(32)
 	panel:Dock(TOP)
 	
 	AccessorFunc(panel, "m_bAltLine", "AltLine")
@@ -164,18 +164,10 @@ function panel:AddPlayer(player)
 		end
 	end
 	
-	local avatar = panel:Add("Panel")
-	avatar:SetWide(50)
+	local avatar = panel:Add("AvatarImage")
 	avatar:Dock(LEFT)
-	
-	function avatar:Paint(w, h)
-		draw.SimpleRect(0, 0, w, h, color_white)
-	end
-	
-	avatar.avatar = avatar:Add("AvatarImage")
-	avatar.avatar:SetSize(48, 48)
-	avatar.avatar:SetPos(1, 1)
-	avatar.avatar:SetPlayer(player, 48)
+	avatar:SetSize(32, 32)
+	avatar:SetPlayer(player, 32)
 	
 	self.list:AddItem(panel)
 	self.list:InvalidateLayout(true)
@@ -265,9 +257,9 @@ function panel:PaintOver(w, h)
 		util.PaintShadow(w, 60, -w, -60, 4, 0.35)
 		util.PaintShadow(w, h, -w, -30, 4, 0.35)
 		
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title.blur", 71, -10, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 72, -9, Color(0, 0, 0, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 71, -10, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title.blur", 51, -10, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 52, -9, Color(0, 0, 0, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 51, -10, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	surface.DisableClipping(false)
 end
 
@@ -296,7 +288,7 @@ function GM:ScoreboardShow()
 			label:SetColor(color_white)
 			label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
 			label:Dock(LEFT)
-			label:DockMargin(10, 0, 0, 0)
+			label:DockMargin(8, 0, 0, 0)
 			
 			function label:Think()
 				if (IsValid(player)) then
@@ -320,7 +312,7 @@ function GM:ScoreboardShow()
 		
 			function barPanel:Paint(w, h)
 				if (IsValid(player)) then
-					local ping, width, height = player:Ping(), 5, 5
+					local ping, width, height = player:Ping(), 4, 4
 					local multiplier = 1 -math.Clamp((ping -50) /400, 0, 1)
 					
 					for i = 1, 4 do
@@ -337,15 +329,15 @@ function GM:ScoreboardShow()
 					
 					if (self.Hovered) then
 						local pingWidth = util.GetTextSize("skeyler.scoreboard.row", ping)
-						local width, height = pingWidth +58, h
-						local x, y = w +6, h /2 -height /2
+						local width, height = pingWidth +40, h
+						local x, y = w +4, h /2 -height /2
 						
 						surface.DisableClipping(true)
 							draw.Material(x -32, y +height /2 -32 /2, 32, 32, Color(0, 0, 0, 230), arrowTexture)
 							draw.SimpleRect(x, y, width, height, Color(0, 0, 0, 200))
 							
-							draw.SimpleText(ping, "skeyler.scoreboard.row", x +24, y +height /2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-							draw.SimpleText("ms", "skeyler.scoreboard.ping.small", x +24 +pingWidth +1, y +height /2 +4, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+							draw.SimpleText(ping, "skeyler.scoreboard.row", x +12, y +height /2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+							draw.SimpleText("ms", "skeyler.scoreboard.ping.small", x +12 +pingWidth, y +height /2 +2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 						surface.DisableClipping(false)
 					end
 				end
