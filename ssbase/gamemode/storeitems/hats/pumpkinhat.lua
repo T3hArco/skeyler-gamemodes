@@ -3,7 +3,7 @@ ITEM.Name = "Pumpkin Hat"									-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/hats/pumpkin.mdl"	-- Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/hats/pumpkin.mdl"	-- Model used by the item
 
 ITEM.Type = "mask"											-- Also works for stuff like "mask" and such. Used for item compatibility
 

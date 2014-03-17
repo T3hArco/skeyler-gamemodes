@@ -3,7 +3,7 @@ ITEM.Name = "Aviators"										-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/accessories/glasses04.mdl"	-- Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/accessories/glasses04.mdl"	-- Model used by the item
 
 ITEM.Type = "glasses"										-- Also works for stuff like "mask" and such. Used for item compatibility
 

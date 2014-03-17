@@ -3,7 +3,7 @@ ITEM.Name = "Cat Ears"										-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/hats/cat_ears.mdl"	-- Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/hats/cat_ears.mdl"	-- Model used by the item
 
 ITEM.Type = "headcoverpart"									-- Also works for stuff like "mask" and such. Used for item compatibility
 

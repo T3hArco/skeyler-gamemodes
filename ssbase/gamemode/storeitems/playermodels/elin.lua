@@ -3,7 +3,7 @@ ITEM.Name = "Elin"						--The name the item should display
  
 ITEM.Price = 200000
  
-ITEM.Model = "models/mrgiggles/skeyler/playermodels/elin.mdl"			--Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/playermodels/elin.mdl"			--Model used by the item
 
 ITEM.Type = "model"								--Also works for stuff like "mask" and such. Used for item compatibility
 
@@ -34,7 +34,7 @@ ITEM.Hooks["Think"] = function (item,ply)
 				if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() then
 					showhair = false
 				end
-				local hairmodel = "models/mrgiggles/skeyler/misc/elin_hair.mdl"
+				local hairmodel = "models/captainbigbutt/skeyler/misc/elin_hair.mdl"
 			
 --[[			local equip = nil
 				if(ply.previewlist) then
@@ -53,7 +53,7 @@ ITEM.Hooks["Think"] = function (item,ply)
 						showhair = false
 					end
 					if(i.Type == "headcoverhalf") then
-						hairmodel = "models/mrgiggles/skeyler/misc/elin_hair_short.mdl"
+						hairmodel = "models/captainbigbutt/skeyler/misc/elin_hair_short.mdl"
 					end
 				end]]
 				if(showhair) then

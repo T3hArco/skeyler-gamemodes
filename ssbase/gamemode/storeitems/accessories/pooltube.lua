@@ -5,7 +5,7 @@ ITEM.Name = "Duck Inner Tube"								-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/accessories/duck_tube.mdl"	-- Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/accessories/duck_tube.mdl"	-- Model used by the item
 
 ITEM.Type = "pelvictube"									-- Also works for stuff like "mask" and such. Used for item compatibility
 
@@ -43,5 +43,5 @@ ITEM.Models[SS.STORE.MODEL.ELIN] = {{0, 0, 0, pos=Vector(0, -1, 1), ang=Angle(-9
 ITEM.Models[SS.STORE.MODEL.MIKU] = {{0, 0, 0, pos=Vector(0, 0, 0.75), ang=Angle(-90, 0, 90), scale=1.125}}
 ITEM.Models[SS.STORE.MODEL.TRON] = {{0, 0, 0, pos=Vector(0, -0.5, 0.75), ang=Angle(-90, 0, 90), scale=1.125}}
 ITEM.Models[SS.STORE.MODEL.USIF] = {{0, 0, 0, pos=Vector(0, -1, 0), ang=Angle(-90, 0, 90), scale=1.135}}
-ITEM.Models["models/mrgiggles/skeyler/playermodels/zer0.mdl"] = {{0, 0, 0, pos=Vector(0, -1, 1), ang=Angle(-90, 0, 90), scale=1.075}}
+ITEM.Models["models/captainbigbutt/skeyler/playermodels/zer0.mdl"] = {{0, 0, 0, pos=Vector(0, -1, 1), ang=Angle(-90, 0, 90), scale=1.075}}
 /* ************* */

@@ -3,7 +3,7 @@ ITEM.Name = "Straw Hat"										-- The name the item should display
  
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/hats/strawhat.mdl"	-- Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/hats/strawhat.mdl"	-- Model used by the item
 
 ITEM.Type = "headcoverhalf"									-- Also works for stuff like "mask" and such. Used for item compatibility
 

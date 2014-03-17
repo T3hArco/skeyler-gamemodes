@@ -3,7 +3,7 @@ ITEM.Name = "Mustache"										-- The name the item should display
 															-- Mustache (U.S.) | Moustache (U.K.)
 ITEM.Price = 2000
  
-ITEM.Model = "models/mrgiggles/skeyler/accessories/mustache.mdl"	-- Model used by the item
+ITEM.Model = "models/captainbigbutt/skeyler/accessories/mustache.mdl"	-- Model used by the item
 
 ITEM.Type = "mustache"										-- Also works for stuff like "mask" and such. Used for item compatibility
 
