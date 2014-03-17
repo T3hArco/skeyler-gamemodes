@@ -1414,6 +1414,21 @@ function panel:Init()
 		end
 		
 		self.list:AddItem(base)
+
+		local slider, base = util.SliderAndLabel(nil, "Lobby Music Volume")
+		base:Dock(TOP)
+		
+		base.autoSize = true
+		
+		slider:SetMin(0)
+		slider:SetMax(100)
+		slider:SetValue(SS.Lobby.MusicVolume:GetInt())
+		
+		function slider:OnValueChanged(value)
+			RunConsoleCommand("sslobby_musicvolume", value)
+		end
+		
+		self.list:AddItem(base)
 	end
 end	
 

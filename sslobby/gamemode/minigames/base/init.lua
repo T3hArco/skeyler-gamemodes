@@ -103,6 +103,7 @@ end
 ---------------------------------------------------------
 
 function MINIGAME:RespawnPlayer(player)
+	player.leavingMinigame = true
 	local spawnPoint = hook.Run("PlayerSelectSpawn", player)
 	
 	player:SetNetworkedBool("ss.playingminigame", false)

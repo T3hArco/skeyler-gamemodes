@@ -172,7 +172,10 @@ function GM:PlayerSelectSpawn(player)
 		if (player:IsPlayingMinigame() && player.minigame) then
 			spawnPoint = player.minigame:GetSpawnPoints(player)
 		else
-			spawnPoint = self.spawnPoints
+			if player.leavingMinigame then
+				spawnPoint = self.spawnPoints
+				player.leavingMinigame = false
+			end
 		end
 	end
 

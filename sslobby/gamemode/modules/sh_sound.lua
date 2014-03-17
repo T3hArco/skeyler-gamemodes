@@ -10,6 +10,7 @@ AccessorFunc(object, "m_iDuration", "Duration")
 
 local soundDurations = {}
 
+
 --------------------------------------------------
 --
 --------------------------------------------------
@@ -73,6 +74,10 @@ end
 
 hook.Add("Think", "ss.lobby.sound", function()
 	for unique, sound in pairs(stored) do
+		if unique == "lobby_music" then
+			sound.object:ChangeVolume(SS.Lobby.MusicVolume:GetInt()/100, 0)
+		end
+
 		if (sound:ShouldLoop()) then
 			if (sound:GetTime() <= CurTime()) then
 				sound.object:Stop()
@@ -80,6 +85,15 @@ hook.Add("Think", "ss.lobby.sound", function()
 				sound.object:ChangeVolume(sound:GetVolume(), 0)
 				
 				sound:SetTime(CurTime() +sound:GetDuration())
+			end
+		elseif unique == "lobby_music" then
+			if (sound:GetTime() <= CurTime()) then
+				sound.object:Stop()
+				SS.Lobby.Sound.Remove(unique)
+
+				//If last song is finished, play a new one at random
+				local music = SS.Lobby.Sound.New("lobby_music", LocalPlayer(), "skeyler/lounge/lobby0".. math.random(1, 5) ..".mp3", false)
+				music:SetTime(CurTime() + music:GetDuration())
 			end
 		end
 	end

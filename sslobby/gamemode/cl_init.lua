@@ -15,14 +15,14 @@ include("modules/cl_leaderboard.lua")
 include("modules/sh_sound.lua")
 
 SS.Lobby.ScreenDistance = CreateClientConVar("sslobby_screendistance", "2048", true)
+SS.Lobby.MusicVolume = CreateClientConVar("sslobby_musicvolume", "20", true)
 
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
 
 function GM:InitPostEntity()
-	local music = SS.Lobby.Sound.New("lobby_music", LocalPlayer(), "sassilization/lobby_music.mp3", true)
-	music:SetVolume(0.4)
+	local music = SS.Lobby.Sound.New("lobby_music", LocalPlayer(), "skeyler/lounge/lobby01.mp3", false)
 end
 
 ---------------------------------------------------------
