@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models\mrgiggles\skeyler\playermodels\miku\lights_original"
-	"$translucent" "1"
-	"$nocull" "1"
-}
