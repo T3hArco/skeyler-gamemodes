@@ -199,7 +199,7 @@ hook.Add("ChatText", "atlaschat.ChatText", function(index, name, text, filter)
 			if (name and name != "") then
 				chat.AddText(color_grey, name, color_white, text)
 			else
-				chat.AddText(color_white, text)
+				timer.Simple(0, function() chat.AddText(color_white, text) end)
 			end
 		end
 	end

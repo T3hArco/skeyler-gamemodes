@@ -22,7 +22,7 @@ function PLAYER_META:ProfileLoad()
 
 	self:ChatPrint("Loading your profile") 
 
-	if DB_DEVS then self:ProfileLoaded() return end 
+	if DB_DEVS or self:IsListenServerHost() then self:ProfileLoaded() return end 
 
 	timer.Simple(30, function() if self and self:IsValid() and !self:IsProfileLoaded() then self:ChatPrint("Your profile seems to be having problems loading.  Our appologies.") end end) 
 
