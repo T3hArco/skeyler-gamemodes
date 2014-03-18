@@ -141,19 +141,19 @@ hook.Add("InitPostEntity", "SA.SetupSocket", function()
 	if (port == 27015) then
 		dataPort = 40001
 		
-		self.ServerID = 1
+		GAMEMODE.ServerID = 1
 	elseif (port == 27016) then
 		dataPort = 40002
 		
-		self.ServerID = 2
+		GAMEMODE.ServerID = 2
 	elseif (port == 27018) then
 		dataPort = 40003
 		
-		self.ServerID = 3
+		GAMEMODE.ServerID = 3
 	elseif (port == 27019) then
 		dataPort = 40004
 		
-		self.ServerID = 4
+		GAMEMODE.ServerID = 4
 	end
 	
 	timer.Simple(5,function()
