@@ -102,7 +102,7 @@ chairs = {
 		}
 	},
 	{
-		model = "models/sassilization/furniture/couch02.mdl",
+		model = "models/captainbigbutt/furniture/couch.mdl",
 		slots = {
 			{
 				pos = Vector( 25, 25, -10 ),
@@ -133,7 +133,7 @@ chairs = {
 		}
 	},
 	{
-		model = "models/sassilization/furniture/couch02_small.mdl",
+		model = "models/captainbigbutt/furniture/couch_small.mdl",
 		slots = {
 			{
 				pos = Vector( 0, 15, 3 ),
