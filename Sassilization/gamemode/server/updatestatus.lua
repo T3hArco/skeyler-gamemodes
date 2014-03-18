@@ -132,6 +132,19 @@ end)
 --
 ---------------------------------------------------------
 
+socket.AddCommand("lm", function(sock, ip, port, data)
+	local id = self.ServerID
+	local map = game.GetMap()
+
+	socket.Send(ip, port, "smap", function(data)
+		return data .. self.ServerID .. "*&*" .. map
+	end)
+end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 hook.Add("InitPostEntity", "SA.SetupSocket", function()
 	local ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
 	local port = socket.GetServerPort()

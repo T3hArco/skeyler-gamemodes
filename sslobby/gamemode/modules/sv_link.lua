@@ -490,6 +490,12 @@ function GM:SocketConnected(ip, port, data)
 		
 		if (IsValid(screen)) then
 			screen:SetStatus(data.lastStatus)
+			
+			local status = screen:GetStatus()
+			
+			if (status == STATUS_LINK_UNAVAILABLE) then
+				socket.Send(ip, port, "lm")
+			end
 		end
 	end
 end
