@@ -494,7 +494,7 @@ function GM:SocketConnected(ip, port, data)
 			end
 			
 			local status = screen:GetStatus()
-			
+			print(status)
 			if (status == STATUS_LINK_UNAVAILABLE) then
 				socket.Send(ip, port, "lm")
 			end
