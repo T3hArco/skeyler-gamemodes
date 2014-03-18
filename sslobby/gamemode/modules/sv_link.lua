@@ -485,11 +485,13 @@ end)
 function GM:SocketConnected(ip, port, data)
 	local data = SS.Lobby.Link.GetByPort(port)
 	
-	if (data and data.lastStatus) then
+	if (data) then
 		local screen = SS.Lobby.Link:GetScreenByID(data.id)
 		
 		if (IsValid(screen)) then
-			screen:SetStatus(data.lastStatus)
+			if (data.lastStatus) then
+				screen:SetStatus(data.lastStatus)
+			end
 			
 			local status = screen:GetStatus()
 			
