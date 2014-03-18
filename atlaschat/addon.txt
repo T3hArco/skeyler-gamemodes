@@ -1,0 +1,6 @@
+"AddonInfo"
+{
+	"name" "atlaschat"
+	"author_name" "Chewgum"
+	"info" "A custom chatbox."
+}

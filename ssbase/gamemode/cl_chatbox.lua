@@ -5,9 +5,6 @@
 
 if (!atlaschat) then Msg("CANNOT LOAD THE ATLAS CHAT THEME: THE ATLAS CHAT ADDON IS MISSING!\n") return end
 
--- why is this a global?
-TAG_MAT = Material("skeyler/tag_bg")
-
 local theme = {}
 
 ---------------------------------------------------------

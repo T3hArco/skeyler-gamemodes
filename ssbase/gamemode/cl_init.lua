@@ -28,7 +28,7 @@ SS.ScrW = ScrW()
 SS.ScrH = ScrH()
 
 GM.GUIBlurAmt = 0
-GM.GUIBlurOverlay = Material("skeyler/blur_overlay") 
+GM.GUIBlurOverlay = Material("skeyler/vgui/blur_overlay") 
 
 function ResolutionCheck() 
 	local w = ScrW() 
@@ -45,7 +45,7 @@ end
 
 function GM:DrawOverlay() 
 	if self.GUIBlurAmt > 0 or self.GUIBlur then 
-		if self.GUIBlur then 
+		if self.GUIBlur and self.GUIBlurAmt != 10 then 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 10, 0.2) 
 		else 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 0, 0.5) 
@@ -53,7 +53,7 @@ function GM:DrawOverlay()
 
 		surface.SetDrawColor(92, 92, 92, 200/10*self.GUIBlurAmt)
 		surface.SetMaterial(self.GUIBlurOverlay) 
-		surface.DrawTexturedRect(0, 0, 2480-(1920-ScrW()), 2480-(1080-ScrH())) 
+		surface.DrawTexturedRect(0, 0, ScrW(), ScrH()) 
 	end 
 end 
 

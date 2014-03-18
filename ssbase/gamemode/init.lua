@@ -15,17 +15,18 @@ else
 	DB_PASS = ""
 end
 
-include("player_class/player_ssbase.lua")
+resource.AddWorkshop("239292201")
+
 
 resource.AddFile("resource/fonts/Arvil_Sans_0.ttf") 
 
 AddCSLuaFile("shared.lua")
-AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("cl_hud.lua") 
-AddCSLuaFile("cl_chatbox.lua") 
 AddCSLuaFile("sh_library.lua")
 AddCSLuaFile("sh_profiles.lua") 
 AddCSLuaFile("sh_store.lua") 
+AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("cl_hud.lua") 
+AddCSLuaFile("cl_chatbox.lua") 
 AddCSLuaFile("cl_store.lua") 
 AddCSLuaFile("cl_scoreboard.lua")
 
@@ -34,12 +35,14 @@ AddCSLuaFile("panels/ss_slider.lua")
 AddCSLuaFile("panels/ss_tooltip.lua")
 AddCSLuaFile("panels/ss_checkbox.lua")
 
+include("player_class/player_ssbase.lua")
+
 include("shared.lua")
 include("sh_profiles.lua") 
-include("sv_database.lua")
 include("sh_library.lua")  
 include("sh_maps.lua")
 include("sh_store.lua") 
+include("sv_database.lua")
 include("sv_profiles.lua") 
 include("sv_store.lua") 
 include("sv_timer.lua")

@@ -539,8 +539,8 @@ local PANEL = {}
 AccessorFunc(PANEL, "m_bEqupIcon", "EquipIcon")
 AccessorFunc(PANEL, "m_bInventoryIcon", "InventoryIcon")
 
-local bgmat = Material("skeyler/store/icon_base.png", "noclamp smooth") 
-local highlight = Material("skeyler/store/icon_highlight.png", "noclamp smooth")
+local bgmat = Material("skeyler/vgui/store/icon_base.png", "noclamp smooth") 
+local highlight = Material("skeyler/vgui/store/icon_highlight.png", "noclamp smooth")
 
 function PANEL:Init()
 	local this = self
@@ -1452,10 +1452,10 @@ function SS:AddHubTab(name, iconPath, panelName)
 	table.insert(self.HubTabs, 1, {name=name, iconPath=iconPath, panelName=panelName}) 
 end 
 
-SS:AddHubTab("Store", "skeyler/icons/store.png", "ss_hub_store") 
-SS:AddHubTab("Inventory", "skeyler/icons/profile.png", "ss_hub_inventory") 
-SS:AddHubTab("Settings", "skeyler/icons/settings.png", "ss_hub_settings") 
-SS:AddHubTab("Help", "skeyler/icons/help.png", "ss_hub_help") 
+SS:AddHubTab("Store", "skeyler/vgui/icons/store.png", "ss_hub_store") 
+SS:AddHubTab("Inventory", "skeyler/vgui/icons/profile.png", "ss_hub_inventory") 
+SS:AddHubTab("Settings", "skeyler/vgui/icons/settings.png", "ss_hub_settings") 
+SS:AddHubTab("Help", "skeyler/vgui/icons/help.png", "ss_hub_help") 
 
 concommand.Add("ss_store", function()
 	if (!ValidPanel(SS.Hub)) then

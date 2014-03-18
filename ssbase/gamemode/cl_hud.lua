@@ -28,17 +28,15 @@ surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550})
 surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=400}) 
 surface.CreateFont("PLAYER_TEXT_BLUR", {font="Arvil Sans", size=120, weight=400, blursize=8, antialias=false}) 
 
-PLAYER_MASK = Material("skeyler/names/diagonals.png","noclamp smooth")
-
-HUD_LEFT = Material("skeyler/hud_box_left.png", "noclamp smooth") 
-HUD_CENTER = Material("skeyler/hud_box_center.png", "noclamp smooth") 
-HUD_RIGHT = Material("skeyler/hud_box_ammo.png", "noclamp smooth") 
-HUD_RIGHT_CIRCLE = Material("skeyler/hud_box_ammo_circle.png", "noclamp smooth") 
-HUD_HP = Material("skeyler/hud_bar_health.png", "noclamp smooth") 
-HUD_XP = Material("skeyler/hud_bar_xp.png", "noclamp smooth") 
-HUD_AMMO = Material("skeyler/hud_bar_ammo.png", "noclamp smooth") 
-HUD_BAR_CENTER = Material("skeyler/hud_bar_center.png", "noclamp smooth") 
-HUD_COIN = Material("skeyler/skeyler_coin02.png", "noclamp smooth") 
+HUD_LEFT = Material("skeyler/vgui/hud/hud_box_left.png", "noclamp smooth") 
+HUD_CENTER = Material("skeyler/vgui/hud/hud_box_center.png", "noclamp smooth") 
+HUD_RIGHT = Material("skeyler/vgui/hud/hud_box_ammo.png", "noclamp smooth") 
+HUD_RIGHT_CIRCLE = Material("skeyler/vgui/hud/hud_box_ammo_circle.png", "noclamp smooth") 
+HUD_HP = Material("skeyler/vgui/hud/hud_bar_health.png", "noclamp smooth") 
+HUD_XP = Material("skeyler/vgui/hud/hud_bar_xp.png", "noclamp smooth") 
+HUD_AMMO = Material("skeyler/vgui/hud/hud_bar_ammo.png", "noclamp smooth") 
+HUD_BAR_CENTER = Material("skeyler/vgui/hud/hud_bar_center.png", "noclamp smooth") 
+HUD_COIN = Material("skeyler/vgui/skeyler_coin02.png", "noclamp smooth") 
 
 
 GM.HudAlpha = 0 

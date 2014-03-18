@@ -1,7 +1,7 @@
 surface.CreateFont("ss.slot.name", {font = "DeJaVu Sans", size = 9, weight = 400})
 
-local backgroundTexture = Material("skeyler/store/icon_base.png", "noclamp smooth") 
-local highlightTexture = Material("skeyler/store/icon_highlight.png", "noclamp smooth")
+local backgroundTexture = Material("skeyler/vgui/store/icon_base.png", "noclamp smooth") 
+local highlightTexture = Material("skeyler/vgui/store/icon_highlight.png", "noclamp smooth")
 
 local color_shadow = Color(0, 0, 0, 180)
 local color_background = Color(249, 249, 249, 250)

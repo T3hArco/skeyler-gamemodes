@@ -1,7 +1,7 @@
 surface.CreateFont("ss.tooltip.name", {font = "Arvil Sans", size = 24, weight = 400}) 
 surface.CreateFont("ss.tooltip.options", {font = "Tahoma", size = 18, weight = 400}) 
 
-local arrowTexture = Material("skeyler/arrow.png", "smooth")
+local arrowTexture = Material("skeyler/vgui/arrow.png", "smooth")
 
 local color_texture = Color(20, 20, 20, 254)
 local color_background = Color(20, 20, 20, 254)

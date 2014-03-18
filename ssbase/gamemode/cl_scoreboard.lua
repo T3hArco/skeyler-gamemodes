@@ -266,7 +266,7 @@ end
 vgui.Register("ss.scoreboard", panel, "EditablePanel")
 
 local scoreboard
-local arrowTexture = Material("skeyler/arrow.png", "noclamp smooth")
+local arrowTexture = Material("skeyler/vgui/arrow.png", "noclamp smooth")
 
 ---------------------------------------------------------
 --
