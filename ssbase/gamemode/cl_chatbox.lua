@@ -54,6 +54,8 @@ surface.CreateFont("atlaschat.theme.checkbox", {font = "Roboto Lt", size = 16, w
 
 atlaschat.CreateFont("Skeyler Servers ChatFont", "ss.chatFont", "Open Sans", 16, 800)
 
+atlaschat.timeStamp24 	= atlaschat.config.New("Enabled 24 hour timestamp format", 	"filter_24hourtimestamp", 	false, 					true)
+
 ---------------------------------------------------------
 -- Called when the chatbox should be created.
 ---------------------------------------------------------
@@ -1156,7 +1158,7 @@ function theme:ParseText(list, ...)
 	
 	-- A nice little timestamp!
 	if (atlaschat.timestamp:GetBool()) then
-		local date = os.date("%H:%M:%S", os.time())
+		local date = (atlaschat.timeStamp24:GetBool() and os.date("%H:%M:%S", os.time()) or os.date("%I:%M:%S", os.time()))
 		
 		local label = atlaschat.GenericLabel()
 		label:SetParent(parseBase)
