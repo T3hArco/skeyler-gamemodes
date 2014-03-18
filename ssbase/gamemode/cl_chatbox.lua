@@ -54,7 +54,7 @@ surface.CreateFont("atlaschat.theme.checkbox", {font = "Roboto Lt", size = 16, w
 
 atlaschat.CreateFont("Skeyler Servers ChatFont", "ss.chatFont", "Open Sans", 16, 800)
 
-atlaschat.timeStamp24 	= atlaschat.config.New("Enabled 24 hour timestamp format", 	"filter_24hourtimestamp", 	false, 					true)
+atlaschat.timeStamp24 	= atlaschat.config.New("Enable 24 hour timestamp format", 	"filter_24hourtimestamp", 	false, 					true)
 
 ---------------------------------------------------------
 -- Called when the chatbox should be created.
