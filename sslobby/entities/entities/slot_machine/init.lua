@@ -76,7 +76,12 @@ function ENT:Use(player)
 		player:TakeMoney(5)
 		
 		if (winMultiply > 0) then
-			timer.Simple(2.5, function() player:GiveMoney(5 *winMultiply) end)
+			timer.Simple(2.5, function()
+				if player and player:IsValid() then 
+					player:GiveMoney(5 *winMultiply)
+					player:ChatPrint("You have won: $"..tostring(5*winMultiply)) 
+				end 
+			end)
 		end
 		
 		net.Start("ss_pullslotmc")
