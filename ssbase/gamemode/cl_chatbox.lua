@@ -69,6 +69,10 @@ function theme:Initialize()
 	end
 	
 	self.settingsIcon:SetImage("skeyler/graphics/settings.png")
+
+	-- A temporary fix for chat not being aligned properly on spawn
+	self:OnToggle(true) 
+	self:OnToggle(false)
 end
 
 ---------------------------------------------------------
