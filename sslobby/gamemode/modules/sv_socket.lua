@@ -200,7 +200,7 @@ function AddServer(ip, port)
 	
 	Send(ip, port, "ping")
 
-	timer.Create("socket.PingPong." .. ip, 60, 0, function()
+	timer.Create("socket.PingPong." .. ip .. ":" .. port, 60, 0, function()
 		Send(ip, port, "ping")
 
 		timer.Simple(5, function()
