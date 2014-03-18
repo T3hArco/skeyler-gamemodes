@@ -93,7 +93,7 @@ end
 PLAYER_META.IsSuperAdmin2 = PLAYER_META.IsSuperAdmin 
 function PLAYER_META:IsSuperAdmin() 
 	if !self:IsValid() then return true end 
-	return self:GetRank() >= 90 
+	return self:GetRank() >= 70 
 end 
 
 function PLAYER_META:IsMod()
