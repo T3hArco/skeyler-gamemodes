@@ -30,14 +30,22 @@ function ENTITY_META:IsChair()
 					seat:SetAngles( self:GetAngles() + (slot.ang or Angle(0,-90,0)) )
 					seat:SetPos( self:GetPos() + self:GetRight() * slot.pos.x + self:GetForward() * slot.pos.y + self:GetUp() * slot.pos.z )
 					seat:DrawShadow( false )
+				
+					if (seatData.KeyValues) then
+						for k2, v2 in pairs(seatData.KeyValues) do
+							seat:SetKeyValue(k2, v2)
+						end
+					end
+					
 					seat:Spawn()
 					seat:Activate()
 					seat:SetNotSolid(true)
-					seat:SetNoDraw( true )
+					seat:SetNoDraw(true)
 					
-					--Seat:SetCollisionGroup( COLLISION_GROUP_WORLD )
-					--Seat:GetPhysicsObject():SetMaterial( "ice" )
-					
+					if (seatData.Members) then
+						table.Merge(seat, seatData.Members)
+					end
+			
 					seat.chair = true
 					seat.exits = slot.exits
 					
@@ -102,10 +110,10 @@ chairs = {
 		}
 	},
 	{
-		model = "models/captainbigbutt/furniture/couch.mdl",
+		model = "models/captainbigbutt/skeyler/furniture/couch.mdl",
 		slots = {
 			{
-				pos = Vector( 25, 25, -10 ),
+				pos = Vector(25, 6, 10),
 				exits = {
 					Vector( 0, 48, 0 ),
 					Vector( 36, 48, 0 ),
@@ -114,7 +122,7 @@ chairs = {
 				}
 			},
 			{
-				pos = Vector( 0, 25, -10 ),
+				pos = Vector(0, 6, 10),
 				exits = {
 					Vector( 0, 48, 0 ),
 					Vector( 36, 48, 0 ),
@@ -122,7 +130,7 @@ chairs = {
 				}
 			},
 			{
-				pos = Vector( -25, 25, -10 ),
+				pos = Vector(-25, 6, 10),
 				exits = {
 					Vector( 0, 48, 0 ),
 					Vector( 36, 48, 0 ),
