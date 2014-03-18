@@ -27,6 +27,12 @@ end
 
 function ENT:Use(player)
 	if (self.nextPull < CurTime()) then
+		if !player:HasMoney(5) then 
+			player:ChatPrint("You do not have enough money to play.  Come back later, it's only $5!")
+			self.nextPull = CurTime() +5 
+			return 
+		end 
+
 		self:ResetSequence(self.sequence)
 		
 		local randomLeft = math.random(1, 6)
