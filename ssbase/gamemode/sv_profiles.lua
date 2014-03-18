@@ -62,6 +62,12 @@ function PLAYER_META:ProfileLoaded(res)
 		self.profile.lastLoginTimestamp = os.time() 
 		self.playtimeStart = os.time() 
 		SS.Profiles[self:SteamID()] = self.profile
+
+		if !self:HasMoney(0) then 
+			self:SetMoney(0) 
+			self:ChatPrint("Oops!  You have negative money, we set that to 0 for you.  Please tell a developer how this happened!")  
+		end 
+
 		self:ChatPrint("Your profile has been loaded") 
 	elseif res and !res[1] then 
 		self:ChatPrint("No profile detected, creating one for you.") 
