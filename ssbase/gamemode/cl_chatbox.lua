@@ -71,8 +71,8 @@ function theme:Initialize()
 	self.settingsIcon:SetImage("skeyler/graphics/settings.png")
 
 	-- A temporary fix for chat not being aligned properly on spawn
-	self:OnToggle(true) 
-	-- self:OnToggle(false)
+	atlaschat.theme.Call("OnToggle", true)
+	hook.Run("StartChat", false)
 end
 
 ---------------------------------------------------------
