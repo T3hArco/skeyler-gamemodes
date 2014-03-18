@@ -54,9 +54,9 @@ end
 net.Receive("ss.lbgtsrs", function(bits)
 	local server = net.ReadUInt(8)
 	
-	storedTriggers[id].map = nil
-	storedTriggers[id].players = {}
-	storedTriggers[id].minimap = {}
+	storedTriggers[server].map = nil
+	storedTriggers[server].players = {}
+	storedTriggers[server].minimap = {}
 end)
 
 ---------------------------------------------------------
