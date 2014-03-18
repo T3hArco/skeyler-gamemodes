@@ -72,7 +72,7 @@ function theme:Initialize()
 
 	-- A temporary fix for chat not being aligned properly on spawn
 	self:OnToggle(true) 
-	self:OnToggle(false)
+	-- self:OnToggle(false)
 end
 
 ---------------------------------------------------------
