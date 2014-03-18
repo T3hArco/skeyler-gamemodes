@@ -45,12 +45,12 @@ SS.STORE.SLOT.NAME[SS.STORE.SLOT.ACCESSORY_4] = "Accessory 4"
 
 SS.STORE.MODEL = {}
 
-SS.STORE.MODEL.DANTE = "models/mrgiggles/skeyler/playermodels/dante.mdl"
-SS.STORE.MODEL.ELIN = "models/mrgiggles/skeyler/playermodels/elin.mdl"
-SS.STORE.MODEL.MIKU = "models/mrgiggles/skeyler/playermodels/miku.mdl"
-SS.STORE.MODEL.TRON = "models/mrgiggles/skeyler/playermodels/tron.mdl"
-SS.STORE.MODEL.ZERO = "models/mrgiggles/skeyler/playermodels/zer0.mdl"
-SS.STORE.MODEL.USIF = "models/mrgiggles/skeyler/playermodels/usifarmor.mdl"
+SS.STORE.MODEL.DANTE = "models/captainbigbutt/skeyler/playermodels/dante.mdl"
+SS.STORE.MODEL.ELIN = "models/captainbigbutt/skeyler/playermodels/elin.mdl"
+SS.STORE.MODEL.MIKU = "models/captainbigbutt/skeyler/playermodels/miku.mdl"
+SS.STORE.MODEL.TRON = "models/captainbigbutt/skeyler/playermodels/tron.mdl"
+SS.STORE.MODEL.ZERO = "models/captainbigbutt/skeyler/playermodels/zer0.mdl"
+SS.STORE.MODEL.USIF = "models/captainbigbutt/skeyler/playermodels/usifarmor.mdl"
 
 -- First number -> Model bodygroup index.
 -- Second number -> The item bodygroup index.
