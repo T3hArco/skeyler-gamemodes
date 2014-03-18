@@ -47,7 +47,7 @@ function GM:DrawOverlay()
 	if self.GUIBlurAmt > 0 or self.GUIBlur then 
 		if self.GUIBlur and self.GUIBlurAmt != 10 then 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 10, 0.2) 
-		else 
+		elseif !self.GUIBlur and self.GUIBlur != 10 then 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 0, 0.5) 
 		end 
 

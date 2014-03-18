@@ -43,6 +43,15 @@ surface.CreateFont("ss_hub_store_purchase_blur", {font = "Arvil Sans", size = 36
 
 surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 30, weight = 400}) 
 
+function SS:AddHubTab(name, iconPath, panelName) 
+	table.insert(self.HubTabs, 1, {name=name, iconPath=iconPath, panelName=panelName}) 
+end 
+
+SS:AddHubTab("Store", "skeyler/vgui/icons/store.png", "ss_hub_store") 
+SS:AddHubTab("Inventory", "skeyler/vgui/icons/profile.png", "ss_hub_inventory") 
+SS:AddHubTab("Settings", "skeyler/vgui/icons/settings.png", "ss_hub_settings") 
+SS:AddHubTab("Help", "skeyler/vgui/icons/help.png", "ss_hub_help")
+
 ---------------------------------------------------------
 -- The HUB's main panel.
 ---------------------------------------------------------
@@ -462,7 +471,8 @@ function PANEL:Init()
 				if v2.Type == "model" then Panel.Model = true end
 			end 
 		end 
-	end
+	end 
+	self:SetCat(1) -- Lets immediately open a tab
 end 
 
 function PANEL:Paint(w, h) 
@@ -526,7 +536,7 @@ function PANEL:Paint(w, h)
 end 
 
 function PANEL:OnMouseReleased() 
-	STORE:SetCat(self.t.id, self)
+	STORE:SetCat(self.t.id)
 end 
 vgui.Register("ss_hub_store_button", PANEL, "DPanel") 
 
@@ -1446,16 +1456,7 @@ vgui.Register("ss_hub_settings", panel, "Panel")
 
 ---------------------------------------------------------
 --
----------------------------------------------------------
-
-function SS:AddHubTab(name, iconPath, panelName) 
-	table.insert(self.HubTabs, 1, {name=name, iconPath=iconPath, panelName=panelName}) 
-end 
-
-SS:AddHubTab("Store", "skeyler/vgui/icons/store.png", "ss_hub_store") 
-SS:AddHubTab("Inventory", "skeyler/vgui/icons/profile.png", "ss_hub_inventory") 
-SS:AddHubTab("Settings", "skeyler/vgui/icons/settings.png", "ss_hub_settings") 
-SS:AddHubTab("Help", "skeyler/vgui/icons/help.png", "ss_hub_help") 
+--------------------------------------------------------- 
 
 concommand.Add("ss_store", function()
 	if (!ValidPanel(SS.Hub)) then
