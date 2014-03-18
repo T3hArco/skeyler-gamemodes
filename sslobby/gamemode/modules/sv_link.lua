@@ -162,7 +162,7 @@ end
 
 function SS.Lobby.Link.GetByPort(port)
 	for k, data in pairs(storedTriggers) do
-		if (data.connectPort == port) then
+		if (data.dataPort == port) then
 			return data
 		end
 	end
@@ -484,7 +484,7 @@ end)
 
 function GM:SocketConnected(ip, port, data)
 	local data = SS.Lobby.Link.GetByPort(port)
-	
+
 	if (data) then
 		local screen = SS.Lobby.Link:GetScreenByID(data.id)
 		
@@ -494,7 +494,7 @@ function GM:SocketConnected(ip, port, data)
 			end
 			
 			local status = screen:GetStatus()
-			print(status)
+			
 			if (status == STATUS_LINK_UNAVAILABLE) then
 				socket.Send(ip, port, "lm")
 			end
