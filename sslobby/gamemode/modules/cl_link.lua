@@ -33,7 +33,6 @@ local colorTable = {
 function SS.Lobby.Link:AddScreen(id)
 	storedTriggers[id] = {
 		map = nil,
-		chat = {},
 		queue = {},
 		players = {},
 		minimap = {}
@@ -49,6 +48,18 @@ function SS.Lobby.Link:GetScreen(id)
 end
 
 ---------------------------------------------------------
+-- Resets a screen.
+---------------------------------------------------------
+
+net.Receive("ss.lbgtsrs", function(bits)
+	local server = net.ReadUInt(8)
+	
+	storedTriggers[id].map = nil
+	storedTriggers[id].players = {}
+	storedTriggers[id].minimap = {}
+end)
+
+---------------------------------------------------------
 --
 ---------------------------------------------------------
 
@@ -58,7 +69,6 @@ net.Receive("ss.lbgtsmap", function(bits)
 	
 	storedTriggers[server] = {
 		map = surface.GetTextureID("sassilization/minimaps/" .. map),
-		chat = {},
 		queue = {},
 		players = {},
 		minimap = {}
@@ -122,8 +132,6 @@ net.Receive("ss.gtminmp", function(bits)
 			table.insert(storedTriggers[server].minimap, {x = x, y = y, width = size, height = size, color = color})
 		end
 	end
-	
-	print("Got minimap data")
 end)
 
 ---------------------------------------------------------

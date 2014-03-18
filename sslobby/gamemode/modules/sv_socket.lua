@@ -187,7 +187,7 @@ end
 ---------------------------------------------------------
 
 function GetServerPort()
-	return GetConVarString("hostport")
+	return GetConVarNumber("hostport")
 end
 
 ---------------------------------------------------------
@@ -207,6 +207,8 @@ function AddServer(ip, port)
 			
 			if (!connected) then
 				Log("Lost connection with '" .. ip .. ":" .. port .. "'! Trying again in 60 seconds.")
+				
+				hook.Run("SocketLostConnection", ip, port)
 			end
 		end)
 	end)

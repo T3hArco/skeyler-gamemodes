@@ -12,18 +12,34 @@ end
 --
 ---------------------------------------------------------
 
+function SS.Lobby.Link.SetupServers()
+	for id, data in pairs(storedTriggers) do
+		local ip = data.ip
+		local port = data.dataPort
+		
+		socket.AddServer(ip, port)
+	end
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function SS.Lobby.Link:AddServerTrigger(id)
-	storedTriggers[id] = {players = {}, queue = {}, sending = false, map = nil}
-	
-	-- FIX THIS LATER
+	storedTriggers[id] = {id = id, players = {}, queue = {}, sending = false, map = nil, ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"}
+
 	if (id == 1) then
-		storedTriggers[id].ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
 		storedTriggers[id].dataPort = 40001
 		storedTriggers[id].connectPort = 27015
-	--elseif (id == 2) then
-		--storedTriggers[id].ip = "208.115.236.184"
-		--storedTriggers[id].dataPort = 40002
-		--storedTriggers[id].connectPort = 27016
+	elseif (id == 2) then
+		storedTriggers[id].dataPort = 40002
+		storedTriggers[id].connectPort = 27016
+	elseif (id == 3) then
+		storedTriggers[id].dataPort = 40003
+		storedTriggers[id].connectPort = 27018
+	elseif (id == 4) then
+		storedTriggers[id].dataPort = 40004
+		storedTriggers[id].connectPort = 27019
 	end
 end
 
@@ -137,6 +153,18 @@ function SS.Lobby.Link:HasQueue(id, player)
 		end
 	else
 		print("Missing server trigger: " .. id .. "??")
+	end
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.Lobby.Link.GetByPort(port)
+	for k, data in pairs(stored) do
+		if (data.port == port) then
+			return data
+		end
 	end
 end
 
@@ -449,3 +477,43 @@ socket.AddCommand("smap", function(sock, ip, port, data)
 		net.WriteString(map)
 	net.Broadcast()
 end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function GM:SocketConnected(ip, port, data)
+	local data = SS.Lobby.Link.GetByPort(port)
+	
+	if (data and data.lastStatus) then
+		local screen = SS.Lobby.Link:GetScreenByID(data.id)
+		
+		if (IsValid(screen)) then
+			screen:SetStatus(data.lastStatus)
+		end
+	end
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+util.AddNetworkString("ss.lbgtsrs")
+
+function GM:SocketLostConnection(ip, port)
+	local data = SS.Lobby.Link.GetByPort(port)
+	
+	if (data) then
+		net.Start("ss.lbgtsrs")
+			net.WriteUInt(data.id, 8)
+		net.Broadcast()
+		
+		local screen = SS.Lobby.Link:GetScreenByID(data.id)
+		
+		if (IsValid(screen)) then
+			data.lastStatus = screen:GetStatus()
+			
+			screen:SetStatus(STATUS_LINK_UNAVAILABLE)
+		end
+	end
+end

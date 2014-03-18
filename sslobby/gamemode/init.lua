@@ -79,7 +79,7 @@ function GM:InitPostEntity()
 		socket.SetupHost(ip, 40000)
 	
 		timer.Simple(2,function()
-			socket.AddServer(ip, 40001)
+			SS.Lobby.Link.SetupServers()
 		end)
 	end)
 end

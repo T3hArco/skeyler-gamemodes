@@ -127,3 +127,40 @@ socket.AddCommand("spl", function(sock, ip, port, data)
 
 	SA.AuthedPlayers = data
 end)
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+hook.Add("InitPostEntity", "SA.SetupSocket", function()
+	local ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
+	local port = socket.GetServerPort()
+	
+	local dataPort
+	
+	if (port == 27015) then
+		dataPort = 40001
+		
+		self.ServerID = 1
+	elseif (port == 27016) then
+		dataPort = 40002
+		
+		self.ServerID = 2
+	elseif (port == 27018) then
+		dataPort = 40003
+		
+		self.ServerID = 3
+	elseif (port == 27019) then
+		dataPort = 40004
+		
+		self.ServerID = 4
+	end
+	
+	timer.Simple(5,function()
+		socket.SetupHost(ip, dataPort)
+		
+		timer.Simple(2,function()
+			socket.AddServer(LOBBY_IP, LOBBY_PORT)
+		end)
+	end)
+end)

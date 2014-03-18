@@ -6,6 +6,7 @@ function GM:Initialize()
 	resource.AddFile("materials/jaanus/sassilization0"..self.waitscreen..".vmt")
 	
 end
+
 concommand.Add("dev_ent", function(ply, cmd, args)
 	local tr = ply:GetEyeTraceNoCursor()
 	local e = ents.Create(args[1])
@@ -13,6 +14,7 @@ concommand.Add("dev_ent", function(ply, cmd, args)
 	e:SetAngles((ply:GetForward()*-1):Angle())
 	e:Spawn()
 end)
+
 function GM:InitPostEntity()
 	
 	local mines = ents.FindByClass("iron_mine")
@@ -29,19 +31,7 @@ function GM:InitPostEntity()
 	end
 	
 	self.SpawnPoints = ents.FindByClass("info_player_start")
-	self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass("gmod_player_start") )	
-	
-	local ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
-	
-	timer.Simple(5,function()
-		socket.SetupHost(ip, 40001)
-		
-		timer.Simple(2,function()
-			socket.AddServer(ip, 40000)
-		end)
-	end)
-	
-	self.ServerID = 1
+	self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass("gmod_player_start") )
 end
 
 function GM:Think()
