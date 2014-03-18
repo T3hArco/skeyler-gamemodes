@@ -133,11 +133,11 @@ end)
 ---------------------------------------------------------
 
 socket.AddCommand("lm", function(sock, ip, port, data)
-	local id = self.ServerID
+	local id = GAMEMODE.ServerID
 	local map = game.GetMap()
 
 	socket.Send(ip, port, "smap", function(data)
-		return data .. self.ServerID .. "*&*" .. map
+		return data .. GAMEMODE.ServerID .. "*&*" .. map
 	end)
 end)
 
