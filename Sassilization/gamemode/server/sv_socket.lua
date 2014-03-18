@@ -58,7 +58,7 @@ local function HandleSocketData(sock, data, ip, port)
 	table.remove(data, 1)
 	
 	if (command and socketData.commands[command]) then
-		if (socketData.servers[ip] != nil) then
+		if (socketData.servers[ip] != nil and socketData.servers[ip][port] != nil) then
 			socketData.commands[command](sock, ip, port, data)
 			
 			Log("CLIENT '" .. ip .. ":" .. port .. "' RAN COMMAND '" .. command .. "'")
@@ -195,15 +195,16 @@ end
 ---------------------------------------------------------
 
 function AddServer(ip, port)
-	socketData.servers[ip] = {port = port, connected = CurTime() -65}
-
+	socketData.servers[ip] = socketData.servers[ip] or {}
+	socketData.servers[ip][port] = {port = port, connected = CurTime() -65}
+	
 	Send(ip, port, "ping")
 
 	timer.Create("socket.PingPong." .. ip, 60, 0, function()
 		Send(ip, port, "ping")
 
 		timer.Simple(5, function()
-			local connected = math.Round(socketData.servers[ip].connected) >= math.Round(CurTime() -61)
+			local connected = math.Round(socketData.servers[ip][port].connected) >= math.Round(CurTime() -61)
 			
 			if (!connected) then
 				Log("Lost connection with '" .. ip .. ":" .. port .. "'! Trying again in 60 seconds.")
@@ -219,7 +220,7 @@ end
 ---------------------------------------------------------
 
 AddCommand("ping", function(sock, ip, port, data, errorCode)
-	local server = socketData.servers[ip]
+	local server = socketData.servers[ip][port]
 
 	if (server) then
 		Send(ip, server.port, "pong")
@@ -233,7 +234,7 @@ end)
 ---------------------------------------------------------
 
 AddCommand("pong", function(sock, ip, port, data, errorCode)
-	local server = socketData.servers[ip]
+	local server = socketData.servers[ip][port]
 
 	if (server) then
 		local connected = math.Round(server.connected) >= math.Round(CurTime() -62)

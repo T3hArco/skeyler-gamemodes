@@ -161,7 +161,7 @@ end
 ---------------------------------------------------------
 
 function SS.Lobby.Link.GetByPort(port)
-	for k, data in pairs(stored) do
+	for k, data in pairs(storedTriggers) do
 		if (data.port == port) then
 			return data
 		end
