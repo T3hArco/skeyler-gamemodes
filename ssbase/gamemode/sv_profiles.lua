@@ -15,8 +15,7 @@ function PLAYER_META:CheckAvatar()
 				function(body) 
 					if self and self:IsValid() then 
 						body = util.JSONToTable(body) 
-						DB_Query("UPDATE users SET avatarUrl='"..body.response.players[1].avatarfull.."' WHERE steamId='"..string.sub(self:SteamID(), 7).."'") 
-						self:ChatPrint("AVATAR DEBUG: "..body.response.players[1].avatarfull)
+						DB_Query("UPDATE users SET avatarUrl='"..body.response.players[1].avatar.."' WHERE steamId='"..string.sub(self:SteamID(), 7).."'") 
 					end 
 				end, 
 				function(error) 
