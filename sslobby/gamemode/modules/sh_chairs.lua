@@ -141,10 +141,10 @@ chairs = {
 		}
 	},
 	{
-		model = "models/captainbigbutt/furniture/couch_small.mdl",
+		model = "models/captainbigbutt/skeyler/furniture/couch_small.mdl",
 		slots = {
 			{
-				pos = Vector( 0, 15, 3 ),
+				pos = Vector(0, 6, 10),
 				exits = {
 					Vector( 0, 48, 0 ),
 					Vector( 36, 48, 0 ),
@@ -170,7 +170,7 @@ chairs = {
 		model = "models/props_c17/chair_stool01a.mdl",
 		slots = {
 			{
-				pos = Vector( 0, 0, 18 ),
+				pos = Vector( 0, 0, 25 ),
 				exits = {
 					Vector( 0, -48, 0 ),
 					Vector( 36, -48, 0 ),
@@ -183,7 +183,7 @@ chairs = {
 		model = "models/props/cs_militia/barstool01.mdl",
 		slots = {
 			{
-				pos = Vector( 0, 5, 18 ),
+				pos = Vector( 0, -1, 25 ),
 				exits = {
 					Vector( 0, -48, 0 ),
 					Vector( 36, -48, 0 ),
