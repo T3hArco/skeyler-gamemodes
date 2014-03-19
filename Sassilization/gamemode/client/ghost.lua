@@ -616,6 +616,15 @@ function GM:DrawGhost()
 	HaloColor.g = col.g
 	HaloColor.b = col.b
 
+	if(self.Ghost.Item == "city") then
+		for k,v in pairs(ents.FindInSphere(self.Ghost.Ent:GetPos(), 60)) do
+			if v:IsResource() then
+				entsToGlowCount = entsToGlowCount + 1
+				entsToGlow[entsToGlowCount] = v
+			end
+		end
+	end
+
 	render.SetBlend(col.a/255)
 	if( not self.Ghost.NoDraw ) then
 		local c = LocalEmpire():GetColor()
