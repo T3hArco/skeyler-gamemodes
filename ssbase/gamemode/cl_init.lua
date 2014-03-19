@@ -29,6 +29,7 @@ SS.ScrH = ScrH()
 
 GM.GUIBlurAmt = 0
 GM.GUIBlurOverlay = Material("skeyler/vgui/blur_overlay") 
+local PP_SCREENBLUR_MAT = Material("pp/blurscreen")
 
 function ResolutionCheck() 
 	local w = ScrW() 
@@ -50,6 +51,14 @@ function GM:DrawOverlay()
 		elseif !self.GUIBlur and self.GUIBlur != 10 then 
 			self.GUIBlurAmt = math.Approach(self.GUIBlurAmt, 0, 0.5) 
 		end 
+
+		surface.SetMaterial(PP_SCREENBLUR_MAT)	
+		surface.SetDrawColor(255, 255, 255, 255/10*self.GUIBlurAmt)
+		PP_SCREENBLUR_MAT:SetFloat("$blur", 2)
+		PP_SCREENBLUR_MAT:Recompute()
+
+		if render then render.UpdateScreenEffectTexture() end -- Todo: Make this available to menu Lua
+		surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
 		surface.SetDrawColor(92, 92, 92, 200/10*self.GUIBlurAmt)
 		surface.SetMaterial(self.GUIBlurOverlay) 
