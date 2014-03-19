@@ -480,7 +480,7 @@ socket.AddCommand("smap", function(sock, ip, port, data)
 	local pitch, position = math.random(85, 110), screen:GetPos()
 	
 	for i = 1, 5 do
-		sound.Play("novaprospekt/kl_ready.wav", position, 180, pitch, 1)
+		sound.Play("vo/novaprospekt/kl_ready.wav", position, 180, pitch, 1)
 	end
 end)
 
