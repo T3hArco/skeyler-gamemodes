@@ -9,6 +9,11 @@ AccessorFunc(object, "m_flVolume", "Volume")
 AccessorFunc(object, "m_iDuration", "Duration")
 
 local soundDurations = {}
+soundDurations["skeyler/lounge/lobby01.mp3"] = 355
+soundDurations["skeyler/lounge/lobby02.mp3"] = 358
+soundDurations["skeyler/lounge/lobby03.mp3"] = 425
+soundDurations["skeyler/lounge/lobby04.mp3"] = 310
+soundDurations["skeyler/lounge/lobby05.mp3"] = 307
 
 --------------------------------------------------
 --

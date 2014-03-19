@@ -256,8 +256,10 @@ end
 --------------------------------------------------
 
 function GM:ShowTeam(player)
-	player:SetTeam(TEAM_READY)
-	player:Spawn()
+	if !player:IsPlayingMinigame() then
+		player:SetTeam(TEAM_READY)
+		player:Spawn()
+	end
 end
 
 --------------------------------------------------

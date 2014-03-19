@@ -34,6 +34,10 @@ function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
 					end
 				end)
 				SA.StartTime = CurTime() + 90
+
+				for k,v in pairs(player.GetBots()) do
+					v:Kick("")
+				end
 			end
 			
 			table.insert(SA.LoadingPlayers, {username, steamID})
