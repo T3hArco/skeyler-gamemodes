@@ -17,8 +17,10 @@ end
 
 resource.AddWorkshop("239292201")
 
-
 resource.AddFile("resource/fonts/Arvil_Sans_0.ttf") 
+
+resource.AddFile("resource/fonts/helveticaltstdboldcond.ttf") 
+resource.AddFile("resource/fonts/helveticaltstdlight.ttf") 
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("sh_library.lua")
