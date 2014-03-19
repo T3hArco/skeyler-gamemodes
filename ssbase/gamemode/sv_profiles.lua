@@ -10,12 +10,13 @@ SS.Profiles = {}
 
 -- Check if the player has a valid avatar url stored in the database, if not fetch it.
 function PLAYER_META:CheckAvatar() 
-	if self.profile and (!self.profile.avatar or string.Trim(self.profile.avatarUrl) == "" )then 
+	if self.profile and (!self.profile.avatarUrl or string.Trim(self.profile.avatarUrl) == "" or string.sub(self.profile.avatarURL, string.len(self.profile.avatarURL)-9, string.len(self.profile.avatarURL)) == "_full.jpg") then 
 		http.Fetch("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=9D7A9B8269C1C1B1B7B21E659904DDEF&steamids="..self.profile.steamId64,
 				function(body) 
 					if self and self:IsValid() then 
 						body = util.JSONToTable(body) 
 						DB_Query("UPDATE users SET avatarUrl='"..body.response.players[1].avatarfull.."' WHERE steamId='"..string.sub(self:SteamID(), 7).."'") 
+						self:ChatPrint("AVATAR DEBUG: "..body.response.players[1].avatarfull)
 					end 
 				end, 
 				function(error) 
