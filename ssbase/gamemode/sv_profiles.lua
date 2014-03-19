@@ -3,14 +3,32 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped"} 
-local update_filter = {"id", "steamId", "rank"}
+local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped", "avatarUrl"} 
+local update_filter = {"id", "steamId", "rank", "avatarUrl"}
 
 SS.Profiles = {} 
 
+-- Check if the player has a valid avatar url stored in the database, if not fetch it.
+function PLAYER_META:CheckAvatar() 
+	if self.profile and (!self.profile.avatar or string.Trim(self.profile.avatarUrl) == "" )then 
+		http.Fetch("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=9D7A9B8269C1C1B1B7B21E659904DDEF&steamids="..self.profile.steamId64,
+				function(body) 
+					if self and self:IsValid() then 
+						body = util.JSONToTable(body) 
+						DB_Query("UPDATE users SET avatarUrl='"..body.response.players[1].avatarfull.."' WHERE steamId='"..string.sub(self:SteamID(), 7).."'") 
+					end 
+				end, 
+				function(error) 
+					Error("[AVATAR FETCH FAILED] ".. error) 
+				end
+		) 
+	end 
+end 
+
 function PLAYER_META:CreateProfile() 
-	if(self:IsBot()) then return end
-	local query = "INSERT INTO users (steamid64, steamid, name, registerIp, registerTimestamp) VALUES ('"..self:SteamID64().."','"..string.sub(self:SteamID(), 7).."','"..DB:escape(self:Name()).."','"..self:IPAddress().."','"..tostring(os.time()).."')"
+	if(self:IsBot()) then return end 
+	local ip = string.Replace(game.IsDedicated() and self:IPAddress() or "127.0.0.1", ".", "")  
+	local query = "INSERT INTO users (steamid64, steamid, name, registerIp, lastLoginIP, registerTimestamp, lastLoginTimestamp) VALUES ('"..self:SteamID64().."','"..string.sub(self:SteamID(), 7).."','"..DB:escape(self:Name()).."','"..ip.."','"..ip.."','"..tostring(os.time()).."','"..tostring(os.time()).."')"
 	DB_Query(query, function() if self and self:IsValid() then self:ProfileLoad() end end)
 end 
 
@@ -22,7 +40,7 @@ function PLAYER_META:ProfileLoad()
 
 	self:ChatPrint("Loading your profile") 
 
-	if DB_DEVS or self:IsListenServerHost() then self:ProfileLoaded() return end 
+	if DB_DEVS then self:ProfileLoaded() return end 
 
 	timer.Simple(30, function() if self and self:IsValid() and !self:IsProfileLoaded() then self:ChatPrint("Your profile seems to be having problems loading.  Our appologies.") end end) 
 
@@ -58,16 +76,10 @@ function PLAYER_META:ProfileLoaded(res)
 		
 		self:NetworkOwnedItem()
 		
-		self.profile.lastLoginIp = self:IPAddress() 
-		self.profile.lastLoginTimestamp = os.time() 
-		self.playtimeStart = os.time() 
-		SS.Profiles[self:SteamID()] = self.profile
-
 		if !self:HasMoney(0) then 
 			self:SetMoney(0) 
 			self:ChatPrint("Oops!  You have negative money, we set that to 0 for you.  Please tell a developer how this happened!")  
 		end 
-
 		self:ChatPrint("Your profile has been loaded") 
 	elseif res and !res[1] then 
 		self:ChatPrint("No profile detected, creating one for you.") 
@@ -77,8 +89,6 @@ function PLAYER_META:ProfileLoaded(res)
 		self.profile = {} 
 		self.profile.lastLoginIp = self:IPAddress() 
 		self.profile.lastLoginTimestamp = os.time() 
-		self.playtimeStart = os.time() 
-		self.profile.playtime = 0
 		self:SetRank(DB_DEVS and 100 or 0)
 		self:SetMoney(100) 
 		self:SetExp(1)
@@ -86,6 +96,16 @@ function PLAYER_META:ProfileLoaded(res)
 		self:SetEquipped("")
 		self:ChatPrint("We had problems loading your profile and have created a temporary one for you.") 
 	end 
+
+	self.profile.playtime = self.profile.playtime or 0 -- Make sure it isn't nil
+	self.playtimeStart = os.time()
+	self.profile.lastLoginIp = self:IPAddress() 
+	self.profile.lastLoginTimestamp = os.time() 
+
+	SS.Profiles[self:SteamID()] = self.profile
+
+	self:CheckAvatar()
+
 	timer.Create(self:SteamID().."_ProfileUpdate", 120, 0, function() 
 		if self and self:IsValid() then 
 			self.profile.lastLoginTimestamp = os.time() 

@@ -90,8 +90,10 @@ emoticons[":O"] = "icon16/emoticon_surprised.png"
 emoticons[":p"] = "icon16/emoticon_tongue.png"
 emoticons[":P"] = "icon16/emoticon_tongue.png"
 emoticons[":("] = "icon16/emoticon_unhappy.png"
-emoticons["garry"] = {"atlaschat/emoticons/garry.png", 64, 64}
-emoticons["gaben"] = {"atlaschat/emoticons/gaben.png", 64, 64}
+
+-- We don't like the spam these get
+-- emoticons["garry"] = {"atlaschat/emoticons/garry.png", 64, 64}
+-- emoticons["gaben"] = {"atlaschat/emoticons/gaben.png", 64, 64}
 
 emoticons[":smile:"] = "icon16/emoticon_smile.png"
 emoticons[":online:"] = "icon16/status_online.png"
@@ -392,38 +394,40 @@ end
 --
 ---------------------------------------------------------
 
-local expression = atlaschat.expression.New("OverRustle")
+-- Disabled to cleanup our chatbox a bit.
 
-expression.noPattern = true
+-- local expression = atlaschat.expression.New("OverRustle")
 
-function expression:Execute(base)
-	local image = base:Add("DImage")
-	image:SetImage("atlaschat/emoticons/overrustle.png")
-	image:SetSize(32, 32)
-	image:SetToolTip("OverRustle")
-	image:SetMouseInputEnabled(true)
+-- expression.noPattern = true
+
+-- function expression:Execute(base)
+-- 	local image = base:Add("DImage")
+-- 	image:SetImage("atlaschat/emoticons/overrustle.png")
+-- 	image:SetSize(32, 32)
+-- 	image:SetToolTip("OverRustle")
+-- 	image:SetMouseInputEnabled(true)
 	
-	function image:Paint(w, h)
-		if (vgui.GetHoveredPanel() == self) then
-			local x = math.sin(CurTime() *80) *3
-			local y = math.cos(CurTime() *60) *1.5
+-- 	function image:Paint(w, h)
+-- 		if (vgui.GetHoveredPanel() == self) then
+-- 			local x = math.sin(CurTime() *80) *3
+-- 			local y = math.cos(CurTime() *60) *1.5
 			
-			self:PaintAt(x, y, self:GetWide(), self:GetTall())
-		else
-			self:PaintAt(0, 0, self:GetWide(), self:GetTall())
-		end
-	end
+-- 			self:PaintAt(x, y, self:GetWide(), self:GetTall())
+-- 		else
+-- 			self:PaintAt(0, 0, self:GetWide(), self:GetTall())
+-- 		end
+-- 	end
 	
-	function image:OnCopiedText()
-		return "OverRustle"
-	end
+-- 	function image:OnCopiedText()
+-- 		return "OverRustle"
+-- 	end
 	
-	return image
-end
+-- 	return image
+-- end
 
-function expression:GetExample(base)
-	return "OverRustle", self:Execute(base)
-end
+-- function expression:GetExample(base)
+-- 	return "OverRustle", self:Execute(base)
+-- end
 
 ---------------------------------------------------------
 --
