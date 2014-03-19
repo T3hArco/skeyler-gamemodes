@@ -173,6 +173,13 @@ end
 --
 ---------------------------------------------------------
 
+function MINIGAME:PlayerShouldTakeDamage(player, attacker)
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function MINIGAME:HasRequirements(players, teams)
 	return true
 end

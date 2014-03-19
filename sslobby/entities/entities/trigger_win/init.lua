@@ -27,10 +27,3 @@ function ENT:StartTouch(entity)
 		SS.Lobby.Minigame.Call("Finish", nil, entity)
 	end
 end
-
----------------------------------------------------------
---
----------------------------------------------------------
-
-function ENT:EndTouch(entity)
-end

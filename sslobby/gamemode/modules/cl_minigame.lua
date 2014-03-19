@@ -78,7 +78,7 @@ hook.Add("HUDPaint", "SS.Lobby.Minigame", function()
 		//5 pixel buffer on each side
 		width = width + 10
 		height = height + 10
-		draw.RoundedBox(8, ScrW() /2 - width /2,  89 + offsetY - height, width, height, color_shadow)
+		draw.RoundedBox(4, ScrW() /2 - width /2,  89 + offsetY - height, width, height, color_shadow)
 		
 		if (gameProgress) then
 			draw.SimpleText("THE GAME WILL END IN " .. seconds .. " SECONDS", "minigame.timer", ScrW() /2 +offsetX +1, 85 +offsetY, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)

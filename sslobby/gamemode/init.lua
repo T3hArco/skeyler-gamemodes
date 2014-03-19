@@ -276,6 +276,20 @@ function GM:PlayerDisconnected(player)
 	end
 end
 
+--------------------------------------------------
+--
+--------------------------------------------------
+
+function GM:PlayerShouldTakeDamage(player, attacker)
+	local bool = SS.Lobby.Minigame:CallWithPlayer("PlayerShouldTakeDamage", player)
+
+	if (bool != nil) then
+		return bool
+	end
+	
+	return true
+end
+
 -- dev
 concommand.Add("poo",function()
 RunConsoleCommand("bot")

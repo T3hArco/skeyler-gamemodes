@@ -131,12 +131,9 @@ function ENT:PaintLeaderboard()
 				if (data) then
 					draw.SimpleText(data.name, "ss.leaderboard.shadow", 278, 662 +spacing, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 					draw.SimpleText(data.name, "ss.leaderboard", 278, 662 +spacing, color_text, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-				
-					draw.SimpleText(data.empires, "ss.leaderboard.shadow", 3682, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-					draw.SimpleText(data.empires, "ss.leaderboard", 3682, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-					
-					draw.SimpleText(data.hours, "ss.leaderboard.shadow", 4532, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-					draw.SimpleText(data.hours, "ss.leaderboard", 4532, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+
+					draw.SimpleText(data.empires, "ss.leaderboard.shadow", 4432, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					draw.SimpleText(data.empires, "ss.leaderboard", 4432, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 					
 					draw.SimpleText(data.games, "ss.leaderboard.shadow", 5330, 662 +spacing, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 					draw.SimpleText(data.games, "ss.leaderboard", 5330, 662 +spacing, Color(69, 69, 69), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
@@ -150,4 +147,3 @@ function ENT:PaintLeaderboard()
 		end
 	end
 end
---RunConsoleCommand("dicks")

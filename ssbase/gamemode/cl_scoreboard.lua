@@ -18,6 +18,21 @@ function SS.Scoreboard.RegisterRow(name, width, x_align, rowType, callback)
 end
 
 -- I add it here so it'll add it first.
+SS.Scoreboard.RegisterRow("Qubes", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+	local rankPanel = panel:Add("Panel")
+	rankPanel:SetSize(row.width, 50)
+	rankPanel:Dock(RIGHT)
+	
+	function rankPanel:Paint(w, h)
+		if (IsValid(player)) then
+			local money = FormatNum(player:GetMoney())
+			
+			draw.SimpleText(money, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(money, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
+	end
+end)
+
 SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local rankPanel = panel:Add("Panel")
 	rankPanel:SetSize(row.width, 50)

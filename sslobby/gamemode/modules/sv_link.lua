@@ -476,6 +476,12 @@ socket.AddCommand("smap", function(sock, ip, port, data)
 		net.WriteUInt(id, 8)
 		net.WriteString(map)
 	net.Broadcast()
+	
+	local pitch, position = math.random(85, 110), screen:GetPos()
+	
+	for i = 1, 5 do
+		sound.Play("novaprospekt/kl_ready.wav", position, 180, pitch, 1)
+	end
 end)
 
 ---------------------------------------------------------
@@ -522,6 +528,12 @@ function GM:SocketLostConnection(ip, port)
 			data.lastStatus = screen:GetStatus()
 			
 			screen:SetStatus(STATUS_LINK_UNAVAILABLE)
+			
+			local pitch, position = math.random(85, 110), screen:GetPos()
+			
+			for i = 1, 5 do
+				sound.Play("vo/k_lab/kl_fiddlesticks.wav", position, 85, pitch, 1)
+			end
 		end
 	end
 end

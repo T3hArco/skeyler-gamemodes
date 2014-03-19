@@ -59,3 +59,13 @@ function MINIGAME:DoPlayerDeath(victim, inflictor, dmginfo)
 		end
 	end)
 end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function MINIGAME:PlayerShouldTakeDamage(player, attacker)
+	if (player:Team() == attacker:Team()) then
+		return false
+	end
+end

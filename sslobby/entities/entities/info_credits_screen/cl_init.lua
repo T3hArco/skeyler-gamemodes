@@ -50,7 +50,7 @@ function ENT:Draw()
 		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
 			draw.Texture(0, 0, 1280, 640, color_white, texture)
 			surface.SetDrawColor(225, 225, 225, 255)
-			surface.DrawRect( 633, 165, 2, 355 )
+			surface.DrawRect( 633, 166, 2, 354 )
 
 			for k,v in pairs(staffTeam) do
 				if k*40 + 135 < 470 then
