@@ -41,7 +41,7 @@ surface.CreateFont("ss_hub_close_tip.blur", {font="Calibri", size=16, weight=400
 surface.CreateFont("ss_hub_store_purchase", {font = "Arvil Sans", size = 36, weight = 400}) 
 surface.CreateFont("ss_hub_store_purchase_blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 6}) 
 
-surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 30, weight = 400}) 
+surface.CreateFont("ss.settings.label", {font = "Arvil Sans", size = 32, weight = 400}) 
 
 function SS:AddHubTab(name, iconPath, panelName) 
 	table.insert(self.HubTabs, 1, {name=name, iconPath=iconPath, panelName=panelName}) 

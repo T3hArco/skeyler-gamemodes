@@ -9,9 +9,6 @@ util.AddNetworkString("chairs_sitdown")
 function GM:PlayerLeaveVehicle(player, vehicle)
 	vehicle:SetOwner(NULL)
 	
-	net.Start("chairs_unsit")
-	net.Send(player)
-	
 	--[[
 	local position = vehicle:GetPos() +Vector(0, 0, 50)
 	
@@ -142,43 +139,10 @@ net.Receive("lobby_sitchair", function(bits, player)
 						player.lastEyeAngles = player:EyeAngles()
 					
 						player.VehicleEnter = true
-						
+
 						player:EnterVehicle(chair)
-						player:SetEyeAngles(chair:GetForward():Angle())
-						--player:AddAFK()
-						
+
 						chair:SetOwner(player)
-						
-						local position = chair:GetPos()
-						
-						net.Start("chairs_sitdown")
-						--net.WriteVector(Vector(position.x, position.y, position.z +64))
-						
-						local game = chair:GetParent().game
-						
-						if (game) then
-							position = Vector()
-							
-							if (game.customangle)then
-								position = game.customangle
-								
-								player:SetEyeAngles((position -player:EyePos()):Angle())
-							end
-							
-							if (game.controller and game.controller.content.npc) then
-								position = game.controller.content.npc:EyePos()
-								
-								player:SetEyeAngles((position -player:EyePos()):Angle())
-							end
-							
-							net.WriteVector(Vector(position.x, position.y, position.z ))
-							net.Send(player)
-							
-							game:AddPlayer(player, chair:GetParent())
-						else
-							net.WriteVector(Vector())
-							net.Send(player)
-						end
 					end
 				end
 			end
