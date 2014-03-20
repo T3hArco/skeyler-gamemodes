@@ -14,6 +14,8 @@ local classes = {
 }
 
 function SS.Lobby.WorldPicker:CanPickup(entity)
+	if !LocalPlayer():IsAdmin() then return false end 
+
 	local class = entity:GetClass()
 	
 	return classes[class]

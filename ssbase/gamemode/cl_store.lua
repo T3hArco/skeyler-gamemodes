@@ -588,7 +588,7 @@ function PANEL:Init()
 			
 			draw.SimpleText("PURCHASED", "ss_hub_store_purchase_blur", w /2, h /2, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			draw.SimpleText("PURCHASED", "ss_hub_store_purchase", w /2 +1, h /2 +1, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText("PURCHASED", "ss_hub_store_purchase", w /2, h /2, Color(10, 220, 10, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText("PURCHASED", "ss_hub_store_purchase", w /2, h /2, Color(166, 217, 93, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		else
 			if self.Hovered or self:IsChildHovered(1) then 
 				self.Offset = math.Approach(self.Offset, 32, 5)
