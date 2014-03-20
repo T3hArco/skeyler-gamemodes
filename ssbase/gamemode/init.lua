@@ -192,6 +192,13 @@ hook.Add("KeyPress", "SpectateModeChange", function(ply, key)
 end )
 
 function GM:PlayerSay( ply, text, public )
+	local t = text
+
+	if (string.sub(t, 0, 1) == "/") then
+		SS.ToConCommand(ply, t)
+		return ""
+	end
+	
 	local t = string.lower( text )
 	
 	if(t == "!spec" || t == "!spectate") then

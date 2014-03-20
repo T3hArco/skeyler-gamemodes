@@ -24,6 +24,7 @@ concommand.Add("aimpos", function(ply)
 	ply:ChatPrint(tostring(trace.HitPos))
 end ) 
 
+
 --[[--------------------------------------------
 		Administration
 ----------------------------------------------]]
@@ -248,3 +249,40 @@ concommand.Add("ss_slay", function(ply, cmd, args)
 		end
 	end
 end)
+
+
+--[[-------------------------------------------------
+		ChatCommands
+---------------------------------------------------]]
+
+SS.ChatCommands = {
+	["ban"] = "ss_ban",
+	["fakename"] = "ss_fakename",
+	["kick"] = "ss_kick",
+	["map"] = "ss_map",
+	["mute"] = "ss_mute",
+	["password"] = "ss_password",
+	["restart"] = "ss_restart",
+	["slay"] = "ss_slay"
+}
+
+function SS.ToConCommand(ply, text)
+	local t = text
+
+	t = string.gsub(t, "/", "", 1)
+	cmd = string.Explode(" ", t)
+
+	local cmdname = cmd[1]
+	table.remove(cmd, 1)
+
+	local args = string.Implode(" ", cmd)
+
+	for k, _ in pairs(SS.ChatCommands) do
+		if k == cmdname then
+			ply:ConCommand(SS.ChatCommands[k].." "..args)
+			return
+		end
+	end
+
+	ply:ChatPrint("Invalid command.\n")
+end
