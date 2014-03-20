@@ -18,6 +18,7 @@ include("panels/ss_slot.lua")
 include("panels/ss_slider.lua")
 include("panels/ss_tooltip.lua")
 include("panels/ss_checkbox.lua")
+include("panels/ss_notify.lua")
 
 GM:HUDAddShouldNotDraw("CHudHealth") 
 GM:HUDAddShouldNotDraw("CHudSecondaryAmmo") 

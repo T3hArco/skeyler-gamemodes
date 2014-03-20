@@ -36,6 +36,7 @@ AddCSLuaFile("panels/ss_slot.lua")
 AddCSLuaFile("panels/ss_slider.lua")
 AddCSLuaFile("panels/ss_tooltip.lua")
 AddCSLuaFile("panels/ss_checkbox.lua")
+AddCSLuaFile("panels/ss_notify.lua")
 
 include("player_class/player_ssbase.lua")
 

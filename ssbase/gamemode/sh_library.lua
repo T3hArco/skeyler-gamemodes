@@ -1,4 +1,43 @@
+local notifications = {}
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
+function SS.RegisterNotify(text, color, time, image)
+	return table.insert(notifications, {text = text, color = color, time = time, image = image})
+end
+
+local color_notify_green = Color(186, 255, 86)
+local color_notify_yellow = Color(255, 226, 86)
+
+NOTIFY_STORE_OWNED = SS.RegisterNotify("YOU ALREADY OWN THAT ITEM", color_notify_yellow, 6)
+NOTIFY_STORE_AFFORD = SS.RegisterNotify("YOU CANNOT AFFORD THAT ITEM", color_notify_yellow, 6)
+NOTIFY_STORE_PURCHASED = SS.RegisterNotify("YOU HAVE SUCCESSFULLY PURCHASED THE ITEM", color_notify_green, 6)
+NOTIFY_STORE_NOTOWNED = SS.RegisterNotify("YOU DO NOT OWN THAT ITEM", color_notify_yellow, 6)
+
+if (SERVER) then
+	---------------------------------------------------------
+	--
+	---------------------------------------------------------
+	
+	util.AddNetworkString("ss.notify")
+	
+	function SS.Notify(id, player)
+		net.Start("ss.notify")
+			net.WriteUInt(id, 8)
+		if (IsValid(player)) then net.Send(player) else net.Broadcast() end
+	end
+end
+
 if (CLIENT) then
+	net.Receive("ss.notify", function(bits)
+		local id = net.ReadUInt(8)
+		local data = notifications[id]
+		
+		SS.Notify(data.text, data.color, data.time, data.image)
+	end)
+
 	local totalMice = 0
 	local enable = gui.EnableScreenClicker
 	

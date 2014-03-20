@@ -221,7 +221,7 @@ net.Receive("SS_ItemEquip",function(bits, player)
 	if (hasItem) then
 		SS.STORE:Equip(player, id)
 	else
-		print("you dont own that item")
+		SS.Notify(NOTIFY_STORE_NOTOWNED, player)
 	end
 end)
 
@@ -236,7 +236,7 @@ net.Receive("SS_ItemUnequip",function(bits, player)
 	if (hasItem) then
 		SS.STORE:Unequip(player, id)
 	else
-		print("you dont own that item")
+		SS.Notify(NOTIFY_STORE_NOTOWNED, player)
 	end
 end)
 
@@ -260,13 +260,13 @@ net.Receive("ss.store.buy",function(bits, player)
 				player:AddStoreItem(item.ID)
 				player:TakeMoney(item.Price)
 				
-				print("purchased")
+				SS.Notify(NOTIFY_STORE_PURCHASED, player)
 			else
-				print("cannot afford")
+				SS.Notify(NOTIFY_STORE_AFFORD, player)
 			end
 		end
 	else
-		print("already has item")
+		SS.Notify(NOTIFY_STORE_OWNED, player)
 	end
 end)
 
@@ -333,7 +333,7 @@ net.Receive("ss.store.stcstm",function(bits, player)
 		-- We need to force update to the player.
 		SS.STORE.UpdateSlot(item.Slot, player, player)
 	else
-		print("you dont own that item")
+		SS.Notify(NOTIFY_STORE_NOTOWNED, player)
 	end
 end)
 
