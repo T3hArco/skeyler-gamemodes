@@ -515,7 +515,7 @@ net.Receive("atlaschat.chat", function(bits, player)
 				if (IsValid(target)) then
 					local canSee = hook.Run("PlayerCanSeePlayersChat", text, team, target, player)
 					
-					if (canSee) then
+					if (canSee or target == player) then
 						table.insert(filter, target)
 					end
 				end
