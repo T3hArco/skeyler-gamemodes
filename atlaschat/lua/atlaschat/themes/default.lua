@@ -84,7 +84,7 @@ end
 -- Configuration variables.
 ---------------------------------------------------------
 
-local version = "2.0.4.5"
+local version = "2.0.4.6"
 
 atlaschat.version 				= atlaschat.config.New(nil, 								"version", 		version, 				true, true)
 atlaschat.chat_x 				= atlaschat.config.New(nil, 								"chat_x", 		-1, 					true)
