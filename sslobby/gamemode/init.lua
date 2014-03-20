@@ -281,7 +281,7 @@ end
 --------------------------------------------------
 
 function GM:PlayerShouldTakeDamage(player, attacker)
-	local bool = SS.Lobby.Minigame:CallWithPlayer("PlayerShouldTakeDamage", player)
+	local bool = SS.Lobby.Minigame:CallWithPlayer("PlayerShouldTakeDamage", player, attacker)
 
 	if (bool != nil) then
 		return bool
