@@ -49,5 +49,3 @@ include("modules/empire/shared.lua")
 include("modules/empire/server.lua")
 
 util.AddNetworkString("territory.GhostCheck")
-
-RunConsoleCommand("bot")

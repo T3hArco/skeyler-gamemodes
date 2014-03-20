@@ -4,6 +4,8 @@ function GM:Initialize()
 	
 	resource.AddFile("materials/jaanus/sassilization0"..self.waitscreen..".vtf")
 	resource.AddFile("materials/jaanus/sassilization0"..self.waitscreen..".vmt")
+
+	RunConsoleCommand("bot")
 	
 end
 
