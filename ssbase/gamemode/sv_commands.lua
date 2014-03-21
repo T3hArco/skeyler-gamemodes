@@ -201,12 +201,12 @@ concommand.Add("ss_password", function(ply, cmd, args)
 	end
 
 	if pass == "" then
-		PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has removed the server password.")
+		PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has removed the server's password.")
 		RunConsoleCommand("sv_password", pass)
 		return
 	end
 
-	PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the server password.")
+	PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the server's password.")
 	SS.PrintToAdmins("[ADMINS] ("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the password to '"..pass.."'.\n")
 	RunConsoleCommand("sv_password", pass)
 end)
