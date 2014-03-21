@@ -617,7 +617,7 @@ function GM:DrawGhost()
 	HaloColor.b = col.b
 
 	if(self.Ghost.Item == "city") then
-		for k,v in pairs(ents.FindInSphere(self.Ghost.Ent:GetPos(), 60)) do
+		for k,v in pairs(ents.FindInSphere(self.Ghost.Ent:GetPos(), 40)) do
 			if v:IsResource() then
 				entsToGlowCount = entsToGlowCount + 1
 				entsToGlow[entsToGlowCount] = v

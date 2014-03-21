@@ -27,8 +27,7 @@ end)
 
 net.Receive( "PlayerLoadingTime", function()
 	local time = net.ReadInt(16)
-	local string = "The game will start in: " .. math.Round(time - CurTime()) .. " seconds."
-	loadingScreen.Timer = string
+	loadingScreen.startTime = math.Round(time + CurTime())
 end)
 
 net.Receive( "PlayerLoadingList", function()
@@ -50,7 +49,7 @@ local PANEL = {}
 
 function PANEL:Init()
 	
-	self:SetZPos( 9999 )
+	self:SetZPos( 1 )
 	self:SetSize( ScrW(), ScrH() )
 	self:SetPos( 0, 0 )
 	self.color = 255
@@ -91,7 +90,12 @@ function PANEL:Paint()
 	end
 
 	if self.alpha == 0 then
+		LocalPlayer().Loading = false
 		self:Remove()
+	end
+
+	if self.startTime then
+		loadingScreen.Timer = "The game will start in: " .. math.Clamp(math.Round(self.startTime - CurTime()), 0, 90) .. " seconds."
 	end
 	
 	surface.SetFont( "Loading" )
@@ -110,3 +114,5 @@ end
 vgui.Register( "LoadingScreen", PANEL, "Panel" )
 
 loadingScreen = vgui.Create( "LoadingScreen" )
+
+LocalPlayer().Loading = true

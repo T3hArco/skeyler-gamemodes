@@ -131,7 +131,7 @@ function GM:PlayerInitialSpawn(pl)
 		PrintTable(SA.LoadingPlayers)
 		if #SA.LoadingPlayers >= 1 then
 			net.Start("PlayerLoadingTime")
-				net.WriteInt(SA.StartTime, 16)
+				net.WriteInt(SA.StartTime - CurTime(), 16)
 			net.Send(pl)
 			net.Start("PlayerLoadingList")
 				net.WriteTable(SA.LoadingPlayers)
@@ -142,7 +142,7 @@ function GM:PlayerInitialSpawn(pl)
 				SA.StartTime = CurTime() + 5
 				for k,v in pairs(player.GetAll()) do
 					net.Start("PlayerLoadingTime")
-						net.WriteInt(SA.StartTime, 16)
+						net.WriteInt(5, 16)
 					net.Send(v)
 					net.Start("PlayerLoadingFinish")
 						net.WriteString("All players loaded. Game starting.")
@@ -188,6 +188,8 @@ function GM:PlayerInitialSpawn(pl)
 			net.Send(d)
 		end
 	end
+
+	self:ShareGameInfo( pl )
 	
 	--if (SA.DEV and !pl:IsBot()) then
 	--else
@@ -269,21 +271,6 @@ function AssociatePlayer( pl )
 		gamemode.Call("OnPlayerEmpire", pl, pl:GetEmpire())
 		
 	end
-
-	timer.Simple(1, function()
-		for k,v in pairs(empire.GetAll()) do
-			MsgN( "Networking empire ", v, " to player ", pl )
-						
-			net.Start( "empire.Create" )
-				net.WriteEntity( v:GetPlayer() )
-				net.WriteUInt( v:GetID(), 8 )
-				net.WriteUInt( v:GetColorID(), 8 )
-				net.WriteString( v:Nick() )
-			net.Send( pl )
-			
-			v:SendNWVars( pl )
-		end 
-	end)
 	
 end
 
@@ -323,11 +310,9 @@ function GM:ShareGameInfo( pl )
 	net.Quick("load.empires", pl)
 	
 	for _, empire in pairs( empire.GetAll() ) do
-		
-		if( empire ~= pl:GetEmpire() ) then
-			pl.loading.empires[ empire ] = true
-		end
-		
+
+		pl.loading.empires[ empire ] = true
+
 	end
 	
 	for _, wall in pairs( ents.FindByClass( "building_wall" ) ) do

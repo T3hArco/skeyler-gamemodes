@@ -35,6 +35,7 @@ MAPS.List = {
 
 function MAPS.GetNextMap()
 	local CURRENTMAP = game.GetMap()
+	NEXTMAP = MAPS.List[math.random(1, table.Count(MAPS.List))]
 	while NEXTMAP == CURRENTMAP do
 		NEXTMAP = MAPS.List[math.random(1, table.Count(MAPS.List))]
 	end

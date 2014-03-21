@@ -38,6 +38,7 @@ local staffTeam = {
 	{"Arco", "Website / IT Manager"},
 	{"Sassafrass", "Created original RTS"},
 	{"Jaanus", "Created original models for the RTS"},
+	{"Scapegoat", "Graphic Design / HUD Elements"},
 }
 
 local kCount
