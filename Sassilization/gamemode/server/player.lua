@@ -208,7 +208,11 @@ function GM:PlayerDisconnected(pl)
 	Msg( pl:Nick().." has disconnected" )
 	
 	if #player.GetAll()-1 <= 1 and self.Started then
-		self:RestartGame(MAPS.GetNextMap())
+		if #player.GetAll()-1 == 1 then
+			self:EndGame()
+		else
+			self:RestartGame(MAPS.GetNextMap())
+		end
 	end
 end
 
