@@ -147,7 +147,7 @@ end
 
 --Using this rather than Q/E for players who happen to be on a different keyboard layout from QWERTY (Specifically because Arco wanted AZERTY support.) //Hateful
 hook.Add("PlayerBindPress", "menu.PlayerBindPress", function(ply, bind, pressed)
-	if string.find(bind, "+menu") then
+	if (bind == "+menu") then
 		if pressed then
 			buildingMenu = true
 			gamemode.Call( "OnBuildingMenuOpen" )
