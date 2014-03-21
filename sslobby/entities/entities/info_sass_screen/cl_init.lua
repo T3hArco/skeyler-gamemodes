@@ -11,6 +11,7 @@ surface.CreateFont("ss.sass.screen.small", {font = "Helvetica", size = 52, weigh
 
 surface.CreateFont("ss.sass.screen.button", {font = "Arvil Sans", size = 156, weight = 400, blursize = 1})
 surface.CreateFont("ss.sass.screen.status", {font = "Arial", size = 52, weight = 400, blursize = 1})
+surface.CreateFont("ss.sass.screen.gamemode", {font = "Arial", size = 42, weight = 400, blursize = 1})
 
 surface.CreateFont("ss.sass.screen.logo", {font = "Arvil Sans", size = 152, weight = 400, blursize = 1})
 surface.CreateFont("ss.sass.screen.logo.small", {font = "Arvil Sans", size = 62, weight = 400, blursize = 1})
@@ -99,11 +100,21 @@ statusPanel:SetPos(0, 0)
 --
 ---------------------------------------------------------
 
+local color_gamemode = Color(175, 174, 175)
+
 function statusPanel:Paint(screen, x, y, w, h)
-	draw.SimpleText("[SS #1] SASSILIZATION SERVER 1", "ss.sass.screen.button", x +1164, y +164, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	local id = screen:GetTriggerID()
+	
+	draw.SimpleText("[SS #" .. id .. "] SASSILIZATION SERVER " .. id, "ss.sass.screen.button", x +1164, y +164, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	
+	local data = SS.Lobby.Link:GetScreen(id)
+	
+	if (data.mapName != "1") then
+		draw.SimpleText(data.mapName, "ss.sass.screen.gamemode", x +1464, y +553, color_gamemode, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+	end
 	
 	if (screen.statusMessage) then
-		local status, players = screen:GetStatus(), SS.Lobby.Link:GetQueue(screen:GetTriggerID())
+		local status, players = screen:GetStatus(), SS.Lobby.Link:GetQueue(id)
 		
 		if (status == STATUS_LINK_PREPARING) then
 			if (!screen.prepareTime) then
@@ -323,6 +334,11 @@ end
 local defaultMap = surface.GetTextureID("skeyler/graphics/icon_newmap")
 local width, height = 356, 356
 
+local offsets = {}
+
+offsets["1"] = {0, 0, 0, 0}
+offsets["sa_orbit"] = {20, 43, 9, 4}
+
 function ENT:PaintMap(x, y)
 	local data = SS.Lobby.Link:GetScreen(self:GetTriggerID())
 	
@@ -348,12 +364,16 @@ function ENT:PaintMap(x, y)
 				end
 			end
 			
-			local objectX = 20+x +((object.x /width) *(width-43)) -object.width /2
-			local objectY = 9+y +((object.y /height) *(height-4)) -object.height /2
+			local offset = offsets[data.mapName] or offsets["1"]
+			
+			local objectX = offset[1] +x +((object.x /width) *(width -offset[2])) -object.width /2
+			local objectY = offset[3] +y +((object.y /height) *(height -offset[4])) -object.height /2
 			
 			surface.SetDrawColor(object.color or color_white)
 			surface.DrawRect(objectX, objectY, object.width, object.height)
 		end
+	else
+		draw.Texture(x, y, width, height, color_white, defaultMap)
 	end
 end
 

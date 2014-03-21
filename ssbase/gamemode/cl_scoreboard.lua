@@ -18,7 +18,7 @@ function SS.Scoreboard.RegisterRow(name, width, x_align, rowType, callback)
 end
 
 -- I add it here so it'll add it first.
-SS.Scoreboard.RegisterRow("Qubes", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+SS.Scoreboard.RegisterRow("Pixels", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local rankPanel = panel:Add("Panel")
 	rankPanel:SetSize(row.width, 50)
 	rankPanel:Dock(RIGHT)

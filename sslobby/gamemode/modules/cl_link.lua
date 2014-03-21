@@ -32,10 +32,11 @@ local colorTable = {
 
 function SS.Lobby.Link:AddScreen(id)
 	storedTriggers[id] = {
-		map = nil,
+		map = "",
 		queue = {},
 		players = {},
-		minimap = {}
+		minimap = {},
+		mapName = "1"
 	}
 end
 	
@@ -73,7 +74,8 @@ net.Receive("ss.lbgtsmap", function(bits)
 		map = surface.GetTextureID("sassilization/minimaps/" .. map),
 		queue = {},
 		players = {},
-		minimap = {}
+		minimap = {},
+		mapName = map
 	}
 end)
 
