@@ -195,6 +195,11 @@ concommand.Add("ss_password", function(ply, cmd, args)
 
 	local pass = args[1]
 
+	if !pass then
+		ply:ChatPrint("Syntax is ss_password NewPassword.\n")
+		return
+	end
+
 	PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the server password.")
 	SS.PrintToAdmins("[ADMINS] ("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the password to '"..pass.."'.\n")
 	RunConsoleCommand("sv_password", pass)
