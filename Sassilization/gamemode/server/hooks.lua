@@ -4,8 +4,6 @@ function GM:Initialize()
 	
 	resource.AddFile("materials/jaanus/sassilization0"..self.waitscreen..".vtf")
 	resource.AddFile("materials/jaanus/sassilization0"..self.waitscreen..".vmt")
-
-	RunConsoleCommand("bot")
 	
 end
 
@@ -34,6 +32,8 @@ function GM:InitPostEntity()
 	
 	self.SpawnPoints = ents.FindByClass("info_player_start")
 	self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass("gmod_player_start") )
+	
+	RunConsoleCommand("bot")
 end
 
 function GM:Think()
