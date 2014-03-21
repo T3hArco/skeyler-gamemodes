@@ -263,7 +263,12 @@ concommand.Add("sa_requestalliance", function( ply,command,args )
 			if acceptRequest then
 
 				if #player.GetAll() < 6 then
-					if #ply.Alliance + 1 > #player.GetAll()/2 - 1 then return end
+					if #ply.Alliance + 1 > #player.GetAll()/2 - 1 then
+						for i,d in pairs(ply.Alliance) do
+							breakAlly(ply, d)
+						end
+						table.Empty(ply.Alliance) 
+					end
 				end
 
 				if #ply.Alliance == 2 then
