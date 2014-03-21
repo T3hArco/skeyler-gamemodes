@@ -189,7 +189,9 @@ function GM:PlayerInitialSpawn(pl)
 		end
 	end
 
-	self:ShareGameInfo( pl )
+	timer.Simple(1, function()
+		self:ShareGameInfo( pl )
+	end)
 	
 	--if (SA.DEV and !pl:IsBot()) then
 	--else
