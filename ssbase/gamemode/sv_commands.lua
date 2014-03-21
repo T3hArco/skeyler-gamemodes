@@ -200,6 +200,12 @@ concommand.Add("ss_password", function(ply, cmd, args)
 		return
 	end
 
+	if pass == "" then
+		PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has removed the server password.")
+		RunConsoleCommand("sv_password", pass)
+		return
+	end
+
 	PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the server password.")
 	SS.PrintToAdmins("[ADMINS] ("..string.upper(ply:GetRankName())..") "..ply:Nick().." has changed the password to '"..pass.."'.\n")
 	RunConsoleCommand("sv_password", pass)
@@ -282,11 +288,9 @@ function SS.ToConCommand(ply, text)
 
 	local args = string.Implode(" ", cmd)
 
-	for k, _ in pairs(SS.ChatCommands) do
-		if k == cmdname then
-			ply:ConCommand(SS.ChatCommands[k].." "..args)
-			return
-		end
+	if SS.ChatCommands[cmdname] then
+		ply:ConCommand(SS.ChatCommands[cmdname].." "..args)
+		return
 	end
 
 	ply:ChatPrint("Invalid command.\n")
