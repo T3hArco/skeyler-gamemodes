@@ -211,7 +211,11 @@ function GM:PlayerDisconnected(pl)
 	
 	if #player.GetAll()-1 <= 1 and self.Started then
 		if #player.GetAll()-1 == 1 then
-			self:EndGame()
+			for k,v in pairs(player.GetAll()) do
+				if v != pl then
+					self:EndGame(v:GetEmpire())
+				end
+			end
 		else
 			self:RestartGame(MAPS.GetNextMap())
 		end
