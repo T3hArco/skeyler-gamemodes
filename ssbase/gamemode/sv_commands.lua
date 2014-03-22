@@ -63,6 +63,32 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("ss_bring", function(ply, cmd, args)
+	if !ply:IsSuperAdmin() then
+		ply:ChatPrint("You do not have access to this command.\n")
+		return
+	end
+
+	if !args[1] then
+		ply:ChatPrint("Syntax is ss_bring PlayerName.\n")
+		return
+	end
+
+	local PlayerName = args[1]
+	local Target = FindByPartial(PlayerName)
+	if (type(Target) == "string") then 
+		ply:ChatPrint(Target)
+		return
+	end
+
+	local tr = ply:GetEyeTrace()
+	if IsValid(Target) then
+		Target:SetPos(tr.HitPos)
+		Target:ChatPrint("("..string.upper(ply:GetRankName())..") "..ply:Nick().." teleported you.\n")
+		ply:ChatPrint("You teleported "..Target:Nick()..".\n")
+	end
+end)
+
 local allowedids = {0, 5, 10, 50, 70, 90, 100}
 concommand.Add("ss_fakename", function(ply, cmd, args)
 	if !ply:IsAdmin() then 
@@ -89,6 +115,30 @@ concommand.Add("ss_fakename", function(ply, cmd, args)
 	end
 
 	ply:SetFake(NewName, id)
+end)
+
+concommand.Add("ss_goto", function(ply, cmd, args)
+	if !ply:IsSuperAdmin() then
+		ply:ChatPrint("You do not have access to this command.\n")
+		return
+	end
+
+	if !args[1] then
+		ply:ChatPrint("Syntax is ss_goto PlayerName.\n")
+		return
+	end
+
+	local PlayerName = args[1]
+	local Target = FindByPartial(PlayerName)
+	if (type(Target) == "string") then 
+		ply:ChatPrint(Target)
+		return
+	end
+
+	if IsValid(Target) then
+		ply:SetPos(Target:GetPos())
+		ply:ChatPrint("You teleported to "..Target:Nick()..".\n")
+	end
 end)
 
 concommand.Add("ss_kick", function(ply, cmd, args)
@@ -188,12 +238,12 @@ concommand.Add("ss_mute", function(ply, cmd, args)
 end)
 
 concommand.Add("ss_password", function(ply, cmd, args)
-	if ply:GetRank() < 70 then
+	if !ply:IsSuperAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
 	end
 
-	if !args[1] then -- Make sure arg1 exists before trying to use it...
+	if !args[1] then
 		ply:ChatPrint("Syntax is ss_password NewPassword.\n")
 		return
 	end
@@ -268,7 +318,9 @@ end)
 
 SS.ChatCommands = {
 	["ban"] = "ss_ban",
+	["bring"] = "ss_bring",
 	["fakename"] = "ss_fakename",
+	["goto"] = "ss_goto",
 	["kick"] = "ss_kick",
 	["map"] = "ss_map",
 	["mute"] = "ss_mute",
