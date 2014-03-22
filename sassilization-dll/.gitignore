@@ -1,0 +1,8 @@
+# Ignore these #
+###################
+*.suo
+*.sdf
+*.vcxproj*
+*.opensdf
+Release/*
+ipch

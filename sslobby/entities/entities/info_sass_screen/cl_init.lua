@@ -11,7 +11,7 @@ surface.CreateFont("ss.sass.screen.small", {font = "Helvetica", size = 52, weigh
 
 surface.CreateFont("ss.sass.screen.button", {font = "Arvil Sans", size = 156, weight = 400, blursize = 1})
 surface.CreateFont("ss.sass.screen.status", {font = "Arial", size = 52, weight = 400, blursize = 1})
-surface.CreateFont("ss.sass.screen.gamemode", {font = "Arial", size = 42, weight = 400, blursize = 1})
+surface.CreateFont("ss.sass.screen.gamemode", {font = "Arial", size = 50, weight = 400, blursize = 1})
 
 surface.CreateFont("ss.sass.screen.logo", {font = "Arvil Sans", size = 152, weight = 400, blursize = 1})
 surface.CreateFont("ss.sass.screen.logo.small", {font = "Arvil Sans", size = 62, weight = 400, blursize = 1})
@@ -19,7 +19,7 @@ surface.CreateFont("ss.sass.screen.logo.small", {font = "Arvil Sans", size = 62,
 local backgroundTexture = surface.GetTextureID("skeyler/graphics/sass_board")
 
 local preparingColor = Color(128, 255, 128, 255)
-local unavailableColor = Color(243, 121, 142)
+local unavailableColor = Color(255, 85, 85)
 
 local color_blue = Color(39, 207, 255, 255)
 local color_blue_light = Color(39 +30, 207 +30, 255, 255)
@@ -100,7 +100,7 @@ statusPanel:SetPos(0, 0)
 --
 ---------------------------------------------------------
 
-local color_gamemode = Color(175, 174, 175)
+local color_gamemode = Color(125, 124, 125)
 
 function statusPanel:Paint(screen, x, y, w, h)
 	local id = screen:GetTriggerID()
@@ -109,8 +109,10 @@ function statusPanel:Paint(screen, x, y, w, h)
 	
 	local data = SS.Lobby.Link:GetScreen(id)
 	
+	draw.SimpleText("Sassilization", "ss.sass.screen.gamemode", x +1504, y +480, color_gamemode, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+
 	if (data.mapName != "1") then
-		draw.SimpleText(data.mapName, "ss.sass.screen.gamemode", x +1464, y +553, color_gamemode, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(data.mapName, "ss.sass.screen.gamemode", x +1504, y +550, color_gamemode, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 	end
 	
 	if (screen.statusMessage) then
@@ -237,7 +239,7 @@ function ENT:Draw()
 	 	local status = self:GetStatus()
 	
 	 	if (self.__status != status) then
-	 		self.statusMessage = statusMessages[status] or statusMessages[STATUS_LINK_UNAVAILABLE]
+	 		self.statusMessage = string.upper(statusMessages[status]) or string.upper(statusMessages[STATUS_LINK_UNAVAILABLE])
 
 	 		self.__status = status
 	 	end

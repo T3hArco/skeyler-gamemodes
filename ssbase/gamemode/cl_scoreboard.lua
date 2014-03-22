@@ -23,21 +23,6 @@ function SS.Scoreboard.RegisterRow(name, width, x_align, rowType, callback)
 end
 
 -- I add it here so it'll add it first.
-SS.Scoreboard.RegisterRow("Pixels", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
-	local rankPanel = panel:Add("Panel")
-	rankPanel:SetSize(row.width, 50)
-	rankPanel:Dock(RIGHT)
-	
-	function rankPanel:Paint(w, h)
-		if (IsValid(player)) then
-			local money = FormatNum(player:GetMoney())
-			
-			draw.SimpleText(money, "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(money, "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		end
-	end
-end)
-
 SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local rankPanel = panel:Add("Panel")
 	rankPanel:SetSize(row.width, 50)
@@ -60,11 +45,52 @@ SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 	end
 end)
 
+SS.Scoreboard.RegisterRow("Pixels", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+	local rankPanel = panel:Add("Panel")
+	rankPanel:SetSize(row.width, 50)
+	rankPanel:Dock(RIGHT)
+	
+	function rankPanel:Paint(w, h)
+		if (IsValid(player)) then
+			local money = FormatNum(player:GetMoney())
+			
+			draw.SimpleText(money, "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(money, "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
+	end
+end)
+
+SS.Scoreboard.RegisterRow("TEAM", 125, TEXT_ALIGN_CENTER, nil, function(panel, player, row)
+	local teamPanel = panel:Add("Panel")
+	teamPanel:SetSize(row.width, 50)
+	teamPanel:Dock(RIGHT)
+
+	panel.team = 1
+	
+	function teamPanel:Paint(w, h)
+		if (IsValid(player)) then
+			local index = player:Team()
+			local name, color = string.upper(team.GetName(index)), team.GetColor(index)
+			
+			if (name) then
+				if (index != TEAM_READY) then
+					draw.SimpleRect(1, 1, w -1, h -2, color)
+				end
+				
+				draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, SS.Scoreboard.Color_Shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, SS.Scoreboard.Color_Label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
+			
+			panel.team = index
+		end
+	end
+end)
+
 surface.CreateFont("skeyler.scoreboard.title", {font = "Arvil Sans", size = 62, weight = 400})
 surface.CreateFont("skeyler.scoreboard.title.blur", {font = "Arvil Sans", size = 62, weight = 400, antialias = false, blursize = 4})
 
-surface.CreateFont("skeyler.scoreboard.row", {font = "Helvetica LT Std Cond", size = 18, weight = 400})
-surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Helvetica LT Std Cond", size = 18, weight = 400, antialias = false, blursize = 4})
+surface.CreateFont("skeyler.scoreboard.row", {font = "Helvetica LT Std Cond", size = 18, weight = 800})
+surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Helvetica LT Std Cond", size = 18, weight = 800, antialias = false, blursize = 4})
 
 surface.CreateFont("skeyler.scoreboard.row.title", {font = "Arvil Sans", size = 36, weight = 400})
 surface.CreateFont("skeyler.scoreboard.row.title.blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 2})
@@ -166,12 +192,12 @@ function panel:AddPlayer(player)
 		if (!self.m_bAltLine) then
 			draw.SimpleRect(0, 0, w, h, Color(21, 22, 23, 120))
 			
-			surface.SetDrawColor(Color(0, 0, 0, 50))
+			surface.SetDrawColor(Color(0, 255, 0, 50))
 		else
-			surface.SetDrawColor(Color(0, 0, 0, 130))
+			surface.SetDrawColor(Color(255, 0, 0, 130))
 		end
 		
-		surface.DrawLine(0, h -1, w, h -1)
+		surface.DrawLine(0, h, w, h)
 	end
 	
 	function panel:Think()
@@ -213,12 +239,30 @@ end
 --
 ---------------------------------------------------------
 
+function panel:SortRows()
+	local children = self.list:GetCanvas():GetChildren()
+
+	for k, child in pairs(children) do
+		if (ValidPanel(child)) then
+			child:SetZPos(child.team *-1)
+		end
+	end
+	
+	self.list:GetCanvas():InvalidateLayout()
+end
+
+---------------------------------------------------------
+--
+---------------------------------------------------------
+
 function panel:Think()
 	local players = player.GetAll()
 	
 	for k, player in pairs(players) do
 		if (!player.ssbase_scoreboard) then
 			self:AddPlayer(player)
+			
+			timer.Simple(0, function() self:SortRows() end)
 			
 			player.ssbase_scoreboard = true
 		end
@@ -381,6 +425,7 @@ function GM:ScoreboardShow()
 	end
 	
 	scoreboard:SetVisible(true)
+	scoreboard:SortRows()
 end
 
 ---------------------------------------------------------
@@ -418,12 +463,3 @@ hook.Add("PlayerBindPress", "ss.scoreboard.scroll", function(player, bind, press
 		end
 	end
 end)
-
--- For autorefresh.
-if (!game.IsDedicated()) then
-	local players = player.GetAll()
-	
-	for k, v in pairs(players) do
-		v.ssbase_scoreboard = nil
-	end
-end

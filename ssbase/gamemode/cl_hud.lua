@@ -65,7 +65,7 @@ end
  
 local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0 
 
-function GM:HUDPaint() 
+function GM:HUDPaint()
 	if self.GUIBlur then 
 		self.HudAlpha = math.Approach(self.HudAlpha, 0, 5) 
 	else 
