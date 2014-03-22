@@ -15,7 +15,7 @@ function GM:HUDShouldDraw(name)
 	return true 
 end 
 
-surface.CreateFont("HUD_Money", {font="Helvetica LT Std Cond", size=20, weight=1000})
+surface.CreateFont("HUD_Money", {font="Helvetica LT Std Cond", size=18, weight=800})
 surface.CreateFont("HUD_HP_Percent", {font="Helvetica LT Std Cond", size=22, weight=800})
 surface.CreateFont("HUD_HP", {font="Helvetica LT Std Cond", size=15, weight=1000})
 surface.CreateFont("HUD_CENTER", {font="Helvetica LT Std Cond", size=18, weight=1000})
@@ -148,9 +148,12 @@ if self.GUIBlur then
 	surface.SetTextPos(309, h-105)
 	surface.DrawText("EXP") 
 
-	surface.SetMaterial(HUD_COIN) 
-	surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
-	surface.DrawTexturedRect(187, h-82, 12, 17) 
+	--surface.SetMaterial(HUD_COIN) 
+	--surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
+	--surface.DrawTexturedRect(187, h-82, 12, 17) 
+	draw.SimpleRect(187, h -72, 5, 5, Color(69, 192, 255, 255))
+	draw.SimpleRect(187 +5, h -77, 5, 5, Color(69, 192, 255, 220))
+	draw.SimpleRect(187, h -82, 5, 5, Color(69, 192, 255, 140))
 
 	Text = FormatNum(LocalPlayer():GetMoney())
 	surface.SetFont("HUD_Money") 

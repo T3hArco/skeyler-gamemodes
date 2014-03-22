@@ -67,7 +67,7 @@ function GM:DrawOverlay()
 	end 
 end 
 
-local MaxAmmo = {weapon_crowbar=0,weapon_physcannon=0,weapon_pysgun=0,weapon_pistol=18,gmod_tool=0,weapon_357=6,weapon_smg1=45,weapon_ar2=30,weapon_crossbow=1,weapon_frag=1,weapon_rpg=1,weapon_shotgun=6}
+local MaxAmmo = {weapon_crowbar=0,weapon_physcannon=0,weapon_physgun=0,weapon_pistol=18,gmod_tool=0,weapon_357=6,weapon_smg1=45,weapon_ar2=30,weapon_crossbow=1,weapon_frag=1,weapon_rpg=1,weapon_shotgun=6}
 function GetPrimaryClipSize(wep) 
 	if !wep or !wep:IsValid() then return false end 
 	if MaxAmmo[wep:GetClass()] then 

@@ -126,8 +126,8 @@ function statusPanel:Paint(screen, x, y, w, h)
 			screen:DrawText(string.format(screen.statusMessage, math.max(math.Round(screen.prepareTime -CurTime()), 0)), "ss.sass.screen.status", x +1164, y +306, preparingColor)
 		elseif (status == STATUS_LINK_UNAVAILABLE) then
 			screen:DrawText(screen.statusMessage, "ss.sass.screen.status", x +1164, y +306, unavailableColor)
-		else
-			screen:DrawText(string.format(screen.statusMessage, #players, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
+		elseif (status == STATUS_LINK_READY) then
+			screen:DrawText(string.format(screen.statusMessage, #players or 0, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
 			
 			screen.prepareTime = nil
 		end

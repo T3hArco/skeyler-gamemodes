@@ -53,6 +53,13 @@ SS.Scoreboard.RegisterRow("Pixels", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RI
 	function rankPanel:Paint(w, h)
 		if (IsValid(player)) then
 			local money = FormatNum(player:GetMoney())
+			local width = util.GetTextSize("skeyler.scoreboard.row", money)
+			
+			width = width /2
+
+			draw.SimpleRect(w /2 -(width +18), h /2 -8, 5, 5, Color(69, 192, 255, 120))
+			draw.SimpleRect(w /2 -(width +13), h /2 -2, 5, 5, Color(69, 192, 255, 200))
+			draw.SimpleRect(w /2 -(width +18), h /2 +3, 5, 5, Color(69, 192, 255, 255))
 			
 			draw.SimpleText(money, "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			draw.SimpleText(money, "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
