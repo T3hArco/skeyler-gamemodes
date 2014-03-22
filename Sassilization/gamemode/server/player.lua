@@ -180,15 +180,6 @@ function GM:PlayerInitialSpawn(pl)
 	-- Setup the delays for each miracle on the player. // Chewgum
 	miracles.Setup(pl)
 
-	for k,v in pairs(player.GetAll()) do
-		for i,d in pairs(player.GetAll()) do
-			net.Start("SetPublicAlliance")
-				net.WriteEntity(v)
-				net.WriteTable(v.Alliance)
-			net.Send(d)
-		end
-	end
-
 	timer.Simple(1, function()
 		self:ShareGameInfo( pl )
 	end)
@@ -318,6 +309,15 @@ function GM:ShareGameInfo( pl )
 	pl.loading.units = {}
 	
 	net.Quick("load.empires", pl)
+
+	for k,v in pairs(player.GetAll()) do
+		for i,d in pairs(player.GetAll()) do
+			net.Start("SetPublicAlliance")
+				net.WriteEntity(v)
+				net.WriteTable(v.Alliance)
+			net.Send(d)
+		end
+	end
 	
 	for _, empire in pairs( empire.GetAll() ) do
 
