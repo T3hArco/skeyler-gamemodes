@@ -330,11 +330,24 @@ net.Receive("ss.lbgtscr", function(bits, player)
 	local id = net.ReadUInt(8)
 	local data = storedTriggers[id]
 	
-	if (data and data.map) then
-		net.Start("ss.lbgtsmap")
-			net.WriteUInt(id, 8)
-			net.WriteString(data.map)
-		net.Send(player)
+	if (data) then
+		if (data.map) then
+			net.Start("ss.lbgtsmap")
+				net.WriteUInt(id, 8)
+				net.WriteString(data.map)
+			net.Send(player)
+		end
+	
+		for k, queued in pairs(data.queue) do
+			if (IsValid(queued)) then
+				local steamID = queued:SteamID()
+				
+				net.Start("ss.lkngtpl")
+					net.WriteUInt(id, 8)
+					net.WriteString(steamID)
+				net.Send(player)
+			end
+		end
 	end
 end)
 

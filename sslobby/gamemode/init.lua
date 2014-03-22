@@ -97,7 +97,7 @@ function GM:PlayerInitialSpawn(player)
 		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
 			SS.Lobby.LeaderBoard.Network(i, player)
 		end
-
+		
 		SS.Lobby.Minigame:UpdateScreen(player)
 	end)
 end
