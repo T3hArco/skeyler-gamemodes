@@ -63,7 +63,7 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 	end
 end)
 
---[[concommand.Add("ss_bring", function(ply, cmd, args)
+concommand.Add("ss_bring", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
@@ -87,7 +87,7 @@ end)
 		Target:ChatPrint("("..string.upper(ply:GetRankName())..") "..ply:Nick().." teleported you.\n")
 		ply:ChatPrint("You teleported "..Target:Nick()..".\n")
 	end
-end)]]
+end)
 
 local allowedids = {0, 5, 10, 50, 70, 90, 100}
 concommand.Add("ss_fakename", function(ply, cmd, args)
@@ -117,7 +117,7 @@ concommand.Add("ss_fakename", function(ply, cmd, args)
 	ply:SetFake(NewName, id)
 end)
 
---[[concommand.Add("ss_goto", function(ply, cmd, args)
+concommand.Add("ss_goto", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
@@ -139,7 +139,7 @@ end)
 		ply:SetPos(Target:GetPos())
 		ply:ChatPrint("You teleported to "..Target:Nick()..".\n")
 	end
-end)]]
+end)
 
 concommand.Add("ss_kick", function(ply, cmd, args)
 	if !ply:IsAdmin() then
@@ -318,9 +318,9 @@ end)
 
 SS.ChatCommands = {
 	["ban"] = "ss_ban",
-	-- ["bring"] = "ss_bring",
+	["bring"] = "ss_bring",
 	["fakename"] = "ss_fakename",
-	-- ["goto"] = "ss_goto",
+	["goto"] = "ss_goto",
 	["kick"] = "ss_kick",
 	["map"] = "ss_map",
 	["mute"] = "ss_mute",
