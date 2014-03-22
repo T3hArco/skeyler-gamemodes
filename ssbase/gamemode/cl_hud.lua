@@ -15,17 +15,17 @@ function GM:HUDShouldDraw(name)
 	return true 
 end 
 
-surface.CreateFont("HUD_Money", {font="Myriad Pro", size=20, weight=1000})
-surface.CreateFont("HUD_HP_Percent", {font="Myriad Pro", size=24, weight=700})
-surface.CreateFont("HUD_HP", {font="Myriad Pro", size=16, weight=1000})
-surface.CreateFont("HUD_CENTER", {font="Myriad Pro", size=18, weight=1000})
-surface.CreateFont("HUD_Level", {font="Myriad Pro", size=20, weight=900})
-surface.CreateFont("HUD_Level_Blue", {font="Myriad Pro", size=24, weight=1000})
+surface.CreateFont("HUD_Money", {font="Helvetica LT Std Cond", size=20, weight=1000})
+surface.CreateFont("HUD_HP_Percent", {font="Helvetica LT Std Cond", size=22, weight=800})
+surface.CreateFont("HUD_HP", {font="Helvetica LT Std Cond", size=15, weight=1000})
+surface.CreateFont("HUD_CENTER", {font="Helvetica LT Std Cond", size=18, weight=1000})
+surface.CreateFont("HUD_Level", {font="Helvetica LT Std Cond", size=20, weight=900})
+surface.CreateFont("HUD_Level_Blue", {font="Helvetica LT Std Cond", size=22, weight=1000})
 surface.CreateFont("HUD_Timer", {font="Century Gothic", size=40, weight=1000}) 
 surface.CreateFont("HUD_Timer_Small", {font="Century Gothic", size=24, weight=1000}) 
 
-surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550}) 
-surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=400}) 
+surface.CreateFont("HUD_WEPS", {font="HalfLife2", size=80, weight=550})
+surface.CreateFont("PLAYER_TEXT", {font="Arvil Sans", size=120, weight=400})
 surface.CreateFont("PLAYER_TEXT_BLUR", {font="Arvil Sans", size=120, weight=400, blursize=8, antialias=false}) 
 
 HUD_LEFT = Material("skeyler/vgui/hud/hud_box_left.png", "noclamp smooth") 
@@ -66,7 +66,7 @@ end
 local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0 
 
 function GM:HUDPaint()
-	if self.GUIBlur then 
+if self.GUIBlur then 
 		self.HudAlpha = math.Approach(self.HudAlpha, 0, 5) 
 	else 
 		self.HudAlpha = math.Approach(self.HudAlpha, 255, 5) 
@@ -123,10 +123,12 @@ function GM:HUDPaint()
 
 	surface.SetDrawColor(255, 255, 255, self.HudAlpha*0.85) 
 	
-	render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, true)
-	surface.SetMaterial(HUD_HP) 
-	surface.DrawTexturedRect(175, h-122, 256, 32)
-	render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, false)
+	draw.RoundedBox(4, 179, h -118, (self.HUDHPSmooth/LocalPlayer():GetMaxHealth()) *173, 13, Color(255, 85, 85, 255))
+	
+	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, true)
+	--surface.SetMaterial(HUD_HP) 
+	--surface.DrawTexturedRect(175, h-122, 256, 32)
+	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, false)
 
 	surface.SetMaterial(HUD_XP) 
 	surface.DrawTexturedRect(176, h-106, 128, 16)
@@ -263,7 +265,7 @@ function GM:HUDPaint()
 		surface.SetTextPos(w-125-tw/2, h-60-th/2) 
 		surface.DrawText(Text) 
 	end
-end 
+end  
  
 function GM:PostDrawTranslucentRenderables()
 	for k, ply in pairs(player.GetAll()) do
