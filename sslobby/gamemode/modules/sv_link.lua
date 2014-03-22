@@ -66,6 +66,7 @@ function SS.Lobby.Link:AddQueue(id, player)
 	local screen = SS.Lobby.Link:GetScreenByID(id)
 	
 	if (screen:GetStatus() != STATUS_LINK_UNAVAILABLE) then
+	
 		-- Remove the player from a previous screen.
 		for id2, data in pairs(storedTriggers) do
 			if (id != id2) then
