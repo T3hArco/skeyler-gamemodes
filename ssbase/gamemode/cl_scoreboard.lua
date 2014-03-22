@@ -1,9 +1,14 @@
 local IsValid, ValidPanel = IsValid, ValidPanel
 
+local color_label = Color(242, 242, 242)
+local color_shadow = Color(0, 0, 0, 180)
+
 SS.Scoreboard = {}
 
 SS.Scoreboard.ROW_LEFT = 1
 SS.Scoreboard.ROW_RIGHT = 2
+SS.Scoreboard.Color_Shadow = color_shadow
+SS.Scoreboard.Color_Label = color_label
 
 local stored = {[SS.Scoreboard.ROW_RIGHT] = {}, [SS.Scoreboard.ROW_LEFT] = {}}
 
@@ -27,8 +32,8 @@ SS.Scoreboard.RegisterRow("Pixels", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RI
 		if (IsValid(player)) then
 			local money = FormatNum(player:GetMoney())
 			
-			draw.SimpleText(money, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-			draw.SimpleText(money, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(money, "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText(money, "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 	end
 end)
@@ -40,16 +45,16 @@ SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 	
 	function rankPanel:Paint(w, h)
 		if (IsValid(player)) then
-			local name, color = player:GetRankName(), player:GetRankColor()
+			local name, color = string.upper(player:GetRankName()), player:GetRankColor()
 			
 			if (name) then
 				draw.SimpleRect(1, 1, w -1, h -2, color)
 
-				draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-				draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			else
-				draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2 +1, h /2 +1, Color(0, 0, 0, 160), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-				draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2, h /2, Color(242, 242, 242), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText("UNKNOWN RANK", "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end
 		end
 	end
@@ -58,12 +63,13 @@ end)
 surface.CreateFont("skeyler.scoreboard.title", {font = "Arvil Sans", size = 62, weight = 400})
 surface.CreateFont("skeyler.scoreboard.title.blur", {font = "Arvil Sans", size = 62, weight = 400, antialias = false, blursize = 4})
 
-surface.CreateFont("skeyler.scoreboard.row", {font = "Arvil Sans", size = 24, weight = 400})
-surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Arvil Sans", size = 24, weight = 400, antialias = false, blursize = 4})
+surface.CreateFont("skeyler.scoreboard.row", {font = "Helvetica LT Std Cond", size = 18, weight = 400})
+surface.CreateFont("skeyler.scoreboard.row.blur", {font = "Helvetica LT Std Cond", size = 18, weight = 400, antialias = false, blursize = 4})
 
 surface.CreateFont("skeyler.scoreboard.row.title", {font = "Arvil Sans", size = 36, weight = 400})
 surface.CreateFont("skeyler.scoreboard.row.title.blur", {font = "Arvil Sans", size = 36, weight = 400, antialias = false, blursize = 2})
 
+surface.CreateFont("skeyler.scoreboard.ping", {font = "Arvil Sans", size = 24, weight = 400})
 surface.CreateFont("skeyler.scoreboard.ping.small", {font = "Arvil Sans", size = 18, weight = 400})
 
 local panel = {}
@@ -273,7 +279,7 @@ function panel:PaintOver(w, h)
 		util.PaintShadow(w, h, -w, -30, 4, 0.35)
 		
 		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title.blur", 51, -10, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 52, -9, Color(0, 0, 0, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 52, -9, color_shadow, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 		draw.SimpleText("SCOREBOARD", "skeyler.scoreboard.title", 51, -10, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	surface.DisableClipping(false)
 end
@@ -294,21 +300,21 @@ function GM:ScoreboardShow()
 		scoreboard:Center()
 		
 		SS.Scoreboard.RegisterRow("PLAYER", scoreboard:GetWide() *0.3, nil, SS.Scoreboard.ROW_LEFT, function(panel, player, row)
-			local name = player:Nick()
+			local name = string.upper(player:Nick())
 			
 			local label = panel:Add("DLabel")
 			label:SetSize(row.width, 50)
 			label:SetText(name)
 			label:SetFont("skeyler.scoreboard.row")
 			label:SetColor(color_white)
-			label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
+			label:SetExpensiveShadow(1, color_shadow)
 			label:Dock(LEFT)
 			label:DockMargin(8, 0, 0, 0)
 			
 			function label:Think()
 				if (IsValid(player)) then
 					local text = self:GetText()
-					local name = player:Nick()
+					local name = string.upper(player:Nick())
 					
 					if (text != name) then
 						self:SetText(name)
@@ -343,7 +349,7 @@ function GM:ScoreboardShow()
 					end
 					
 					if (self.Hovered) then
-						local pingWidth = util.GetTextSize("skeyler.scoreboard.row", ping)
+						local pingWidth = util.GetTextSize("skeyler.scoreboard.ping", ping)
 						local width, height = pingWidth +40, h
 						local x, y = w +4, h /2 -height /2
 						
@@ -351,7 +357,7 @@ function GM:ScoreboardShow()
 							draw.Material(x -32, y +height /2 -32 /2, 32, 32, Color(0, 0, 0, 230), arrowTexture)
 							draw.SimpleRect(x, y, width, height, Color(0, 0, 0, 200))
 							
-							draw.SimpleText(ping, "skeyler.scoreboard.row", x +12, y +height /2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+							draw.SimpleText(ping, "skeyler.scoreboard.ping", x +12, y +height /2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 							draw.SimpleText("ms", "skeyler.scoreboard.ping.small", x +12 +pingWidth, y +height /2 +2, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 						surface.DisableClipping(false)
 					end
