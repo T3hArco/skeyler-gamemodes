@@ -193,12 +193,12 @@ concommand.Add("ss_password", function(ply, cmd, args)
 		return
 	end
 
-	local pass = args[1]
-
-	if !pass then
+	if !args[1] then -- Make sure arg1 exists before trying to use it...
 		ply:ChatPrint("Syntax is ss_password NewPassword.\n")
 		return
 	end
+
+	local pass = args[1]
 
 	if pass == "" then
 		PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." has removed the server's password.")
