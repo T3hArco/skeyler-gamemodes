@@ -741,11 +741,15 @@ function PANEL:SetData(data)
 				if (self.nextUpdate and self.nextUpdate <= CurTime()) then
 					local value = self:GetValue()
 					
-					if (data.Slot == SS.STORE.SLOT.MODEL) then
-						this.preview.Entity:SetSkin(value)
-					else
-						this.preview.Entity.previews[data.Slot].entity:SetSkin(value)
-					end
+					if this.preview.Entity and this.preview.Entity:IsValid() then 
+						if (data.Slot == SS.STORE.SLOT.MODEL) then
+							this.preview.Entity:SetSkin(value)
+						else
+							this.preview.Entity.previews[data.Slot].entity:SetSkin(value)
+						end 
+					else 
+						self.nextUpdate = CurTime()+1  -- This will only run if the entity is not valid... so set it if it isn't
+					end 
 					
 					self.nextUpdate = nil
 				end
@@ -1128,6 +1132,7 @@ function PANEL:OnMousePressed(mousecode)
 	if (mousecode == MOUSE_RIGHT) then
 		self.rightMouse = true
 		self.lastY = self.camZ
+		self.StartXL, self.StartYL = input.GetCursorPos()
 		
 		self:MouseCapture(true)
 	end
@@ -1160,7 +1165,7 @@ function PANEL:OnCursorMoved(x, y)
 	if (self.rightMouse) then
 		x, y = input.GetCursorPos() 
 		
-		self.camZ = math.min(self:GetTall(), (self.lastY +(y -self.lastY)) *0.25)
+		self.camZ = math.min(self:GetTall(), (self.lastY+((y-self.StartYL)*0.25)))
 	end
 end 
 
