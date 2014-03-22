@@ -27,10 +27,10 @@ local color_grey_light = Color(69, 69, 69, 60)
 local color_text_dark = Color(69, 69, 69, 200)
 
 local statusMessages = {
-	"Waiting for enough players to join: %i / %i",
-	"This server is not up at the moment",
-	"Game In Progress, you cannot join",
-	"The game will be initalized in %i seconds."
+	"WAITING FOR ENOUGH PLAYESR TO JOIN: %i / %i",
+	"THIS SERVER IS NOT UP AT THE MOMENT",
+	"GAME IN PROGRESS, YOU CANNOT JOIN",
+	"THE GAME WILL BE INITIALIZED IN %i SECONDS"
 }
 
 local screenWidth, screenHeight = 64, 32
@@ -117,9 +117,6 @@ function statusPanel:Paint(screen, x, y, w, h)
 	
 	if (screen.statusMessage) then
 		local status, players = screen:GetStatus(), SS.Lobby.Link:GetQueue(id)
-		print(players,#players)
-		
-		local players = players and #players or 0
 		
 		if (status == STATUS_LINK_PREPARING) then
 			if (!screen.prepareTime) then
@@ -129,8 +126,8 @@ function statusPanel:Paint(screen, x, y, w, h)
 			screen:DrawText(string.format(screen.statusMessage, math.max(math.Round(screen.prepareTime -CurTime()), 0)), "ss.sass.screen.status", x +1164, y +306, preparingColor)
 		elseif (status == STATUS_LINK_UNAVAILABLE) then
 			screen:DrawText(screen.statusMessage, "ss.sass.screen.status", x +1164, y +306, unavailableColor)
-		elseif (status == STATUS_LINK_READY) then
-			screen:DrawText(string.format(screen.statusMessage, players, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
+		else
+			screen:DrawText(string.format(screen.statusMessage, #players, SS.Lobby.Link.MinPlayers), "ss.sass.screen.status", x +1164, y +306, color_yellow)
 			
 			screen.prepareTime = nil
 		end
@@ -242,7 +239,7 @@ function ENT:Draw()
 	 	local status = self:GetStatus()
 	
 	 	if (self.__status != status) then
-	 		self.statusMessage = string.upper(statusMessages[status]) or string.upper(statusMessages[STATUS_LINK_UNAVAILABLE])
+	 		self.statusMessage = statusMessages[status] or statusMessages[STATUS_LINK_UNAVAILABLE]
 
 	 		self.__status = status
 	 	end
