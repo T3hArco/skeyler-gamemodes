@@ -65,7 +65,7 @@ end
 ---------------------------------------------------------
 
 function MINIGAME:PlayerShouldTakeDamage(player, attacker)
-	if (player:Team() == attacker:Team()) then
+	if (player.Team and attacker.Team and player:Team() == attacker:Team()) then
 		return false
 	end
 end
