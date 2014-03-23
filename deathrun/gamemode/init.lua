@@ -48,6 +48,11 @@ function GM:PlayerSpawn(ply)
 	end 
 end 
 
+function GM:IsSpawnpointSuitable(ply, spawnpointent, bMakeSuitable) 
+	-- Don't kill people please...
+	return true 
+end 
+
 function GM:PlayerSpawnAsSpectator(ply) 
 	ply:StripWeapons() 
 	ply:Spectate(ply.SpecMode) 
@@ -62,11 +67,6 @@ end
 
 function GM:PlayerDisconnected(ply) 
 	self.BaseClass:PlayerDisconnected(ply) 
-
-	-- if !self:CheckPlayers() then 
-	-- 	self.Started = false 
-	-- end 
-
 	self:CheckRoundOver() 
 end 
 
@@ -76,8 +76,6 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 end 
 
 function GM:DoPlayerDeath(victim, attacker, dmg) 
-	print("DEATH OF", victim)
-
 	victim:SetTeam(TEAM_DEAD) 
 	self.BaseClass:DoPlayerDeath(victim, attacker, dmg) 
 	self:CheckRoundOver() 
