@@ -29,6 +29,6 @@ end
 
 function ENT:Think()
         if (self.timer < CurTime()) then
-                ent:Remove()
+                self:Remove()
         end
 end
