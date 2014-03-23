@@ -43,6 +43,7 @@ end
 
 function GM:SetGUIBlur(bool) 
 	self.GUIBlur = bool or false 
+	self.BlurStartTime = SysTime()-0.6
 end 
 
 function GM:DrawOverlay() 
@@ -54,14 +55,17 @@ function GM:DrawOverlay()
 		end 
 
 		surface.SetMaterial(PP_SCREENBLUR_MAT)	
-		surface.SetDrawColor(255, 255, 255, 255/10*self.GUIBlurAmt)
-		PP_SCREENBLUR_MAT:SetFloat("$blur", 2)
-		PP_SCREENBLUR_MAT:Recompute()
+		surface.SetDrawColor(255, 255, 255, 200/10*self.GUIBlurAmt)
 
-		if render then render.UpdateScreenEffectTexture() end -- Todo: Make this available to menu Lua
-		surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+		for i=0.33, 1, 0.33 do 
+			PP_SCREENBLUR_MAT:SetFloat("$blur", 5*i)
+			PP_SCREENBLUR_MAT:Recompute()
 
-		surface.SetDrawColor(92, 92, 92, 200/10*self.GUIBlurAmt)
+			if render then render.UpdateScreenEffectTexture() end 
+			surface.DrawTexturedRect(0, 0, ScrW(), ScrH()) 
+		end 
+
+		surface.SetDrawColor(255, 255, 255, 127/10*self.GUIBlurAmt)
 		surface.SetMaterial(self.GUIBlurOverlay) 
 		surface.DrawTexturedRect(0, 0, ScrW(), ScrH()) 
 	end 
