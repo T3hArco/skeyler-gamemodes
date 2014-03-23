@@ -29,7 +29,13 @@ end
 function ENT:OnDestroy(Info, Empire, Attacker)
 	if(Empire) then
 		if(Info ~= building.BUILDING_SELL) then
-			self:SpawnUnits("archer", math.random(1, 2))
+			if self.level == 1 then
+				self:SpawnUnits("archer", 1)
+			elseif self.level == 2 then
+				self:SpawnUnits("archer", math.random(1, 2))
+			else
+				self:SpawnUnits("archer", 2)
+			end
 		end
 	end
 	self:UpdateControl()
@@ -39,6 +45,7 @@ function ENT:OnLevel(Level)
 	if(Level > 1) then
 		self.Gib = GIB_ALL
 	end
+	self.level = Level
 	
 	self.AttackSpeed = building.GetBuildingKey("tower", "AttackSpeed")[Level]
 	self.AttackRange = building.GetBuildingKey("tower", "AttackRange")[Level]

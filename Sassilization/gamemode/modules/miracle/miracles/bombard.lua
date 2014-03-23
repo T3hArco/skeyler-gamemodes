@@ -56,7 +56,7 @@ if (SERVER) then
 				arrow.Gravitated = gravitate
 
 				local dmginfo = {}
-				dmginfo.damage = 4
+				dmginfo.damage = 5.5
 				dmginfo.dmgtype = DMG_BULLET
 				dmginfo.attacker = arrow
 				

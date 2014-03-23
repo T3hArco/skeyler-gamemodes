@@ -55,6 +55,10 @@ GM.ButtonClick = Sound("buttons/button1.wav")
 GM.ButtonRelease = Sound("UI/buttonclickrelease.wav")
 GM.ButtonRollover = Sound("UI/buttonrollover.wav")
 
+function GM:InitPostEntity()
+	LocalPlayer():ConCommand("sa_requestupdate")
+end
+
 function GM:OnBuildingMenuOpen()
 	
 	if( not self.BottomBar ) then return end

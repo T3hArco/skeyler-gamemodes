@@ -51,3 +51,8 @@ function toggleAlliances( ply, command, args )
 	end
 end
 concommand.Add("toggleAlliances", toggleAlliances)
+
+function requestUpdate( ply, command, args )
+	ShareGameInfo( ply )
+end
+concommand.Add("sa_requestupdate", requestUpdate)

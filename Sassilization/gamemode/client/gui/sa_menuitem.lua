@@ -45,8 +45,7 @@ function PANEL:SetItem(Item, ItemTable, Type)
 	
 	self.model:InvalidateLayout(true)
 	self.model:SetModel(model)
-
-	/*
+	
 	if (!generatedIcons[string.lower(model)]) then
 		local iconData = {}
 		
@@ -58,7 +57,6 @@ function PANEL:SetItem(Item, ItemTable, Type)
 		
 		generatedIcons[string.lower(model)] = true
 	end
-	*/
 	
 	--[[
 	if (Type == "Buildings") then

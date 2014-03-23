@@ -17,8 +17,8 @@ UNIT.SightRange = 110
 UNIT.Speed = 25
 UNIT.Require = {city = 0,workshop = 1}
 UNIT.Spawnable = true
-UNIT.HP = 15
-UNIT.AttackDamage = 1.8
+UNIT.HP = 10
+UNIT.AttackDamage = 2.1
 UNIT.OBBMins = Vector(-2, -2, -1)
 UNIT.OBBMaxs = Vector(2, 2, 4)
 UNIT.Size = 6

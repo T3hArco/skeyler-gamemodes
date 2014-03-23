@@ -240,27 +240,27 @@ concommand.Add("sa_requestalliance", function( ply,command,args )
 
 			for i,d in pairs(ply.Alliance) do -- Check to see if the target is allied with the current sender
 				if d == v then
-					breakAlliance = true
+					ply.breakAlliance = true
 				end
 			end
-			if !breakAlliance then
+			if !ply.breakAlliance then
 				for i,d in pairs(ply.incRequests) do -- Check to see if the target has sent a request to the current sender
 					if d == v then
-						acceptRequest = true
+						ply.acceptRequest = true
 						table.remove(ply.incRequests, i)
 					end
 				end
-				if !acceptRequest then
+				if !ply.acceptRequest then
 					for i,d in pairs(v.incRequests) do -- Check to see if the sender has an outgoing request to the target
 						if d == ply then
-							removeRequest = true
+							ply.removeRequest = true
 							table.remove(v.incRequests, i)
 						end
 					end
 				end
 			end
 
-			if acceptRequest then
+			if ply.acceptRequest then
 
 				if #player.GetAll() < 6 then
 					if #ply.Alliance + 1 > #player.GetAll()/2 - 1 then
@@ -268,6 +268,13 @@ concommand.Add("sa_requestalliance", function( ply,command,args )
 							breakAlly(ply, d)
 						end
 						table.Empty(ply.Alliance) 
+					end
+
+					if #v.Alliance + 1 > #player.GetAll()/2 - 1 then
+						for i,d in pairs(v.Alliance) do
+							breakAlly(v, d)
+						end
+						table.Empty(v.Alliance) 
 					end
 				end
 
@@ -306,14 +313,14 @@ concommand.Add("sa_requestalliance", function( ply,command,args )
 
 				setAlly(ply, v, "true")
 
-			elseif breakAlliance then
+			elseif ply.breakAlliance then
 
 				for i,d in pairs(ply.Alliance) do
 					breakAlly(ply, d)
 				end
 				table.Empty(ply.Alliance)
 
-			elseif removeRequest then
+			elseif ply.removeRequest then
 
 				ply:PrintMessage(HUD_PRINTTALK, "You have cancelled your alliance request to " .. v:Nick() .. ".")
 				v:PrintMessage(HUD_PRINTTALK, ply:Nick() .. " has cancelled their alliance request to you.")
@@ -331,9 +338,9 @@ concommand.Add("sa_requestalliance", function( ply,command,args )
 				allyRequest(ply, v, "Incoming", "Outgoing")
 
 			end
-			removeRequest = nil
-			acceptRequest = nil
-			breakAlliance = nil
+			ply.removeRequest = nil
+			ply.acceptRequest = nil
+			ply.breakAlliance = nil
 		end
 	end
 end)

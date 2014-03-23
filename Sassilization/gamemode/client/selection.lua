@@ -8,7 +8,7 @@ GM.SelectionSubZ = Vector(0, 0, 500)
 GM.SelectionColor = Color(255, 0, 0, 60)
 GM.SelectionMat = Material("cable/redlaser")
 
-local maxDiam = 160
+local maxDiam = 200
 
 function GM:StartSelection(Pos)
 	

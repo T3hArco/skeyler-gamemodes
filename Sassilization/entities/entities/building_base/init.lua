@@ -200,12 +200,16 @@ function ENT:SpawnUnits(Name, Amount)
         trace.filter = self
 		trace.mask = CHECK_MASK
 		
-        local tr = util.TraceLine(trace)
-        if(tr.Hit and not tr.HitSky) then
-            local CanFit, Pos, Ang = GAMEMODE:CanFit(tr, Vector(-3.25, -3.25, -3.25), Vector(3.25, 3.25, 3.25), Angle(0, 90, 0), true, false)
-            if CanFit then
-                GAMEMODE:SpawnUnit(Name, tr.HitPos + (tr.HitNormal * 5), self:RandomYaw(), self:GetEmpire())
+        if self:GetClass() != "building_tower" then
+            local tr = util.TraceLine(trace)
+            if(tr.Hit and not tr.HitSky) then
+                local CanFit, Pos, Ang = GAMEMODE:CanFit(tr, Vector(-3.25, -3.25, -3.25), Vector(3.25, 3.25, 3.25), Angle(0, 90, 0), true, false)
+                if CanFit then
+                    GAMEMODE:SpawnUnit(Name, tr.HitPos + (tr.HitNormal * 5), self:RandomYaw(), self:GetEmpire())
+                end
             end
+        else
+            GAMEMODE:SpawnUnit(Name, self.UpPos, self:RandomYaw(), self:GetEmpire())
         end
     end
 end

@@ -14,11 +14,11 @@ UNIT.AttackDelay = 6
 UNIT.AttackMoveDelay = 2
 UNIT.Range = 120
 UNIT.SightRange = 140
-UNIT.Speed = 7 -- 20
+UNIT.Speed = 12 -- 20
 UNIT.Require = {city = 0,workshop = 2}
 UNIT.Spawnable = true
 UNIT.HP = 35
-UNIT.AttackDamage = 5
+UNIT.AttackDamage = 15
 UNIT.OBBMins = Vector(-8, -8, -1)
 UNIT.OBBMaxs = Vector(8, 8, 8)
 UNIT.Size = 10

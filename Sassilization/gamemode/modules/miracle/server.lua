@@ -80,7 +80,7 @@ function miracles.Start(unique, player)
 				local trace = {}
 				trace.start = position
 				trace.endpos = position +angle *2048
-				trace.mask = MASK_SOLID_BRUSHONLY
+				trace.mask = MASK_SOLID
 				trace.filter = GetPlayers()
 				
 				trace = util.TraceLine(trace)
