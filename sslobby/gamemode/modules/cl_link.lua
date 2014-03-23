@@ -99,7 +99,7 @@ net.Receive("ss.lbgtssin", function(bits)
 		table.insert(storedTriggers[server].players, {teamID = teamID, name = name, gold = gold, food = food, iron = iron})
 	end
 	
-	table.sort(storedTriggers[server].players, function(a, b) return a.gold < b.gold end)
+	table.sort(storedTriggers[server].players, function(a, b) return a.gold > b.gold end)
 end)
 
 ---------------------------------------------------------

@@ -33,8 +33,10 @@ SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 			local name, color = string.upper(player:GetRankName()), player:GetRankColor()
 			
 			if (name) then
-				draw.SimpleRect(1, 1, w -1, h -2, color)
-
+				if (player:GetRank() > 0) then
+					draw.SimpleRect(1, 1, w -1, h -2, color)
+				end
+				
 				draw.SimpleText(name, "skeyler.scoreboard.row", w /2 +1, h /2 +1, color_shadow, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				draw.SimpleText(name, "skeyler.scoreboard.row", w /2, h /2, color_label, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			else
@@ -245,7 +247,9 @@ end
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
+
 SS.Scoreboard.SortRight = false -- invert the sorting
+
 function panel:SortRows()
 	local children = self.list:GetCanvas():GetChildren()
 
@@ -259,7 +263,24 @@ function panel:SortRows()
 		end
 	end
 	
-	self.list:GetCanvas():InvalidateLayout()
+	self.list:GetCanvas():InvalidateLayout(true)
+	
+	timer.Simple(0, function()
+		local index = 1
+		local children = self.list:GetCanvas():GetChildren()
+	
+		for k, child in pairs(children) do
+			if (ValidPanel(child)) then
+				if (index % 2 == 1) then
+					child:SetAltLine(true)
+				else
+					child:SetAltLine(false)
+				end
+				
+				index = index +1
+			end
+		end
+	end)
 end
 
 ---------------------------------------------------------

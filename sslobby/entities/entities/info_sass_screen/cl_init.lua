@@ -27,7 +27,7 @@ local color_grey_light = Color(69, 69, 69, 60)
 local color_text_dark = Color(69, 69, 69, 200)
 
 local statusMessages = {
-	"WAITING FOR ENOUGH PLAYESR TO JOIN: %i / %i",
+	"WAITING FOR ENOUGH PLAYERS TO JOIN: %i / %i",
 	"THIS SERVER IS NOT UP AT THE MOMENT",
 	"GAME IN PROGRESS, YOU CANNOT JOIN",
 	"THE GAME WILL BE INITIALIZED IN %i SECONDS"

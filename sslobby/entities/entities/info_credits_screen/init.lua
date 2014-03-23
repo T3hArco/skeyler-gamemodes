@@ -20,5 +20,4 @@ end
 ---------------------------------------------------------
 
 function ENT:KeyValue(key, value)
-	print(self,key,value)
 end
