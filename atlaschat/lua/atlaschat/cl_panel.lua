@@ -557,6 +557,20 @@ end
 function panel:OnChange()
 	local value = self:GetText()
 
+	if (value == "/") then
+		local prefix = atlaschat.theme.GetValue("panel").prefix
+		
+		if (ValidPanel(prefix)) then
+			prefix:SetPrefix("COMMAND:")
+		end
+	elseif (value == "") then
+		local prefix = atlaschat.theme.GetValue("panel").prefix
+		
+		if (ValidPanel(prefix)) then
+			prefix:SetPrefix("SAY:")
+		end
+	end
+	
 	hook.Run("ChatTextChanged", value)
 end
 	

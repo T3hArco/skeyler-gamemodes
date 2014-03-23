@@ -66,7 +66,7 @@ end
 local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0 
 
 function GM:HUDPaint()
-if self.GUIBlur then 
+	if self.GUIBlur then 
 		self.HudAlpha = math.Approach(self.HudAlpha, 0, 5) 
 	else 
 		self.HudAlpha = math.Approach(self.HudAlpha, 255, 5) 
@@ -130,8 +130,8 @@ if self.GUIBlur then
 	--surface.DrawTexturedRect(175, h-122, 256, 32)
 	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, false)
 
-	surface.SetMaterial(HUD_XP) 
-	surface.DrawTexturedRect(176, h-106, 128, 16)
+	--surface.SetMaterial(HUD_XP) 
+	--surface.DrawTexturedRect(176, h-106, 128, 16)
 
 	Text = tostring(self.HUDHP).."%"
 	surface.SetTextColor(255, 255, 255, self.HudAlpha) 
@@ -145,8 +145,8 @@ if self.GUIBlur then
 	surface.SetTextPos(355, h-120)
 	surface.DrawText("HP") 
 
-	surface.SetTextPos(309, h-105)
-	surface.DrawText("EXP") 
+	--surface.SetTextPos(309, h-105)
+	--surface.DrawText("EXP") 
 
 	--surface.SetMaterial(HUD_COIN) 
 	--surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
@@ -162,17 +162,17 @@ if self.GUIBlur then
 	surface.SetTextColor(110, 110, 110, self.HudAlpha) 
 	surface.DrawText(Text) 
 
-	surface.SetFont("HUD_Level_Blue") 
-	surface.SetTextColor(102, 167, 201, self.HudAlpha) 
-	tw, th = surface.GetTextSize(" "..tostring(LocalPlayer():GetLevel())) 
-	surface.SetTextPos(378-tw, h-76-th/2) 
-	surface.DrawText(" "..tostring(LocalPlayer():GetLevel())) 
+	--surface.SetFont("HUD_Level_Blue") 
+	--surface.SetTextColor(102, 167, 201, self.HudAlpha) 
+	--tw, th = surface.GetTextSize(" "..tostring(LocalPlayer():GetLevel())) 
+	--surface.SetTextPos(378-tw, h-76-th/2) 
+	--surface.DrawText(" "..tostring(LocalPlayer():GetLevel())) 
 
-	surface.SetFont("HUD_Level")
-	surface.SetTextColor(195, 195, 195, self.HudAlpha) 
-	tw2, th2 = surface.GetTextSize("lvl") 
-	surface.SetTextPos(378-tw-tw2, h-73-th2/2)
-	surface.DrawText("lvl") 
+	--surface.SetFont("HUD_Level")
+	--surface.SetTextColor(195, 195, 195, self.HudAlpha) 
+	--tw2, th2 = surface.GetTextSize("lvl") 
+	--surface.SetTextPos(378-tw-tw2, h-73-th2/2)
+	--surface.DrawText("lvl") 
 
 	/* Center HUD */
 	if self.HUDShowVel and w > 800 then -- Get a better computer if you can only handle 800x600
