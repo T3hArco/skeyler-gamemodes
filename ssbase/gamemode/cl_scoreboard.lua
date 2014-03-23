@@ -118,6 +118,7 @@ function panel:Init()
 	self.startTime = SysTime() -0.6
 	
 	self:DockPadding(2, 60, 2, 30)
+	self:SetDrawOnTop(true)
 	
 	self.list = self:Add("DScrollPanel")
 	self.list:Dock(FILL)

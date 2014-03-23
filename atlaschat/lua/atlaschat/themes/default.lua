@@ -138,7 +138,7 @@ end
 ---------------------------------------------------------
 
 function theme:Initialize()
-	local w, h, x, y = atlaschat.ScaleSize(200, true), atlaschat.ScaleSize(150), atlaschat.ScaleSize(10, true), atlaschat.ScaleSize(230)
+	local w, h, x, y = atlaschat.ScaleSize(200, true), atlaschat.ScaleSize(150), 85, ScrH() -545
 	
 	local panel = vgui.Create("atlaschat.chat")
 	panel:SetSize(w, h)
