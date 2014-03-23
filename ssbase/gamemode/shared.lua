@@ -19,7 +19,7 @@ PLAYER_META = FindMetaTable("Player")
 ENTITY_META = FindMetaTable("Entity")
 TEAM_SPEC = TEAM_SPECTATOR
 
-team.SetUp(TEAM_SPEC, "Spectator", Color(197, 197, 197), false) 
+team.SetUp(TEAM_SPEC, "Spectator", Color(150, 150, 150), false) 
 
 PLAYER_META.Alive2 = PLAYER_META.Alive2 or PLAYER_META.Alive 
 function PLAYER_META:Alive() 

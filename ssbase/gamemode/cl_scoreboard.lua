@@ -245,13 +245,17 @@ end
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
-SS.Scoreboard.SortRight = false 
+SS.Scoreboard.SortRight = false -- invert the sorting
 function panel:SortRows()
 	local children = self.list:GetCanvas():GetChildren()
 
 	for k, child in pairs(children) do
 		if (ValidPanel(child)) then
-			child:SetZPos(child.team * (SS.Scoreboard.SortRight and 1 or -1))
+			if child.team == 1 then 
+				child:SetZPos(-10) -- This is spectator, it should always be on bottom.
+			else 
+				child:SetZPos(child.team * (SS.Scoreboard.SortRight and 1 or -1))
+			end 
 		end
 	end
 	

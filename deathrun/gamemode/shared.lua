@@ -19,7 +19,7 @@ TEAM_RUNNER = 3
 TEAM_DEATH = 2 
 
 function GM:CreateTeams() 
-	team.SetUp(TEAM_DEAD, "Dead", Color(150, 150, 150), false) 
+	team.SetUp(TEAM_DEAD, "Dead", Color(177, 86, 255), false) 
 	team.SetUp(TEAM_RUNNER, "Runners", Color(69, 192, 255), false) 
 	team.SetUp(TEAM_DEATH, "Deaths", Color(255, 85, 85), false) 
 
