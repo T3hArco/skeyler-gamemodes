@@ -245,13 +245,13 @@ end
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
-
+SS.Scoreboard.SortRight = false 
 function panel:SortRows()
 	local children = self.list:GetCanvas():GetChildren()
 
 	for k, child in pairs(children) do
 		if (ValidPanel(child)) then
-			child:SetZPos(child.team *-1)
+			child:SetZPos(child.team * (SS.Scoreboard.SortRight and 1 or -1))
 		end
 	end
 	

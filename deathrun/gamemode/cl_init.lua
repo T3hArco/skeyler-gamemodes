@@ -6,8 +6,9 @@
 include("shared.lua")
 include("sh_meta.lua") 
 include("sh_library.lua") 
-include("cl_scoreboard.lua") 
 include("player_class/player_deathrun.lua")
+
+SS.Scoreboard.SortRight = true 
 
 timer.Create("HullstuffSadface",5,0,function()
 	if(LocalPlayer() && LocalPlayer():IsValid() && LocalPlayer().SetHull && LocalPlayer().SetHullDuck) then

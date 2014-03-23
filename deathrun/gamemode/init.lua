@@ -14,7 +14,6 @@ AddCSLuaFile("shared.lua")
 AddCSLuaFile("sh_meta.lua") 
 AddCSLuaFile("sh_library.lua") 
 AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("cl_scoreboard.lua") 
 AddCSLuaFile("player_class/player_deathrun.lua")
 
 function GM:InitPostEntity() 
