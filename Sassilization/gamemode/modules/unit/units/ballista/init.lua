@@ -23,12 +23,12 @@ function UNIT:DoAttack( enemy, dmginfo )
 	timer.Simple( arrowTime, function()
 		for k,v in pairs(box) do
 			if IsValid(v) and v.Unit then
-				if v.Unit:GetEmpire() != self:GetEmpire() then
+				if v.Unit:GetEmpire() != self:GetEmpire() && !Allied(self:GetEmpire(), v.Unit:GetEmpire()) then
 					v.Unit:Damage( dmginfo )
 				end
 			elseif IsValid(v) and v.Building then
 				if v:GetEmpire() != self:GetEmpire() then
-					dmginfo.damage = 5
+					dmginfo.damage = 3
 					v:Damage( dmginfo )
 				end
 			end
