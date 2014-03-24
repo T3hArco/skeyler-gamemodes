@@ -148,7 +148,7 @@ function GM:RoundStart()
 		end
 	end
 
-	game.CleanUpMap()
+	game.CleanUpMap() 
 
 	for k,v in pairs(player.GetAll()) do 
 		if v:Team() == TEAM_SPEC then continue end 
@@ -171,17 +171,19 @@ function GM:RoundRestart()
 
 	ChatPrintAll("Restarting the round in 5 seconds") 
 
-	local nodeathcount = 0
-	for k,v in pairs(player.GetAll()) do 
-		if v.IsDeath then 
-			v.WasDeath = true 
-			v.IsDeath = false 
-			nodeathcount = nodeathcount + 1 -- Make sure we aren't filtering everyone out.
-		elseif v.WasDeath then 
-			v.WasDeath = false 
+	timer.Create("SS_PreRoundReset", 4.5, 1, function() 
+		local nodeathcount = 0
+		for k,v in pairs(player.GetAll()) do 
+			if v.IsDeath then 
+				v.WasDeath = true 
+				v.IsDeath = false 
+				nodeathcount = nodeathcount + 1 -- Make sure we aren't filtering everyone out.
+			elseif v.WasDeath then 
+				v.WasDeath = false 
+			end 
 		end 
-	end 
-	self:NewDeaths((nodeathcount >= #player.GetAll() and true or false), 0)  
+		self:NewDeaths((nodeathcount >= #player.GetAll() and true or false), 0)
+	end )
 
 	timer.Create("SS_RoundReset", 5, 1, function() 
 		if self:CheckPlayers() then 

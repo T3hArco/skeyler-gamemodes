@@ -27,7 +27,7 @@ end
 
 function PLAYER_META:CreateProfile() 
 	if(self:IsBot()) then return end 
-	local ip = string.Replace(game.IsDedicated() and self:IPAddress() or "127.0.0.1", ".", "")  
+	local ip = string.Replace(self:IPAddress() != "loopback" and self:IPAddress() or "127.0.0.1", ".", "")  
 	local query = "INSERT INTO users (steamid64, steamid, name, registerIp, lastLoginIP, registerTimestamp, lastLoginTimestamp) VALUES ('"..self:SteamID64().."','"..string.sub(self:SteamID(), 7).."','"..DB:escape(self:Name()).."','"..ip.."','"..ip.."','"..tostring(os.time()).."','"..tostring(os.time()).."')"
 	DB_Query(query, function() if self and self:IsValid() then self:ProfileLoad() end end)
 end 
