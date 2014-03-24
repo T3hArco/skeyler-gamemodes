@@ -85,7 +85,6 @@ end
 function GM:ShowTeam(ply) 
 	ply:SetTeam(TEAM_DEAD) 
 	ply:Spawn() 
-	self:CanRoundStart() 
 end 
 
 function GM:NewDeaths(anydeath, deathcount) 
