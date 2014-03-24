@@ -38,6 +38,11 @@ function Start(ply, name, time, callback, ...)
 		return 
 	end 
 
+	if !time or !isnumber(tonumber(time)) then 
+		Error("Vote syntax error, time is not a number") 
+		return 
+	end 
+
 	if !options[1] then 
 		Error("No vote options for: ".. name) 
 		return 

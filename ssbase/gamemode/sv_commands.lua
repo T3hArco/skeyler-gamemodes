@@ -317,7 +317,7 @@ concommand.Add("ss_startvote", function(ply, cmd, args)
 		return 
 	end 
 
-	if args[1] and args[2] and args[3] then 
+	if args[1] and args[2] and args[3] and isnumber(tonumber(args[2])) then 
 		local name, time = args[1], args[2] 
 		table.remove(args, 2); table.remove(args, 1); 
 		vote.Start(ply, name, time, function(result) ChatPrintAll(result) end, unpack(args)) 
