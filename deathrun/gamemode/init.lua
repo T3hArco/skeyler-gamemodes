@@ -5,12 +5,14 @@
 
 
 include("shared.lua")
+include("sh_maps.lua") 
 include("sh_meta.lua") 
 include("sh_library.lua") 
 include("sv_gatekeeper.lua") 
 include("player_class/player_deathrun.lua")
 
-AddCSLuaFile("shared.lua")
+AddCSLuaFile("shared.lua") 
+AddCSLuaFile("sh_maps.lua") 
 AddCSLuaFile("sh_meta.lua") 
 AddCSLuaFile("sh_library.lua") 
 AddCSLuaFile("cl_init.lua")

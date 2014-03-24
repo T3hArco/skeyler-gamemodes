@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 DB_DEVS = false 
 
@@ -30,7 +30,8 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_hud.lua") 
 AddCSLuaFile("cl_chatbox.lua") 
 AddCSLuaFile("cl_store.lua") 
-AddCSLuaFile("cl_scoreboard.lua")
+AddCSLuaFile("cl_scoreboard.lua") 
+AddCSLuaFile("cl_vote.lua") 
 
 AddCSLuaFile("panels/ss_slot.lua")
 AddCSLuaFile("panels/ss_slider.lua")
@@ -50,6 +51,7 @@ include("sv_profiles.lua")
 include("sv_store.lua") 
 include("sv_timer.lua")
 include("sv_commands.lua")
+include("sv_vote.lua") 
 
 if (!game.IsDedicated()) then
 	include("sv_gatekeeper.lua") 

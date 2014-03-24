@@ -309,7 +309,20 @@ concommand.Add("ss_slay", function(ply, cmd, args)
 			PLAYER_META:ChatPrintAll(msg)
 		end
 	end
-end)
+end) 
+
+concommand.Add("ss_startvote", function(ply, cmd, args) 
+	if !ply:IsSuperAdmin() then 
+		ply:ChatPrint("You do not have access to this command.") 
+		return 
+	end 
+
+	if args[1] and args[2] and args[3] then 
+		local name, time = args[1], args[2] 
+		table.remove(args, 2); table.remove(args, 1); 
+		vote.Start(ply, name, time, function(result) ChatPrintAll(result) end, unpack(args)) 
+	end 
+end )
 
 
 --[[-------------------------------------------------

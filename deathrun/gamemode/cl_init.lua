@@ -3,7 +3,8 @@
 -- Created by xAaron113x --
 --------------------------- 
 
-include("shared.lua")
+include("shared.lua") 
+include("sh_maps.lua") 
 include("sh_meta.lua") 
 include("sh_library.lua") 
 include("player_class/player_deathrun.lua")

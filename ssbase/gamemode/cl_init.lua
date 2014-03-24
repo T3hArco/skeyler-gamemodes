@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 include("player_class/player_ssbase.lua")
 
@@ -13,6 +13,7 @@ include("cl_scoreboard.lua")
 include("cl_store.lua") 
 include("cl_chatbox.lua") 
 include("cl_hud.lua") 
+include("cl_vote.lua") 
 
 include("panels/ss_slot.lua")
 include("panels/ss_slider.lua")
