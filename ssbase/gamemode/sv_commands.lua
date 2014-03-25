@@ -323,7 +323,7 @@ concommand.Add("ss_startvote", function(ply, cmd, args)
 	if args[1] and args[2] and args[3] and isnumber(tonumber(args[2])) then 
 		local name, time = args[1], args[2] 
 		table.remove(args, 2); table.remove(args, 1); 
-		vote.Start(ply, name, time, function(result) ChatPrintAll(result) end, false, unpack(args)) 
+		vote.Start(ply, name, time, function(result) ChatPrintAll("The vote results are in and the winner is:  "..result) end, false, unpack(args)) 
 	else 
 		ply:ChatPrint("Syntax: ss_startvote name time option1 [,option2, option3, etc]") 
 	end 

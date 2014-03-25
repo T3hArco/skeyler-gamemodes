@@ -11,7 +11,6 @@ include("cl_difficulty_menu.lua")
 include("sh_styles.lua") 
 include("cl_records.lua") 
 include("cl_scoreboard.lua") 
-include("cl_mapvote.lua") 
 
 GM.RecordTable = {}
 

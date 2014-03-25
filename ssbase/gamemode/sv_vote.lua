@@ -99,9 +99,7 @@ function EndVote()
 
 	winner = 0
 
-	PrintTable(results) 
-
-	if #results > 1 then -- We know there will be at least one winner
+	if #results > 0 then -- We know there will be at least one winner
 		for k,v in pairs(results) do -- default to first wins if equal 
 			if winner == 0 or v > results[winner] then 
 				winner = k 

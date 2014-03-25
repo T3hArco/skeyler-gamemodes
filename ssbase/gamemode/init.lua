@@ -51,16 +51,17 @@ function ChatPrintAll(msg)
 end
 
 include("shared.lua")
-include("sh_profiles.lua") 
 include("sh_library.lua")  
-include("sh_maps.lua")
-include("sh_store.lua") 
 include("sv_database.lua")
+include("sh_profiles.lua") 
 include("sv_profiles.lua") 
-include("sv_store.lua") 
 include("sv_timer.lua")
 include("sv_commands.lua")
+include("sh_maps.lua")
+include("sv_maps.lua")
 include("sv_vote.lua") 
+include("sh_store.lua") 
+include("sv_store.lua") 
 
 if (!game.IsDedicated()) then
 	include("sv_gatekeeper.lua") 
@@ -68,14 +69,20 @@ end
 
 if !file.IsDir("ss", "DATA") then file.CreateDir("ss") end 
 
-function SS.SetupGamemode(name) 
+-- Call this after you've loaded your map file
+function SS.SetupGamemode(name, b_loadmaps)  
 	if !name then Error("SetupGamemode requires a name") return end 
 
 	if !file.IsDir("ss/"..name, "DATA") then file.CreateDir("ss/"..name) end 
-	if !file.IsDir("ss/"..name.."/logs") then file.CreateDir("ss/"..name.."/logs") end 
-	if !file.IsDir("ss/"..name, "DATA") then file.CreateDir("ss/"..name) end
+	if !file.IsDir("ss/"..name.."/logs", "DATA") then file.CreateDir("ss/"..name.."/logs") end 
 
 	SS.ServerDir = "ss/"..name.."/" 
+	print(1, SS.ServerDir) 
+
+	if b_loadmaps then 
+		print(2, SS.ServerDir) 
+		SS:LoadMaps() 
+	end 
 end 
 
  

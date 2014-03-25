@@ -5,10 +5,12 @@
 
 SS.MapList = {} 
 
-function SS:AddMap(name) 
-	SS.MapList[name] = {name=name}
+function SS:AddMap(name, save) 
+	SS.MapList[name] = {name=name} 
+	if save then SS:Save() end 
 end 
 
+-- These will all get saved once the maps are loaded
 SS:AddMap("daethrun_ale-tech_v3") 
 SS:AddMap("deathrun_extremeway_gm4") 
 SS:AddMap("deathrun_iceworld_vfix2") 

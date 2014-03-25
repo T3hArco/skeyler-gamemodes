@@ -11,7 +11,6 @@ include("sh_styles.lua")
 include("sh_maps.lua") 
 include("sh_viewoffsets.lua") 
 include("player_class/player_bhop.lua")
-include("sv_mapvote.lua")
 include("sv_gatekeeper.lua") 
 
 AddCSLuaFile("shared.lua")
@@ -22,12 +21,11 @@ AddCSLuaFile("sh_styles.lua")
 AddCSLuaFile("sh_viewoffsets.lua") 
 AddCSLuaFile("cl_records.lua") 
 AddCSLuaFile("cl_scoreboard.lua") 
-AddCSLuaFile("cl_mapvote.lua")
 
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
 
-SS.SetupGamemode("bhop") 
+SS.SetupGamemode("bhop", true) 
 
 local StoreFrames = {} --local is better
 local Frames = {}
