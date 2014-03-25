@@ -60,7 +60,8 @@ function PLAYER_META:ProfileLoad()
 end 
 
 function PLAYER_META:ProfileLoaded(res) 
-	local steamid = self:SteamID()
+	local steamid = self:SteamID() 
+	local ip = string.Replace(self:IPAddress() != "loopback" and self:IPAddress() or "127.0.0.1", ".", "")
 	
 	if res and res[1] then 
 		if res[2] then Error("Duplicate profile! Contact a developer! ("..steam..")") return end 
@@ -87,7 +88,7 @@ function PLAYER_META:ProfileLoaded(res)
 		return 
 	else 
 		self.profile = {} 
-		self.profile.lastLoginIp = self:IPAddress() 
+		self.profile.lastLoginIp = ip 
 		self.profile.lastLoginTimestamp = os.time() 
 		self:SetRank(DB_DEVS and 100 or 0)
 		self:SetMoney(100) 
@@ -99,7 +100,7 @@ function PLAYER_META:ProfileLoaded(res)
 
 	self.profile.playtime = self.profile.playtime or 0 -- Make sure it isn't nil
 	self.playtimeStart = os.time()
-	self.profile.lastLoginIp = self:IPAddress() 
+	self.profile.lastLoginIp = ip 
 	self.profile.lastLoginTimestamp = os.time() 
 
 	SS.Profiles[self:SteamID()] = self.profile

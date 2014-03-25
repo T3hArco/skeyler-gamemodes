@@ -41,6 +41,15 @@ AddCSLuaFile("panels/ss_notify.lua")
 
 include("player_class/player_ssbase.lua")
 
+-- I need this before everything else loads
+function ChatPrintAll(msg)
+	if !msg or string.Trim(msg) == "" then return end 
+
+	for k,v in pairs(player.GetAll()) do 
+		v:ChatPrint(msg) 
+	end 
+end
+
 include("shared.lua")
 include("sh_profiles.lua") 
 include("sh_library.lua")  
@@ -57,13 +66,18 @@ if (!game.IsDedicated()) then
 	include("sv_gatekeeper.lua") 
 end
 
-function ChatPrintAll(msg)
-	if !msg or string.Trim(msg) == "" then return end 
-  
-  for k,v in pairs(player.GetAll()) do 
-		v:ChatPrint(msg) 
-	end 
- end
+if !file.IsDir("ss", "DATA") then file.CreateDir("ss") end 
+
+function SS.SetupGamemode(name) 
+	if !name then Error("SetupGamemode requires a name") return end 
+
+	if !file.IsDir("ss/"..name, "DATA") then file.CreateDir("ss/"..name) end 
+	if !file.IsDir("ss/"..name.."/logs") then file.CreateDir("ss/"..name.."/logs") end 
+	if !file.IsDir("ss/"..name, "DATA") then file.CreateDir("ss/"..name) end
+
+	SS.ServerDir = "ss/"..name.."/" 
+end 
+
  
 function PLAYER_META:ChatPrintAll(msg) 
 	ChatPrintAll(msg)

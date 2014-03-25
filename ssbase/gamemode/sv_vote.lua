@@ -14,10 +14,13 @@ local tonumber = tonumber
 local print = print 
 local PrintTable = PrintTable 
 local pairs = pairs 
+local isnumber = isnumber 
+local ChatPrintAll = ChatPrintAll 
 
 util.AddNetworkString("ss_startvote") 
 util.AddNetworkString("ss_endvote") 
 util.AddNetworkString("ss_vote") 
+util.AddNetworkString("ss_revote") 
 
 module("vote") 
 
@@ -25,7 +28,11 @@ local isVoting = false
 local currentvote = false 
 local results = false 
 
-function Start(ply, name, time, callback, ...) 
+function IsVoting() 
+	return isVoting 
+end 
+
+function Start(ply, name, time, successCallback, failedCallback, ...) 
 	local options = {...} 
 
 	if isVoting then 
@@ -56,7 +63,8 @@ function Start(ply, name, time, callback, ...)
 	currentvote.name = name 
 	currentvote.time = time 
 	currentvote.ply = ply 
-	currentvote.callback = callback 
+	currentvote.successCallback = successCallback 
+	currentvote.failedCallback = failedCallback 
 	currentvote.options = options 
 	currentvote.votes = {} 
 
@@ -68,7 +76,7 @@ function Start(ply, name, time, callback, ...)
 		EndVote() 
 	end ) 
 
-	return currentvote 
+	return currentvote -- return this for shits 'n giggles
 end 
 
 function SendVote(ply)  
@@ -89,29 +97,46 @@ function EndVote()
 	net.Start("ss_endvote") 
 	net.Broadcast() 
 
-	winner = 1
-	for k,v in pairs(results) do -- default to first wins if equal
-		if v > results[winner] then 
-			winner = k 
+	winner = 0
+
+	PrintTable(results) 
+
+	if #results > 1 then -- We know there will be at least one winner
+		for k,v in pairs(results) do -- default to first wins if equal 
+			if winner == 0 or v > results[winner] then 
+				winner = k 
+			end 
+		end 
+		currentvote.successCallback(currentvote.options[winner]) 
+	else -- WE FAILED!  ABORT!  ABORT!
+		if currentvote.failedCallback then 
+			currentvote.failedCallback() 
+		else 
+			ChatPrintAll("The vote has failed, no one voted!") 
 		end 
 	end 
 
-	currentvote.callback(currentvote.options[winner]) 
 	currentvote = false 
 	results = false 
 	isVoting = false 
 end 
 
+function Revote(ply) 
+	if isVoting then 
+		if currentvote.votes[ply:SteamID()] then 
+			if results[currentvote.votes[ply:SteamID()]] then 
+				results[currentvote.votes[ply:SteamID()]] = results[currentvote.votes[ply:SteamID()]]-1 
+			end 
+			currentvote.votes[ply:SteamID()] = false 
+		end 
+	end 
+end 
+
 net.Receive("ss_vote", function(l, ply)  
 	if isVoting then 
 		local num = net.ReadInt(4) 
-		if num >= 1 and num <= #currentvote.options then 
+		if !currentvote.votes[ply:SteamID()] and num >= 1 and num <= #currentvote.options then 
 			results[num] = results[num] and results[num]+1 or 1
-
-			if currentvote.votes[ply:SteamID()] then 
-				results[currentvote.votes[ply:SteamID()]] = results[currentvote.votes[ply:SteamID()]]-1 
-			end 
-
 			currentvote.votes[ply:SteamID()] = num 
 		end 
 	end 

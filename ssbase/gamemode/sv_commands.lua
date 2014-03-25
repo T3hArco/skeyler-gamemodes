@@ -320,7 +320,21 @@ concommand.Add("ss_startvote", function(ply, cmd, args)
 	if args[1] and args[2] and args[3] and isnumber(tonumber(args[2])) then 
 		local name, time = args[1], args[2] 
 		table.remove(args, 2); table.remove(args, 1); 
-		vote.Start(ply, name, time, function(result) ChatPrintAll(result) end, unpack(args)) 
+		vote.Start(ply, name, time, function(result) ChatPrintAll(result) end, false, unpack(args)) 
+	else 
+		ply:ChatPrint("Syntax: ss_startvote name time option1 [,option2, option3, etc]") 
+	end 
+end ) 
+
+concommand.Add("ss_revote", function(ply) 
+	if vote.IsVoting() then 
+		net.Start("ss_revote") 
+		net.Send(ply) 
+		vote.Revote(ply) 
+
+		ply:ChatPrint("You can now revote.") 
+	else 
+		ply:ChatPrint("There is currently no vote.") 
 	end 
 end )
 
@@ -339,6 +353,7 @@ SS.ChatCommands = {
 	["mute"] = "ss_mute",
 	["password"] = "ss_password",
 	["restart"] = "ss_restart",
+	["revote"] = "ss_revote",
 	["slay"] = "ss_slay"
 }
 

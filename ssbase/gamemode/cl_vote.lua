@@ -16,16 +16,26 @@ local tostring = tostring
 local print = print 
 local ScrH = ScrH 
 
-
 module("vote") 
 
+-- Are we currently voting?
 local isVoting = false 
+
+-- The info of the current vote sent through net msgs
 local currentvote = false 
+
+-- The vote panel we create for votes 
 local votepanel = false 
+
+-- Padding around the outside edges of the text body
 local outsidepadding = 14
+
+-- Padding between text lines 
 local padding = 5 
-local maxw, maxh = 50, outsidepadding 
-local myvote = false 
+
+-- Max height/width of the vote panel 
+local maxw = 50 
+local maxh = outsidepadding 
 
 function StartVote() 
 	isVoting = true 
@@ -45,7 +55,7 @@ net.Receive("ss_startvote", function()
 	currentvote.name = net.ReadString() 
 	currentvote.ply = net.ReadString() 
 	currentvote.options  = net.ReadTable() 
-	currentvote.votes = 0
+	currentvote.myvote = 0
 
 	StartVote() 
 end )
@@ -117,7 +127,7 @@ function CreateVote()
 				surface.SetTextColor(255, 255, 255, 75) 
 			else 
 				surface.SetFont("ss_votenormal") 
-				if k == currentvote.votes+3 then 
+				if k == currentvote.myvote+3 then 
 					surface.SetTextColor(143, 230, 101) 
 				else 
 					surface.SetTextColor(255, 255, 255, 255) 
@@ -151,17 +161,20 @@ end
 ---------------------
 
 hook.Add("PlayerBindPress","ss_vote",function(ply,bind,pressed)
-	if isVoting and string.match(bind, "slot%d+") then 
+	if isVoting and currentvote.myvote == 0 and string.match(bind, "slot%d+") then 
 		local num = string.gsub(bind,"slot","")
 		num = tonumber(num) 
 
 		if num >= 1 and num <= #currentvote.options then 
-			if currentvote.votes != num then 
-				currentvote.votes = num 
-				net.Start("ss_vote") 
-					net.WriteInt(num, 4) 
-				net.SendToServer() 
-			end 
+			currentvote.myvote = num 
+			net.Start("ss_vote") 
+				net.WriteInt(num, 4) 
+			net.SendToServer() 
+			return true 
 		end 
 	end 
 end)
+
+net.Receive("ss_revote", function() 
+	currentvote.myvote = 0 
+end )
