@@ -9,7 +9,6 @@ local filename = "maplist.txt"
 
 -- Set this to run in the SS.SetupGamemode function in your init.lua
 function SS:LoadMaps() 
-	print(3, SS.ServerDir) 
 	if !SS.ServerDir then Error("YOU HAVE NO SERVERDIR!\n") return end 
 	local data = file.Read(SS.ServerDir..filename, "DATA") 
 	if !data or string.Trim(data) == "" then SS.MapList = {} return end 

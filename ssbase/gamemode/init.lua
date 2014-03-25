@@ -77,10 +77,8 @@ function SS.SetupGamemode(name, b_loadmaps)
 	if !file.IsDir("ss/"..name.."/logs", "DATA") then file.CreateDir("ss/"..name.."/logs") end 
 
 	SS.ServerDir = "ss/"..name.."/" 
-	print(1, SS.ServerDir) 
 
 	if b_loadmaps then 
-		print(2, SS.ServerDir) 
 		SS:LoadMaps() 
 	end 
 end 
