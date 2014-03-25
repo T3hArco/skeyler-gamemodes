@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 include("shared.lua")
 local Endflash, Startflash = 0, 0
 local FLASHTIMER = 5; --time in seconds, for the grenade to transition from full white to clear

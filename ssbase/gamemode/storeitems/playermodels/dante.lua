@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "dante"							--Should be a unique string that identifies the item
 ITEM.Name = "Dante"						--The name the item should display
  

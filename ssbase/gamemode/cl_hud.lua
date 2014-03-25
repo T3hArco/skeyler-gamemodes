@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 HUD_DO_NOT_DRAW = {}
 function GM:HUDAddShouldNotDraw(name) 

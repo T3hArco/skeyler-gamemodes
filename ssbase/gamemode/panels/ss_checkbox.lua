@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 local panel = {}
 
 local color_outline = Color(243, 243, 243, 100)

@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 -- MAKE THE RIGHT-CLICK DRAG FROM CURRENT VIEW POSITION
 

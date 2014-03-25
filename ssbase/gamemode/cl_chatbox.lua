@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 if (!atlaschat) then Msg("CANNOT LOAD THE ATLAS CHAT THEME: THE ATLAS CHAT ADDON IS MISSING!\n") return end
 

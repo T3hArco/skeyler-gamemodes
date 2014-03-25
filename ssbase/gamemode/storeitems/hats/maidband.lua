@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 --FIX ME (and icon and shit)
 
 ITEM.ID = "maidband"										-- Should be a unique string that identifies the item

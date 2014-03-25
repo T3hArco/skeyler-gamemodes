@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "tophat02"										-- Should be a unique string that identifies the item
 ITEM.Name = "Deluxe Top Hat"								-- The name the item should display
  

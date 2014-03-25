@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "mustache"										-- Should be a unique string that identifies the item
 ITEM.Name = "Mustache"										-- The name the item should display
 															-- Mustache (U.S.) | Moustache (U.K.)

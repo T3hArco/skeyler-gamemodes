@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 surface.CreateFont("ss.slider.text", {font = "DeJaVu Sans", size = 12, weight = 400})
 
 local panel = {}

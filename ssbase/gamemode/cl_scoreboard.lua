@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 local IsValid, ValidPanel = IsValid, ValidPanel
 
 local color_label = Color(242, 242, 242)

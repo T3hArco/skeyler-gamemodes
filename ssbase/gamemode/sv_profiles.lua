@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped", "avatarUrl"} 
 local update_filter = {"id", "steamId", "rank", "avatarUrl"}

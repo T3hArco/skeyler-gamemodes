@@ -1,8 +1,7 @@
----------------------------
---        Deathrun       -- 
--- Created by xAaron113x --
----------------------------
-
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 include("shared.lua")
 include("sh_maps.lua") 
@@ -72,7 +71,9 @@ function GM:PlayerDisconnected(ply)
 end 
 
 function GM:PlayerShouldTakeDamage(ply, attacker) 
-	if ply and ply.Team and attacker and attacker.Team and ply:Team() == attacker:Team() then print("NO DAMAGE TEAMMATE") return false end 
+	if ply and ply.Team and attacker and attacker.Team and ply:Team() == attacker:Team() then 
+		return false 
+	end 
 	return self.BaseClass:PlayerShouldTakeDamage(ply, attacker) 
 end 
 
@@ -98,7 +99,6 @@ function GM:NewDeaths(anydeath, deathcount)
 		-- Don't be a death twice please
 		if !v.WasDeath or anydeath  then 
 			v.IsDeath = true 
-			print(v, "Selected to be death") 
 			deathcount = deathcount + 1
 		end 
 	end 

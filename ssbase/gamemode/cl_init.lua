@@ -66,7 +66,7 @@ function GM:DrawOverlay()
 			surface.DrawTexturedRect(0, 0, ScrW(), ScrH()) 
 		end 
 
-		surface.SetDrawColor(255, 255, 255, 127/10*self.GUIBlurAmt)
+		surface.SetDrawColor(92, 92, 92, 200/10*self.GUIBlurAmt)
 		surface.SetMaterial(self.GUIBlurOverlay) 
 		surface.DrawTexturedRect(0, 0, ScrW(), ScrH()) 
 	end 

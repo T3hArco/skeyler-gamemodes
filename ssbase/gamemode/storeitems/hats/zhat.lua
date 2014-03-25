@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "zhat"											-- Should be a unique string that identifies the item
 ITEM.Name = "Stylish Z Cap"									-- The name the item should display
  

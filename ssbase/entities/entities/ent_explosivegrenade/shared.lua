@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ENT.Type = "anim"
 ENT.PrintName		= "Nade D:"
 ENT.Author			= "kna_rus"

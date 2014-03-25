@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "strawhat"										-- Should be a unique string that identifies the item
 ITEM.Name = "Straw Hat"										-- The name the item should display
  

@@ -1,4 +1,7 @@
-
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 concommand.Add("rs", function(ply) 
 	if ply:IsValid() and !ply:IsSuperAdmin() then return end 

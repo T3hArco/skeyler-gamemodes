@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 util.AddNetworkString("StartPosition")
 util.AddNetworkString("EndPosition")
 

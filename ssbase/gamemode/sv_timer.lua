@@ -1,7 +1,8 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 local TIMES = {} 
 
 function PLAYER_META:InitTimer() 

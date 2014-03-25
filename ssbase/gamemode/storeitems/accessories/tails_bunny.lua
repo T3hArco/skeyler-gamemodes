@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "tail_bunny"										-- Should be a unique string that identifies the item
 ITEM.Name = "Tail (Bunny)"									-- The name the item should display
  

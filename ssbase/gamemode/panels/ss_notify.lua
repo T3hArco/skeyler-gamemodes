@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 surface.CreateFont("ss.notify", {font = "Helvetica LT Std Cond", size = 21, weight = 400})
 surface.CreateFont("ss.notify.blur", {font = "Helvetica LT Std Cond", size = 21, weight = 400, blursize = 2})
 

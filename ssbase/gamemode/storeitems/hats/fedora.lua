@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "fedora"											-- Should be a unique string that identifies the item
 ITEM.Name = "Fedora"										-- The name the item should display
  

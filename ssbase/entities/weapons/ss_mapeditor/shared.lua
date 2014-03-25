@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 -- Variables that are used on both client and server
 
 SWEP.Author			= ""

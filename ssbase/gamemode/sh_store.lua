@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 SS.STORE = {}
 SS.STORE.Categories = {"Player Models", "Hats", "Accessories"}
 SS.STORE.Items = {}

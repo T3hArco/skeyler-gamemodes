@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 -- Overwrite if you need different
 function GM:CheckPassword( steamid, networkid, server_password, password, name )

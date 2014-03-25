@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "miku"							--Should be a unique string that identifies the item
 ITEM.Name = "Hatsune Miku"						--The name the item should display
  

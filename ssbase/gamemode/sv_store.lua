@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 local MAXIMUM_SLOTS = SS.STORE.SLOT.MAXIMUM
 
 util.AddNetworkString("SS_ItemEquip")

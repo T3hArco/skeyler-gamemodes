@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "zer0"							--Should be a unique string that identifies the item
 ITEM.Name = "Zer0"						--The name the item should display
  

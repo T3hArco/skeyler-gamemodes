@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 surface.CreateFont("ss.slot.name", {font = "DeJaVu Sans", size = 9, weight = 400})
 
 local backgroundTexture = Material("skeyler/vgui/store/icon_base.png", "noclamp smooth") 

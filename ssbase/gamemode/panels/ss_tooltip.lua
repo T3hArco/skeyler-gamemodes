@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 surface.CreateFont("ss.tooltip.name", {font = "Arvil Sans", size = 24, weight = 400}) 
 surface.CreateFont("ss.tooltip.options", {font = "Tahoma", size = 18, weight = 400}) 
 

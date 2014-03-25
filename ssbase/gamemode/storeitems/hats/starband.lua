@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "starband"										-- Should be a unique string that identifies the item
 ITEM.Name = "Star Antennae"									-- The name the item should display
  

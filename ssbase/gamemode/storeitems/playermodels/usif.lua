@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "usif"							--Should be a unique string that identifies the item
 ITEM.Name = "USIF Armor"						--The name the item should display
  

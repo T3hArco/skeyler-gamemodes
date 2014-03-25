@@ -1,14 +1,14 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 DeriveGamemode("base") 
 
 GM.Name 		= "SSBase"
-GM.Author 		= "xAaron113x"
-GM.Email 		= "xaaron113x@gmail.com"
-GM.Website 		= "aaron113.pw"
+GM.Author 		= "Skeyler Servers"
+GM.Email 		= "info@skeyler.com"
+GM.Website 		= "skeyler.com"
 GM.TeamBased 	= false 
 
 GM.VIPBonusHP = false 

@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "heartband"										-- Should be a unique string that identifies the item
 ITEM.Name = "Heart Antennae"								-- The name the item should display
  

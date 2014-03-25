@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 ITEM.ID = "glasses04"										-- Should be a unique string that identifies the item
 ITEM.Name = "Aviators"										-- The name the item should display
  

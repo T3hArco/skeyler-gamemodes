@@ -1,3 +1,8 @@
+---------------------------- 
+--         SSBase         -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 --FIX ME (and do icons and shit)
 
 ITEM.ID = "pooltube"										-- Should be a unique string that identifies the item
