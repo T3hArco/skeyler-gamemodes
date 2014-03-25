@@ -84,7 +84,6 @@ end
 
 function GM:ShowTeam(ply) 
 	ply:SetTeam(TEAM_DEAD) 
-	ply:Spawn() 
 end 
 
 function GM:NewDeaths(anydeath, deathcount) 
