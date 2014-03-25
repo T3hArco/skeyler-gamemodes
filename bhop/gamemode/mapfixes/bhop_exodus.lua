@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 HOOKS["Initialize"] = function()
 	GAMEMODE:AddACArea(Vector(866, 162, -240),Vector(1371, 664, -40),"You have entered the level select area as a result of this your timer has been stopped.")
 	GAMEMODE:AddACArea(Vector(-580, 772, -768),Vector(-315, 894, -568))

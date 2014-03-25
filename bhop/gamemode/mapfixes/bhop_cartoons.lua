@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 HOOKS["Initialize"] = function()
 	GAMEMODE:AddACArea(Vector(2824, 10532, -42),Vector(2871, 11073, 158))
 	GAMEMODE:AddACArea(Vector(3309, 10581, -38),Vector(3409, 11766, 200))

@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 HOOKS["InitPostEntity"] = function()
 	print('hi')
 	for k,v in pairs(ents.FindByClass("func_breakable")) do

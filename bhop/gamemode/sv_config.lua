@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 RunConsoleCommand("sv_stopspeed", "75")
 RunConsoleCommand("sv_friction", "4")

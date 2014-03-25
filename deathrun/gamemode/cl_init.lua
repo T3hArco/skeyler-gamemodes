@@ -1,7 +1,7 @@
----------------------------
---        Deathrun       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--        Deathrun        -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 include("shared.lua") 
 include("sh_maps.lua") 

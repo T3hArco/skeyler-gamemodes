@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 AddCSLuaFile("cl_init.lua")
 

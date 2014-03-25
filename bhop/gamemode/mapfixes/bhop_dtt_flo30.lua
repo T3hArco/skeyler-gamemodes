@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 HOOKS["InitPostEntity"] = function()
 	for k,v in pairs(ents.FindByClass("trigger_teleport")) do
 		local p = v:GetPos()

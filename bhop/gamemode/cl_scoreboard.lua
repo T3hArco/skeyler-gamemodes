@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 SS.Scoreboard.RegisterRow("TIME", 110, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local label = panel:Add("DLabel")
 	label:SetSize(row.width, 50)

@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 local function PlayerHullMax(ply)
 	if( ply:Crouching() ) then
 		return Vector(16, 16, 45)

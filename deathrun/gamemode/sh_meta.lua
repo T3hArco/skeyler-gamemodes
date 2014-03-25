@@ -1,7 +1,7 @@
----------------------------
---        Deathrun       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--        Deathrun        -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 local oldalive = PLAYER_META.Alive 
 function PLAYER_META:Alive() 

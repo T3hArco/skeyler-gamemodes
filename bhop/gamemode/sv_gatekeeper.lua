@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 GM.AllowedList = {} 
 GM.AllowedList["STEAM_0:0:25464234"]=true -- Aaron

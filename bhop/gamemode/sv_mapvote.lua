@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 util.AddNetworkString("ss_mapvote")
 util.AddNetworkString("ss_rtv")
 

@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 AddCSLuaFile("cl_init.lua")
 
 ENT.Type             = "anim"

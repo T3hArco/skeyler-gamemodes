@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 local mmm, rtvpanel, timeleft, maps = 6
 
 surface.CreateFont("ss_mapvote", {font="Arvil Sans", size=36, weight=500})

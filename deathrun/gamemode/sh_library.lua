@@ -1,7 +1,7 @@
----------------------------
---        Deathrun       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--        Deathrun        -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 function GetFilteredPlayers(filters) 
 	filters = filters or {}

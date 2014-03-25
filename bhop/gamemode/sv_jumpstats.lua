@@ -1,3 +1,8 @@
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
 util.AddNetworkString("LJStats")
 
 local JUMP_LJ = 1

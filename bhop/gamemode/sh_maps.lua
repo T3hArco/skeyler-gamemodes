@@ -1,7 +1,7 @@
----------------------------
---       Bunny Hop       -- 
--- Created by xAaron113x --
---------------------------- 
+---------------------------- 
+--        Bunny Hop       -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 function SS:AddMap(name, payout, spawnpos, spawnang, spawnareamin, spawnareamax, finishareamin, finishareamax) 
 	SS.MapList[name] = {name=name, payout=payout, spawnpos=spawnpos, spawnang=spawnang, spawnarea={min=spawnareamin, max=spawnareamax}, finisharea={pos=finishareapos, min=finishareamin, max=finishareamax}}

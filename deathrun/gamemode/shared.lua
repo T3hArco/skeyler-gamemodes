@@ -1,7 +1,7 @@
----------------------------
---        Deathrun       -- 
--- Created by xAaron113x --
----------------------------
+---------------------------- 
+--        Deathrun        -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 GM.Name 		= "Deathrun"
 GM.Author 		= "xAaron113x"

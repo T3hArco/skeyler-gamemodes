@@ -1,3 +1,7 @@
+---------------------------- 
+--        Deathrun        -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
 
 AddCSLuaFile()
 DEFINE_BASECLASS("player_default")

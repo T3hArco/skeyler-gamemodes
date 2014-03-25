@@ -1,3 +1,9 @@
+---------------------------- 
+--        Deathrun        -- 
+-- Created by Skeyler.com -- 
+---------------------------- 
+
+-- CREDIT FOR THIS ONE GOES TO STGAMEMODES 
 
 if(SERVER) then
 	AddCSLuaFile("shared.lua")
