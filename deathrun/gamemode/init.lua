@@ -17,6 +17,8 @@ AddCSLuaFile("sh_library.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("player_class/player_deathrun.lua")
 
+SS.SetupGamemode("deathrun") 
+
 function GM:InitPostEntity() 
 	self.BaseClass:InitPostEntity() 
 	self.FirstRoundTime = CurTime()+10

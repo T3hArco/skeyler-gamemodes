@@ -27,6 +27,8 @@ AddCSLuaFile("cl_mapvote.lua")
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
 
+SS.SetupGamemode("bhop") 
+
 local StoreFrames = {} --local is better
 local Frames = {}
 
