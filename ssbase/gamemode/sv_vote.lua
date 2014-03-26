@@ -104,7 +104,7 @@ function EndVote()
 				winner = k 
 			end 
 		end 
-		currentvote.successCallback(currentvote.options[winner]) 
+		if winner > 0 then currentvote.successCallback(currentvote.options[winner]) end 
 	end 
 
 	if winner == 0 then  -- WE FAILED!  ABORT!  ABORT!
