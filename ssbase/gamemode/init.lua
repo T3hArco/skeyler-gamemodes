@@ -98,9 +98,6 @@ function GM:PlayerInitialSpawn(ply)
 
 	ply.SpecMode = OBS_MODE_CHASE 
 	ply.SpecID = 1
-	ply.roam = false
-	ply.chase = true
-
 	ply:SendLua("ResolutionCheck()") 
 end 
 
@@ -152,75 +149,81 @@ function GM:GetPlayers(b_alive, filter)
 	return Return 
 end 
 
+function GM:SpectateSetup(ply) 
+	if ply.SpecMode == OBS_MODE_ROAMING then 
+		ply:SetParent(false) 
+	else  
+		if !ply or !ply:IsValid() then 
+			self:SpectateNext(ply) 
+			return 
+		end 
+		if ply.SpecPly and ply.SpecPly:IsValid() then -- If not valid, there probably are none to spectate 
+			ply:SetPos(ply.SpecPly:GetPos()) 
+			ply:SetParent(ply.SpecPly) 
+			ply:SpectateEntity(ply.SpecPly) 
+		end 
+	end 
+	ply:Spectate(ply.SpecMode)
+end 
+
+function GM:SpectateCheckValid(ply) 
+	for k,v in pairs(player.GetAll()) do 
+		if !v:Alive() then 
+			if v.SpecPly == ply then -- Assume dead or DC'd
+				self:SpectateNext(v) 
+			end 
+		end 
+	end 
+end 
+
 function GM:SpectateNext(ply) 
-	local players = self:GetPlayers(true,{ply})
-	if(#players == 1) then
-		if(ply.SpecID != 1) then
-			ply.SpecID = 1
-			ply:SpectateEntity(players[ply.SpecID])
-		end
-		return
-	end
-	ply.SpecID = ply.SpecID + 1
-	if(ply.SpecID>#players)then
-		ply.SpecID = 1
-	end
-	ply:SpectateEntity(players[ply.SpecID])
+	local players = self:GetPlayers(true, {ply}) 
+	ply.SpecID = ply.SpecID+1 
+
+	if ply.SpecID > table.Count(players) then 
+		ply.SpecID = 1 
+	end 
+
+	ply.SpecPly = players[ply.SpecID] 
+	self:SpectateSetup(ply) 
 end 
 
 function GM:SpectatePrev(ply) 
-	local players = self:GetPlayers(true,{ply})
-	if(#players == 1) then
-		if(ply.SpecID != 1) then
-			ply.SpecID = 1
-			ply:SpectateEntity(players[ply.SpecID])
-		end
-		return
-	end
-	ply.SpecID = ply.SpecID - 1
-	if(ply.SpecID<1)then
-		ply.SpecID = #players
-	end
-	ply:SpectateEntity(players[ply.SpecID])
+	local players = self:GetPlayers(true, {ply}) 
+	ply.SpecID = ply.SpecID-1 
+
+	if ply.SpecID < 1 then 
+		ply.SpecID = table.Count(players) 
+	end 
+
+	ply.SpecPly = players[ply.SpecID] 
+	self:SpectateSetup(ply) 
 end 
 
 function GM:ChangeSpecMode(ply)
-	if(ply.chase) then
-		ply.SpecMode = OBS_MODE_IN_EYE
-		ply.chase = false
-	else
-		ply.SpecMode = OBS_MODE_CHASE
-		ply.chase = true
-	end
-	ply:SetObserverMode(ply.SpecMode)
-end
+	if ply.SpecMode == OBS_MODE_IN_EYE then 
+		ply.SpecMode = OBS_MODE_CHASE 
+	elseif ply.SpecMode == OBS_MODE_CHASE then 
+		ply.SpecMode = OBS_MODE_ROAMING 
+	else 
+		ply.SpecMode = OBS_MODE_IN_EYE 
+	end 
 
-function GM:ToggleRoam(ply)
-	if(ply.roam) then
-		if(ply.chase) then
-			ply.SpecMode = OBS_MODE_CHASE
-		else
-			ply.SpecMode = OBS_MODE_IN_EYE
-		end
-		ply.roam = false
-	else
-		ply.SpecMode = OBS_MODE_ROAMING
-		ply.roam = true
-	end
-	ply:Spectate(ply.SpecMode)
+	self:SpectateSetup(ply) 
 end
-
 function GM:KeyPress(ply, key) 
 	if !ply:Alive() then 
-		if !ply.roam && key == IN_ATTACK then 
-			GAMEMODE:SpectateNext(ply)
-		elseif !ply.roam && key == IN_ATTACK2 then 
-			GAMEMODE:SpectatePrev(ply)
-		elseif !ply.roam && key == IN_JUMP then 
-			GAMEMODE:ChangeSpecMode(ply)
-		elseif key == IN_RELOAD then 
-			GAMEMODE:ToggleRoam(ply)
-		end
+		if ply.SpecMode != OBS_MODE_ROAMING then 
+			if key == IN_ATTACK then -- Cycle through players if not in roaming 
+				self:SpectateNext(ply) 
+			elseif key == IN_ATTACK2 then 
+				self:SpectatePrev(ply) 
+			end 
+		end 
+
+		if key == IN_JUMP then 
+			self:ChangeSpecMode(ply) -- Change how we view them 
+		end 
 	end 
 end 
 
@@ -249,10 +252,16 @@ function GM:PlayerSay( ply, text, public )
 	end
 
 	return self.BaseClass:PlayerSay(ply,text,public)
-end
+end 
+
+function GM:DoPlayerDeath(victim, attacker, dmg) 
+	self:SpectateCheckValid(victim) 
+	self.BaseClass:DoPlayerDeath(victim, attacker, dmg) 
+end 
 
 function GM:PlayerDisconnected(ply) 
 	ply:ProfileSave() 
+	self:SpectateCheckValid(ply) 
 end 
 
 function GM:AllowPlayerPickup( ply, object )
