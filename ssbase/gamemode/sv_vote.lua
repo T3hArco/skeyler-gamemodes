@@ -100,7 +100,7 @@ function EndVote()
 	winner = 0
 	if table.Count(results) > 0 then -- We know there will be at least one winner
 		for k,v in pairs(results) do -- default to first wins if equal 
-			if winner == 0 or v > results[winner] then 
+			if v != 0 and (winner == 0 or v > results[winner]) then 
 				winner = k 
 			end 
 		end 
