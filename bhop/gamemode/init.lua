@@ -304,13 +304,7 @@ function GM:PlayerSpawn(ply)
 			end
 		end
 	else 
-		ply:StripWeapons()
-		ply:Spectate(ply.SpecMode)
-		if(!ply.roam) then
-			local players = self:GetPlayers(true,{ply})
-			ply:SpectateEntity(players[ply.SpecID])
-		end
-		ply:Freeze(false)
+		self:PlayerSpawnAsSpectator(ply) 
 	end 
 end 
 

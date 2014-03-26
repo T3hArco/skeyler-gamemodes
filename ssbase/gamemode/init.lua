@@ -105,9 +105,8 @@ function GM:PlayerInitialSpawn(ply)
 end 
 
 function GM:PlayerSpawn(ply)
-	player_manager.SetPlayerClass(ply, "player_ssbase")
-	
 	self.BaseClass:PlayerSpawn(ply)
+	player_manager.SetPlayerClass(ply, "player_ssbase")
 end 
 
 function GM:PlayerSetModel(player)
@@ -124,7 +123,17 @@ function GM:PlayerSetModel(player)
 			end
 		end
 	end
-end
+end 
+
+function GM:PlayerSpawnAsSpectator(ply) 
+	ply:StripWeapons()
+	ply:Spectate(ply.SpecMode)
+	if(!ply.roam) then
+		local players = self:GetPlayers(true,{ply})
+		ply:SpectateEntity(players[ply.SpecID])
+	end
+	ply:Freeze(false)
+end 
 
 function GM:GetPlayers(b_alive, filter)  
 	local players = player.GetAll() 
@@ -201,8 +210,8 @@ function GM:ToggleRoam(ply)
 	ply:Spectate(ply.SpecMode)
 end
 
-hook.Add("KeyPress", "SpectateModeChange", function(ply, key) 
-	if ply:Team() == TEAM_SPEC then 
+function GM:KeyPress(ply, key) 
+	if !ply:Alive() then 
 		if !ply.roam && key == IN_ATTACK then 
 			GAMEMODE:SpectateNext(ply)
 		elseif !ply.roam && key == IN_ATTACK2 then 
@@ -213,7 +222,7 @@ hook.Add("KeyPress", "SpectateModeChange", function(ply, key)
 			GAMEMODE:ToggleRoam(ply)
 		end
 	end 
-end )
+end 
 
 function GM:PlayerSay( ply, text, public )
 	local t = text

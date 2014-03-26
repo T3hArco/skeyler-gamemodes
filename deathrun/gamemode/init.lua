@@ -32,13 +32,12 @@ function GM:PlayerInitialSpawn(ply)
 	self:CanRoundStart() 
 
 	if (self.FirstRoundTime-CurTime())>0 then 
-		ply:ChatPrint("Waiting "..tostring(math.ceil(self.FirstRoundTime-CurTime())).." seconds for players to spawn") 
+		ply:ChatPrint("Waiting "..tostring(math.ceil(self.FirstRoundTime-CurTime())).." seconds for players to spawn.") 
 	end 
 end 
 
 function GM:PlayerSpawn(ply) 
 	if ply:Alive() then 
-		ply:UnSpectate()
 		self.BaseClass:PlayerSpawn(ply) 
 
 		player_manager.SetPlayerClass(ply, "player_deathrun")
@@ -53,18 +52,6 @@ end
 function GM:IsSpawnpointSuitable(ply, spawnpointent, bMakeSuitable) 
 	-- Don't kill people please...
 	return true 
-end 
-
-function GM:PlayerSpawnAsSpectator(ply) 
-	ply:StripWeapons() 
-	ply:Spectate(ply.SpecMode) 
-	if(!ply.roam) then 
-		local players = self:GetPlayers(true,{ply}) 
-		ply:SpectateEntity(players[ply.SpecID]) 
-	end 
-	ply:Freeze(false) 
-
-	self:CanRoundStart() 
 end 
 
 function GM:PlayerDisconnected(ply) 
@@ -86,7 +73,10 @@ function GM:DoPlayerDeath(victim, attacker, dmg)
 end 
 
 function GM:ShowTeam(ply) 
-	ply:SetTeam(TEAM_DEAD) 
+	if ply:Team() == TEAM_SPEC then 
+		ply:SetTeam(TEAM_DEAD) 
+		ply:ChatPrint("You will spawn on the next round.") 
+	end 
 end 
 
 function GM:NewDeaths(anydeath, deathcount) 
@@ -114,7 +104,7 @@ function GM:CheckRoundOver()
 		ChatPrintAll("The deaths have triumphed!  Starting new round.") 
 		self.Started = false 
 	elseif #deaths <= 0 then 
-		ChatPrintAll("The runners have prevailed!  Starting new round") 
+		ChatPrintAll("The runners have prevailed!  Starting new round.") 
 		self.Started = false 
 	end 
 	self:CanRoundStart() 
@@ -159,7 +149,7 @@ function GM:RoundStart()
 		elseif v:Team() == TEAM_RUNNER or v:Team() == TEAM_DEAD or v:Team() == TEAM_DEATH then 
 			v:SetTeam(TEAM_RUNNER) 
 		else 
-			v:Kick("Idk how the fuck you got on an invalid team") 
+			v:Kick("Idk how the fuck you got on an invalid team!") 
 			return 
 		end 
 		v:Spawn() 
@@ -170,24 +160,21 @@ function GM:RoundRestart()
 	self.Restarting = true 
 	self.Started = true 
 
-	ChatPrintAll("Restarting the round in 5 seconds") 
-
-	timer.Create("SS_PreRoundReset", 4.5, 1, function() 
-		local nodeathcount = 0
-		for k,v in pairs(player.GetAll()) do 
-			if v.IsDeath then 
-				v.WasDeath = true 
-				v.IsDeath = false 
-				nodeathcount = nodeathcount + 1 -- Make sure we aren't filtering everyone out.
-			elseif v.WasDeath then 
-				v.WasDeath = false 
-			end 
-		end 
-		self:NewDeaths((nodeathcount >= #player.GetAll() and true or false), 0)
-	end )
+	ChatPrintAll("A new round will start in 5 seconds.") 
 
 	timer.Create("SS_RoundReset", 5, 1, function() 
 		if self:CheckPlayers() then 
+			local nodeathcount = 0
+			for k,v in pairs(player.GetAll()) do 
+				if v.IsDeath then 
+					v.WasDeath = true 
+					v.IsDeath = false 
+					nodeathcount = nodeathcount + 1 -- Make sure we aren't filtering everyone out.
+				elseif v.WasDeath then 
+					v.WasDeath = false 
+				end 
+			end 
+			self:NewDeaths((nodeathcount >= #player.GetAll() and true or false), 0)
 			self:RoundStart() 
 		end 
 	end ) 
@@ -195,5 +182,9 @@ end
 
 -- Check to make sure we have enough players to actually play
 function GM:CheckPlayers() 
-	return (#GetFilteredPlayers({TEAM_DEAD, TEAM_RUNNER, TEAM_DEATH}) >= 2)
+	return (table.Count(GetFilteredPlayers({TEAM_DEAD, TEAM_RUNNER, TEAM_DEATH})) >= 2)
 end 
+
+function GM:PlayerCanPickupWeapon( ply, wep )
+	return true
+end
