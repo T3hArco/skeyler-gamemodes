@@ -101,7 +101,7 @@ function GM:PlayerInitialSpawn(ply)
 	ply:SendLua("ResolutionCheck()") 
 end 
 
-function GM:PlayerSpawn(ply)
+function GM:PlayerSpawn(ply) 
 	self.BaseClass:PlayerSpawn(ply)
 	player_manager.SetPlayerClass(ply, "player_ssbase")
 end 
@@ -159,7 +159,6 @@ function GM:SpectateSetup(ply)
 		end 
 		if ply.SpecPly and ply.SpecPly:IsValid() then -- If not valid, there probably are none to spectate 
 			ply:SetPos(ply.SpecPly:GetPos()) 
-			ply:SetParent(ply.SpecPly) 
 			ply:SpectateEntity(ply.SpecPly) 
 		end 
 	end 
