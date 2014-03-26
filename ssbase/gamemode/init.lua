@@ -60,6 +60,7 @@ include("sv_commands.lua")
 include("sh_maps.lua")
 include("sv_maps.lua")
 include("sv_vote.lua") 
+include("sv_votemap.lua") 
 include("sh_store.lua") 
 include("sv_store.lua") 
 
@@ -80,6 +81,7 @@ function SS.SetupGamemode(name, b_loadmaps)
 
 	if b_loadmaps then 
 		SS:LoadMaps() 
+		votemap.Init()
 	end 
 end 
 

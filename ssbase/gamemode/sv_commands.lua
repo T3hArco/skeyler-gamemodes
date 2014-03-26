@@ -181,28 +181,39 @@ concommand.Add("ss_kick", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("ss_map", function(ply, cmd, args)
-	if !ply:IsAdmin() then
-		ply:ChatPrint("You do not have access to this command.\n")
-		return
-	end
+concommand.Add("ss_map", function(ply, cmd, args) 
+	local map = args[1] 
+	if ply and ply:IsValid() then 
+		if !ply:IsAdmin() then
+			ply:ChatPrint("You do not have access to this command.\n")
+			return
+		end 
+		if !map then
+			ply:ChatPrint("Syntax is ss_map NewMap\n")
+			return
+		end
+	end 
 
-	local map = args[1]
 
-	if !map then
-		ply:ChatPrint("Syntax is ss_map NewMap\n")
-		return
-	end
 
-	if file.Exists("maps/"..map..".bsp", "MOD") then
-		PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." is changing the map to "..map..".\n")
+	local prefix = "" 
+	if ply and ply:IsValid() then 
+		prefix = "("..string.upper(ply:GetRankName())..") "..ply:Nick() 
+	else 
+		prefix = "(Console)" 
+	end 
+
+	-- if file.Exists("maps/"..map..".bsp", "MOD") then
+		ChatPrintAll(prefix.." is changing the map to "..map..".")
 		for k, v in pairs(player.GetAll()) do
 			v:EmitSound("vo/k_lab/kl_initializing02.wav", 40, 115)
 		end
 		timer.Simple(4.2, function() RunConsoleCommand("changelevel", map) end)
-	else
-		ply:ChatPrint("Couldn't find map "..map..".bsp.\n")
-	end
+	-- elseif ply and ply:IsValid() then 
+	-- 	ply:ChatPrint("Couldn't find map "..map..".bsp.") 
+	-- else 
+	-- 	print("Couldn't find map "..map..".bsp") 
+	-- end
 end)
 
 concommand.Add("ss_mute", function(ply, cmd, args)

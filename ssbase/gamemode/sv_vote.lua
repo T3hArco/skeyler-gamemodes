@@ -98,8 +98,7 @@ function EndVote()
 	net.Broadcast() 
 
 	winner = 0
-
-	if #results > 0 then -- We know there will be at least one winner
+	if table.Count(results) > 0 then -- We know there will be at least one winner
 		for k,v in pairs(results) do -- default to first wins if equal 
 			if winner == 0 or v > results[winner] then 
 				winner = k 
@@ -133,7 +132,7 @@ end
 net.Receive("ss_vote", function(l, ply)  
 	if isVoting then 
 		local num = net.ReadInt(4) 
-		if !currentvote.votes[ply:SteamID()] and num >= 1 and num <= #currentvote.options then 
+		if !currentvote.votes[ply:SteamID()] and num >= 1 and num <= table.Count(currentvote.options) then 
 			results[num] = results[num] and results[num]+1 or 1
 			currentvote.votes[ply:SteamID()] = num 
 		end 
