@@ -4,6 +4,7 @@
 ---------------------------- 
 
 include("shared.lua")
+include("sv_config.lua") 
 include("sh_maps.lua") 
 include("sh_meta.lua") 
 include("sh_library.lua") 
