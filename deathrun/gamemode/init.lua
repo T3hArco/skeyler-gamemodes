@@ -9,6 +9,7 @@ include("sh_maps.lua")
 include("sh_meta.lua") 
 include("sh_library.lua") 
 include("sv_gatekeeper.lua") 
+include("sv_lasers.lua")
 include("player_class/player_deathrun.lua")
 
 AddCSLuaFile("shared.lua") 
@@ -66,6 +67,16 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 	end 
 	return self.BaseClass:PlayerShouldTakeDamage(ply, attacker) 
 end 
+
+local fatal = 1100
+local maxsafe = 580
+local damage = 100/(fatal-maxsafe) --do not change these, they are direct css rips ;_;
+
+--note I am doing this to hopefully save a little calc on fall damage :P
+
+function GM:GetFallDamage( ply, speed )
+	return math.max((speed - maxsafe)*damage*1.25,0)
+end
 
 function GM:DoPlayerDeath(victim, attacker, dmg) 
 	victim:SetTeam(TEAM_DEAD) 
