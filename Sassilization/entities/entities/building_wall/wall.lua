@@ -20,7 +20,6 @@ function ENT:CreateWall( positions )
     if( self.Walls ) then return end
     
     if( CLIENT ) then
-        --self.positions = self:UnoptimizePositions( positions )
         self.positions = positions
     else
         self.positions = positions

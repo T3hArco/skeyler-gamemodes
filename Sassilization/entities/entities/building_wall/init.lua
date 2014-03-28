@@ -184,7 +184,9 @@ function ENT:SetTowers( WallTower1, WallTower2, Positions )
 		debugoverlay.Line( p, p+Vector( 0, 0, 10 ), 10, color_white, true )
 	end
 	
+
 	assert(#Positions < (24 * 3))
+
 	self.OptimizedPositions = table.Copy( Positions )
     local OptimizedPositions = self.OptimizedPositions
 	

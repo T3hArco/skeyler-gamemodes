@@ -4,8 +4,8 @@
 --------------------
 
 SA.START_RES_GOLD = 75
-SA.START_RES_FOOD = 120
-SA.START_RES_IRON = 120
+SA.START_RES_FOOD = 100
+SA.START_RES_IRON = 100
 SA.START_SUPPLY = 6
 
 if game.IsDedicated() then

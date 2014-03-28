@@ -236,7 +236,8 @@ function methods:GetGoldIncome()
 	if( self:GetCities() > 0 ) then
 		return self:GetCities()
 	elseif( self:GetGold() < building.GetBuildingKey( "city", "Gold" ) ) then
-		return 1
+		//Was previously 1, was changed to 7 to make recovering from a loss of all cities actually possible.
+		return 7
 	else
 		return 0
 	end

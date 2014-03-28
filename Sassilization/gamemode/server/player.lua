@@ -16,6 +16,8 @@ util.AddNetworkString( "PlayerLoadingList" )
 util.AddNetworkString( "PlayerLoadingFinish" )
 
 function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
+	if SA.DEV then return true end
+
 	local steamID = util.SteamIDFrom64(sid)
 	
 	if table.HasValue(SA.AuthedPlayers, steamID) then
@@ -121,44 +123,51 @@ end
 function GM:PlayerInitialSpawn(pl)
 	if pl:SteamID() == "STEAM_0:0:12454744" or game.SinglePlayer() then sass = pl end
 
-	if !self.Started then
-		pl:Lock()
-		for k,v in pairs(SA.LoadingPlayers) do
-			if v[2] == pl:SteamID() then
-				table.remove(SA.LoadingPlayers, k)
-			end
-		end
-		PrintTable(SA.LoadingPlayers)
-		if #SA.LoadingPlayers >= 1 then
-			net.Start("PlayerLoadingTime")
-				net.WriteInt(SA.StartTime - CurTime(), 16)
-			net.Send(pl)
-			net.Start("PlayerLoadingList")
-				net.WriteTable(SA.LoadingPlayers)
-			net.Send(pl)
-		else
-			if timer.Exists("Player Loading") then
-				timer.Destroy("Player Loading")
-				SA.StartTime = CurTime() + 5
-				for k,v in pairs(player.GetAll()) do
-					net.Start("PlayerLoadingTime")
-						net.WriteInt(5, 16)
-					net.Send(v)
-					net.Start("PlayerLoadingFinish")
-						net.WriteString("All players loaded. Game starting.")
-					net.Send(v)
-					
-					v:ChatPrint("All players loaded. Game starting.")
+	if !SA.DEV then
+		if !self.Started then
+			pl:Lock()
+			for k,v in pairs(SA.LoadingPlayers) do
+				if v[2] == pl:SteamID() then
+					table.remove(SA.LoadingPlayers, k)
 				end
-				timer.Simple(5, function()
-					self:StartGame()
-				end)
 			end
+			PrintTable(SA.LoadingPlayers)
+			if #SA.LoadingPlayers >= 1 then
+				net.Start("PlayerLoadingTime")
+					net.WriteInt(SA.StartTime - CurTime(), 16)
+				net.Send(pl)
+				net.Start("PlayerLoadingList")
+					net.WriteTable(SA.LoadingPlayers)
+				net.Send(pl)
+			else
+				if timer.Exists("Player Loading") then
+					timer.Destroy("Player Loading")
+					SA.StartTime = CurTime() + 5
+					for k,v in pairs(player.GetAll()) do
+						net.Start("PlayerLoadingTime")
+							net.WriteInt(5, 16)
+						net.Send(v)
+						net.Start("PlayerLoadingFinish")
+							net.WriteString("All players loaded. Game starting.")
+						net.Send(v)
+						
+						v:ChatPrint("All players loaded. Game starting.")
+					end
+					timer.Simple(5, function()
+						self:StartGame()
+					end)
+				end
+			end
+		else
+			net.Start("PlayerLoadingFinish")
+				net.WriteString("Game starting.")
+			net.Send(pl)
 		end
 	else
 		net.Start("PlayerLoadingFinish")
 			net.WriteString("Game starting.")
 		net.Send(pl)
+		self:StartGame()
 	end
 	
 	pl:SetJumpPower(280)

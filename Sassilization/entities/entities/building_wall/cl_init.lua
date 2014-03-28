@@ -165,19 +165,27 @@ net.Receive( "wall.SpawnNewWall", function( len )
     for i = 1, count do
         positions[ i ] = net.ReadVector()
     end
+
+    if count == 2 then
+        wallEnt:UnoptimizePositions(positions)
+    end
    
-    if( IsValid( wallEnt ) and IsValid( wallTower1 ) and IsValid( wallTower2 ) ) then
-		timer.Simple( 0.5, function()
-            if( IsValid( wallEnt ) and IsValid( wallTower1 ) and IsValid( wallTower2 ) ) then
+    if( IsValid( wallEnt ) ) then
+        timer.Simple( 0.5, function()
+            if( IsValid( wallEnt ) ) then
                 if wallEnt:GetClass() == "building_wall" then
-        			wallEnt:CreateWall( positions )
-        			wallEnt.entTower1 = wallTower1
-        			wallEnt.entTower2 = wallTower2
-        			wallTower1:AddConnectedWall( wallEnt )
-        			wallTower2:AddConnectedWall( wallEnt )
+                    wallEnt:CreateWall( positions )
+                    if IsValid( wallTower1 ) then
+                        wallEnt.entTower1 = wallTower1
+                        wallTower1:AddConnectedWall( wallEnt )
+                    end
+                    if IsValid( wallTower2 ) then
+                        wallEnt.entTower2 = wallTower2
+                        wallTower2:AddConnectedWall( wallEnt )
+                    end
                 end
             end
-		end )
+        end )
     else
         --Assume we received the message before the entity was created clientside
         hook.Add( "OnEntityCreated", "wall.CatchWallCreate"..tostring(wallEntID), function( ent )
