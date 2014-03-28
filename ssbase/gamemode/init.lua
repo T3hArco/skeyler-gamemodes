@@ -17,7 +17,7 @@ end
 
 resource.AddWorkshop("239292201")
 
-resource.AddFile("resource/fonts/arvilsans0.ttf") 
+resource.AddFile("resource/fonts/arvil_sans_0.ttf") 
 
 resource.AddFile("resource/fonts/helveticaltstdboldcond.ttf") 
 resource.AddFile("resource/fonts/helveticaltstdlight.ttf") 
