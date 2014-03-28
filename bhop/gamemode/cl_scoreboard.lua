@@ -28,10 +28,10 @@ SS.Scoreboard.RegisterRow("TIME", 110, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 	end
 end)
 
-SS.Scoreboard.RegisterRow("DIFFICULTY", 132, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+SS.Scoreboard.RegisterRow("STYLE", 132, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local label = panel:Add("DLabel")
 	label:SetSize(row.width, 50)
-	label:SetText("EASY")
+	label:SetText("NORMAL")
 	label:SetFont("skeyler.scoreboard.row")
 	label:SetColor(Color(242, 242, 242))
 	label:SetExpensiveShadow(1, Color(0, 0, 0, 210))
@@ -41,10 +41,10 @@ SS.Scoreboard.RegisterRow("DIFFICULTY", 132, TEXT_ALIGN_CENTER, SS.Scoreboard.RO
 	function label:Think()
 		if (IsValid(player)) then
 			local text = self:GetText()
-			local level = GAMEMODE.Levels[player:GetNetworkedInt("ssbhop_level", 1)]
+			local level = GAMEMODE.Styles[player:GetNetworkedInt("Style", 1)]
 			
 			if (level and text != level.name) then
-				self:SetText(level.name)
+				self:SetText(string.upper(level.name))
 			end
 		end
 	end

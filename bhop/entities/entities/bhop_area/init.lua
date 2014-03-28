@@ -2,8 +2,10 @@
 --        Bunny Hop       -- 
 -- Created by Skeyler.com -- 
 ---------------------------- 
+include("shared.lua")
 
 AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("shared.lua")
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
@@ -11,14 +13,15 @@ ENT.Base = "base_anim"
 function ENT:Initialize()
 end
 
-function ENT:IsSpawn() 
-	return (self.isSpawn and self.isSpawn == true)
-end 
-
 function ENT:Setup(Min, Max, IsSpawn)
-	Max.z = Max.z+200
+	if(IsSpawn) then
+		Max.z = Max.z+75
+	else
+		Max.z = Max.z+200
+	end
 
-	self.isSpawn = IsSpawn
+	self:SetSpawn(IsSpawn)
+	
 	self:SetMoveType(MOVETYPE_NONE)
 	
 	self:SetModel("models/Combine_Helicopter/helicopter_bomb01.mdl")
@@ -42,10 +45,12 @@ function ENT:Setup(Min, Max, IsSpawn)
 end 
 
 function ENT:StartTouch(ply) 
-	if ply and ply:IsValid() and ply:IsPlayer() and !ply.Winner and !ply.AreaIgnore then 
-		if self:IsSpawn() then 
+	if ply and ply:IsValid() and ply:IsPlayer() and !ply.AreaIgnore then 
+		if self:GetSpawn() then 
 			ply.InSpawn = true
-			ply:ResetTimer()  
+			ply.Winner = false
+			ply:ResetTimer()
+			ply:ClearFrames()
 		elseif ply:IsTimerRunning() then
 			hook.Call("PlayerWon", GAMEMODE, ply)  
 		end  
@@ -54,9 +59,10 @@ end
 
 function ENT:EndTouch(ply) 
 	if ply and ply:IsValid() and ply:IsPlayer() and !ply.AreaIgnore then 
-		if self:IsSpawn() and !ply.Winner then 
+		if self:GetSpawn() and !ply.Winner then 
 			ply.InSpawn = false 
 			ply:StartTimer() 
+			ply:ClearFrames()
 		end 
 	end 
 end 

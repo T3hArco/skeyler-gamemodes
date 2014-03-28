@@ -6,7 +6,6 @@
 include("shared.lua")
 include("sv_config.lua")
 include("sv_jumpstats.lua")
-include("sh_levels.lua") 
 include("sh_styles.lua") 
 include("sh_maps.lua") 
 include("sh_viewoffsets.lua") 
@@ -15,8 +14,6 @@ include("sv_gatekeeper.lua")
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("cl_difficulty_menu.lua") 
-AddCSLuaFile("sh_levels.lua") 
 AddCSLuaFile("sh_styles.lua") 
 AddCSLuaFile("sh_viewoffsets.lua") 
 AddCSLuaFile("cl_records.lua") 
@@ -33,11 +30,8 @@ local Frames = {}
 GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 GM.ACAreas = {}
 GM.RecordTable = {}
-for k,_ in pairs(GM.Levels) do
-	GM.RecordTable[k] = {}
-	for k2,_ in pairs(GM.Styles) do
-		GM.RecordTable[k][k2] = {}
-	end
+for k,_ in pairs(GM.Styles) do
+		GM.RecordTable[k] = {}
 end
 
 function GM:Initialize()
@@ -113,39 +107,14 @@ function GM:AddACArea(min,max,message)
 	else
 		m = message
 	end
-	table.insert(GAMEMODE.ACAreas,{min,max,m})
+	local ac = ents.Create("ac_area")
+	ac:SetPos(max-(max-min)/2) 
+	ac:Setup(min, max, m) 
+	ac:Spawn()
 end
 
-function GM:LevelSetup(ply, Level)
-	if !Level or !isnumber(Level) or !self.Levels[Level] then return end 
-
-	ply:SetNetworkedInt("ssbhop_level", Level) 
-	ply.LevelData = self.Levels[Level] 
-
-	if !ply.LevelData then return end 
-
-	ply:SetGravity(ply.LevelData.gravity) 
-	ply.StayTime = ply.LevelData.staytime 
-	print(game.GetMap())
-	ply.Payout = SS.MapList[game.GetMap()] and SS.MapList[game.GetMap()].payout or 100
-
-	ply:ChatPrint("Your difficulty is ".. ply.LevelData.name ..".") 
-
-	if ply:Team() == TEAM_BHOP then 
-		ply:ResetTimer() 
-		ply.Winner = false 
-	end  
-	ply:SetTeam(TEAM_BHOP) 
-	ply:Spawn() 
-end 
-concommand.Add("level_select", function(ply, cmd, args) GAMEMODE:LevelSetup(ply, tonumber(args[1])) end)
-
 function GM:ShowTeam(ply) 
-	if ply:Team() != TEAM_BHOP and ply:HasTimer() and self.PSaveData[ply:SteamID()] then -- Just resume if they already played.
-		self:LevelSetup(ply, self.PSaveData[ply:SteamID()].Level)
-	else 
-		ply:ConCommand("open_difficulties") 
-	end 
+	ply:ConCommand("records")
 end 
 
 function GM:PlayerSay( ply, text, public )
@@ -178,15 +147,20 @@ function GM:PlayerSay( ply, text, public )
 		return ""
 	end
 	
+	if(t == "!wr") then
+		ply:ConCommand("records")
+		return ""
+	end
+	
 	return self.BaseClass:PlayerSay(ply,text,public)
 end
 
 function GM:LoadRecs()
-	DB_Query("SELECT name,level,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1' ORDER BY time",
+	DB_Query("SELECT name,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1' ORDER BY time",
 	function(data)
 		if(data) then
 			for _,v in pairs(data) do
-				table.insert(self.RecordTable[tonumber(v["level"])][tonumber(v["style"])],{["name"] = v["name"],["steamid"] = v["steamid"],["time"] = v["time"]})
+				table.insert(self.RecordTable[tonumber(v["style"])],{["name"] = v["name"],["steamid"] = v["steamid"],["time"] = v["time"]})
 			end
 		end
 	end)
@@ -194,18 +168,13 @@ end
 
 function PLAYER_META:LoadPBs()
 	self.PBS = {}
-	for k,_ in pairs(GAMEMODE.Levels) do
-		self.PBS[k] = {}
-		for k2,_ in pairs(GAMEMODE.Styles) do
-			self.PBS[k][k2] = 0
-		end
+	for k,_ in pairs(GAMEMODE.Styles) do
+		self.PBS[k] = 0
 	end
 	for k,v in pairs(GAMEMODE.RecordTable) do
-		for k2,v2 in pairs(v) do
-			for _,rec in pairs(v2) do
-				if(rec["steamid"] == string.sub(self:SteamID(),7)) then
-					self.PBS[k][k2] = rec["time"]
-				end
+		for _,rec in pairs(v) do
+			if(rec["steamid"] == string.sub(self:SteamID(),7)) then
+				self.PBS[k] = rec["time"]
 			end
 		end
 	end
@@ -225,6 +194,7 @@ function GM:PlayerInitialSpawn(ply)
 		end)
 	end
 	self.BaseClass:PlayerInitialSpawn(ply)
+	ply:SetTeam(TEAM_BHOP)
 end
 
 function GM:PlayerSpawn(ply)
@@ -250,17 +220,13 @@ function GM:PlayerSpawn(ply)
 			ply:SetNWInt("Style",1)
 		end
 
-		if ply:IsSuperAdmin() then 
+		if ply:IsAdmin() then 
 			ply:Give("ss_mapeditor") 
 		end 
 
 		if(!ply:IsBot()) then
-			if !ply.LevelData then
-				self:LevelSetup(ply,2) --default level
-			end
-			
-			if ply.PBS and ply.PBS[ply.LevelData.id] and ply.PBS[ply.LevelData.id][ply.Style] then -- We have to make sure it exists.
-				ply:SetPB(tonumber(ply.PBS[ply.LevelData.id][ply.Style])) 
+			if ply.PBS and ply.PBS[ply.Style] then -- We have to make sure it exists.
+				ply:SetPB(tonumber(ply.PBS[ply.Style])) 
 			end 
 			
 			if ply:HasTimer() and self.PSaveData[ply:SteamID()] then 
@@ -388,7 +354,6 @@ function GM:PlayerFootstep(ply)
 		if !self.PSaveData[ply:SteamID()] then self.PSaveData[ply:SteamID()] = {} end 
 		self.PSaveData[ply:SteamID()].LastPosition = ply:GetPos() 
 		self.PSaveData[ply:SteamID()].LastAngle = ply:GetAngles() 
-		self.PSaveData[ply:SteamID()].Level = ply:GetNetworkedInt("ssbhop_level", 0) 
 	end 
 end
 
@@ -439,32 +404,32 @@ function GM:PlayerWon(ply)
 	if(ply:IsBot()) then return end
 	ply:EndTimer()
 	ply.Winner = true 
+	local steamid = ply:SteamID()
+	local name = ply:Nick()
 	ply:ChatPrintAll(ply:Name().." has won in ".. FormatTime(ply:GetTotalTime(true)))
 	local t = ply:GetTotalTime(false)
-	if(self.CurrentID && (tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0 ||t < tonumber(ply.PBS[ply.LevelData.id][ply.Style]))) then
+	if(self.CurrentID && (tonumber(ply.PBS[ply.Style]) == 0 ||t < tonumber(ply.PBS[ply.Style]))) then
 		ply:ChatPrint("You have set a new Personal Best of "..FormatTime(t).."!")
-		local steamid = ply:SteamID()
-		local name = ply:Nick()
-		if(tonumber(ply.PBS[ply.LevelData.id][ply.Style]) == 0) then
-			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
+		if(tonumber(ply.PBS[ply.Style]) == 0) then
+			DB_Query("INSERT INTO bh_records (name,mapid,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 		else
-			DB_Query("UPDATE bh_records SET pb='0' WHERE style='"..ply.Style.."' AND level='"..ply.LevelData.id.."' AND steamid='"..string.sub(steamid, 7).."' AND pb='1'")
-			DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
+			DB_Query("UPDATE bh_records SET pb='0' WHERE style='"..ply.Style.."' AND steamid='"..string.sub(steamid, 7).."' AND pb='1'")
+			DB_Query("INSERT INTO bh_records (name,mapid,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 		end
-		ply.PBS[ply.LevelData.id][ply.Style] = t
+		ply.PBS[ply.Style] = t
 		ply:SetPB(t)
 	
 		local rem = 0
-		for k,v in pairs(self.RecordTable[ply.LevelData.id][ply.Style]) do
+		for k,v in pairs(self.RecordTable[ply.Style]) do
 			if(v["steamid"] == string.sub(steamid, 7)) then
 				rem = k
 			end
 		end
 		local i = {["name"] = name, ["steamid"] = string.sub(steamid, 7), ["time"] = t}
-		table.remove(self.RecordTable[ply.LevelData.id][ply.Style],k)
-		table.insert(self.RecordTable[ply.LevelData.id][ply.Style],i)
-		table.SortByMember(self.RecordTable[ply.LevelData.id][ply.Style], "time", function(a, b) return a > b end)
-		if(self.RecordTable[ply.LevelData.id][ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && StoreFrames[ply]) then
+		table.remove(self.RecordTable[ply.Style],k)
+		table.insert(self.RecordTable[ply.Style],i)
+		table.SortByMember(self.RecordTable[ply.Style], "time", function(a, b) return a > b end)
+		if(self.RecordTable[ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && StoreFrames[ply]) then
 			self.WRFr = StoreFrames[ply]
 			self.WRFrames = #self.WRFr[1]
 			self.NewWR = true
@@ -478,37 +443,35 @@ function GM:PlayerWon(ply)
 		net.Start("ModifyRT")
 		net.WriteString(steamid)
 		net.WriteString(name)
-		net.WriteInt(ply.LevelData.id,4)
 		net.WriteInt(ply.Style,4)
 		net.WriteInt(rem,32)
 		net.WriteInt(t,32)
 		net.Broadcast()
 	else
-		DB_Query("INSERT INTO bh_records (name,mapid,level,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.LevelData.id.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
+		DB_Query("INSERT INTO bh_records (name,mapid,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")
 	end
 	StoreFrames[ply] = nil
-	print(ply.Payout) 
-	ply:GiveMoney(ply.Payout)
+	--print(ply.Payout) 
+	--ply:GiveMoney(ply.Payout)
 end 
 
-hook.Add("Think","ACAreas",function()
+hook.Add("Think","BotShit",function()
 	for _,p in pairs(player.GetAll()) do
 		if(p:IsBot() && GAMEMODE.WRBot && p == GAMEMODE.WRBot) then 
 			if(p:GetMoveType() == 2) then
 				p:SetMoveType(0)
 			end
 		end
-		for _,v in pairs(GAMEMODE.ACAreas) do	
-			if(p:Team() == TEAM_BHOP && p:HasTimer() && p:IsTimerRunning() && !p.Winner && GAMEMODE:IsInArea(p,v[1],v[2])) then
-				p:EndTimer()
-				p:ChatPrint(v[3])
-			end
-		end
 	end
 	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && #player.GetAll() != 0) then
 		GAMEMODE:SpawnBot()
 	end
-end) --seperate think hooks = more organised and no extra cost in proccessing afaik
+end)
+
+function PLAYER_META:ClearFrames()
+	Frames[self] = 0
+	StoreFrames[self] = nil
+end
 
 local wrframes = 1
 

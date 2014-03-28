@@ -3,11 +3,14 @@
 -- Created by Skeyler.com -- 
 ---------------------------- 
 
+include("shared.lua")
+
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
 local Laser = Material("skeyler/solidbeam.png")
-local Col = Color(0, 255, 0, 255)
+local Col1 = Color(0, 255, 0, 255)
+local Col2 = Color(255, 0, 0, 255)
 
 function ENT:Initialize() 
 end 
@@ -26,6 +29,14 @@ function ENT:Draw()
 	local Z = Pos.z
 
 	local C1, C2, C3, C4 = Vector(Min.x, Min.y, Z), Vector(Min.x, Max.y, Z), Vector(Max.x, Max.y, Z), Vector(Max.x, Min.y, Z) 
+	
+	local Col = nil
+	
+	if(self:GetSpawn()) then
+		Col = Col1
+	else
+		Col = Col2
+	end
 	
 	render.SetMaterial(Laser)
 	render.DrawBeam(C1, C2, 5, 0, 1, Col) 

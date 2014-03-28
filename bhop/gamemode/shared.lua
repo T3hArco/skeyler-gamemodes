@@ -120,6 +120,11 @@ function GM:Move(pl, movedata)
 
 	local vel = movedata:GetVelocity()
 	vel = vel + (wishdir * accelspeed)
+	if(pl.InSpawn) then --cap even more in air
+		vel.x = math.min(vel.x, 200) 
+		vel.y = math.min(vel.y, 200) 
+		vel.z = math.min(vel.z, 200) 
+	end
 	movedata:SetVelocity(vel)
 	
 	if(self.BaseClass && self.BaseClass.Move) then
@@ -146,50 +151,25 @@ function GM:OnPlayerHitGround(ply)
 	end
 	timer.Simple(0.3,function () ply:SetJumpPower(280) end)
 	
-	
-	local leveldata = {}
-	if CLIENT then
-		leveldata = self.Levels[ply:GetNetworkedInt("ssbhop_level", 0)]
-	else
-		leveldata = ply.LevelData
-	end
-	
 	--mpbhop stuff
 	local ent = ply:GetGroundEntity()
 	if(tonumber(ent:GetNWInt("Platform",0)) == 0) then return end
-    if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && !table.HasValue(SS.Alldoors,game.GetMap()) && ent.BHSp && ent.BHSp > 100 then
+    if (ent:GetClass() == "func_door" || ent:GetClass() == "func_button") && ent.BHSp && ent.BHSp > 100 then
 		if(game.GetMap() == "bhop_cartoony" or game.GetMap() == "bhop_dan") then
 			ply:SetVelocity( Vector( 0, 0, ent.BHSp*2.4 ) ) --these maps have the weakest func_door boosters known to man. they also have made me make over 6 commits
 		else
 			ply:SetVelocity( Vector( 0, 0, ent.BHSp*1.9 ) )
 		end
 	elseif ent:GetClass() == "func_door" || ent:GetClass() == "func_button" then
-		if(leveldata and leveldata.id != 1) then
-			timer.Simple( leveldata.staytime, function()
-				-- setting owner stops collision between two entities
-				ent:SetOwner(ply)
-				if(CLIENT)then
-					ent:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
-				end
-			end)
-			timer.Simple( leveldata.respawntime, function()  ent:SetOwner(nil) end)
-			timer.Simple( leveldata.respawntime, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
-		else
-			ply.cblock = ent
-			if(timer.Exists("BlockTimer")) then
-				timer.Destroy("BlockTimer")
+		timer.Simple( 0.06, function()
+			-- setting owner stops collision between two entities
+			ent:SetOwner(ply)
+			if(CLIENT)then
+				ent:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
 			end
-			timer.Create("BlockTimer",0.5,1,function()
-				if(ply && ply:IsValid() && ply.cblock && ply.cblock:IsValid() && ply:GetGroundEntity() == ply.cblock) then
-					ply.cblock:SetOwner(ply)
-					if(CLIENT)then
-						ply.cblock:SetColor(Color(255,255,255,125)) --clientsided setcolor (SHOULD BE AUTORUN SHARED)
-					end
-					timer.Simple( 0.5, function()  ent:SetOwner(nil) end)
-					timer.Simple( 0.5, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
-				end
-			end)
-		end
+		end)
+		timer.Simple( 0.75, function()  ent:SetOwner(nil) end)
+		timer.Simple( 0.75, function()  if(CLIENT)then ent:SetColor(Color (255,255,255,255)) end end)
 	end
 	
 	if(self.BaseClass && self.BaseClass.OnPlayerHitGround) then

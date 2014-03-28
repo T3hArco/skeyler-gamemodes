@@ -361,3 +361,11 @@ function SWEP:OnRestore()
 	self:SetIronsights( false )
 	
 end
+
+function SWEP:TranslateFOV(fov)
+	if(self:GetOwner():IsBot()) then
+		return 90
+	else
+		return fov
+	end
+end

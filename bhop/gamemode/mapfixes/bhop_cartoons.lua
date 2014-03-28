@@ -3,7 +3,7 @@
 -- Created by Skeyler.com -- 
 ---------------------------- 
 
-HOOKS["Initialize"] = function()
+HOOKS["InitPostEntity"] = function()
 	GAMEMODE:AddACArea(Vector(2824, 10532, -42),Vector(2871, 11073, 158))
 	GAMEMODE:AddACArea(Vector(3309, 10581, -38),Vector(3409, 11766, 200))
 	GAMEMODE:AddACArea(Vector(-989, 10685, -1511),Vector(-929, 11597, -756))

@@ -237,8 +237,9 @@ function GM:PlayerSay( ply, text, public )
 	local t = string.lower( text )
 	
 	if(t == "!spec" || t == "!spectate") then
-		if(ply:Team() == TEAM_SPEC) then
-			ply:ChatPrint("You are already a spectator")
+		if(ply:Team() == TEAM_SPEC) then --toggle spectator with !spec
+			ply:SetTeam(TEAM_BHOP)
+			ply:Spawn()
 			return ""
 		end
 		ply:SetTeam(TEAM_SPEC)

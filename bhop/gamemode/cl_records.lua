@@ -22,7 +22,11 @@ NEXT_ARROW = Material("skeyler/next_arrow.png")
 local PANEL = {} 
 function PANEL:Init() 
 	self.page = 1
+	self.pages = 1
 	self:SetSize(rw, rh)
+	self:SetDrawOnTop(true)
+	
+	self.startTime = SysTime() -0.6
 
 	self.CloseBtn = vgui.Create("DPanel", self) 
 
@@ -49,46 +53,6 @@ function PANEL:Init()
 
 	self.Container = vgui.Create("DPanel", self) 
 	self.Container.Paint = nil 
-
-	self.LevelButtons = {} 
-	for k,v in pairs(GAMEMODE.Levels) do 
-		local Button = vgui.Create("DPanel", self.Container) 
-		Button.T = v 
-
-		function Button:Paint(w, h) 
-			if self.Selected then 
-				surface.SetDrawColor(0, 0, 0, 255*0.35) 
-				surface.DrawRect(0, 0, w, h)
-			elseif self.Hovered then 
-				surface.SetDrawColor(0, 0, 0, 255*0.275) 
-				surface.DrawRect(1, 1, w-2, h-2) 
-				surface.SetDrawColor(255, 255, 255, 255*0.275) 
-				surface.DrawOutlinedRect(0, 0, w, h) 
-			else 
-				surface.SetDrawColor(0, 0, 0, 255*0.2) 
-				surface.DrawRect(1, 1, w-2, h-2) 
-				surface.SetDrawColor(255, 255, 255, 255*0.2) 
-				surface.DrawOutlinedRect(0, 0, w, h) 
-			end 
-
-			surface.SetFont("ss_records_buttons") 
-			local tw, th = surface.GetTextSize(self.T.name) 
-			surface.SetTextPos(w/2-tw/2+1, h/2-th/2+1) 
-			surface.SetTextColor(0, 0, 0, 255*0.2) 
-			surface.DrawText(self.T.name) 
-			surface.SetTextPos(w/2-tw/2, h/2-th/2) 
-			surface.SetTextColor(255, 255, 255, 255) 
-			surface.DrawText(self.T.name) 
-		end 
-
-		function Button:OnMouseReleased(mcode) 
-			if mcode == MOUSE_LEFT then 
-				RECORDMENU:SelectDifficulty(self.T.id) 
-			end 
-		end 
-
-		self.LevelButtons[k] = Button
-	end  
 
 	self.StyleButtons = {} 
 	for k,v in pairs(GAMEMODE.Styles) do 
@@ -124,13 +88,13 @@ function PANEL:Init()
 		function Button:OnMouseReleased(mcode) 
 			if mcode == MOUSE_LEFT then 
 				RECORDMENU:SelectStyle(self.T.id) 
+				RECORDMENU:UpdateList()
 			end 
 		end 
 
 		self.StyleButtons[k] = Button
 	end 
 
-	self:SelectDifficulty(3) 
 	self:SelectStyle(1) 
 
 	self.Pages = vgui.Create("DPanel", self.Container) 
@@ -139,10 +103,10 @@ function PANEL:Init()
 	self.CurPage = vgui.Create("DPanel", self.Pages) 
 	function self.CurPage:Paint(w, h) 
 		surface.SetFont("ss_records_pages") 
-		local tw, th = surface.GetTextSize(tostring(RECORDMENU.page).."/32") 
+		local tw, th = surface.GetTextSize(tostring(RECORDMENU.page).."/"..RECORDMENU.pages) 
 		surface.SetTextPos(w/2-tw/2, h/2-th/2)  
 		surface.SetTextColor(255, 255, 255, 255) 
-		surface.DrawText(tostring(RECORDMENU.page).."/32") 
+		surface.DrawText(tostring(RECORDMENU.page).."/"..RECORDMENU.pages) 
 	end 
 
 	self.NextPage = vgui.Create("DPanel", self.Pages)  
@@ -154,7 +118,7 @@ function PANEL:Init()
 
 	function self.NextPage:OnMouseReleased(mcode) 
 		if mcode == MOUSE_LEFT then 
-			RECORDMENU.page = math.min(RECORDMENU.page+1, 32) 
+			RECORDMENU.page = math.min(RECORDMENU.page+1, RECORDMENU.pages) 
 			RECORDMENU:UpdateList()
 		end 
 	end 
@@ -203,7 +167,7 @@ function PANEL:Init()
 		PANEL.name = "" 
 		PANEL.time = ""
 		if i == 1 then 
-			function PANEL:Paint(w, h) 
+			function PANEL:Paint(w, h)
 				surface.SetDrawColor(255, 255, 255, 255*0.3) 
 				surface.DrawRect(0, 0, w, h) 
 
@@ -242,7 +206,6 @@ function PANEL:Init()
 			end 
 			PANEL.less = less 
 			less = !less 
-			print(less) 
 		end
 		self.List[i] = PANEL  
 	end 
@@ -254,29 +217,33 @@ function PANEL:UpdateList()
 	self.nw = 0 
 	surface.SetFont("ss_records_list") 
 	local w, h = 0, 0
-	for i=self.page*10, self.page*10+10 do 
+	local s = self.SelectedStyle
+	for i=((self.page-1)*10)+1, (self.page-1)*10+10 do 
 		w, h = surface.GetTextSize(i..".") 
 		if w+15 > self.nw then 
 			self.nw = w+15 
 		end 
-		self.List[n].info = {name=table.Random(NAME_BANK), time=n*self.page*(math.random(1, 10)/3)}  
+		if(!GAMEMODE.RecordTable[s][i]) then
+			self.List[n+1].info = {name="", time=0}  
+			self.List[n+1]:SetVisible(false)
+		else
+			self.List[n+1].info = {name=GAMEMODE.RecordTable[s][i]["name"], time=GAMEMODE.RecordTable[s][i]["time"]}  
+			self.List[n+1]:SetVisible(true)
+			
+		end
 		n = n+1
 	end 
-end 
-
-function PANEL:SelectDifficulty(id) 
-	self.SelectedDifficulty = id 
-	for k,v in pairs(self.LevelButtons) do 
-		if k == id then 
-			v.Selected = true 
-		else 
-			v.Selected = false 
-		end 
-	end 
+	if(#GAMEMODE.RecordTable[self.SelectedStyle] < 1) then
+		self.List[1]:SetVisible(false)
+	else
+		self.List[1]:SetVisible(true)
+	end
+	self.pages = math.max(math.ceil((#GAMEMODE.RecordTable[s])/10),1)
 end 
 
 function PANEL:SelectStyle(id) 
 	self.SelectedStyle = id 
+	self.page = 1
 	for k,v in pairs(self.StyleButtons) do 
 		if k == id then 
 			v.Selected = true 
@@ -284,6 +251,7 @@ function PANEL:SelectStyle(id)
 			v.Selected = false 
 		end 
 	end 
+	self.pages = math.max(math.ceil((#GAMEMODE.RecordTable[id])/10),1)
 end 
 
 function PANEL:PerformLayout(w, h) 
@@ -299,20 +267,13 @@ function PANEL:PerformLayout(w, h)
 	self.Container:SetSize(w-10, h-102-26) 
 
 	local LastX = 0 
-	for k,v in pairs(self.LevelButtons) do 
+	for k,v in pairs(self.StyleButtons) do 
 		v:SetPos(LastX, 0) 
 		v:SetSize(self.Container:GetWide()/3, 42) 
 		LastX = LastX+v:GetWide() 
 	end 
 
-	LastX = 0 
-	for k,v in pairs(self.StyleButtons) do 
-		v:SetPos(LastX, 42) 
-		v:SetSize(self.Container:GetWide()/3, 42) 
-		LastX = LastX+v:GetWide() 
-	end 
-
-	self.ListPanel:SetPos(18, 18+42*2) 
+	self.ListPanel:SetPos(18, 22+18*2) 
 	self.ListPanel:SetSize(w-10-18*2, 30*11) 
 
 	local Slot = 0 
@@ -323,7 +284,7 @@ function PANEL:PerformLayout(w, h)
 	end 
 
 	surface.SetFont("ss_records_pages") 
-	local tw, th = surface.GetTextSize(tostring(self.Page).."/32") 
+	local tw, th = surface.GetTextSize(tostring(self.Page).."/999") 
 	self.NextPage:SetSize(15, th+8) 
 	self.PrevPage:SetSize(15, th+8)
 	self.CurPage:SetSize(tw, th) 
@@ -335,6 +296,8 @@ function PANEL:PerformLayout(w, h)
 end 
 
 function PANEL:Paint(w, h) 
+	Derma_DrawBackgroundBlur(self, self.startTime)
+	
 	surface.SetFont("ss_records_header") 
 	local tw, th = surface.GetTextSize("Records") 
 	surface.SetTextPos(1, 1) 
@@ -348,23 +311,29 @@ function PANEL:Paint(w, h)
 	draw.RoundedBox(2, 0, h-26, w, 26, Color(255, 255, 255, 255))  
 	surface.SetDrawColor(255, 255, 255, 255*0.36) 
 	surface.DrawRect(5, 102, w-10, h-102-26) 
+	if(#GAMEMODE.RecordTable[self.SelectedStyle] < 1) then
+		tw, th = surface.GetTextSize("There are no records for this style!") 
+		surface.SetTextPos(w/2-tw/2, 150) 
+		surface.SetTextColor(255, 255, 255, 255) 
+		surface.DrawText("There are no records for this style!")
+	end
 end 
 vgui.Register("ss_records", PANEL, "DPanel") 
 
 concommand.Add("records", function() 
 	if !RECORDMENU then 
 		RECORDMENU = vgui.Create("ss_records") 
-		GAMEMODE:SetGUIBlur(true) 
+		--GAMEMODE:SetGUIBlur(true) 
 		gui.EnableScreenClicker(true)
 		return 
 	end 
 	if RECORDMENU:IsVisible() then 
-		GAMEMODE:SetGUIBlur(false) 
+		--GAMEMODE:SetGUIBlur(false) 
 		gui.EnableScreenClicker(false)
 		RECORDMENU:SetVisible(false) 
 	else 
 		RECORDMENU:SetVisible(true) 
-		GAMEMODE:SetGUIBlur(true) 
+		--GAMEMODE:SetGUIBlur(true) 
 		gui.EnableScreenClicker(true)
 	end 
 end )  
