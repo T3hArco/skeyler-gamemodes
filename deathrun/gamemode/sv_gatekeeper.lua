@@ -17,15 +17,15 @@ GM.AllowedList["STEAM_0:1:22006069"]=true -- Arco
 GM.AllowedList["STEAM_0:1:14671056"]=true -- Hateful
 GM.AllowedList["STEAM_0:0:8232794"]=true -- Chewgum
 
-GM.AllowedList[""] = true
 
 function GM:CheckPassword(steam, IP, sv_pass, cl_pass, name) 
 	steam = util.SteamIDFrom64(steam) 
 
-	if self.AllowedList[steam] then 
+	--[[if self.AllowedList[steam] then 
 		return true 
 	else 
 		MsgN(name.."<"..steam..">("..IP..") tried to join the server.") 
 		return false, "Skeyler Deathrun is currently in Development, please try another day." 
-	end 
+	end ]]
+	return true
 end 
