@@ -73,6 +73,8 @@ function Start()
 	for k,v in rpairs(SS.MapList) do 
 		if table.Count(voteinfo.options) >= SS.MapVoteNumber then break end -- We have all the maps already 
 
+		if v.name == game.GetMap() then continue end -- Don't add the current map.
+
 		table.insert(voteinfo.options, v.name) 
 	end 
 
