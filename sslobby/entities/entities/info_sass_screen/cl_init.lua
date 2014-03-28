@@ -173,7 +173,7 @@ function labelsPanel:Paint(screen, x, y, w, h)
 			end
 		end
 	end
-	
+
 	local information = SS.Lobby.Link:GetPlayerInfo(screen:GetTriggerID())
 	local infoY = 0
 	
@@ -181,7 +181,9 @@ function labelsPanel:Paint(screen, x, y, w, h)
 		local data = information[i]
 		
 		if (data) then
-			draw.SimpleText(data.name, "ss.sass.screen.button", x +w /2 -932, y +h /2 -144 +infoY, color_blue, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleRect(x +w /2 -987, y +h /2 -168 +infoY, 1140, 192, data.color)
+			
+			draw.SimpleText(data.name, "ss.sass.screen.button", x +w /2 -932, y +h /2 -144 +infoY, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 			draw.SimpleText(data.gold, "ss.sass.screen.button", x +w /2 +32 +364, y +h /2 -144 +infoY, color_text_dark, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 			draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +512 +364, y +h /2 -144 +infoY, color_text_dark, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 			draw.SimpleText(data.food, "ss.sass.screen.button", x +w /2 +1024 +320, y +h /2 -144 +infoY, color_text_dark, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)

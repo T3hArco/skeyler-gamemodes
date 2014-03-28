@@ -26,7 +26,14 @@ end
 ---------------------------------------------------------
 
 function SS.Lobby.Link:AddServerTrigger(id)
-	storedTriggers[id] = {id = id, players = {}, queue = {}, sending = false, map = nil, ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"}
+	storedTriggers[id] = {
+		id = id,
+		players = {},
+		queue = {},
+		sending = false,
+		map = nil,
+		ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
+	}
 
 	if (id == 1) then
 		storedTriggers[id].dataPort = 40001

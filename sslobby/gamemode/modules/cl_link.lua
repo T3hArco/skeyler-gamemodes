@@ -96,7 +96,7 @@ net.Receive("ss.lbgtssin", function(bits)
 		local iron = net.ReadUInt(16)
 		local gold = net.ReadUInt(16)
 		
-		table.insert(storedTriggers[server].players, {teamID = teamID, name = name, gold = gold, food = food, iron = iron})
+		table.insert(storedTriggers[server].players, {color = colorTable[teamID], teamID = teamID, name = name, gold = gold, food = food, iron = iron})
 	end
 	
 	table.sort(storedTriggers[server].players, function(a, b) return a.gold > b.gold end)
