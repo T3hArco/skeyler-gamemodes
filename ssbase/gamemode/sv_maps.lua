@@ -11,8 +11,11 @@ local filename = "maplist.txt"
 function SS:LoadMaps() 
 	if !SS.ServerDir then Error("YOU HAVE NO SERVERDIR!\n") return end 
 	local data = file.Read(SS.ServerDir..filename, "DATA") 
-	if !data or string.Trim(data) == "" then SS.MapList = {} return end 
-	data = util.JSONToTable(data) 
+	if !data or string.Trim(data) == "" then 
+		data = {} 
+	else 
+		data = util.JSONToTable(data) 	
+	end 
 	SS.MapList = table.Merge(SS.MapList, data) -- Overwrite hardcoded with ones stored in data 
 	self:SaveMaps() 
 end  
