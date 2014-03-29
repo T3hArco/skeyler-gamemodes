@@ -442,7 +442,7 @@ function GM:PlayerWon(ply)
 			self:SpawnBot()
 		end
 		net.Start("ModifyRT")
-		net.WriteString(steamid)
+		net.WriteString(string.sub(steamid,7))
 		net.WriteString(name)
 		net.WriteInt(ply.Style,4)
 		net.WriteFloat(t)
