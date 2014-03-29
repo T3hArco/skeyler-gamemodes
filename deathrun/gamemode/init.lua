@@ -46,7 +46,7 @@ function GM:PlayerSpawn(ply)
 		player_manager.OnPlayerSpawn(ply) 
 		player_manager.RunClass(ply, "Spawn") 
 		player_manager.RunClass(ply, "Loadout")
-	else
+	else 
 		self:PlayerSpawnAsSpectator(ply) 
 	end 
 end 
@@ -58,7 +58,7 @@ end
 
 function GM:PlayerDisconnected(ply) 
 	self.BaseClass:PlayerDisconnected(ply) 
-	self:CheckRoundOver() 
+	timer.Simple(0.1, function() self:CheckRoundOver() end) -- Wait until they are gone.
 end 
 
 function GM:PlayerShouldTakeDamage(ply, attacker) 
@@ -109,14 +109,18 @@ function GM:NewDeaths(anydeath, deathcount)
 end 
 
 function GM:CheckRoundOver() 
-	if self.Restarting then return end 
-	local runners = GetFilteredPlayers({TEAM_RUNNER}) 
-	local deaths = GetFilteredPlayers({TEAM_DEATH}) 
-	if #runners <= 0 then 
-		ChatPrintAll("The deaths have triumphed!  Starting new round.") 
-		self.Started = false 
-	elseif #deaths <= 0 then 
-		ChatPrintAll("The runners have prevailed!  Starting new round.") 
+	if self:CheckPlayers() then 
+		if self.Restarting then return end 
+		local runners = GetFilteredPlayers({TEAM_RUNNER}) 
+		local deaths = GetFilteredPlayers({TEAM_DEATH}) 
+		if #runners <= 0 then 
+			ChatPrintAll("The deaths have triumphed!  Starting new round.") 
+			self.Started = false 
+		elseif #deaths <= 0 then 
+			ChatPrintAll("The runners have prevailed!  Starting new round.") 
+			self.Started = false 
+		end 
+	else 
 		self.Started = false 
 	end 
 	self:CanRoundStart() 
@@ -130,6 +134,7 @@ function GM:CanRoundStart()
 		else 
 			ChatPrintAll("Not enough players to start another round... waiting.") 
 			self.Started = false 
+			self.Restarting = false 
 			timer.Destroy("SS_RoundReset") 
 		end 
 	end 
@@ -188,6 +193,9 @@ function GM:RoundRestart()
 			end 
 			self:NewDeaths((nodeathcount >= #player.GetAll() and true or false), 0)
 			self:RoundStart() 
+		else 
+			self.Started = false 
+			self:CheckRoundOver() 
 		end 
 	end ) 
 end 
