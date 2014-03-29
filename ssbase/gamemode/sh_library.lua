@@ -199,20 +199,9 @@ function FindByPartial(PlayerName)
 	end
 end
 
-function ArgConcat(args)
-	local reason
-	local b = false
-
-	for k, v in pairs(args) do
-		if (k >= 2 and type(args[k]) != "number") then
-			if !b then
-				reason = args[k]
-				b = true
-			else
-				reason = reason.." "..args[k]
-			end
-		end
-	end
+function StpRsnStrng(args)
+	table.remove(args, 1)
+	local reason = string.Implode(" ", args)
 
 	return reason
 end

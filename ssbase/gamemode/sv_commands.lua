@@ -39,9 +39,11 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 	end
 
 	local PlayerName = args[1]
-	args[2] = tonumber(args[2])
-	local Time = args[2]
-	local Reason = ArgConcat(args)
+	local Time = tonumber(args[2])
+
+	table.remove(args, 2)
+
+	local Reason = StpRsnStrng(args)
 
 	if (!PlayerName || !Time || !Reason) then
 		ply:ChatPrint("Syntax is ss_ban PlayerName Time(Hours) Reason.\n")
@@ -151,7 +153,7 @@ concommand.Add("ss_kick", function(ply, cmd, args)
 	end
 
 	local PlayerName = args[1]
-	local Reason = ArgConcat(args)
+	local Reason = StpRsnStrng(args)
 
 	if (!PlayerName) then
 		ply:ChatPrint("Syntax is ss_kick PlayerName Reason.\n")
@@ -296,7 +298,7 @@ concommand.Add("ss_slay", function(ply, cmd, args)
 	end
 
 	local PlayerName = args[1]
-	local Reason = ArgConcat(args)
+	local Reason = StpRsnStrng(args)
 
 	if !PlayerName then
 		ply:ChatPrint("Syntax is ss_slay PlayerName Reason.\n")
