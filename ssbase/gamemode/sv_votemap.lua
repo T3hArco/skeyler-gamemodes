@@ -22,6 +22,7 @@ local RunConsoleCommand = RunConsoleCommand
 local ChatPrintAll = ChatPrintAll 
 local unpack = unpack 
 local game = game 
+local FormatTime = FormatTime 
 local hook = hook
 local concommand = concommand
 local player = player
@@ -43,8 +44,15 @@ function IsVoting()
 	return voteinfo.voting 
 end 
 
-function GetTimeleft() 
-	return (voteinfo.endTime-voteinfo.startTime) 
+function GetTimeleft(format) 
+	local time = (voteinfo.endTime-CurTime()) 
+	if time == 0 then 
+		return "N/A" 
+	elseif format then 
+		return FormatTime(time) 
+	else 
+		return time 
+	end 
 end 
 
 function Init() 
@@ -98,6 +106,8 @@ function Start()
 		table.insert(voteinfo.options, "Extend") 
 	end 
 
+	voteinfo.startTime = 0 
+	voteinfo.endTime = 0 
 	vote.Start(false, "Vote for a map to play!", SS.VotemapTime, End, Failed, unpack(voteinfo.options)) 
 end 
 

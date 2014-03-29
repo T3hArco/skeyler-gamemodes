@@ -354,6 +354,9 @@ concommand.Add("ss_revote", function(ply)
 	end 
 end )
 
+concommand.Add("ss_timeleft", function(ply) 
+	ply:ChatPrint("Timeleft until votemap: "..votemap.GetTimeleft(true)) 
+end ) 
 
 --[[-------------------------------------------------
 		ChatCommands
@@ -370,13 +373,19 @@ SS.ChatCommands = {
 	["password"] = "ss_password",
 	["restart"] = "ss_restart",
 	["revote"] = "ss_revote",
-	["slay"] = "ss_slay"
+	["slay"] = "ss_slay", 
+	["timeleft"] = "ss_timeleft" 
 }
 
 function SS.ToConCommand(ply, text)
 	local t = text
 
-	t = string.gsub(t, "/", "", 1)
+	if string.sub(t, 0, 1) == "/" then 
+		t = string.gsub(t, "/", "", 1) 
+	else 
+		t = string.gsub(t, "!", "", 1) 
+	end 
+	
 	cmd = string.Explode(" ", t)
 
 	local cmdname = cmd[1]

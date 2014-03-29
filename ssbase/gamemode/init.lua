@@ -229,7 +229,7 @@ end
 function GM:PlayerSay( ply, text, public )
 	local t = text
 
-	if (string.sub(t, 0, 1) == "/") then
+	if (string.sub(t, 0, 1) == "/" or string.sub(t, 0, 1) == "!") then
 		if(!(votemap.GetTimeleft() != 0 && t == "/rtv")) then
 			SS.ToConCommand(ply, t)
 			return ""

@@ -205,6 +205,14 @@ function GM:CheckPlayers()
 	return (table.Count(GetFilteredPlayers({TEAM_DEAD, TEAM_RUNNER, TEAM_DEATH})) >= 2)
 end 
 
-function GM:PlayerCanPickupWeapon( ply, wep )
+function GM:PlayerCanPickupWeapon( ply, wep ) 
+	if !wep or !wep:IsValid() then return false end 
+	if ply:HasWeapon(wep:GetClass()) then return false end 
+	ply:SetAmmo(999, wep:GetPrimaryAmmoType()) 
+	ply:SelectWeapon(wep:GetClass()) 
 	return true
-end
+end 
+
+function GM:PlayerDeathSound() 
+	return true  
+end 

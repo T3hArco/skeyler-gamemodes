@@ -557,7 +557,7 @@ end
 function panel:OnChange()
 	local value = self:GetText()
 
-	if (value == "/") then
+	if (value == "/" or value == "!") then
 		local prefix = atlaschat.theme.GetValue("panel").prefix
 		
 		if (ValidPanel(prefix)) then

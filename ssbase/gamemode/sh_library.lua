@@ -3,6 +3,84 @@
 -- Created by Skeyler.com -- 
 ---------------------------- 
 
+
+function GetFilteredPlayers(filters) 
+	filters = filters or {}
+	local players = {} 
+	for k,v in pairs(player.GetAll()) do 
+		if table.HasValue(filters, v:Team()) then 
+			table.insert(players, v) 
+		end 
+	end 
+	return players 
+end 
+
+-- Credit to STGamemodes for this one.
+function rpairs(t)
+	-- math.randomseed(os.time())
+	local keys = {}
+	for k,_ in pairs(t) do
+		table.insert(keys, k)
+	end
+	return function()
+		if(#keys == 0) then
+			return nil
+		end
+		local i = math.random(1, #keys)
+		local k = keys[i]
+		local v = t[k]
+		table.remove(keys, i)
+		return k, v
+	end
+end 
+
+function FormatTime(Time) 
+	local Mili, Seconds, Mins, Hours, Text
+
+	Mili = string.Explode(".", tostring(Time))
+	if Mili[2] then Mili = string.sub(string.Explode(".", tostring(Time))[2], 1, 2) else Mili = "00" end 
+	Hours = math.floor(Time/3600)
+	Mins = math.floor((Time-Hours*3600)/60) 
+	Seconds = math.floor(Time-Hours*3600-Mins*60)
+
+	Text = ""
+	for k,v in pairs({Hours, Mins, Seconds}) do 
+		if v > 0 then 
+			if v >= 10 then 
+				Text = Text..tostring(v) 
+			else 
+				Text = Text..tostring("0"..tostring(v)) 
+			end 
+		else 
+			Text = Text.."00" 
+		end 
+		if k < 3 then Text = Text..":" end 
+	end 
+	if string.len(Mili) < 2 then 
+		Text = Text.."."..Mili.."0" 
+	else 
+		Text = Text.."."..Mili
+	end 
+	return Text 
+end 
+ 
+function FormatNum(n)
+	if (!n) then
+		return 0
+	end
+	n = tostring(n)
+	local dp = string.find(n, "%.") or #n+1
+	for i=dp-4, 1, -3 do
+		n = n:sub(1, i) .. "," .. n:sub(i+1)
+	end
+	return n
+end
+
+
+
+
+
+
 local notifications = {}
 
 ---------------------------------------------------------
@@ -1625,34 +1703,4 @@ end
 -- install in the string library
 if not string.utf8reverse then
 	string.utf8reverse = utf8reverse
-end
-
-function GetFilteredPlayers(filters) 
-	filters = filters or {}
-	local players = {} 
-	for k,v in pairs(player.GetAll()) do 
-		if table.HasValue(filters, v:Team()) then 
-			table.insert(players, v) 
-		end 
-	end 
-	return players 
-end 
-
--- Credit to STGamemodes for this one.
-function rpairs(t)
-	-- math.randomseed(os.time())
-	local keys = {}
-	for k,_ in pairs(t) do
-		table.insert(keys, k)
-	end
-	return function()
-		if(#keys == 0) then
-			return nil
-		end
-		local i = math.random(1, #keys)
-		local k = keys[i]
-		local v = t[k]
-		table.remove(keys, i)
-		return k, v
-	end
 end

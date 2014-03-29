@@ -35,4 +35,7 @@ SS:AddMap("deathrun_ramesses_revenge_v3")
 SS:AddMap("deathrun_simpsons_final") 
 SS:AddMap("deathrun_starwars_b1_gm") 
 SS:AddMap("deathrun_steam_works_gm1") 
-SS:AddMap("dr_minecraft") 
+-- SS:AddMap("dr_minecraft") 
+-- SS:AddMap("deathrun_deluxe_beta") -- endings need fixing 
+SS:AddMap("deathrun_ennui_v2") 
+
