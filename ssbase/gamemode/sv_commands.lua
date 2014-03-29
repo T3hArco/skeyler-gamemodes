@@ -375,7 +375,8 @@ SS.ChatCommands = {
 	["revote"] = "ss_revote",
 	["slay"] = "ss_slay", 
 	["timeleft"] = "ss_timeleft",
-	["rtv"] = "ss_rtv"
+	["rtv"] = "ss_rtv",
+	["spec"] = "ss_spec"
 }
 
 function SS.AddCommand(text,cmd) --for gamemodes to use to ensure they dont overwrite/get overwritten by the above table
