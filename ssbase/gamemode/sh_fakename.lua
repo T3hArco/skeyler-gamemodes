@@ -7,7 +7,7 @@ function PLAYER_META:CheckFake()
 	if self:IsBot() then return	end
 
 	timer.Simple(0.5, function()
-		if self and self:IsValid() then
+		if self and self:IsValid() and self.profile.fakename then
 			self.fakename = util.JSONToTable(self.profile.fakename)
 			if self.fakename.rank >= 0 then
 				self:SetFake(self.fakename.name, self.fakename.rank)
