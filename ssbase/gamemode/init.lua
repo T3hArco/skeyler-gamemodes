@@ -249,14 +249,12 @@ function GM:PlayerSay( ply, text, public )
 end 
 
 concommand.Add("ss_spec",function(p,cmd,args)
-	if(ply:Team() == TEAM_SPEC) then --toggle spectator with !spec
-		ply:SetTeam(TEAM_BHOP)
-		ply:Spawn()
-		return ""
+	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
+		p:SetTeam(TEAM_BHOP)
+		p:Spawn()
 	end
-	ply:SetTeam(TEAM_SPEC)
-	ply:Spawn()
-	return ""
+	p:SetTeam(TEAM_SPEC)
+	p:Spawn()
 end)
 
 function GM:DoPlayerDeath(victim, attacker, dmg) 
