@@ -6,6 +6,7 @@
 include("player_class/player_ssbase.lua")
 
 include("shared.lua")
+include("sh_fakename.lua")
 include("sh_library.lua")
 include("sh_profiles.lua") 
 include("sh_store.lua") 

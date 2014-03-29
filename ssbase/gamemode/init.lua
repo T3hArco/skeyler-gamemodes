@@ -23,6 +23,7 @@ resource.AddFile("resource/fonts/helveticaltstdboldcond.ttf")
 resource.AddFile("resource/fonts/helveticaltstdlight.ttf") 
 
 AddCSLuaFile("shared.lua")
+AddCSLuaFile("sh_fakename.lua")
 AddCSLuaFile("sh_library.lua")
 AddCSLuaFile("sh_profiles.lua") 
 AddCSLuaFile("sh_store.lua") 
@@ -51,6 +52,7 @@ function ChatPrintAll(msg)
 end
 
 include("shared.lua")
+include("sh_fakename.lua")
 include("sh_library.lua")  
 include("sv_database.lua")
 include("sh_profiles.lua") 

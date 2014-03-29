@@ -3,7 +3,7 @@
 -- Created by Skeyler.com -- 
 ---------------------------- 
 
-local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped", "avatarUrl"} 
+local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped", "avatarUrl", "fakename"} 
 local update_filter = {"id", "steamId", "rank", "avatarUrl"}
 
 SS.Profiles = {} 
@@ -130,6 +130,7 @@ function PLAYER_META:ProfileSave()
 	profile.money = self.money 
 	profile.exp = self.exp 
 	profile.playtime = profile.playtime+(os.time()-self.playtimeStart)
+	profile.fakename = util.TableToJSON(self.fakename)
 	profile.store = util.TableToJSON(self.storeItems)
 	profile.equipped = util.TableToJSON(self.storeEquipped)
 	self.playtimeStart = os.time() 

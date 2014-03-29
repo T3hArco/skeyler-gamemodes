@@ -35,7 +35,7 @@ SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 	
 	function rankPanel:Paint(w, h)
 		if (IsValid(player)) then
-			local name, color = string.upper(player:GetRankName()), player:GetRankColor()
+			local name, color = string.upper(player:FakenameStatus("nm") or player:GetRankName()), player:FakenameStatus("clr") or player:GetRankColor()
 			
 			if (name) then
 				if (player:GetRank() > 0) then

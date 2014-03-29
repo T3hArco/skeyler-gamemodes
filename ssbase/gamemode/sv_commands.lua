@@ -94,7 +94,17 @@ concommand.Add("ss_bring", function(ply, cmd, args)
 	end
 end)
 
-local allowedids = {0, 5, 10, 50, 70, 90, 100}
+SS.allwdFkrnk = {
+	["O"] = 100,
+	["S"] = 90,
+	["D"] = 70,
+	["A"] = 50,
+	["M"] = 10,
+	["V"] = 5,
+	["R"] = 0,
+	[""] = 0
+}
+
 concommand.Add("ss_fakename", function(ply, cmd, args)
 	if !ply:IsAdmin() then 
 		ply:ChatPrint("You do not have access to this command.\n")
@@ -102,11 +112,11 @@ concommand.Add("ss_fakename", function(ply, cmd, args)
 	end
 
 	local NewName = args[1]
-	local id = tonumber(args[2])
+	local FakeRank = args[2]
 
-	if NewName and !id then
+	if NewName and !FakeRank then
 		if !ply:IsFakenamed() then
-			ply:ChatPrint("Syntax is ss_fakename NewName ID.")
+			ply:ChatPrint("Syntax is ss_fakename NewName FakeRank.")
 			return
 		else
 			ply:ChatPrint("Type ss_fakename if you wish to remove your fake name. Otherwise, the syntax is ss_fakename NewName ID.")
@@ -114,10 +124,12 @@ concommand.Add("ss_fakename", function(ply, cmd, args)
 		end
 	end
 
-	if id and !table.HasValue(allowedids, id) then
-		ply:ChatPrint("That is not a valid id. Valid id's are 0, 5, 10, 50, 70, 90 and 100.\n")
+	if FakeRank and !SS.allwdFkrnk[FakeRank] then
+		ply:ChatPrint("(FAKENAME): '"..FakeRank.."' is not a valid rank. Valid rank modes are 'O', 'S', 'D', 'A', 'M', 'V' and 'R'.\n")
 		return
 	end
+
+	local id = SS.allwdFkrnk[FakeRank]
 
 	ply:SetFake(NewName, id)
 end)
@@ -373,10 +385,10 @@ SS.ChatCommands = {
 	["password"] = "ss_password",
 	["restart"] = "ss_restart",
 	["revote"] = "ss_revote",
-	["slay"] = "ss_slay", 
-	["timeleft"] = "ss_timeleft",
 	["rtv"] = "ss_rtv",
-	["spec"] = "ss_spec"
+	["slay"] = "ss_slay", 
+	["spec"] = "ss_spec",
+	["timeleft"] = "ss_timeleft"
 }
 
 function SS.AddCommand(text,cmd) --for gamemodes to use to ensure they dont overwrite/get overwritten by the above table
