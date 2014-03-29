@@ -134,7 +134,20 @@ concommand.Add("ss_restart",function(ply)
 	end  
 	ply:SetTeam(TEAM_BHOP) 
 	ply:Spawn() 
-	return ""
+end)
+
+concommand.Add("ss_spec",function(p,cmd,args)
+	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
+		if ply:Team() == TEAM_BHOP then 
+			ply:ResetTimer() 
+			ply.Winner = false 
+		end  
+		ply:SetTeam(TEAM_BHOP) 
+		ply:Spawn() 
+		return
+	end
+	p:SetTeam(TEAM_SPEC)
+	p:Spawn()
 end)
 
 SS.AddCommand("r","ss_restart")

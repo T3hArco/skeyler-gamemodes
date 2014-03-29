@@ -250,8 +250,8 @@ end
 
 concommand.Add("ss_spec",function(p,cmd,args)
 	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
-		p:SetTeam(TEAM_BHOP)
-		p:Spawn()
+		p:ChatPrint("You are already in spec")
+		return
 	end
 	p:SetTeam(TEAM_SPEC)
 	p:Spawn()

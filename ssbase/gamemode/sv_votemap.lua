@@ -26,6 +26,7 @@ local FormatTime = FormatTime
 local hook = hook
 local concommand = concommand
 local player = player
+local math = math
 
 local rtvcount = 0
 local rtvenable = false
