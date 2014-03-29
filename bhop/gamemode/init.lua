@@ -192,7 +192,9 @@ function GM:PlayerInitialSpawn(ply)
 		end
 	end
 	if(cacheresult) then
-		ply:ChatPrint("This map has auto enabled. Hold SPACE to bhop.")
+		timer.Simple(5,function()
+			ply:ChatPrint("This map has auto enabled. Hold SPACE to bhop.")
+		end)
 	end
 end
 
@@ -219,7 +221,7 @@ function GM:PlayerSpawn(ply)
 			ply:SetNWInt("Style",1)
 		end
 
-		if ply:IsAdmin() then 
+		if ply:IsSuperAdmin() then 
 			ply:Give("ss_mapeditor") 
 		end 
 
