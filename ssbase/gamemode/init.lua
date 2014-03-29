@@ -230,29 +230,14 @@ function GM:PlayerSay( ply, text, public )
 	local t = text
 
 	if (string.sub(t, 0, 1) == "/" or string.sub(t, 0, 1) == "!") then
-		if(!(votemap.GetTimeleft() != 0 && t == "/rtv")) then
+		if(!(votemap.GetTimeleft() != 0 && string.find(t,"rtv"))) then
 			SS.ToConCommand(ply, t)
 			return ""
 		end
 	end
 	
-	
-	
-	local t = string.lower( text )
-	
-	if(votemap.GetTimeleft() != 0 && text == "!rtv" || text == "rtv") then --dumb way for now while beta
-		ply:ConCommand("ss_rtv") --we have to check that voting is enabled
-		return ""
-	end
-	
-	if(t == "!spec" || t == "!spectate") then
-		if(ply:Team() == TEAM_SPEC) then --toggle spectator with !spec
-			ply:SetTeam(TEAM_BHOP)
-			ply:Spawn()
-			return ""
-		end
-		ply:SetTeam(TEAM_SPEC)
-		ply:Spawn()
+	if(votemap.GetTimeleft() != 0 && t == "rtv") then
+		ply:ConCommand("ss_rtv")
 		return ""
 	end
 
@@ -263,6 +248,17 @@ function GM:PlayerSay( ply, text, public )
 	return self.BaseClass:PlayerSay(ply,text,public)
 end 
 
+concommand.Add("ss_spec",function(p,cmd,args)
+	if(ply:Team() == TEAM_SPEC) then --toggle spectator with !spec
+		ply:SetTeam(TEAM_BHOP)
+		ply:Spawn()
+		return ""
+	end
+	ply:SetTeam(TEAM_SPEC)
+	ply:Spawn()
+	return ""
+end)
+
 function GM:DoPlayerDeath(victim, attacker, dmg) 
 	self:SpectateCheckValid(victim) 
 	self.BaseClass:DoPlayerDeath(victim, attacker, dmg) 
@@ -270,7 +266,11 @@ end
 
 function GM:PlayerDisconnected(ply) 
 	ply:ProfileSave() 
-	self:SpectateCheckValid(ply) 
+	timer.Simple(0.1,function()
+		if(self && self:IsValid()) then
+			self:SpectateCheckValid(ply) 
+		end
+	end)
 end 
 
 function GM:AllowPlayerPickup( ply, object )

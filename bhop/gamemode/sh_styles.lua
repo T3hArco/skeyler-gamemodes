@@ -13,9 +13,9 @@ STYLE_CLASSIC = 1
 STYLE_SW = 2 
 STYLE_W = 3 
 
-GM:AddStyle(STYLE_CLASSIC, {cl={},sv={}}, "!normal", "Normal") --erry key
-GM:AddStyle(STYLE_SW, {cl={"moveright","moveleft"},sv={IN_MOVERIGHT,IN_MOVELEFT}}, "!sw", "Sideways") --no W or S
-GM:AddStyle(STYLE_W, {cl={"moveright","back","moveleft"},sv={IN_MOVERIGHT,IN_BACK,IN_MOVELEFT}}, "!w", "W-Only") --no S or A or D
+GM:AddStyle(STYLE_CLASSIC, {cl={},sv={}}, "normal", "Normal") --erry key
+GM:AddStyle(STYLE_SW, {cl={"moveright","moveleft"},sv={IN_MOVERIGHT,IN_MOVELEFT}}, "sw", "Sideways") --no W or S
+GM:AddStyle(STYLE_W, {cl={"moveright","back","moveleft"},sv={IN_MOVERIGHT,IN_BACK,IN_MOVELEFT}}, "w", "W-Only") --no S or A or D
 
 if CLIENT then 
 	hook.Add("PlayerBindPress","CheckIllegalKey",function(ply,bind,pressed)
@@ -32,6 +32,25 @@ if CLIENT then
 		end
 	end)
 	return 
+end
+
+for k,v in pairs(GM.Styles) do
+	concommand.Add("ss_"..v.cmd,function(ply)
+		ply.Style = k
+		ply:SetNWInt("Style",k)
+		ply:ChatPrint("Changed to "..v.name..".")
+		if(ply:IsTimerRunning() || ply.Winner) then
+			if ply:Team() == TEAM_BHOP then 
+				ply:ResetTimer() 
+				ply.Winner = false 
+			end  
+			ply:SetTeam(TEAM_BHOP) 
+			ply:Spawn() 
+		end
+		return ""
+	end)
+	
+	SS.AddCommand(v.cmd,"ss_"..v.cmd)
 end
 
 hook.Add("SetupMove","ALLYOURBASEAREBELONGTOUS",function(ply,data)

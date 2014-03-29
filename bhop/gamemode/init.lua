@@ -121,43 +121,24 @@ function GM:ShowTeam(ply)
 	ply:ConCommand("records")
 end 
 
-function GM:PlayerSay( ply, text, public )
-	local t = string.lower( text )
-	
-	for k,v in pairs(self.Styles) do
-		if(t == v.cmd) then
-			ply.Style = k
-			ply:SetNWInt("Style",k)
-			ply:ChatPrint("Changed to "..v.name..".")
-			if(ply:IsTimerRunning() || ply.Winner) then
-				if ply:Team() == TEAM_BHOP then 
-					ply:ResetTimer() 
-					ply.Winner = false 
-				end  
-				ply:SetTeam(TEAM_BHOP) 
-				ply:Spawn() 
-			end
-			return ""
-		end
-	end
-	
-	if(t == "!r") then
-		if ply:Team() == TEAM_BHOP then 
-			ply:ResetTimer() 
-			ply.Winner = false 
-		end  
-		ply:SetTeam(TEAM_BHOP) 
-		ply:Spawn() 
-		return ""
-	end
-	
-	if(t == "!wr") then
-		ply:ConCommand("records")
-		return ""
-	end
-	
-	return self.BaseClass:PlayerSay(ply,text,public)
-end
+concommand.Add("ss_wr",function(ply)
+	ply:ConCommand("records")
+end)
+
+SS.AddCommand("wr","ss_wr")
+
+concommand.Add("ss_restart",function(ply)
+	if ply:Team() == TEAM_BHOP then 
+		ply:ResetTimer() 
+		ply.Winner = false 
+	end  
+	ply:SetTeam(TEAM_BHOP) 
+	ply:Spawn() 
+	return ""
+end)
+
+SS.AddCommand("r","ss_restart")
+SS.AddCommand("restart","ss_restart")
 
 function GM:LoadRecs()
 	DB_Query("SELECT name,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1' ORDER BY time",

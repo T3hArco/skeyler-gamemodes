@@ -374,8 +374,13 @@ SS.ChatCommands = {
 	["restart"] = "ss_restart",
 	["revote"] = "ss_revote",
 	["slay"] = "ss_slay", 
-	["timeleft"] = "ss_timeleft" 
+	["timeleft"] = "ss_timeleft",
+	["rtv"] = "ss_rtv"
 }
+
+function SS.AddCommand(text,cmd) --for gamemodes to use to ensure they dont overwrite/get overwritten by the above table
+	SS.ChatCommands[text] = cmd
+end
 
 function SS.ToConCommand(ply, text)
 	local t = text
