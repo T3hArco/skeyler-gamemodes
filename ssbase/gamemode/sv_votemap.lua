@@ -9,6 +9,7 @@ SS.MapTime = 15 -- In minutes
 SS.MaxNomiations = 2 
 SS.RTVPercent = 0.75 
 SS.VotemapTime = 30 -- how long in seconds the vote will last 
+SS.WaitRTV = 3 --time in minutes till rtv wait
 
 local SS = SS 
 local rpairs = rpairs 
@@ -21,6 +22,12 @@ local RunConsoleCommand = RunConsoleCommand
 local ChatPrintAll = ChatPrintAll 
 local unpack = unpack 
 local game = game 
+local hook = hook
+local concommand = concommand
+local player = player
+
+local rtvcount = 0
+local rtvenable = false
 
 module("votemap") 
 
@@ -48,6 +55,8 @@ function Timer()
 	voteinfo.startTime = CurTime() 
 	voteinfo.endTime = CurTime()+SS.MapTime*60 
 	timer.Create("SS_Votemap", SS.MapTime*60, 1, Start) 
+	rtvenable = false
+	timer.Simple(SS.WaitRTV*60, AllowRTV) 
 end 
 
 function Map(name) 
@@ -61,6 +70,11 @@ end
 
 function Start() 
 	if voteinfo.voting then return end -- don't start twice...
+	
+	rtvcount = 0
+	for k,v in pairs(player.GetAll()) do
+		v.rtv = false
+	end
 
 	voteinfo.voting = true 
 	voteinfo.options = {} 
@@ -80,7 +94,7 @@ function Start()
 	end 
 
 	-- Add an extend 
-	if !voteinfo.rtv and voteinfo.extends < SS.MaxExtends then 
+	if voteinfo.extends < SS.MaxExtends then 
 		table.insert(voteinfo.options, "Extend") 
 	end 
 
@@ -128,10 +142,54 @@ function InvalidMap(map)
 	Start() 
 end 
 
+function AllowRTV()
+	rtvenable = true
+end
+
 function Nominate() 
 	-- TODO
 end 
 
-function RTV() 
-	-- TODO
+function RTV(ply) 
+	if(ply.rtv) then
+		ply:ChatPrint("You have already RTVd!")
+	elseif(!rtvenable) then
+		ply:ChatPrint("Please wait a while before RTVing.")
+	elseif(!voteinfo.voting) then
+		rtvcount = rtvcount + 1
+		ply.rtv = true
+		local n = math.ceil(#player.GetAll()*SS.RTVPercent)
+		ChatPrintAll(ply:Nick().." has voted to RTV ("..rtvcount.." / "..n.." votes)")
+		if(rtvcount >= n) then
+			if(timer.Exists("SS_VoteMap")) then
+				timer.Destroy("SS_VoteMap")
+			end
+			voteinfo.rtv = true
+			Start()
+		end
+	else
+		ply:ChatPrint("A map vote is already in-progress.")
+	end
 end 
+
+hook.Add("PlayerDisconnected",function(p)
+	if(p.rtv && !voteinfo.voting) then
+		rtvcount = rtvcount - 1
+		timer.Simple(1,function() --dont include them in rtv count
+			local n = (#player.GetAll()*SS.RTVPercent)
+			if(rtvcount >= n && !voteinfo.voting) then
+				if(timer.Exists("SS_VoteMap")) then
+					timer.Destroy("SS_VoteMap")
+				end
+				voteinfo.rtv = true
+				Start()
+			end
+		end)
+	end
+end)
+
+concommand.Add("ss_rtv",function(ply,cmd,args)
+	if(voteinfo.startTime != 0) then
+		RTV(ply)
+	end
+end)

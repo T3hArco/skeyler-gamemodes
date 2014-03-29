@@ -11,6 +11,7 @@ include("sh_maps.lua")
 include("sh_viewoffsets.lua") 
 include("player_class/player_bhop.lua")
 include("sv_gatekeeper.lua") 
+include("gas2_sv.lua")
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
@@ -18,11 +19,14 @@ AddCSLuaFile("sh_styles.lua")
 AddCSLuaFile("sh_viewoffsets.lua") 
 AddCSLuaFile("cl_records.lua") 
 AddCSLuaFile("cl_scoreboard.lua") 
+AddCSLuaFile("a12c.lua")
 
 util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
 
+SS.MapTime = 60
 SS.SetupGamemode("bhop", true) 
+
 
 local StoreFrames = {} --local is better
 local Frames = {}
@@ -183,6 +187,9 @@ function PLAYER_META:LoadPBs()
 	net.Send(self)
 end
 
+local cache = false --more of my dumb cache shit
+local cacheresult = false
+
 function GM:PlayerInitialSpawn(ply) 
 	if(self.CurrentID) then
 		ply:LoadPBs()
@@ -195,6 +202,17 @@ function GM:PlayerInitialSpawn(ply)
 	end
 	self.BaseClass:PlayerInitialSpawn(ply)
 	ply:SetTeam(TEAM_BHOP)
+	if(!cache) then
+		cache = true
+		if(table.HasValue(SS.AutoMaps,game.GetMap())) then
+			cacheresult = true
+		else
+			cacheresult = false
+		end
+	end
+	if(cacheresult) then
+		ply:ChatPrint("This map has auto enabled. Hold SPACE to bhop.")
+	end
 end
 
 function GM:PlayerSpawn(ply)
@@ -406,7 +424,7 @@ function GM:PlayerWon(ply)
 	ply.Winner = true 
 	local steamid = ply:SteamID()
 	local name = ply:Nick()
-	ply:ChatPrintAll(ply:Name().." has won in ".. FormatTime(ply:GetTotalTime(true)))
+	ply:ChatPrintAll(ply:Name().." has finished on "..self.Styles[ply.Style].name.." in ".. FormatTime(ply:GetTotalTime(true)))
 	local t = ply:GetTotalTime(false)
 	if(self.CurrentID && (tonumber(ply.PBS[ply.Style]) == 0 ||t < tonumber(ply.PBS[ply.Style]))) then
 		ply:ChatPrint("You have set a new Personal Best of "..FormatTime(t).."!")
@@ -444,8 +462,7 @@ function GM:PlayerWon(ply)
 		net.WriteString(steamid)
 		net.WriteString(name)
 		net.WriteInt(ply.Style,4)
-		net.WriteInt(rem,32)
-		net.WriteInt(t,32)
+		net.WriteFloat(t)
 		net.Broadcast()
 	else
 		DB_Query("INSERT INTO bh_records (name,mapid,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','0')")

@@ -8,7 +8,7 @@ include("shared.lua")
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
-local Laser = Material("skeyler/solidbeam.png")
+local Laser = Material("skeyler/vgui/solidbeam.png")
 local Col1 = Color(0, 255, 0, 255)
 local Col2 = Color(255, 0, 0, 255)
 

@@ -230,11 +230,20 @@ function GM:PlayerSay( ply, text, public )
 	local t = text
 
 	if (string.sub(t, 0, 1) == "/") then
-		SS.ToConCommand(ply, t)
-		return ""
+		if(!(votemap.GetTimeleft() != 0 && t == "/rtv")) then
+			SS.ToConCommand(ply, t)
+			return ""
+		end
 	end
 	
+	
+	
 	local t = string.lower( text )
+	
+	if(votemap.GetTimeleft() != 0 && text == "!rtv" || text == "rtv") then --dumb way for now while beta
+		ply:ConCommand("ss_rtv") --we have to check that voting is enabled
+		return ""
+	end
 	
 	if(t == "!spec" || t == "!spectate") then
 		if(ply:Team() == TEAM_SPEC) then --toggle spectator with !spec

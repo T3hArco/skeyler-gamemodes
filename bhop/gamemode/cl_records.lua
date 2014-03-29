@@ -17,7 +17,7 @@ surface.CreateFont("ss_records_close", {font="Arial", size=20, weight=650})
 surface.CreateFont("ss_records_list", {font="Arial", size=22, weight=500}) 
 surface.CreateFont("ss_records_pages", {font="Arial", size=22, weight=500}) 
 
-NEXT_ARROW = Material("skeyler/next_arrow.png") 
+NEXT_ARROW = Material("skeyler/vgui/next_arrow.png") 
 
 local PANEL = {} 
 function PANEL:Init() 

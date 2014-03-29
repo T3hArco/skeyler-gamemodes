@@ -8,7 +8,8 @@ include("sh_viewoffsets.lua")
 include("player_class/player_bhop.lua")
 include("sh_styles.lua") 
 include("cl_records.lua") 
-include("cl_scoreboard.lua") 
+include("cl_scoreboard.lua")
+include("a12c.lua") 
 
 GM.RecordTable = {}
 
@@ -24,18 +25,25 @@ net.Receive("ModifyRT",function()
 	local p = net.ReadString()
 	local n = net.ReadString()
 	local s = net.ReadInt(4)
-	local r = net.ReadInt(32)
-	local t = net.ReadInt(32)
+	local t = net.ReadFloat()
 	
 	if(!GAMEMODE.RecordTable[s]) then
 		GAMEMODE.RecordTable[s] = {}
 	end
-	if(r && r != 0 && GAMEMODE.RecordTable[s][r]) then
-		table.remove(GAMEMODE.RecordTable[s],r)
+	local rem = 0
+	for k,v in pairs(GAMEMODE.RecordTable[s]) do
+		if(v["steamid"] == p) then
+			rem = k
+		end
+	end
+	if(rem) then
+		table.remove(GAMEMODE.RecordTable[s],k)
 	end
 	table.insert(GAMEMODE.RecordTable[s],{["name"] = n,["steamid"] = p,["time"] = t})
 	table.SortByMember(GAMEMODE.RecordTable[s], "time", function(a, b) return a > b end)
-	RECORDMENU:UpdateList()
+	if(RECORDMENU) then
+		RECORDMENU:UpdateList()
+	end
 end)
 
 timer.Create("HullstuffSadface",5,0,function()

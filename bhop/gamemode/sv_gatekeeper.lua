@@ -26,4 +26,4 @@ function GM:CheckPassword(steam, IP, sv_pass, cl_pass, name)
 		MsgN(name.."<"..steam..">("..IP..") tried to join the server.") 
 		return false, "Skeyler Bhop is currently in Development, please try another day." 
 	end 
-end 
+end

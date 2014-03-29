@@ -22,9 +22,21 @@ SS.Alldoors = {
 	"bhop_exzha"
 }
 
+SS.Nodoors = {
+	"bhop_fury",
+	"bhop_hive"
+}
+
+SS.AutoMaps = {
+	"bhop_brax",
+	"bhop_fps_max",
+	"bhop_superdooperhard"
+}
+
 SS.NoHeightReset = {
 	"bhop_muchfast",
-	"bhop_exquisite"
+	"bhop_exquisite",
+	"bhop_brax"
 }
 
 SS.Heightdoors = {
@@ -53,6 +65,9 @@ function GM:EntityKeyValue(ent, key, value)
 			end
 			ent.BHSp = tonumber(value)
 		end
+		if(table.HasValue(SS.Nodoors,game.GetMap())) then
+			ent.IsP = false
+		end
 	end
 	if(ent:GetClass() == "func_button") then
 		if(table.HasValue(SS.Alldoors,game.GetMap())) then
@@ -72,6 +87,9 @@ function GM:EntityKeyValue(ent, key, value)
 				ent.IsP = true
 			end
 			ent.BHSp = tonumber(value)
+		end
+		if(table.HasValue(SS.Nodoors,game.GetMap())) then
+			ent.IsP = false
 		end
 	end
 	if(self.BaseClass.EntityKeyValue) then
@@ -177,8 +195,28 @@ function GM:OnPlayerHitGround(ply)
 	end
 end
 
+local cache = false --caching
+local cacheresult = false
+
 /* Spawn Velocity Cap */
 function GM:SetupMove(ply, Data) 
+	if(!cache) then
+		cache = true
+		if(table.HasValue(SS.AutoMaps,game.GetMap())) then
+			cacheresult = true
+		else
+			cacheresult = false
+		end
+	end
+	if(cacheresult) then
+		local buttonsetter = Data:GetButtons()
+		if(bit.band(buttonsetter,IN_JUMP)>0) then
+			if ply:WaterLevel() < 2 && ply:GetMoveType() != MOVETYPE_LADDER && !ply:IsOnGround() then
+				buttonsetter = bit.band(buttonsetter, bit.bnot(IN_JUMP))
+			end
+			Data:SetButtons(buttonsetter)
+		end
+	end
 	if !ply.InSpawn then return end 
 	local vel = Data:GetVelocity() 
 	vel.x = math.min(vel.x, 270) 
