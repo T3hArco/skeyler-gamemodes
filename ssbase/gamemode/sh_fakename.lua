@@ -56,7 +56,7 @@ function PLAYER_META:SetFake(fakename, fakerank)
 
 			self.fakename = {["name"] = nil, ["rank"] = -1}
 			self.profile.fakename = util.TableToJSON(self.fakename)
-			self:ProfileUpdate("fakename", self.fakename)
+			self:ProfileUpdate("fakename", self.profile.fakename)
 
 		elseif fakename and fakerank then
 			self:SetNWInt("ss_fakerank", fakerank)
