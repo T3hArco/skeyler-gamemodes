@@ -30,7 +30,8 @@ net.Receive("ModifyRT",function()
 	if(!GAMEMODE.RecordTable[s]) then
 		GAMEMODE.RecordTable[s] = {}
 	end
-	local rem = 0
+	
+	local rem = nil
 	for k,v in pairs(GAMEMODE.RecordTable[s]) do
 		if(v["steamid"] == p) then
 			rem = k

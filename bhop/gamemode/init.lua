@@ -433,14 +433,16 @@ function GM:PlayerWon(ply)
 		ply.PBS[ply.Style] = t
 		ply:SetPB(t)
 	
-		local rem = 0
+		local rem = nil
 		for k,v in pairs(self.RecordTable[ply.Style]) do
 			if(v["steamid"] == string.sub(steamid, 7)) then
 				rem = k
 			end
 		end
 		local i = {["name"] = name, ["steamid"] = string.sub(steamid, 7), ["time"] = t}
-		table.remove(self.RecordTable[ply.Style],k)
+		if(rem) then
+			table.remove(self.RecordTable[ply.Style],rem)
+		end
 		table.insert(self.RecordTable[ply.Style],i)
 		table.SortByMember(self.RecordTable[ply.Style], "time", function(a, b) return a > b end)
 		if(self.RecordTable[ply.Style][1]["steamid"] == i["steamid"] && ply.Style == 1 && StoreFrames[ply]) then

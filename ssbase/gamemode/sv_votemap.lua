@@ -169,7 +169,7 @@ function RTV(ply)
 	elseif(!voteinfo.voting) then
 		rtvcount = rtvcount + 1
 		ply.rtv = true
-		local n = math.ceil(#player.GetAll()*SS.RTVPercent)
+		local n = math.ceil(#player.GetHumans()*SS.RTVPercent)
 		ChatPrintAll(ply:Nick().." has voted to RTV ("..rtvcount.." / "..n.." votes)")
 		if(rtvcount >= n) then
 			if(timer.Exists("SS_VoteMap")) then
@@ -187,7 +187,7 @@ hook.Add("PlayerDisconnected",function(p)
 	if(p.rtv && !voteinfo.voting) then
 		rtvcount = rtvcount - 1
 		timer.Simple(1,function() --dont include them in rtv count
-			local n = (#player.GetAll()*SS.RTVPercent)
+			local n = (#player.GetHumans()*SS.RTVPercent)
 			if(rtvcount >= n && !voteinfo.voting) then
 				if(timer.Exists("SS_VoteMap")) then
 					timer.Destroy("SS_VoteMap")
