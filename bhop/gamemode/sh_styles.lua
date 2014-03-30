@@ -66,11 +66,11 @@ hook.Add("SetupMove","ALLYOURBASEAREBELONGTOUS",function(ply,data)
 		end
 		
 		if(style == 2 || style == 3) then
-			data:SetSideMove(0)
+			data:SetSideSpeed(0)
 		end
 		
-		if(data:GetForwardMove() < 0 && style == 3) then
-			data:SetForwardMove(0)
+		if(style == 3 && data:GetForwardSpeed() < 0) then
+			data:SetForwardSpeed(0)
 		end
 		
 		data:SetButtons(buttons)
