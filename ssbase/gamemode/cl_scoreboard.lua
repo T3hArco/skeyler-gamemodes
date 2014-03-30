@@ -28,7 +28,7 @@ function SS.Scoreboard.RegisterRow(name, width, x_align, rowType, callback)
 end
 
 -- I add it here so it'll add it first.
-SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+SS.Scoreboard.RegisterRow("Rank", 134, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local rankPanel = panel:Add("Panel")
 	rankPanel:SetSize(row.width, 50)
 	rankPanel:Dock(RIGHT)
@@ -52,7 +52,7 @@ SS.Scoreboard.RegisterRow("Rank", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 	end
 end)
 
-SS.Scoreboard.RegisterRow("Pixels", 164, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
+SS.Scoreboard.RegisterRow("Pixels", 154, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGHT, function(panel, player, row)
 	local rankPanel = panel:Add("Panel")
 	rankPanel:SetSize(row.width, 50)
 	rankPanel:Dock(RIGHT)
@@ -172,7 +172,15 @@ end
 function panel:AddRow(name, width, x_align, rowType, callback)
 	rowType = rowType or SS.Scoreboard.ROW_RIGHT
 	
-	local id = table.insert(self.rows[rowType], {name = name, width = width, x = (rowType == SS.Scoreboard.ROW_LEFT and 51 or rowType == SS.Scoreboard.ROW_RIGHT and (self:GetWide() -8) -width), x_align = x_align or TEXT_ALIGN_LEFT, rowType = rowType, callback = callback})
+	local id = table.insert(self.rows[rowType], {
+		name = name,
+		width = width,
+		x = (rowType == SS.Scoreboard.ROW_LEFT and 51 or rowType == SS.Scoreboard.ROW_RIGHT and (self:GetWide() -8) -width),
+		x_align = x_align or TEXT_ALIGN_LEFT,
+		rowType = rowType,
+		callback = callback
+	})
+	
 	local rows = self.rows[rowType]
 	
 	for i = 1, id -1 do
@@ -186,6 +194,15 @@ function panel:AddRow(name, width, x_align, rowType, callback)
 			end
 		end
 	end
+	
+	timer.Simple(0.05, function()
+		-- This should always be the player name.
+		local nameRow = self.rows[SS.Scoreboard.ROW_LEFT][1]
+		
+		if (nameRow and self.rows[SS.Scoreboard.ROW_RIGHT][#self.rows[SS.Scoreboard.ROW_RIGHT]]) then
+			nameRow.width = self.rows[SS.Scoreboard.ROW_RIGHT][#self.rows[SS.Scoreboard.ROW_RIGHT]].x -59
+		end
+	end)
 end
 
 ---------------------------------------------------------
@@ -385,7 +402,12 @@ function GM:ScoreboardShow()
 			local name = string.upper(player:Nick())
 			
 			local label = panel:Add("DLabel")
-			label:SetSize(row.width, 50)
+			
+			-- Meh...
+			timer.Simple(0.1, function()
+				label:SetSize(row.width, 50)
+			end)
+			
 			label:SetText(name)
 			label:SetFont("skeyler.scoreboard.row")
 			label:SetColor(color_white)
