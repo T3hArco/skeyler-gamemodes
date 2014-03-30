@@ -19,7 +19,8 @@ GM.HUDShowTimer = true
 SS.Alldoors = {
 	"bhop_archives",
 	"bhop_monster_jam",
-	"bhop_exzha"
+	"bhop_exzha",
+	"bhop_addict"
 }
 
 SS.Nodoors = {
