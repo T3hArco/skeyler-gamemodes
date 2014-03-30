@@ -20,7 +20,8 @@ SS.Alldoors = {
 	"bhop_archives",
 	"bhop_monster_jam",
 	"bhop_exzha",
-	"bhop_addict"
+	"bhop_addict",
+	"bhop_ytt_space"
 }
 
 SS.Nodoors = {
