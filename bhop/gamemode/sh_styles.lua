@@ -60,11 +60,17 @@ hook.Add("SetupMove","ALLYOURBASEAREBELONGTOUS",function(ply,data)
 		
 		local s = GAMEMODE.Styles[style]
 		for k,v in pairs(s.blockkeys.sv) do
-			print('key')
 			if(bit.band(buttons,v)>0) then
 				buttons = bit.band(buttons, bit.bnot(v))
-				print('removed')
 			end
+		end
+		
+		if(style == 2 || style == 3) then
+			data:SetSideMove(0)
+		end
+		
+		if(data:GetForwardMove() < 0 && style == 3) then
+			data:SetForwardMove(0)
 		end
 		
 		data:SetButtons(buttons)
