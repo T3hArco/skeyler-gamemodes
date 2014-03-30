@@ -64,5 +64,7 @@ hook.Add("SetupMove","ALLYOURBASEAREBELONGTOUS",function(ply,data)
 				buttons = bit.band(buttons, bit.bnot(v))
 			end
 		end
+		
+		data:SetButtons(buttons)
 	end
 end)
