@@ -387,7 +387,6 @@ SS.ChatCommands = {
 	["revote"] = "ss_revote",
 	["rtv"] = "ss_rtv",
 	["slay"] = "ss_slay", 
-	["spec"] = "ss_spec",
 	["timeleft"] = "ss_timeleft"
 }
 

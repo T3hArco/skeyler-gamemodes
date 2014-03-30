@@ -23,7 +23,6 @@ resource.AddFile("resource/fonts/helveticaltstdboldcond.ttf")
 resource.AddFile("resource/fonts/helveticaltstdlight.ttf") 
 
 AddCSLuaFile("shared.lua")
-AddCSLuaFile("sh_fakename.lua")
 AddCSLuaFile("sh_library.lua")
 AddCSLuaFile("sh_profiles.lua") 
 AddCSLuaFile("sh_store.lua") 
@@ -52,7 +51,6 @@ function ChatPrintAll(msg)
 end
 
 include("shared.lua")
-include("sh_fakename.lua")
 include("sh_library.lua")  
 include("sv_database.lua")
 include("sh_profiles.lua") 
@@ -232,7 +230,7 @@ function GM:PlayerSay( ply, text, public )
 	local t = text
 
 	if (string.sub(t, 0, 1) == "/" or string.sub(t, 0, 1) == "!") then
-		if(!(votemap.GetTimeleft() != 0 && string.find(t,"rtv"))) then
+		if(!(votemap.GetTimeleft() == 0 && string.find(t,"rtv"))) then
 			SS.ToConCommand(ply, t)
 			return ""
 		end
@@ -249,15 +247,6 @@ function GM:PlayerSay( ply, text, public )
 
 	return self.BaseClass:PlayerSay(ply,text,public)
 end 
-
-concommand.Add("ss_spec",function(p,cmd,args)
-	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
-		p:ChatPrint("You are already in spec")
-		return
-	end
-	p:SetTeam(TEAM_SPEC)
-	p:Spawn()
-end)
 
 function GM:DoPlayerDeath(victim, attacker, dmg) 
 	self:SpectateCheckValid(victim) 

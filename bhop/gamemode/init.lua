@@ -127,6 +127,17 @@ end)
 
 SS.AddCommand("wr","ss_wr")
 
+concommand.Add("ss_spec",function(p,cmd,args)
+	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
+		p:ChatPrint("You are already in spec")
+		return
+	end
+	p:SetTeam(TEAM_SPEC)
+	p:Spawn()
+end)
+
+SS.AddCommand("spec","ss_spec")
+
 concommand.Add("ss_restart",function(ply)
 	if ply:Team() == TEAM_BHOP then 
 		ply:ResetTimer() 
