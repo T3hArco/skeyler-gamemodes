@@ -38,7 +38,7 @@ net.Receive("ModifyRT",function()
 		end
 	end
 	if(rem) then
-		table.remove(GAMEMODE.RecordTable[s],k)
+		table.remove(GAMEMODE.RecordTable[s],rem)
 	end
 	table.insert(GAMEMODE.RecordTable[s],{["name"] = n,["steamid"] = p,["time"] = t})
 	table.SortByMember(GAMEMODE.RecordTable[s], "time", function(a, b) return a > b end)
