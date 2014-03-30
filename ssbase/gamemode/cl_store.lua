@@ -3,8 +3,6 @@
 -- Created by Skeyler.com -- 
 ---------------------------- 
 
--- MAKE THE RIGHT-CLICK DRAG FROM CURRENT VIEW POSITION
-
 -- NICE RAMP!!! LET'S SKATE
 local bit = bit
 local net = net
@@ -1744,125 +1742,127 @@ end)
 -- Draws the gear.
 ---------------------------------------------------------
 
-hook.Add("PostPlayerDraw", "ss.gear.render", function(player, isRagdoll)
-	local steamID = player:SteamID()
-	local entity = isRagdoll and player:GetRagdollEntity() or player
-	
-	-- Request full update.
-	if (!cache[steamID]) then
-		cache[steamID] = {}
+local validGear = setmetatable({}, {__mode = "k"})
 
-		net.Start("ss.gear.rqgrfull")
-			net.WriteString(steamID)
-		net.SendToServer()
-	else
-		for i = 1, MAXIMUM_SLOTS do
-			local data = cache[steamID][i]
-			
-			if (data) then
-			
-				-- Request update for slot if it's dirty.
-				if (data.dirty) then
-					cache[steamID][i].dirty = false
-					
-					net.Start("ss.gear.rqgrslot")
-						net.WriteString(steamID)
-						net.WriteUInt(i, 8)
-					net.SendToServer()
-				end
-				
-				local item = SS.STORE.Items[data.item]
-				
-				if (item) then
-					if (IsValid(data.entity)) then
-					
-						-- Maybe cache this?
-						local index = entity:LookupBone(item.Bone or "ValveBiped.Bip01_Head1")
-						
-						if (index and index > -1) then
-							
-							-- Using bone matrix fixes the hat from lagging behind when the player is getting shot. (lol)
-							local boneMatrix = entity:GetBoneMatrix(index)
-							
-							if (boneMatrix) then
-								local position, angles = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
-								
-								local modelData = item.Models[string.lower(entity:GetModel())]
-								
-								if (modelData) then
-									local positionData = modelData[1]
-									
-									for i = 1, #modelData do
-										local modelBodygroup = entity:GetBodygroup(modelData[i][1])
-										local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
-										
-										if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
-											positionData = modelData[i]
-										end
-									end
-									
-									if (positionData) then
-										if positionData.pos then
-											local up, right, forward = angles:Up(), angles:Right(), angles:Forward()
-											
-											position = position + up*positionData.pos.z + right*positionData.pos.y + forward*positionData.pos.x -- NOTE: y and x could be wrong way round
-										end 
-					
-										if positionData.ang then 
-											angles:RotateAroundAxis(angles:Up(), positionData.ang.p) 
-											angles:RotateAroundAxis(angles:Forward(), positionData.ang.y) 
-											angles:RotateAroundAxis(angles:Right(), positionData.ang.r) 
-										end
-										
-										if positionData.scale then data.entity:SetModelScale(positionData.scale, 0) end 
-									end
-								end
-			
-								data.entity:SetPos(position)
-								data.entity:SetAngles(angles)
-							end
-						end
-					end
-					
-					-- This is probably not the right place to call these, but whatever.
-					if (item.Hooks.Think) then
-						item.Hooks.Think(cache[steamID], entity)
-					end
-					
-					if (item.Hooks.PostDrawOpaqueRenderables) then
-						item.Hooks.PostDrawOpaqueRenderables(cache[steamID], entity)
-					end
-				end
-			end
-		end
-	end
+hook.Add("PostPlayerDraw", "ss.gear.render", function(player)
+	validGear[player] = true
 end)
 
----------------------------------------------------------
--- Hide the gear for the localplayer if we're not in
--- 3rd person.
----------------------------------------------------------
-
-hook.Add("Think", "ss.gear.render", function()
-	local steamID = LocalPlayer():SteamID()
-
-	if (cache[steamID]) then
-		local shouldDraw = SS.Gear.ShouldDraw()
-
-		if (shouldDraw) then
-			if (hidden) then
+hook.Add("PostDrawTranslucentRenderables", "ss.gear.render", function()
+	local players = player.GetAll()
+	
+	for k, player in pairs(players) do
+		local steamID = player:SteamID()
+		
+		if (validGear[player]) then
+			validGear[player] = false
+			
+			local entity = !player:Alive() and player:GetRagdollEntity() or player
+			
+			-- Request full update.
+			if (!cache[steamID]) then
+				cache[steamID] = {}
+			
+				net.Start("ss.gear.rqgrfull")
+					net.WriteString(steamID)
+				net.SendToServer()
+			else
+				if (cache[steamID].hidden) then
+					for i = 1, MAXIMUM_SLOTS do
+						local data = cache[steamID][i]
+						
+						if (data and IsValid(data.entity)) then
+							data.entity:RemoveEffects(EF_NODRAW)
+						end
+					end
+				end
+				
+				cache[steamID].hidden = false
+				
 				for i = 1, MAXIMUM_SLOTS do
 					local data = cache[steamID][i]
 					
-					if (data and IsValid(data.entity)) then
-						data.entity:RemoveEffects(EF_NODRAW)
+					if (data) then
+					
+						-- Request update for slot if it's dirty.
+						if (data.dirty) then
+							cache[steamID][i].dirty = false
+							
+							net.Start("ss.gear.rqgrslot")
+								net.WriteString(steamID)
+								net.WriteUInt(i, 8)
+							net.SendToServer()
+						end
+						
+						local item = SS.STORE.Items[data.item]
+						
+						if (item) then
+							if (IsValid(data.entity)) then
+							
+								-- Maybe cache this?
+								local index = entity:LookupBone(item.Bone or "ValveBiped.Bip01_Head1")
+								
+								if (index and index > -1) then
+									
+									-- Using bone matrix fixes the hat from lagging behind when the player is getting shot. (lol)
+									local boneMatrix = entity:GetBoneMatrix(index)
+									
+									if (boneMatrix) then
+										local position, angles = boneMatrix:GetTranslation(), boneMatrix:GetAngles()
+										
+										local modelData = item.Models[string.lower(entity:GetModel())]
+										
+										if (modelData) then
+											local positionData = modelData[1]
+											
+											for i = 1, #modelData do
+												local modelBodygroup = entity:GetBodygroup(modelData[i][1])
+												local entityBodygroup = data.entity:GetBodygroup(modelData[i][2])
+												
+												if (bit.bor(modelBodygroup, entityBodygroup) == modelData[i][3]) then
+													positionData = modelData[i]
+												end
+											end
+											
+											if (positionData) then
+												if positionData.pos then
+													local up, right, forward = angles:Up(), angles:Right(), angles:Forward()
+													
+													position = position + up*positionData.pos.z + right*positionData.pos.y + forward*positionData.pos.x -- NOTE: y and x could be wrong way round
+												end 
+							
+												if positionData.ang then 
+													angles:RotateAroundAxis(angles:Up(), positionData.ang.p) 
+													angles:RotateAroundAxis(angles:Forward(), positionData.ang.y) 
+													angles:RotateAroundAxis(angles:Right(), positionData.ang.r) 
+												end
+												
+												if positionData.scale then data.entity:SetModelScale(positionData.scale, 0) end 
+											end
+										end
+					
+										data.entity:SetPos(position)
+										data.entity:SetAngles(angles)
+									end
+								end
+							end
+							
+							-- This is probably not the right place to call these, but whatever.
+							if (item.Hooks.Think) then
+								item.Hooks.Think(cache[steamID], entity)
+							end
+							
+							if (item.Hooks.PostDrawOpaqueRenderables) then
+								item.Hooks.PostDrawOpaqueRenderables(cache[steamID], entity)
+							end
+						end
 					end
 				end
-				
-				hidden = false
 			end
 		else
-			if (!hidden) then
+			if (cache[steamID] and !cache[steamID].hidden) then
+				cache[steamID].hidden = true
+				
 				for i = 1, MAXIMUM_SLOTS do
 					local data = cache[steamID][i]
 					
@@ -1870,24 +1870,7 @@ hook.Add("Think", "ss.gear.render", function()
 						data.entity:AddEffects(EF_NODRAW)
 					end
 				end
-				
-				hidden = true
 			end
-		end
-	end
-end)
-
----------------------------------------------------------
--- A shitty hack to make it draw on the corpse.
--- This might be a bad idea!
----------------------------------------------------------
-
-hook.Add("PostDrawTranslucentRenderables", "ss.gear.render", function()
-	local players = player.GetAll()
-	
-	for k, player in pairs(players) do
-		if (!player:Alive()) then
-			hook.Run("PostPlayerDraw", player, true)
 		end
 	end
 end)
