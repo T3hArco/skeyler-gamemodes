@@ -328,7 +328,7 @@ function GM:InitPostEntity()
 			local h = maxs.z - mins.z
 			if(h > 80 && !table.HasValue(SS.Alldoors,game.GetMap()) && !table.HasValue(SS.Heightdoors,game.GetMap())) then continue end
 			local tab = ents.FindInBox( v:LocalToWorld(mins)-Vector(0,0,10), v:LocalToWorld(maxs)+Vector(0,0,5) )
-			if(tab) then
+			if(tab || table.HasValue(SS.Alldoors,game.GetMap())) then
 				for _,v2 in pairs(tab) do if(v2 && v2:IsValid() && v2:GetClass() == "trigger_teleport") then tele = v2 end end
 				if(tele) then
 					v:Fire("Lock")
