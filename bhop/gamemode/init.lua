@@ -330,7 +330,7 @@ function GM:InitPostEntity()
 			local tab = ents.FindInBox( v:LocalToWorld(mins)-Vector(0,0,10), v:LocalToWorld(maxs)+Vector(0,0,5) )
 			if(tab || table.HasValue(SS.Alldoors,game.GetMap())) then
 				for _,v2 in pairs(tab) do if(v2 && v2:IsValid() && v2:GetClass() == "trigger_teleport") then tele = v2 end end
-				if(tele) then
+				if(tele || table.HasValue(SS.Alldoors,game.GetMap())) then
 					v:Fire("Lock")
 					v:SetKeyValue("spawnflags","1024")
 					v:SetKeyValue("speed","0")
