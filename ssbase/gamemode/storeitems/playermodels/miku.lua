@@ -34,7 +34,8 @@ end
 ITEM.Hooks = {}
 
 function ITEM.Hooks.Think(data, ply)
-	if CLIENT then
+	if (SERVER) then
+
 		if ply.IsPlayer && ply:IsPlayer() && ply:GetSkin() > 0 then
 			if ply:Health() > 66 then 
 				ply:SetSkin(1)
@@ -46,28 +47,26 @@ function ITEM.Hooks.Think(data, ply)
 				ply:SetSkin(1)
 			end
 		end
-		
+	
 		if (data) then
-			for i = 1, SS.STORE.SLOT.MAXIMUM do
-				local info = data[i]
+			local info = data[SS.STORE.SLOT.HEAD]
+			
+			if (info and info.unique) then
+				local item = SS.STORE.Items[info.unique]
 				
-				if (info and info.item) then
-					local item = SS.STORE.Items[info.item]
-					
-					if (item) then
-						if (item.Type == "mask" or item.Type == "headcoverfull") then
-							ply:SetBodygroup(2, 3)
-						else
-							if (item.Type == "headcoverhalf") then
-							ply:SetBodygroup(2, 2)
-							elseif (item.Type == "headcoverpart") then
-							ply:SetBodygroup(2, 1)
-							else
-							ply:SetBodygroup(2, 0)
-							end
-						end
+				if (item) then
+					if (item.Type == "mask" or item.Type == "headcoverfull") then
+						ply:SetBodygroup(2, 3)
+					elseif (item.Type == "headcoverhalf") then
+						ply:SetBodygroup(2, 2)
+					elseif (item.Type == "headcoverpart") then
+						ply:SetBodygroup(2, 1)
+					else
+						ply:SetBodygroup(2, 0)
 					end
 				end
+			else
+				ply:SetBodygroup(2, 0)
 			end
 		end
 	end

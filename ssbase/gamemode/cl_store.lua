@@ -1308,6 +1308,7 @@ function panel:Update()
 			
 			if (data and data.item and data.item != "") then
 				local item = SS.STORE.Items[data.item]
+				
 				if (item.Bone) then
 					self.preview:SetHat(item.Model, item)
 				end
@@ -1748,7 +1749,7 @@ hook.Add("PostPlayerDraw", "ss.gear.render", function(player)
 	validGear[player] = true
 end)
 
-hook.Add("PostDrawTranslucentRenderables", "ss.gear.render", function()
+hook.Add("PreDrawOpaqueRenderables", "ss.gear.render", function()
 	local players = player.GetAll()
 	
 	for k, player in pairs(players) do

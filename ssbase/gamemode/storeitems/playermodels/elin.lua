@@ -33,41 +33,34 @@ end
 
 ITEM.Hooks = {}
 
-ITEM.Hooks["Think"] = function (item,ply)
-		if CLIENT then
-				local showhair = true
-				if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() then
-					showhair = false
-				end
-				local hairmodel = "models/captainbigbutt/skeyler/misc/elin_hair.mdl"
+ITEM.Hooks["Think"] = function (data,ply)
+	if CLIENT then
+		ply.hairtoshow = "models/captainbigbutt/skeyler/misc/elin_hair.mdl"
+	end
+	
+	if (SERVER) then
+		if (data) then
+			local info = data[SS.STORE.SLOT.HEAD]
 			
---[[			local equip = nil
-				if(ply.previewlist) then
-					equip = ply.previewlist
-				elseif(SS.STORE.Equipped[ply]) then
-					equip = SS.STORE.Equipped[ply]
-				end
+			if (info and info.unique) then
+				local item = SS.STORE.Items[info.unique]
 				
-				for k,v in pairs(equip or {}) do
-					if(!SS.STORE.Items[v]) then continue end
-					local i = SS.STORE.Items[v]
-					if(i.Type == "mask") then
-						showhair = false
+				if (item) then
+					if (item.Type == "mask" or item.Type == "headcoverfull") then
+						ply:SetBodygroup(1, 3)
+					elseif (item.Type == "headcoverhalf") then
+						ply:SetBodygroup(1, 2)
+					elseif (item.Type == "headcoverpart") then
+						ply:SetBodygroup(1, 1)
+					else
+						ply:SetBodygroup(1, 0)
 					end
-					if(i.Type == "headcoverfull") then
-						showhair = false
-					end
-					if(i.Type == "headcoverhalf") then
-						hairmodel = "models/captainbigbutt/skeyler/misc/elin_hair_short.mdl"
-					end
-				end]]
-				if(showhair) then
-					ply.hairtoshow = hairmodel
-				else
-					ply.hairtoshow = nil
+				end
 			end
 		end
+	end
 end
+
 ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 	if CLIENT && ply && ply:IsValid() && ply.hairtoshow then 
 		if ply == LocalPlayer() and GetViewEntity():GetClass() == 'player' and !LocalPlayer():ShouldDrawLocalPlayer() and !LocalPlayer():GetObserverTarget() then return end
@@ -90,34 +83,38 @@ ITEM.Hooks["PostDrawOpaqueRenderables"] = function (item,ply)
 			p = ply
 		end
 		
-		local Pos, Ang = p:GetBonePosition(p:LookupBone("ValveBiped.Bip01_Head1"))
+		local index = p:LookupBone("ValveBiped.Bip01_Head1")
 		
-		local model = ply.currenthair
-		
-		local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
-		Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
-		
-		model:SetBodygroup(1,p:GetBodygroup(1))
-		
-		local NewAng, FinalAng = Ang, Ang
-		NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 
-		FinalAng.p = NewAng.p 
-		NewAng = Ang 
-		NewAng:RotateAroundAxis(Ang:Forward(), hairang.y) 
-		FinalAng.y = NewAng.y 
-		NewAng = Ang 
-		NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
-		FinalAng.r = NewAng.r 
-		Ang = FinalAng 
+		if (index > -1) then
+			local Pos, Ang = p:GetBonePosition(index)
 			
-		model:SetPos(Pos)
-		model:SetAngles(Ang)
-
-		model:SetRenderOrigin(Pos)
-		model:SetRenderAngles(Ang)
-		model:SetupBones()
-		model:DrawModel()
-		model:SetRenderOrigin()
-		model:SetRenderAngles()
+			local model = ply.currenthair
+			
+			local up, right, forward = Ang:Up(), Ang:Right(), Ang:Forward()
+			Pos = Pos + up*hairpos.z + right*hairpos.y + forward*hairpos.x -- NOTE: y and x could be wrong way round
+			
+			model:SetBodygroup(1,p:GetBodygroup(1))
+			
+			local NewAng, FinalAng = Ang, Ang
+			NewAng:RotateAroundAxis(Ang:Up(), hairang.p) 
+			FinalAng.p = NewAng.p 
+			NewAng = Ang 
+			NewAng:RotateAroundAxis(Ang:Forward(), hairang.y) 
+			FinalAng.y = NewAng.y 
+			NewAng = Ang 
+			NewAng:RotateAroundAxis(Ang:Right(), hairang.r) 
+			FinalAng.r = NewAng.r 
+			Ang = FinalAng 
+				
+			model:SetPos(Pos)
+			model:SetAngles(Ang)
+		
+			model:SetRenderOrigin(Pos)
+			model:SetRenderAngles(Ang)
+			model:SetupBones()
+			model:DrawModel()
+			model:SetRenderOrigin()
+			model:SetRenderAngles()
+		end
 	end
 end

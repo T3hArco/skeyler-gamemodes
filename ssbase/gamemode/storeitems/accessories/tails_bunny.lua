@@ -33,45 +33,48 @@ end
 
 ITEM.Hooks = {}												-- Could run some shit in think hook maybe clientside only (e.g. repositioning or HEALTH CALCULATIONS OR SOMETHING LIKE THAT)
 
-ITEM.Hooks["UpdateAnimation"] = function (item,ply)
+ITEM.Hooks["UpdateAnimation"] = function (data, ply)
 	if CLIENT then
-		if(SS.STORE.CSModels[ply] && SS.STORE.CSModels[ply][item.ID]) then
-			local i = SS.STORE.CSModels[ply][item.ID]
-			if(ply:GetVelocity():Length2D() <= 150 and ply:GetVelocity():Length2D() >= 1 ) then
-				ply.idle = false
-				ply.walking = true
-				ply.running = false
-			elseif(ply:GetVelocity():Length2D() > 150) then
-				ply.idle = false
-				ply.walking = false
-				ply.running = true
-			elseif(ply:GetVelocity():Length2D() == 0) then
-				ply.idle = true
-				ply.walking = false
-				ply.running = false
-			else
-				ply.idle = true
-				ply.walking = false
-				ply.running = false
-			end
+		if (data) then
+			local info = data[SS.STORE.SLOT.ACCESSORY_4]
 			
-			if ply.idle then
-				if i:GetSequence() > 6 then
-					i:SetSequence(math.random(1,6))
+			if (info and info.item and IsValid(info.entity)) then
+				if(ply:GetVelocity():Length2D() <= 150 and ply:GetVelocity():Length2D() >= 1 ) then
+					ply.idle = false
+					ply.walking = true
+					ply.running = false
+				elseif(ply:GetVelocity():Length2D() > 150) then
+					ply.idle = false
+					ply.walking = false
+					ply.running = true
+				elseif(ply:GetVelocity():Length2D() == 0) then
+					ply.idle = true
+					ply.walking = false
+					ply.running = false
+				else
+					ply.idle = true
+					ply.walking = false
+					ply.running = false
 				end
-			elseif ply.walking then 
-				if i:GetSequence() != 7 then
-					i:SetSequence(7) 
+				
+				if ply.idle then
+					if info.entity:GetSequence() > 6 then
+						info.entity:SetSequence(math.random(1,6))
+					end
+				elseif ply.walking then 
+					if info.entity:GetSequence() != 7 then
+						info.entity:SetSequence(7) 
+					end
+				elseif ply.running then
+					if info.entity:GetSequence() < 8 then
+						info.entity:SetSequence(math.random(8,11)) 
+					end
 				end
-			elseif ply.running then
-				if i:GetSequence() < 8 then
-					i:SetSequence(math.random(8,11)) 
+				if(info.entity.lastthink) then
+					info.entity:FrameAdvance(CurTime()-info.entity.lastthink) --this function better fucking work I HAD TO FIND THIS IN DMODELPANEL ITS NOT EVEN DOCUMENTED!
 				end
+				info.entity.lastthink = CurTime()
 			end
-			if(i.lastthink) then
-				i:FrameAdvance(CurTime()-i.lastthink) --this function better fucking work I HAD TO FIND THIS IN DMODELPANEL ITS NOT EVEN DOCUMENTED!
-			end
-			i.lastthink = CurTime()
 		end
 	end
 end

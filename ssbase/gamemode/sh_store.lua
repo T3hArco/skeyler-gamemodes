@@ -107,8 +107,56 @@ function SS.STORE:LoadItems()
 		end
 	end
 end 
- 
+
 SS.STORE:LoadItems()
+
+---------------------------------------------------------
+-- Item hooks.
+---------------------------------------------------------
+
+if (SERVER) then
+	hook.Add("Think", "ss.gear.Think", function()
+		local players = player.GetAll()
+		
+		for k, player in pairs(players) do
+			local equipped = player.storeEquipped
+			
+			if (equipped) then
+				for i = 1, SS.STORE.SLOT.MAXIMUM do
+					local unique = equipped[i].unique
+					
+					if (unique) then
+						local item = SS.STORE.Items[unique]
+						
+						if (item and item.Hooks and item.Hooks.Think) then
+							item.Hooks.Think(equipped, player)
+						end
+					end
+				end
+			end
+		end
+	end)
+end
+
+if (CLIENT) then
+	hook.Add("UpdateAnimation", "ss.gear.UpdateAnimation", function(player, velocity, maxSequenceGroundSpeed)
+		local cache = SS.Gear.GetCacheByPlayer(player)
+	
+		if (cache) then
+			for i = 1, SS.STORE.SLOT.MAXIMUM do
+				local data = cache[i]
+				
+				if (data) then
+					local item = SS.STORE.Items[data.item]
+					
+					if (item and item.Hooks.UpdateAnimation) then
+						item.Hooks.UpdateAnimation(cache, player)
+					end
+				end
+			end
+		end
+	end)
+end
 
 ---------------------------------------------------------
 --
