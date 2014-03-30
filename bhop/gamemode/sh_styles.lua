@@ -54,14 +54,16 @@ for k,v in pairs(GM.Styles) do
 end
 
 hook.Add("SetupMove","ALLYOURBASEAREBELONGTOUS",function(ply,data)
-	local style = tonumber(ply:GetNWInt("Style",1))
+	local style = ply.Style
 	if(ply:Team() == TEAM_BHOP && style != 1) then
 		local buttons = data:GetButtons()
 		
 		local s = GAMEMODE.Styles[style]
 		for k,v in pairs(s.blockkeys.sv) do
+			print('key')
 			if(bit.band(buttons,v)>0) then
 				buttons = bit.band(buttons, bit.bnot(v))
+				print('removed')
 			end
 		end
 		
