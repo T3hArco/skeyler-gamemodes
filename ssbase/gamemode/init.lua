@@ -228,6 +228,11 @@ function GM:KeyPress(ply, key)
 	end 
 end 
 
+function GM:PlayerUse( ply, entity )
+	if !ply:Alive() then return false end 
+	return true
+end
+
 function GM:PlayerSay( ply, text, public )
 	local t = text
 

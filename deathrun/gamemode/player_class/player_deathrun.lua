@@ -16,7 +16,8 @@ PLAYER.CrouchedWalkSpeed 	= 0.6
 PLAYER.DuckSpeed			= 0.4		-- How fast to go from not ducking, to ducking
 PLAYER.UnDuckSpeed			= 0.01		-- How fast to go from ducking, to not ducking
 PLAYER.JumpPower			= 268.4     -- How powerful our jump should be
-PLAYER.AvoidPlayers			= false
+PLAYER.AvoidPlayers			= false 
+PLAYER.DropWeaponOnDie		= true 
 
 --
 -- Called serverside only when the player spawns
