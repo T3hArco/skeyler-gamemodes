@@ -141,6 +141,17 @@ function GM:CanRoundStart()
 	return false 
 end 
 
+function GM:Think() 
+	for k,v in pairs(ents.FindByClass("weapon_*")) do 
+		if v:CreatedByMap() then 
+			local phys = v:GetPhysicsObject() 
+			if phys and phys:IsValid() then 
+				phys:EnableMotion(false) 
+			end 
+		end 
+	end 
+end 
+
 function GM:RoundStart() 
 	self.Restarting = false 
 	self.Started = true 
@@ -216,3 +227,11 @@ end
 function GM:PlayerDeathSound() 
 	return true  
 end 
+
+if(file.Exists("deathrun/gamemode/mapfixes/"..game.GetMap()..".lua","LUA")) then
+	HOOKS = {}
+	include("deathrun/gamemode/mapfixes/"..game.GetMap()..".lua")
+	for k,v in pairs(HOOKS) do
+		hook.Add(k,k.."_"..game.GetMap(),v)
+	end
+end
