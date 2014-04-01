@@ -379,3 +379,14 @@ function GM:EntityKeyValue( ent, key, value )
 	end
 	 
 end
+
+hook.Add("InitPostEntity","SS_FixRenderAlpha",function()
+	for k,v in pairs(ents.FindByClass("func_lod")) do
+		v:SetRenderMode(RENDERMODE_TRANSALPHA)
+	end
+	for k,v in pairs(ents.GetAll()) do
+		if(v:GetRenderFX() != 0 && v:GetRenderMode() == 0) then
+			v:SetRenderMode(RENDERMODE_TRANSALPHA)
+		end
+	end
+end)

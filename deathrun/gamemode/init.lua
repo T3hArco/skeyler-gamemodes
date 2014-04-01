@@ -141,17 +141,6 @@ function GM:CanRoundStart()
 	return false 
 end 
 
-function GM:Think() 
-	for k,v in pairs(ents.FindByClass("weapon_*")) do 
-		if v:CreatedByMap() then 
-			local phys = v:GetPhysicsObject() 
-			if phys and phys:IsValid() then 
-				phys:EnableMotion(false) 
-			end 
-		end 
-	end 
-end 
-
 function GM:RoundStart() 
 	self.Restarting = false 
 	self.Started = true 
@@ -228,10 +217,38 @@ function GM:PlayerDeathSound()
 	return true  
 end 
 
-if(file.Exists("deathrun/gamemode/mapfixes/"..game.GetMap()..".lua","LUA")) then
-	HOOKS = {}
-	include("deathrun/gamemode/mapfixes/"..game.GetMap()..".lua")
-	for k,v in pairs(HOOKS) do
-		hook.Add(k,k.."_"..game.GetMap(),v)
+local freeze = {}
+local reps = 0
+
+local function freezethem()
+	if(reps == 20) then
+		hook.Remove("Think","SS_FreezeWeps")
+		freeze = {}
 	end
+	for k,v in pairs(freeze) do
+		local py = v:GetPhysicsObject()
+		if(py && py:IsValid()) then
+			py:Sleep()
+		end
+	end
+	reps = reps + 1
 end
+
+hook.Add("InitPostEntity","SS_FindWeaponsToFreeze",function()
+	for k,v in pairs(ents.FindByClass("weapon_*")) do
+		table.insert(freeze,v)
+	end
+	hook.Add("Think","SS_FreezeWeps",freezethem)
+end)
+
+hook.Add("PreCleanupMap","SS_PreWeaponFreeze",function()
+	hook.Remove("Think","SS_FreezeWeps")
+	freeze = {}
+end)
+
+hook.Add("PostCleanupMap","SS_PostWeaponFreeze",function()
+	for k,v in pairs(ents.FindByClass("weapon_*")) do
+		table.insert(freeze,v)
+	end
+	hook.Add("Think","FreezeWeps",freezethem)
+end)

@@ -87,3 +87,12 @@ function GM:Move(pl, movedata)
 		return false
 	end
 end
+
+if(file.Exists("deathrun/gamemode/mapfixes/"..game.GetMap()..".lua","LUA")) then
+	HOOKS = {}
+	include("deathrun/gamemode/mapfixes/"..game.GetMap()..".lua")
+	for k,v in pairs(HOOKS) do
+		hook.Add(k,k.."_"..game.GetMap(),v)
+	end
+end
+
