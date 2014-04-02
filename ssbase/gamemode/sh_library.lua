@@ -279,6 +279,9 @@ end
 
 function StpRsnStrng(args)
 	table.remove(args, 1)
+
+	if !args[1] then return end
+
 	local reason = string.Implode(" ", args)
 
 	return reason
