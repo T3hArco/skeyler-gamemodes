@@ -263,7 +263,7 @@ end
 function GM:PlayerDisconnected(ply) 
 	ply:ProfileSave() 
 	timer.Simple(0.1,function()
-		if(self && self:IsValid()) then
+		if(self && IsValid(self)) then
 			self:SpectateCheckValid(ply) 
 		end
 	end)
