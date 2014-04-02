@@ -131,7 +131,7 @@ concommand.Add("ss_fakename", function(ply, cmd, args)
 
 	local id = SS.allwdFkrnk[FakeRank]
 
-	ply:SetFake(NewName, id)
+	ply:SetFake(NewName, id, true)
 end)
 
 concommand.Add("ss_goto", function(ply, cmd, args)

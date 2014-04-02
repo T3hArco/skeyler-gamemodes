@@ -703,23 +703,13 @@ function theme:ParseData(data, list, isTitle)
 		local value, type = data[i], GetType(data[i])
 
 		if (type == "Player") then
-			if (value.GetRank and value:GetRank() > 0 and ((value.fakerank and value.fakerank > 0) or !value.fakerank)) then
+			if (value.GetRank and value:GetRank() > 0) then
 				local tagPanel = vgui.Create("Panel")
 				
 				tagPanel.base = self.panel
 				tagPanel.parseBase = parseBase
 				
-				local text, color, fakeRank = nil, nil, value.fakerank
-		
-				if (fakeRank == 50) then
-					text, color = "ADMIN", Color(255, 72, 72)
-				elseif (fakeRank == 20) then
-					text, color = "DEVeloper", Color(87, 198, 255)
-				elseif (fakeRank == 1) then
-					text, color = "VIP", Color(255, 216, 0)
-				else
-					text, color = string.upper(value:GetRankName()), value:GetRankColor()
-				end
+				local text, color = string.upper(value:GetFakeRankName()), value:GetFakeRankColor()
 				
 				text = string.upper(text)
 				
@@ -770,6 +760,7 @@ function theme:ParseData(data, list, isTitle)
 				
 				if (rankIconsEnabled) then
 					for userGroup, image in pairs(atlaschat.ranks) do
+
 						local isUserGroup = value:IsUserGroup(userGroup)
 						
 						if (isUserGroup) then

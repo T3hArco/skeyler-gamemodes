@@ -10,7 +10,7 @@ function PLAYER_META:CheckFake()
 		if self and self:IsValid() and self:IsAdmin() then
 			self.fakename = util.JSONToTable(self.profile.fakename)
 			if self.fakename.rank >= 0 then
-				self:SetFake(self.fakename.name, self.fakename.rank)
+				self:SetFake(self.fakename.name, self.fakename.rank, false)
 			end
 		end
 	end)
@@ -39,20 +39,20 @@ function PLAYER_META:GetFakeRank()
 end
 
 function PLAYER_META:GetFakeRankName() 
-	return SS.Ranks[self:GetFakeRank()].name 
+	return self:IsFakenamed() and SS.Ranks[self:GetFakeRank()].name  or SS.Ranks[self:GetRank()].name
 end 
 
 function PLAYER_META:GetFakeRankColor() 
-	return SS.Ranks[self:GetFakeRank()].color 
+	return self:IsFakenamed() and SS.Ranks[self:GetFakeRank()].color  or SS.Ranks[self:GetRank()].color
 end
 
-function PLAYER_META:SetFake(fakename, fakerank)
+function PLAYER_META:SetFake(fakename, fakerank, bsave)
 	if self and self:IsValid() then
 		if self:IsFakenamed() and fakename == nil then
 			self:SetNWInt("ss_fakerank", -1)
 			self:SetNWString("ss_fakename", nil)
 			self:SetNWBool("ss_bfakename", false)
-			self:ChatPrint("[FAKENAME]: You are now back to normal.\n")
+			self:ChatPrint("(FAKENAME): You are now back to normal.\n")
 
 			self.fakename = {["name"] = nil, ["rank"] = -1}
 			self.profile.fakename = util.TableToJSON(self.fakename)
@@ -62,11 +62,13 @@ function PLAYER_META:SetFake(fakename, fakerank)
 			self:SetNWInt("ss_fakerank", fakerank)
 			self:SetNWString("ss_fakename", fakename)
 			self:SetNWBool("ss_bfakename", true)
-			SS.PrintToAdmins("[FAKENAME]: "..self:Name().." is now "..self:GetFakename()..". Fakerank: "..self:GetFakeRankName()..".\n")
+			SS.PrintToAdmins("(FAKENAME): "..self:Name().." is now "..self:GetFakename()..". Fakerank: "..self:GetFakeRankName()..".\n")
 
-			self.fakename = {["name"] = fakename, ["rank"] = fakerank}
-			self.profile.fakename = util.TableToJSON(self.fakename)
-			self:ProfileUpdate("fakename", self.profile.fakename)
+			if bsave then
+				self.fakename = {["name"] = fakename, ["rank"] = fakerank}
+				self.profile.fakename = util.TableToJSON(self.fakename)
+				self:ProfileUpdate("fakename", self.profile.fakename)
+			end
 		end
 	end
 end
