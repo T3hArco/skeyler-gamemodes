@@ -38,7 +38,7 @@ SS.Scoreboard.RegisterRow("Rank", 134, TEXT_ALIGN_CENTER, SS.Scoreboard.ROW_RIGH
 			local name, color = string.upper(player:FakenameStatus("nm") or player:GetRankName()), player:FakenameStatus("clr") or player:GetRankColor()
 			
 			if (name) then
-				if (player:GetRank() > 0) then
+				if ((player:IsFakenamed() and player:GetFakeRank() > 0) or (!player:IsFakenamed() and player:GetRank() > 0)) then
 					draw.SimpleRect(1, 1, w -1, h -2, color)
 				end
 				
