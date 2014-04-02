@@ -703,7 +703,6 @@ function theme:ParseData(data, list, isTitle)
 		local value, type = data[i], GetType(data[i])
 
 		if (type == "Player") then
-			print(value:GetFakeRank())
 			if ((value:IsFakenamed() and value.GetFakeRank and value:GetFakeRank() > 0) or (!value:IsFakenamed() and value.GetRank and value:GetRank() > 0)) then
 				local tagPanel = vgui.Create("Panel")
 				
