@@ -289,7 +289,7 @@ concommand.Add("ss_password", function(ply, cmd, args)
 	RunConsoleCommand("sv_password", pass)
 end)
 
-concommand.Add("ss_restart", function(ply, cmd, args)
+concommand.Add("ss_rs", function(ply, cmd, args)
 	if !ply:IsAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
@@ -383,8 +383,8 @@ SS.ChatCommands = {
 	["map"] = "ss_map",
 	["mute"] = "ss_mute",
 	["password"] = "ss_password",
-	["restart"] = "ss_restart",
 	["revote"] = "ss_revote",
+	["rs"] = "ss_rs",
 	["rtv"] = "ss_rtv",
 	["slay"] = "ss_slay", 
 	["timeleft"] = "ss_timeleft"
