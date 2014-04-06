@@ -25,7 +25,7 @@ util.AddNetworkString("WriteRT")
 util.AddNetworkString("ModifyRT")
 
 SS.MapTime = 60
--- SS.SetupGamemode("bhop", true) 
+SS.SetupGamemode("bhop", true) 
 
 
 local StoreFrames = {} --local is better
