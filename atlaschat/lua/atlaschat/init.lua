@@ -497,33 +497,29 @@ net.Receive("atlaschat.chat", function(bits, player)
 	text = hook.Run("PlayerSay", player, text, team, !player:Alive())
 	
 	if (text and text != "") then
-		ServerLog(player:Nick() .. ": " .. text .. "\n")
+		if (game.IsDedicated()) then
+			ServerLog(player:Nick() .. ": " .. text .. "\n")
+		end
+		
+		local filter = {}
+		local players = util.GetPlayers()
+		
+		for i = 1, #players do
+			local target = players[i]
+			
+			if (IsValid(target)) then
+				local canSee = hook.Run("PlayerCanSeePlayersChat", text, team, target, player)
+				
+				if (canSee or target == player) then
+					table.insert(filter, target)
+				end
+			end
+		end
 		
 		net.Start("atlaschat.chatText")
 			net.WriteString(text)
 			net.WriteEntity(player)
 			net.WriteBit(team)
-		
-		if (team) then
-			local filter = {}
-			local players = util.GetPlayers()
-			local table = table
-			
-			for i = 1, #players do
-				local target = players[i]
-				
-				if (IsValid(target)) then
-					local canSee = hook.Run("PlayerCanSeePlayersChat", text, team, target, player)
-					
-					if (canSee or target == player) then
-						table.insert(filter, target)
-					end
-				end
-			end
-			
-			net.Send(filter)
-		else
-			net.Broadcast()
-		end
+		net.Send(filter)
 	end
 end)
