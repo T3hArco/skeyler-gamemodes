@@ -127,17 +127,6 @@ end)
 
 SS.AddCommand("wr","ss_wr")
 
-concommand.Add("ss_spec",function(p,cmd,args)
-	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
-		p:ChatPrint("You are already in spec")
-		return
-	end
-	p:SetTeam(TEAM_SPEC)
-	p:Spawn()
-end)
-
-SS.AddCommand("spec","ss_spec")
-
 concommand.Add("ss_restart",function(ply)
 	if ply:Team() == TEAM_BHOP then 
 		ply:ResetTimer() 
@@ -147,22 +136,25 @@ concommand.Add("ss_restart",function(ply)
 	ply:Spawn() 
 end)
 
+SS.AddCommand("r","ss_restart")
+SS.AddCommand("rr","ss_restart")
+SS.AddCommand("restart","ss_restart")
+
 concommand.Add("ss_spec",function(p,cmd,args)
 	if(p:Team() == TEAM_SPEC) then --toggle spectator with !spec
-		if ply:Team() == TEAM_BHOP then 
-			ply:ResetTimer() 
-			ply.Winner = false 
+		if p:Team() == TEAM_BHOP then 
+			p:ResetTimer() 
+			p.Winner = false 
 		end  
-		ply:SetTeam(TEAM_BHOP) 
-		ply:Spawn() 
+		p:SetTeam(TEAM_BHOP) 
+		p:Spawn() 
 		return
 	end
 	p:SetTeam(TEAM_SPEC)
 	p:Spawn()
 end)
 
-SS.AddCommand("r","ss_restart")
-SS.AddCommand("restart","ss_restart")
+SS.AddCommand("spec","ss_spec")
 
 function GM:LoadRecs()
 	DB_Query("SELECT name,style,time,steamid FROM bh_records WHERE mapid='"..self.CurrentID.."' AND pb='1' ORDER BY time",
