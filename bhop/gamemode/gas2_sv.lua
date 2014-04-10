@@ -40,6 +40,7 @@ hook.Add("StartCommand","CheckScripters",function(ply,cmd)
 	if(canrecord[ply] && !thisscrolltime[ply] && bit.band(b,IN_JUMP)>0) then
 		thisscrolltime[ply] = CurTime() --first scroll
 	end
+	
 	if(timebetweeno[ply] && lastscrolltime[ply] && thisscrolltime[ply]) then
 		dirty3[ply] = 0
 		local n = (thisscrolltime[ply] - lastscrolltime[ply])-(timebetween[ply]-timebetweeno[ply])
@@ -70,10 +71,10 @@ hook.Add("StartCommand","CheckScripters",function(ply,cmd)
 		ply:ReportMe("Possible Scripter - 50 sequential jumps with little variance.")
 	end
 	
-	if(dirty2[ply] && dirty2[ply] > 2) then
+	if(dirty2[ply] && dirty2[ply] > 4) then
 		if(!det[ply]) then
 			det[ply] = true
-			ply:ReportMe("Possible Scripter - 3 jumps with 0 variance within 10 seconds.")
+			ply:ReportMe("Possible Scripter - 5 jumps with 0 variance within 10 seconds.")
 		end
 	end
 	
@@ -88,7 +89,9 @@ hook.Add("StartCommand","CheckScripters",function(ply,cmd)
 			timebetweeno[ply] = timebetween[ply]
 		end
 		timebetween[ply] = CurTime()
-		canrecord[ply] = true
+		timer.Simple(0.1,function() 
+			canrecord[ply] = true
+		end)
 	end
 	
 	if(!onground[ply] && ply:OnGround()) then
