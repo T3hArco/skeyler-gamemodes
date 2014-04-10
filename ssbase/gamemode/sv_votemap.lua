@@ -183,7 +183,7 @@ function RTV(ply)
 	end
 end 
 
-hook.Add("PlayerDisconnected",function(p)
+hook.Add("PlayerDisconnected","SS_Votemap_Disconnect",function(p)
 	if(p.rtv && !voteinfo.voting) then
 		rtvcount = rtvcount - 1
 		timer.Simple(1,function() --dont include them in rtv count
