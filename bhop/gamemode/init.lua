@@ -30,6 +30,7 @@ SS.SetupGamemode("bhop", true)
 
 local StoreFrames = {} --local is better
 local Frames = {}
+local LastWep = {}
 
 GM.PSaveData = {} -- Save last known positions and angles for respawn here.
 GM.ACAreas = {}
@@ -508,6 +509,12 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 
 		data:SetOrigin(o)
 		ply:SetEyeAngles(a)
+		if(GAMEMODE.WRFr[7][wrframes]) then
+			if(!ply:HasWeapon(GAMEMODE.WRFr[7][wrframes])) then
+				ply:Give(GAMEMODE.WRFr[7][wrframes])
+			end
+			ply:SelectWeapon(GAMEMODE.WRFr[7][wrframes])
+		end
 		wrframes = wrframes + 1
 	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && Frames[ply]) then
 		if(!StoreFrames[ply]) then
@@ -518,6 +525,9 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 			StoreFrames[ply][3] = {}
 			StoreFrames[ply][4] = {}
 			StoreFrames[ply][5] = {}
+			StoreFrames[ply][6] = {}
+			StoreFrames[ply][7] = {}
+			LastWep[ply] = "weapon_crowbar"
 		end
 		local o = data:GetOrigin()
 		local a = data:GetAngles()
@@ -527,8 +537,22 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		StoreFrames[ply][4][Frames[ply]] = a.p
 		StoreFrames[ply][5][Frames[ply]] = a.y
 		
+		local c = ply:GetActiveWeapon():GetClass()
+		if(LastWep[ply] != c) then
+			StoreFrames[ply][7][Frames[ply]] = c
+			LastWep[ply] = c
+		end
+		
 		Frames[ply] = Frames[ply] + 1
 	elseif(ply:Team() == TEAM_BHOP && ply.InStart && StoreFrames[ply]) then
 		StoreFrames[ply] = nil
+	end
+end)
+
+hook.Add("StartCommand","wrbot2",function(ply,data)
+	if(ply == GAMEMODE.WRBot && wrframes) then
+		data:SetButtons(tonumber(GAMEMODE.WRFr[6][wrframes])) --only place this actually works
+	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && StoreFrames[ply] && Frames[ply]) then
+		StoreFrames[ply][6][Frames[ply]] = data:GetButtons() --may aswell record it in here too
 	end
 end)

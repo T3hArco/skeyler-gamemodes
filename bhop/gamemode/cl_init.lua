@@ -58,3 +58,17 @@ timer.Create("HullstuffSadface",5,0,function()
 		LocalPlayer():SetHullDuck(Vector(-16, -16, 0), Vector(16, 16, 45))
 	end
 end)
+
+hook.Add("CalcView","CheckShitOut",function(ply, pos, angles, fov, nearZ, farZ)
+	if(ply:GetObserverTarget() && ply:GetObserverTarget():IsValid() && ply:GetObserverTarget():IsBot()) then
+		local view = {}
+
+		view.origin = pos
+		view.angles = angles
+		view.znear = nearZ
+		view.zfar = farZ
+		view.fov = 90
+ 
+		return view
+	end
+end)

@@ -66,8 +66,15 @@ end
 local w, h, Text, tw, th, tw2, th2, wep, frac = ScrW(), ScrH(), "", 0, 0, 0, 0, 0, 0 
 
 function GM:HUDPaint()
-	if !LocalPlayer():Alive() then return end 
+	if !LocalPlayer():Alive() && (!LocalPlayer():GetObserverTarget() || !LocalPlayer():GetObserverTarget():IsValid() || !LocalPlayer():GetObserverTarget():Alive()) then return end 
 
+	local pl = nil
+	if(LocalPlayer():GetObserverTarget() && LocalPlayer():GetObserverTarget():IsValid()) then
+		pl = LocalPlayer():GetObserverTarget()
+	else
+		pl = LocalPlayer()
+	end
+	
 	if self.GUIBlur then 
 		self.HudAlpha = math.Approach(self.HudAlpha, 0, 5) 
 	else 
@@ -75,11 +82,11 @@ function GM:HUDPaint()
 		if self.HudAlpha <= 0 then return end 
 	end 
 
-	if LocalPlayer():Alive() then 
-		self.HUDHPSmooth = math.min(LocalPlayer():GetMaxHealth(), math.Approach(self.HUDHPSmooth, LocalPlayer():Health(), 5)) 
-		self.HUDHP = math.ceil(LocalPlayer():Health()/100*100)
+	if pl:Alive() then 
+		self.HUDHPSmooth = math.min(pl:GetMaxHealth(), math.Approach(self.HUDHPSmooth, pl:Health(), 5)) 
+		self.HUDHP = math.ceil(pl:Health()/100*100)
 		if self.HUDShowVel then 
-			self.HUDVel = LocalPlayer():GetVelocity():Length2D()
+			self.HUDVel = pl:GetVelocity():Length2D()
 			self.HUDVelFrac = math.Approach(self.HUDVelFrac, math.min(1200, self.HUDVel)/1200, 0.01) 
 		end 
 	else 
@@ -88,13 +95,13 @@ function GM:HUDPaint()
 		if self.HUDShowVel then self.HUDVelFrac = math.Approach(1, self.HUDVelFrac, 0.01)  end 
 	end 
 
-	if self.HUDShowTimer then 
+	if self.HUDShowTimer && !pl:IsBot() then 
 		/* Top HUD (Timer) */
 		Text = "00:00:00.00"
-		if LocalPlayer():GetNetworkedInt("STimer_TotalTime", 0) != 0 then 
-			Text = FormatTime(LocalPlayer():GetNetworkedInt("STimer_TotalTime", 0)) 
-		elseif LocalPlayer():GetNetworkedInt("STimer_StartTime", 0) != 0 then 
-			Text = FormatTime(CurTime()-LocalPlayer():GetNetworkedInt("STimer_StartTime", 0))
+		if pl:GetNetworkedInt("STimer_TotalTime", 0) != 0 then 
+			Text = FormatTime(pl:GetNetworkedInt("STimer_TotalTime", 0)) 
+		elseif pl:GetNetworkedInt("STimer_StartTime", 0) != 0 then 
+			Text = FormatTime(CurTime()-pl:GetNetworkedInt("STimer_StartTime", 0))
 		end 
 
 		surface.SetFont("HUD_Timer") 
@@ -106,7 +113,7 @@ function GM:HUDPaint()
 		surface.SetTextPos(w/2-tw/2, 40) 
 		surface.DrawText(Text) 
 		
-		Text = FormatTime(LocalPlayer():GetNetworkedInt("STimer_PB", 0)) 
+		Text = FormatTime(pl:GetNetworkedInt("STimer_PB", 0)) 
 
 		surface.SetFont("HUD_Timer_Small") 
 		tw = surface.GetTextSize(Text) 
@@ -125,12 +132,12 @@ function GM:HUDPaint()
 
 	surface.SetDrawColor(255, 255, 255, self.HudAlpha*0.85) 
 	
-	draw.RoundedBox(4, 179, h -118, (self.HUDHPSmooth/LocalPlayer():GetMaxHealth()) *173, 13, Color(255, 85, 85, 255))
+	draw.RoundedBox(4, 179, h -118, (self.HUDHPSmooth/pl:GetMaxHealth()) *173, 13, Color(255, 85, 85, 255))
 	
-	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, true)
+	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/pl:GetMaxHealth())), h-89, true)
 	--surface.SetMaterial(HUD_HP) 
 	--surface.DrawTexturedRect(175, h-122, 256, 32)
-	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/LocalPlayer():GetMaxHealth())), h-89, false)
+	--render.SetScissorRect(175, h-121, 179+(172*(self.HUDHPSmooth/pl:GetMaxHealth())), h-89, false)
 
 	--surface.SetMaterial(HUD_XP) 
 	--surface.DrawTexturedRect(176, h-106, 128, 16)
@@ -157,7 +164,7 @@ function GM:HUDPaint()
 	draw.SimpleRect(187 +5, h -77, 5, 5, Color(69, 192, 255, 220))
 	draw.SimpleRect(187, h -82, 5, 5, Color(69, 192, 255, 140))
 
-	Text = FormatNum(LocalPlayer():GetMoney())
+	Text = FormatNum(pl:GetMoney())
 	surface.SetFont("HUD_Money") 
 	tw, th = surface.GetTextSize(Text) 
 	surface.SetTextPos(205, h-73-th/2)
@@ -166,9 +173,9 @@ function GM:HUDPaint()
 
 	--surface.SetFont("HUD_Level_Blue") 
 	--surface.SetTextColor(102, 167, 201, self.HudAlpha) 
-	--tw, th = surface.GetTextSize(" "..tostring(LocalPlayer():GetLevel())) 
+	--tw, th = surface.GetTextSize(" "..tostring(pl:GetLevel())) 
 	--surface.SetTextPos(378-tw, h-76-th/2) 
-	--surface.DrawText(" "..tostring(LocalPlayer():GetLevel())) 
+	--surface.DrawText(" "..tostring(pl:GetLevel())) 
 
 	--surface.SetFont("HUD_Level")
 	--surface.SetTextColor(195, 195, 195, self.HudAlpha) 
@@ -208,7 +215,7 @@ function GM:HUDPaint()
 	end 
 
 	/* Right HUD (Ammo) */
-	wep = LocalPlayer():GetActiveWeapon() 
+	wep = pl:GetActiveWeapon() 
 	
 	if (IsValid(wep)) then
 		surface.SetDrawColor(255, 255, 255, self.HudAlpha)
@@ -229,20 +236,21 @@ function GM:HUDPaint()
 			end 
 			frac = math.Approach(frac, 1, 0.01)
 			if wep and wep:IsValid() then 
-				Text = Text..tostring(LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType())) 
+				Text = Text..tostring(pl:GetAmmoCount(wep:GetPrimaryAmmoType())) 
 			else 
 				Text = Text.."0"
 			end 
 		else 
-			Text = tostring(wep:Clip1()).." / "..tostring(LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType()))
-			frac = math.Approach(frac, wep:Clip1()/GetPrimaryClipSize(wep), 0.01) 
+			Text = tostring(wep:Clip1()).." / "..tostring(pl:GetAmmoCount(wep:GetPrimaryAmmoType()))
+			frac = math.Approach(frac, wep:Clip1()/GetPrimaryClipSize(wep), 0.01)
+			
 		end 
 		
-		render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, true)
+		render.SetScissorRect(w -((172*frac) + 192), h-87, w-162, h-74, true)
 		surface.SetDrawColor(255, 255, 255, self.HudAlpha*0.85) 
 		surface.SetMaterial(HUD_AMMO) 
 		surface.DrawTexturedRect(w -(256 +108), h-87, 256, 16)
-		render.SetScissorRect(w -(256 +108)*frac, h-87, w-162, h-74, false)
+		render.SetScissorRect(w -((172*frac) + 192), h-87, w-162, h-74, false)
 		
 		surface.SetFont("HUD_CENTER") 
 		surface.SetTextColor(255, 255, 255, self.HudAlpha) 
@@ -250,8 +258,8 @@ function GM:HUDPaint()
 		surface.DrawText(Text) 
 		
 		Text = "a"
-		if LocalPlayer():Alive() and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().GetHoldType and weaponImgs[LocalPlayer():GetActiveWeapon():GetHoldType()] then 
-			Text = weaponImgs[LocalPlayer():GetActiveWeapon():GetHoldType()] 
+		if pl:Alive() and pl:GetActiveWeapon() and pl:GetActiveWeapon().GetHoldType and weaponImgs[pl:GetActiveWeapon():GetHoldType()] then 
+			Text = weaponImgs[pl:GetActiveWeapon():GetHoldType()] 
 		end 
 		surface.SetFont("HUD_WEPS") 
 		tw, th = surface.GetTextSize(Text) 
@@ -260,8 +268,8 @@ function GM:HUDPaint()
 		surface.DrawText(Text) 
 		
 		Text = "None" 
-		if LocalPlayer():Alive() and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().GetPrintName then 
-			Text = LocalPlayer():GetActiveWeapon():GetPrintName() 
+		if pl:Alive() and pl:GetActiveWeapon() and pl:GetActiveWeapon().GetPrintName then 
+			Text = pl:GetActiveWeapon():GetPrintName() 
 		end 
 		
 		surface.SetFont("HUD_CENTER") 
@@ -270,6 +278,7 @@ function GM:HUDPaint()
 		surface.SetTextPos(w-125-tw/2, h-60-th/2) 
 		surface.DrawText(Text) 
 	end
+	
 end  
  
 function GM:PostDrawTranslucentRenderables()

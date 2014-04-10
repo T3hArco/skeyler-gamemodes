@@ -69,44 +69,24 @@ function SWEP:CSSGlockShoot( dmg, recoil, numbul, cone, anim )
 	bullet.Force	= 5									// Amount of force to give to phys objects
 	bullet.Damage	= dmg
 	
-	local owner = self.Owner --faster than getting info from damageinfo cause c++ calls
-	local slf = self --faster than getting info from damageinfo cause c++ calls
-	bullet.Callback = function(a,b,c)
-		if(SERVER && b.HitPos) then
-			local tracedata = {}
-			tracedata.start = b.StartPos
-			tracedata.endpos = b.HitPos + (b.Normal*2)
-			tracedata.filter = a
-			tracedata.mask = MASK_PLAYERSOLID
-			local trace = util.TraceLine(tracedata)
+	if(!self.Owner:IsBot()) then
+		bullet.Callback = function(a,b,c)
+			if(SERVER && b.HitPos) then
+				local tracedata = {}
+				tracedata.start = b.StartPos
+				tracedata.endpos = b.HitPos + (b.Normal*2)
+				tracedata.filter = a
+				tracedata.mask = MASK_PLAYERSOLID
+				local trace = util.TraceLine(tracedata)
 				
-			if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
-				trace.Entity:TakeDamage(dmg,owner,slf)
-				trace.Entity:TakeDamage(dmg,owner,slf)
-					--[[if(game.GetMap() == "bhop_lost_world" && tonumber(trace.Entity:GetSaveTable().spawnflags) == 513 && trace.Entity:GetSaveTable().m_toggle_state == 1) then
-						trace.Entity:TriggerOutput("OnPressed",owner)
-						trace.Entity:SetSaveValue("m_toggle_state",0)
-						timer.Simple(trace.Entity:GetSaveTable().m_flWait,function()
-							if(trace.Entity && trace.Entity:IsValid()) then
-								trace.Entity:SetSaveValue("m_toggle_state",1)
-							end
-						end)
-					elseif((game.GetMap() != "bhop_infog_final" || !GAMEMODE:IsInArea(owner,Vector(5269, -1280, 141), Vector(5567, -1084, 341))) && trace.Entity:GetSaveTable().m_toggle_state == 1) then
-						trace.Entity:TriggerOutput("OnDamaged",owner)
-						trace.Entity:SetSaveValue("m_toggle_state",0)
-						timer.Simple(trace.Entity:GetSaveTable().m_flWait,function()
-							if(trace.Entity && trace.Entity:IsValid()) then
-								trace.Entity:SetSaveValue("m_toggle_state",1)
-							end
-						end)
-					end]]
-			elseif(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_breakable") then
-				if(game.GetMap() == "kz_bhop_yonkoma" && trace.Entity.TriggerOutput) then
-					trace.Entity:TriggerOutput("OnBreak",owner)
+				if(IsValid(trace.Entity) && trace.Entity:GetClass() == "func_button") then
+					trace.Entity:TakeDamage(dmg,a,c:GetInflictor())
+					trace.Entity:TakeDamage(dmg,a,c:GetInflictor())
 				end
 			end
 		end
 	end
+	
 	self.Owner:FireBullets( bullet )
 	if(anim) then
 		if(self:GetDTInt(0) == 1) then

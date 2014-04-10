@@ -29,15 +29,10 @@ end
 -- Called on spawn to give the player their default loadout
 --
 function PLAYER:Loadout()
-	if(self.Player:IsBot()) then
-		self.Player:Give("weapon_crowbar_fov") 
-	else
-		self.Player:Give("weapon_crowbar") 
-		self.Player:Give("weapon_pistol")
-		self.Player:Give("weapon_smg1") 
-		self.Player:Give("weapon_fists") 
-	end
+	self.Player:Give("weapon_crowbar") 
 	self.Player:Give("weapon_glock")
+	self.Player:Give("weapon_usp")
+	self.Player:SelectWeapon("weapon_glock")
 	if self.Player:IsSuperAdmin() then self.Player:Give("ss_mapeditor") end 
 	self.Player:GiveAmmo(999, "Pistol", true) 
 	self.Player:GiveAmmo(999, "Smg1", true) 
