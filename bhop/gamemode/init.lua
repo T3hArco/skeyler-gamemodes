@@ -498,7 +498,9 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 	if(ply:GetObserverTarget() && ply:GetObserverTarget():IsValid() && ply:GetObserverMode() != OBS_MODE_ROAMING) then
 		local o = ply:GetObserverTarget()
 		data:SetOrigin(o:GetPos())
-		ply:SetEyeAngles(o:EyeAngles())
+		if(ply:GetObserverMode() == OBS_MODE_IN_EYE) then
+			ply:SetEyeAngles(o:EyeAngles())
+		end
 	end
 	if(ply == GAMEMODE.WRBot) then
 		if(GAMEMODE.NewWR) then
