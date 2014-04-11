@@ -101,7 +101,7 @@ end
 
 function GM:Move(pl, movedata)
 	if(!pl or !pl:IsValid()) then return end
-	if pl:IsOnGround() or !pl:Alive() or pl:WaterLevel() > 0 then return end
+	if pl:IsOnGround() or !pl:Alive() or pl:WaterLevel() > 1 then return end
 	
 	local aim = movedata:GetMoveAngles()
 	local forward, right = aim:Forward(), aim:Right()
