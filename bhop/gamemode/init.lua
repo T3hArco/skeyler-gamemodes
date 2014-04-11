@@ -388,9 +388,7 @@ function GM:ReadWRRun()
 		self.WRFr = str
 		self.WRFrames = #self.WRFr[1]
 	end
-	if(self.WRFr) then
-		self:SpawnBot()
-	end
+	self:SpawnBot()
 end
 
 function GM:SpawnBot()
@@ -398,7 +396,7 @@ function GM:SpawnBot()
 		if(v:IsBot()) then
 			self.WRBot = v
 			if(v:GetMoveType() != 0) then
-				v:SetMoveType(0)
+				v:SetMoveType(1)
 				v:SetCollisionGroup(10)
 			end
 		end
@@ -410,7 +408,7 @@ function GM:SpawnBot()
 			if(v:IsBot()) then
 				self.WRBot = v
 				if(v:GetMoveType() != 0) then
-					v:SetMoveType(0)
+					v:SetMoveType(1)
 					v:SetCollisionGroup(10)
 				end
 			end
@@ -482,7 +480,7 @@ hook.Add("Think","BotShit",function()
 			end
 		end
 	end
-	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid() && GAMEMODE.WRFr && #player.GetAll() != 0) then
+	if(GAMEMODE.WRBot && !GAMEMODE.WRBot:IsValid()) then
 		GAMEMODE:SpawnBot()
 	end
 end)
@@ -502,7 +500,7 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 			ply:SetEyeAngles(o:EyeAngles())
 		end
 	end
-	if(ply == GAMEMODE.WRBot) then
+	if(ply == GAMEMODE.WRBot && GAMEMODE.WRFr) then
 		if(GAMEMODE.NewWR) then
 			GAMEMODE.NewWR = false
 			wrframes = 1

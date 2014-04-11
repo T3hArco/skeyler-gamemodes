@@ -72,3 +72,15 @@ hook.Add("CalcView","CheckShitOut",function(ply, pos, angles, fov, nearZ, farZ)
 		return view
 	end
 end)
+
+PLAYER_META.OldNick = PLAYER_META.OldNick or PLAYER_META.Nick
+
+function PLAYER_META:Nick()
+	if(self:IsBot()) then
+		if(!GAMEMODE.RecordTable[s][1]) then
+			return "[BOT] NO RECORD"
+		else
+			return "[BOT] "..string.sub(GAMEMODE.RecordTable[s][1]["name"],1,19).." - "..FormatTime(GAMEMODE.RecordTable[s][1]["time"])
+		end
+	end
+end
