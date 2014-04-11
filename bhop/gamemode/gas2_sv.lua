@@ -32,7 +32,7 @@ local timebetween = {}
 local timebetweeno = {}
 local dirty = {}
 local dirty2 = {}
-local dirty3 = {}
+--local dirty3 = {}
 local det = {}
 
 hook.Add("StartCommand","CheckScripters",function(ply,cmd)
@@ -42,7 +42,7 @@ hook.Add("StartCommand","CheckScripters",function(ply,cmd)
 	end
 	
 	if(timebetweeno[ply] && lastscrolltime[ply] && thisscrolltime[ply]) then
-		dirty3[ply] = 0
+		--dirty3[ply] = 0
 		local n = (thisscrolltime[ply] - lastscrolltime[ply])-(timebetween[ply]-timebetweeno[ply])
 		lastscrolltime[ply] = nil
 		local na = math.Clamp(n,-0.2,0.2)
@@ -96,12 +96,12 @@ hook.Add("StartCommand","CheckScripters",function(ply,cmd)
 	
 	if(!onground[ply] && ply:OnGround()) then
 		onground[ply] = true
-		if(canrecord[ply] && !lastscrolltime[ply] && !thisscrolltime[ply]) then
+		--[[if(canrecord[ply] && !lastscrolltime[ply] && !thisscrolltime[ply]) then
 			if(!dirty3[ply]) then
 				dirty3[ply] = 0
 			end
 			dirty3[ply] = dirty3[ply] + 1
-		end
+		end]]
 		canrecord[ply] = false
 		bhop[ply] = true
 		lastscrolltime[ply] = nil
