@@ -129,6 +129,11 @@ concommand.Add("ss_fakename", function(ply, cmd, args)
 		return
 	end
 
+	if !ply:IsSuperAdmin() and (SS.allwdFkrnk[FakeRank] > ply:GetRank()) then
+		ply:ChatPrint("You can not fakename as a higher rank!\n")
+		return
+	end
+
 	local id = SS.allwdFkrnk[FakeRank]
 
 	ply:SetFake(NewName, id, true)
