@@ -77,10 +77,10 @@ PLAYER_META.OldNick = PLAYER_META.OldNick or PLAYER_META.Nick
 
 function PLAYER_META:Nick()
 	if(self:IsBot()) then
-		if(!GAMEMODE.RecordTable[s][1]) then
+		if(!GAMEMODE.RecordTable[1] || !GAMEMODE.RecordTable[1][1]) then
 			return "[BOT] NO RECORD"
 		else
-			return "[BOT] "..string.sub(GAMEMODE.RecordTable[s][1]["name"],1,19).." - "..FormatTime(GAMEMODE.RecordTable[s][1]["time"])
+			return "[BOT] "..string.sub(GAMEMODE.RecordTable[1][1]["name"],1,19).." - "..FormatTime(GAMEMODE.RecordTable[1][1]["time"])
 		end
 	end
 	
