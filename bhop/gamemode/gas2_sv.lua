@@ -78,10 +78,10 @@ hook.Add("StartCommand","CheckScripters",function(ply,cmd)
 		end
 	end
 	
-	if(dirty3[ply] && dirty3[ply] >= 2) then
+	--[[if(dirty3[ply] && dirty3[ply] >= 2) then
 		dirty3[ply] = 0
 		ply:ReportMe("Possible Scripter - 2 sequential jumps with no detectable variance.")
-	end
+	end]]
 	
 	if(bhop[ply] && bit.band(b,IN_JUMP)>0) then
 		bhop[ply] = false
