@@ -490,6 +490,10 @@ function PLAYER_META:ClearFrames()
 	StoreFrames[self] = nil
 end
 
+function GM:GetFallDamage( ply, speed )
+	return 0
+end
+
 local wrframes = 1
 
 hook.Add("SetupMove","wrbot",function(ply,data)
