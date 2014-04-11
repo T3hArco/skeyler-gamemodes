@@ -499,7 +499,7 @@ local wrframes = 1
 hook.Add("SetupMove","wrbot",function(ply,data)
 	if(ply:GetObserverTarget() && ply:GetObserverTarget():IsValid() && ply:GetObserverMode() != OBS_MODE_ROAMING) then
 		local o = ply:GetObserverTarget()
-		data:SetOrigin(o:GetPos())
+		ply:SetPos(o:GetPos()) --might be less glitchy in some situations
 		if(ply:GetObserverMode() == OBS_MODE_IN_EYE) then
 			ply:SetEyeAngles(o:EyeAngles())
 		end
