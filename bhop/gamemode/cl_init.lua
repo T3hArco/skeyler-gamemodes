@@ -83,4 +83,6 @@ function PLAYER_META:Nick()
 			return "[BOT] "..string.sub(GAMEMODE.RecordTable[s][1]["name"],1,19).." - "..FormatTime(GAMEMODE.RecordTable[s][1]["time"])
 		end
 	end
+	
+	return PLAYER_META:OldNick()
 end
