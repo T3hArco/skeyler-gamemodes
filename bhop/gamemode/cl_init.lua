@@ -84,5 +84,5 @@ function PLAYER_META:Nick()
 		end
 	end
 	
-	return PLAYER_META:OldNick()
+	return self:OldNick()
 end
