@@ -396,8 +396,9 @@ function GM:SpawnBot()
 		if(v:IsBot()) then
 			self.WRBot = v
 			if(v:GetMoveType() != 0) then
-				v:SetMoveType(1)
-				v:SetCollisionGroup(10)
+				v:SetMoveType(0)
+				v:SetCollisionGroup(1)
+				v:SetGravity(0)
 			end
 		end
 	end
@@ -408,8 +409,9 @@ function GM:SpawnBot()
 			if(v:IsBot()) then
 				self.WRBot = v
 				if(v:GetMoveType() != 0) then
-					v:SetMoveType(1)
-					v:SetCollisionGroup(10)
+					v:SetMoveType(0)
+					v:SetCollisionGroup(1)
+					v:SetGravity(0)
 				end
 			end
 		end
