@@ -560,13 +560,12 @@ end)
 
 hook.Add("StartCommand","wrbot2",function(ply,data)
 	if(ply == GAMEMODE.WRBot && wrframes) then
+		data:ClearButtons()
+		data:ClearMovement()
 		if(GAMEMODE.WRFr) then
 			if(ply:GetMoveType() == 0) then
 				data:SetButtons(tonumber(GAMEMODE.WRFr[6][wrframes])) --only place this actually works
 			end
-		else
-			data:ClearButtons()
-			data:ClearMovement()
 		end
 	elseif(ply:Team() == TEAM_BHOP && !ply.InStart && ply:IsTimerRunning() && !ply.Winner && StoreFrames[ply] && Frames[ply]) then
 		StoreFrames[ply][6][Frames[ply]] = data:GetButtons() --may aswell record it in here too
