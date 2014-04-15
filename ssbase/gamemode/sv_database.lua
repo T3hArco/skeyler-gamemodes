@@ -16,8 +16,8 @@ local function LogQuery(Query) -- Logging all queries so we can track problems
 	local dircheck = ""
 	for k,v in pairs(string.Explode("/", folder)) do 
 		if !file.IsDir(dircheck.."/"..v, "DATA") then 
-			file.CreateDir(dircheck.."/"..v) 
 			if k > 1 then dircheck = dircheck.."/"..v else dircheck = v end 
+			file.CreateDir(dircheck) 
 		end 
 	end 
 	if !file.Exists(folder.."/"..File, "DATA") then file.Write(folder.."/"..File) end 
