@@ -431,7 +431,7 @@ function GM:PlayerWon(ply)
 		if(tonumber(ply.PBS[ply.Style]) == 0) then
 			DB_Query("INSERT INTO bh_records (name,mapid,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 		else
-			DB_Query("UPDATE bh_records SET pb='0' WHERE style='"..ply.Style.."' AND steamid='"..string.sub(steamid, 7).."' AND pb='1'",
+			DB_Query("UPDATE bh_records SET pb='0' WHERE mapid='"..self.CurrentID.."' AND style='"..ply.Style.."' AND steamid='"..string.sub(steamid, 7).."' AND pb='1'",
 			function()
 				DB_Query("INSERT INTO bh_records (name,mapid,style,date,time,steamid,pb) VALUES('"..name.."','"..self.CurrentID.."','"..ply.Style.."','"..os.time().."','"..t.."','"..string.sub(steamid, 7).."','1')")
 			end)
