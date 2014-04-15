@@ -549,9 +549,11 @@ hook.Add("SetupMove","wrbot",function(ply,data)
 		StoreFrames[ply][3][Frames[ply]] = o.z
 		StoreFrames[ply][4][Frames[ply]] = a.p
 		StoreFrames[ply][5][Frames[ply]] = a.y
-		
-		local c = ply:GetActiveWeapon():GetClass()
-		if(LastWep[ply] != c) then
+		local c = nil
+		if(ply:GetActiveWeapon() && ply:GetActiveWeapon():IsValid()) then
+			c = ply:GetActiveWeapon():GetClass()
+		end
+		if(c && LastWep[ply] != c) then
 			StoreFrames[ply][7][Frames[ply]] = c
 			LastWep[ply] = c
 		end
