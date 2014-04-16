@@ -20,6 +20,7 @@ function PLAYER_META:StartTimer()
 	else 
 		self:ResumeTimer() 
 	end 
+	self:SetGravity(1)
 	self:SetNetworkedInt("STimer_StartTime", self:GetStartTime()) 
 	if self:HasFinishedTimer() then 
 		self:SetNetworkedInt("STimer_EndTime", self:GetEndTime()) 
@@ -72,6 +73,7 @@ end
 function PLAYER_META:ResetTimer() 
 	self.STimer = false 
 	TIMES[self:SteamID()] = false 
+	self:SetGravity(1)
 
 	self:SetNetworkedInt("STimer_StartTime", 0)
 	self:SetNetworkedInt("STimer_EndTime", 0) 

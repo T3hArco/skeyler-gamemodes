@@ -184,8 +184,10 @@ function RTV(ply)
 end 
 
 hook.Add("PlayerDisconnected","SS_Votemap_Disconnect",function(p)
-	if(p.rtv && !voteinfo.voting) then
-		rtvcount = rtvcount - 1
+	if(!voteinfo.voting) then
+		if(p.rtv) then
+			rtvcount = rtvcount - 1
+		end
 		timer.Simple(1,function() --dont include them in rtv count
 			local n = (#player.GetHumans()*SS.RTVPercent)
 			if(rtvcount >= n && !voteinfo.voting) then

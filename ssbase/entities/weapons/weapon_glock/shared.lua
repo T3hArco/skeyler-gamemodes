@@ -116,7 +116,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:FireMOAR()
-	if(self.shootnext && self.NextShoot < CurTime() && self.shotsleft > 0) then
+	if(self.shootnext && self:GetDTInt(0) == 1 && self.NextShoot < CurTime() && self.shotsleft > 0) then
 		self:GlockShoot(false)
 	end
 end
