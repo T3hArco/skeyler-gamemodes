@@ -7,7 +7,7 @@ SS.MapVoteNumber = 5 -- How many maps can be in the vote
 SS.MaxExtends = 3 
 SS.MapTime = 15 -- In minutes 
 SS.MaxNomiations = 2 
-SS.RTVPercent = 0.75 
+SS.RTVPercent = 0.66
 SS.VotemapTime = 30 -- how long in seconds the vote will last 
 SS.WaitRTV = 3 --time in minutes till rtv wait
 
