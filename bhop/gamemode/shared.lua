@@ -204,8 +204,7 @@ end
 local cache = false --caching
 local cacheresult = false
 
-/* Spawn Velocity Cap */
-function GM:SetupMove(ply, Data) 
+hook.Add("StartCommand","AutoIt",function(ply,cmd)
 	if(!cache) then
 		cache = true
 		if(table.HasValue(SS.AutoMaps,game.GetMap())) then
@@ -215,14 +214,16 @@ function GM:SetupMove(ply, Data)
 		end
 	end
 	if(cacheresult) then
-		local buttonsetter = Data:GetButtons()
-		if(bit.band(buttonsetter,IN_JUMP)>0) then
-			if ply:WaterLevel() < 2 && ply:GetMoveType() != MOVETYPE_LADDER && !ply:IsOnGround() then
-				buttonsetter = bit.band(buttonsetter, bit.bnot(IN_JUMP))
-			end
-			Data:SetButtons(buttonsetter)
+		local buttonsetter = cmd:GetButtons()
+		if ply:WaterLevel() < 2 && ply:GetMoveType() != MOVETYPE_LADDER && !(ply:IsFlagSet(FL_ONGROUND)) then
+			buttonsetter = bit.band(buttonsetter, bit.bnot(IN_JUMP))
 		end
+		cmd:SetButtons(buttonsetter)
 	end
+end)
+
+/* Spawn Velocity Cap */
+function GM:SetupMove(ply, Data) 
 	if !ply.InSpawn then return end 
 	local vel = Data:GetVelocity() 
 	vel.x = math.min(vel.x, 270) 

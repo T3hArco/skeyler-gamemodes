@@ -11,6 +11,7 @@ local function G2M(p,n,s,t)
 end
 
 function pm:ReportMe(r)
+	if(self:IsBot()) then return end
 	print("reporting: "..self:Nick().." now for "..r)
 	local p = {}
 	for k,v in pairs(player.GetAll()) do
@@ -34,8 +35,15 @@ local dirty = {}
 local dirty2 = {}
 --local dirty3 = {}
 local det = {}
+local cache = false
 
 hook.Add("StartCommand","CheckScripters",function(ply,cmd)
+	if(!cache) then
+		cache = true
+		if(table.HasValue(SS.AutoMaps,game.GetMap())) then
+			hook.Remove("StartCommand","CheckScripters")
+		end
+	end
 	local b = cmd:GetButtons()
 	if(canrecord[ply] && !thisscrolltime[ply] && bit.band(b,IN_JUMP)>0) then
 		thisscrolltime[ply] = CurTime() --first scroll

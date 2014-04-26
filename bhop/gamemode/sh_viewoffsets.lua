@@ -59,6 +59,21 @@ local function FixView(ply)
 	end
 end
 
+local groundframes = {}
+
 hook.Add("Move","FixView",function(ply, data)
 	FixView(ply)
+	if(!IsFirstTimePredicted()) then return end
+	if(!groundframes[ply]) then groundframes[ply] = 0 end
+	if(ply:OnGround()) then
+		groundframes[ply] = groundframes[ply] + 1
+		if(groundframes[ply] > 5) then
+			ply:SetDuckSpeed(0.4)
+			ply:SetUnDuckSpeed(0.2)
+		end
+	else
+		groundframes[ply] = 0
+		ply:SetDuckSpeed(0)
+		ply:SetUnDuckSpeed(0)
+	end
 end)
