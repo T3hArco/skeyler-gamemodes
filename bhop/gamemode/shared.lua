@@ -33,7 +33,8 @@ SS.AutoMaps = {
 	"bhop_brax",
 	"bhop_fps_max",
 	"bhop_superdooperhard",
-	"bhop_inmomentum_gfl_final"
+	"bhop_inmomentum_gfl_final",
+	"bhop_indest_beta"
 }
 
 SS.NoHeightReset = {
@@ -41,7 +42,8 @@ SS.NoHeightReset = {
 	"bhop_exquisite",
 	"bhop_brax",
 	"bhop_fps_max",
-	"bhop_chivas_ez"
+	"bhop_chivas_ez",
+	"bhop_indest_beta"
 }
 
 SS.Heightdoors = {
