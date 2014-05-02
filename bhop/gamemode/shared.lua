@@ -43,7 +43,8 @@ SS.NoHeightReset = {
 	"bhop_brax",
 	"bhop_fps_max",
 	"bhop_chivas_ez",
-	"bhop_indest_beta"
+	"bhop_indest_beta",
+	"bhop_illusionary_fix"
 }
 
 SS.Heightdoors = {
