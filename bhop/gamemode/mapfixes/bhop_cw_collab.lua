@@ -35,3 +35,6 @@ sound.Add( {
 	pitch = 100,
 	sound = "aids/col4.mp3"
 } )
+
+--hope
+sound.AddSoundOverrides("scripts/soundscapes_bhop_cw_collab.txt")
