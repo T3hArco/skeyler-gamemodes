@@ -1,0 +1,1 @@
+resource.AddFile("scripts/soundscapes_bhop_cw_collab.txt") --it isnt pak'd right
