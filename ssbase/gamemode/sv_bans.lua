@@ -21,7 +21,7 @@ function PLAYER_META:Ban(ply, target, time, Reason)
 			return
 		end
 
-		playerid = self.profile.id
+		local playerid = self.profile.id
 		ip = string.Replace(self:IPAddress() != "loopback" and self:IPAddress() or "127.0.0.1", ".", "")
 		Query = "INSERT INTO punishments (playerid, punishmentid, steamid64, steamid, name, lastregisteredip, expiretime, reason, admin) VALUES ('"..playerid.."', 1, '"..self:SteamID64().."', '"..string.sub(self:SteamID(), 7).."', '"..DB:escape(self:Name()).."', '"..ip.."', '"..expiretime.."', '"..DB:escape(Reason).."', '"..DB:escape(ply:Name()).."')"
 	end
