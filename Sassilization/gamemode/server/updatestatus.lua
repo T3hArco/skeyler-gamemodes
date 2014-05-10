@@ -1,4 +1,4 @@
-﻿LOBBY_IP = "208.115.236.184"
+﻿LOBBY_IP = "63.143.48.134"
 LOBBY_PORT = 40000
 
 ---------------------------------------------------------
@@ -146,7 +146,7 @@ end)
 ---------------------------------------------------------
 
 hook.Add("InitPostEntity", "SA.SetupSocket", function()
-	local ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
+	local ip = game.IsDedicated() and "63.143.48.134" or "192.168.1.152"
 	local port = socket.GetServerPort()
 	
 	local dataPort
