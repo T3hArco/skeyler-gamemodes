@@ -73,9 +73,9 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 			ply:ChatPrint("You can't ban a BOT!")
 			return
 		else
-			Target:Ban(ply, Target, Time * 3600, Reason) /* Seconds */
-			-- Target:Ban(Time * 60, Reason)
-			-- Target:Kick(Reason)
+			-- Target:Ban(ply, Target, Time * 3600, Reason) 		-- Seconds 
+			Target:Ban(Time * 60, Reason)
+			Target:Kick(Reason)
 			PLAYER_META:ChatPrintAll(msg)
 		end
 	end
