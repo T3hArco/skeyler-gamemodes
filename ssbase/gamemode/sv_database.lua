@@ -72,4 +72,5 @@ function DB_Query(query, SuccessFunc, FailFunc)
 end 
 
 if DB_DEVS then return end 
-DB:connect() 
+DB:connect()
+-- SS.Bans:LoadBans()

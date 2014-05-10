@@ -40,6 +40,7 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 
 	local PlayerName = args[1]
 	local Time = tonumber(args[2])
+	local msg
 
 	table.remove(args, 2)
 
@@ -56,14 +57,26 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 		return
 	end
 
-	if Target:IsValid() then
+	if Time > 0 then
+		msg = "("..string.upper(ply:GetRankName())..") "..ply:Nick().." banned "..Target:Nick().." for "..Time.." hours. Reason: '"..Reason.."'."
+	elseif Time == 0 then
+		msg = "("..string.upper(ply:GetRankName())..") "..ply:Nick().." banned "..Target:Nick().." forever. Reason: '"..Reason.."'."
+	else
+		ply:ChatPrint("Seriously?")
+	end
+
+	if IsValid(Target) then
 		if Target:GetRank() > ply:GetRank() and !ply:IsSuperAdmin() then
 			ply:ChatPrint("This rank is inmune to yours.\n")
 			return
+		elseif Target:IsBot() and !ply:IsSuperAdmin() then
+			ply:ChatPrint("You can't ban a BOT!")
+			return
 		else
-			Target:Ban(Time * 60, Reason)
-			Target:Kick(Reason)
-			PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." banned "..Target:Nick().." for "..Time.." hours. Reason: '"..Reason.."'.")
+			Target:Ban(ply, Target, Time * 3600, Reason) /* Seconds */
+			-- Target:Ban(Time * 60, Reason)
+			-- Target:Kick(Reason)
+			PLAYER_META:ChatPrintAll(msg)
 		end
 	end
 end)
@@ -375,6 +388,21 @@ concommand.Add("ss_timeleft", function(ply)
 	ply:ChatPrint("Timeleft until votemap: "..votemap.GetTimeleft(true)) 
 end ) 
 
+--[[concommand.Add("ss_unban", function(ply, cmd, args)
+	if !ply:IsSuperAdmin() then
+		ply:ChatPrint("You do not have access to this command.")
+		return
+	end
+
+	if !args[1] then
+		ply:ChatPrint("Syntax is ss_unban SteamID. Example: ss_unban STEAM_0:0:14340930")
+		return
+	end
+
+	local SteamID = string.Implode("", args)
+	SS.Bans:Unban(SteamID, ply)
+end)]]
+
 --[[-------------------------------------------------
 		ChatCommands
 ---------------------------------------------------]]
@@ -392,7 +420,8 @@ SS.ChatCommands = {
 	["rs"] = "ss_rs",
 	["rtv"] = "ss_rtv",
 	["slay"] = "ss_slay", 
-	["timeleft"] = "ss_timeleft"
+	["timeleft"] = "ss_timeleft",
+	-- ["unban"] = "ss_unban"
 }
 
 function SS.AddCommand(text,cmd) --for gamemodes to use to ensure they dont overwrite/get overwritten by the above table
