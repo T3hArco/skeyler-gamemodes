@@ -8,11 +8,11 @@ DB_DEVS = false
 if (game.IsDedicated()) then
 	DB_HOST = "127.0.0.1"
 	DB_USER = "root"
-	DB_PASS = "MzZ4YB10v-1"
+	DB_PASS = "4a5ruxeMatRAhERe"
 else
 	DB_HOST = "127.0.0.1"
 	DB_USER = "root"
-	DB_PASS = "MzZ4YB10v-1"
+	DB_PASS = ""
 end
 
 resource.AddWorkshop("239292201")
