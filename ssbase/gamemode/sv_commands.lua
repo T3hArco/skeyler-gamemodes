@@ -32,7 +32,7 @@ end )
 		Administration
 ----------------------------------------------]]
 
-concommand.Add("ss_ban", function(ply, cmd, args)
+--[[concommand.Add("ss_ban", function(ply, cmd, args)
 	if !ply:IsAdmin() then 
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
@@ -67,19 +67,22 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 
 	if IsValid(Target) then
 		if Target:GetRank() > ply:GetRank() and !ply:IsSuperAdmin() then
-			ply:ChatPrint("This rank is inmune to yours.\n")
+			ply:ChatPrint("You can not target this rank.\n")
 			return
 		elseif Target:IsBot() and !ply:IsSuperAdmin() then
 			ply:ChatPrint("You can't ban a BOT!")
 			return
+		elseif Target:IsBanned() then
+			MsgN("[BANS] Attempted to ban a banned player.")
+			ply:ChatPrint("This player shouldn't be here. Contact a developer!")
+			return
 		else
-			-- Target:Ban(ply, Target, Time * 3600, Reason) 		-- Seconds 
-			Target:Ban(Time * 60, Reason)
+			Target:Punish(ply, Target, Time * 3600, Reason, 1) 		-- Seconds 
 			Target:Kick(Reason)
 			PLAYER_META:ChatPrintAll(msg)
 		end
 	end
-end)
+end)]]
 
 concommand.Add("ss_bring", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
@@ -248,40 +251,42 @@ concommand.Add("ss_map", function(ply, cmd, args)
 	-- end
 end)
 
-concommand.Add("ss_mute", function(ply, cmd, args)
+--[[concommand.Add("ss_mute", function(ply, cmd, args)
 	if !ply:IsAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
 	end
 
 	local PlayerName = args[1]
+	local Time = tonumber(args[2])
 
-	if (!PlayerName) then
-		ply:ChatPrint("Syntax is ss_mute PlayerName.\n")
+	if (!PlayerName || !Time) then
+		ply:ChatPrint("Syntax is ss_mute PlayerName Time(Hours) Reason(Optional).\n")
 		return
 	end
 
+	table.remove(args, 2)
+	local Reason = StpRsnStrng(args) or "No reason was specified"
 	local Target = FindByPartial(PlayerName)
 	if (type(Target) == "string") then 
 		ply:ChatPrint(Target)
 		return
 	end
 
-	if Target:IsValid() then
+	if IsValid(Target) then
 		if (Target:GetRank() > ply:GetRank() and !ply:IsSuperAdmin()) then
 			ply:ChatPrint("You can not target this rank.\n")
 			return
 		else
-			if (!Target:IsSSMuted()) then
-				Target:SetSSMuted(true)
-				PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." muted "..Target:Nick()..".")
-			else
-				Target:SetSSMuted(false)
-				PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." unmuted "..Target:Nick()..".")
+			if Target:IsMuted() then
+				ply:ChatPrint("This player is already muted.")
+				return
 			end
+			Target:Punish(ply, Target, Time * 3600, Reason, 2)
+			PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." muted "..Target:Nick()..". Reason: '"..Reason.."'.")
 		end
 	end
-end)
+end)]]
 
 concommand.Add("ss_password", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
@@ -400,7 +405,22 @@ end )
 	end
 
 	local SteamID = string.Implode("", args)
-	SS.Bans:Unban(SteamID, ply)
+	SS.Punishments:Unban(SteamID, ply)
+end)
+
+concommand.Add("ss_unmute", function(ply, cmd, args)
+	if !ply:IsSuperAdmin() then
+		ply:ChatPrint("You do not have access to this command.")
+		return
+	end
+
+	if !args[1] then
+		ply:ChatPrint("Syntax is ss_unmute SteamID. Example: ss_unmute STEAM_0:0:14340930")
+		return
+	end
+
+	local SteamID = string.Implode("", args)
+	SS.Punishments:Unmute(SteamID, ply)
 end)]]
 
 --[[-------------------------------------------------
@@ -421,7 +441,8 @@ SS.ChatCommands = {
 	["rtv"] = "ss_rtv",
 	["slay"] = "ss_slay", 
 	["timeleft"] = "ss_timeleft",
-	-- ["unban"] = "ss_unban"
+	-- ["unban"] = "ss_unban",
+	-- ["unmute"] = "ss_unmute"
 }
 
 function SS.AddCommand(text,cmd) --for gamemodes to use to ensure they dont overwrite/get overwritten by the above table

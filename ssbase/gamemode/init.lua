@@ -8,11 +8,11 @@ DB_DEVS = false
 if (game.IsDedicated()) then
 	DB_HOST = "127.0.0.1"
 	DB_USER = "root"
-	DB_PASS = "4a5ruxeMatRAhERe"
+	DB_PASS = "MzZ4YB10v-1"
 else
 	DB_HOST = "127.0.0.1"
 	DB_USER = "root"
-	DB_PASS = ""
+	DB_PASS = "MzZ4YB10v-1"
 end
 
 resource.AddWorkshop("239292201")
@@ -52,8 +52,8 @@ function ChatPrintAll(msg)
 end
 
 include("shared.lua")
--- include("sv_bans.lua")
 include("sv_commands.lua")
+-- include("sv_punishments.lua")
 include("sv_database.lua")
 include("sh_fakename.lua")
 include("sh_library.lua")  
@@ -249,9 +249,11 @@ function GM:PlayerSay( ply, text, public )
 		return ""
 	end
 
-	if ply:IsSSMuted() then
+	--[[if ply:IsMuted() then
+		local SteamID = ply:SteamID()
+		ply:ChatPrint(SS.Punishments:TimeRemaining(SteamID))
 		return ""
-	end
+	end]]
 
 	return self.BaseClass:PlayerSay(ply,text,public)
 end 

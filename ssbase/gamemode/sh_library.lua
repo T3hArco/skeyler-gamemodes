@@ -311,15 +311,6 @@ function PLAYER_META:Nick()
 	return self:IsFakenamed() and self:GetFakename() or self:Name()
 end
 
-SS.Muted = {}
-function PLAYER_META:IsSSMuted()
-	return SS.Muted[self:SteamID()]
-end
-
-function PLAYER_META:SetSSMuted(b)
-	SS.Muted[self:SteamID()] = b
-end
-
 function SS.PrintToAdmins(msg)
 	for _, ply in pairs(player.GetAll()) do
 		if ply:GetRank() >= 50 then
