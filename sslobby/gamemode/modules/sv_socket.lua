@@ -18,13 +18,13 @@ local ErrorNoHalt = ErrorNoHalt
 local GetConVarNumber = GetConVarNumber
 local GetConVarString = GetConVarString
 
--- local luasocket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
+local luasocket = require(system.IsLinux() and "luasocket" or system.IsWindows() and "socket.core")
 
 if(!luasocket) then
-	-- luasocket = luasocket_stuff.luaopen_socket_core()
+	luasocket = luasocket_stuff.luaopen_socket_core()
 end
 
--- module("socket")
+module("socket")
 
 local socketData = {
 	host = {}, -- This server.
@@ -57,7 +57,7 @@ local function HandleSocketData(sock, data, ip, port)
 	-- Remove the command.
 	table.remove(data, 1)
 	
-	--[[if (command and socketData.commands[command]) then
+	if (command and socketData.commands[command]) then
 		if (socketData.servers[ip] != nil and socketData.servers[ip][port] != nil) then
 			socketData.commands[command](sock, ip, port, data)
 			
@@ -65,7 +65,7 @@ local function HandleSocketData(sock, data, ip, port)
 		else
 			Log("UNKNOWN CLIENT TRIED TO RUN COMMAND: " .. command .. " IP: '" .. tostring(ip) .. " :" .. port .. "'")
 		end
-	end]]
+	end
 end
 
 ---------------------------------------------------------
@@ -73,13 +73,13 @@ end
 ---------------------------------------------------------
 
 hook.Add("Tick", "socket.Tick", function()
-	--[[if (socketData.host.read) then
+	if (socketData.host.read) then
 		local data, ip, port = socketData.host.sock:receivefrom()
 	
 		if (data) then
 			HandleSocketData(socketData.host.sock, data, ip, port)
 		end
-	end]]
+	end
 end)
 
 ---------------------------------------------------------
@@ -87,7 +87,7 @@ end)
 ---------------------------------------------------------
 
 function SetListenPackets()
-	-- socketData.host.read = true
+	socketData.host.read = true
 end
 
 ---------------------------------------------------------
@@ -95,7 +95,7 @@ end
 ---------------------------------------------------------
 
 function GetHostIP()
-	-- return socketData.host.ip
+	return socketData.host.ip
 end
 
 ---------------------------------------------------------
@@ -103,7 +103,7 @@ end
 ---------------------------------------------------------
 
 function GetServers()
-	-- return socketData.servers
+	return socketData.servers
 end
 
 ---------------------------------------------------------
@@ -111,16 +111,16 @@ end
 ---------------------------------------------------------
 
 function SetupHost(ip, port)
-	-- local sock = luasocket.udp()
-	-- local success, errorMessage = sock:setsockname(ip, port)
+	local sock = luasocket.udp()
+	local success, errorMessage = sock:setsockname(ip, port)
 	
 	if (success == 1) then
-		-- sock:settimeout(0)
+		sock:settimeout(0)
 		
-		-- socketData.host.ip = ip
-		-- socketData.host.port = port
-		-- socketData.host.sock = sock
-		-- socketData.host.read = true
+		socketData.host.ip = ip
+		socketData.host.port = port
+		socketData.host.sock = sock
+		socketData.host.read = true
 		
 		Log("BOUND SOCKET")
 	else
@@ -133,7 +133,7 @@ end
 ---------------------------------------------------------
 
 function AddCommand(command, callback)
-	-- socketData.commands[command] = callback
+	socketData.commands[command] = callback
 end
 
 ---------------------------------------------------------
@@ -145,7 +145,7 @@ function Send(ip, port, command, callback)
 	
 	if (callback) then command = callback(command) end
 
-	-- socketData.host.sock:sendto(command, ip, port)
+	socketData.host.sock:sendto(command, ip, port)
 end
 
 ---------------------------------------------------------
@@ -195,12 +195,12 @@ end
 ---------------------------------------------------------
 
 function AddServer(ip, port)
-	-- socketData.servers[ip] = socketData.servers[ip] or {}
-	-- socketData.servers[ip][port] = {port = port, connected = CurTime() -65}
+	socketData.servers[ip] = socketData.servers[ip] or {}
+	socketData.servers[ip][port] = {port = port, connected = CurTime() -65}
 	
-	-- Send(ip, port, "ping")
+	Send(ip, port, "ping")
 
-	--[[timer.Create("socket.PingPong." .. ip .. ":" .. port, 60, 0, function()
+	timer.Create("socket.PingPong." .. ip .. ":" .. port, 60, 0, function()
 		Send(ip, port, "ping")
 
 		timer.Simple(5, function()
@@ -209,10 +209,10 @@ function AddServer(ip, port)
 			if (!connected) then
 				Log("Lost connection with '" .. ip .. ":" .. port .. "'! Trying again in 60 seconds.")
 				
-				-- hook.Run("SocketLostConnection", ip, port)
+				hook.Run("SocketLostConnection", ip, port)
 			end
 		end)
-	end)]]
+	end)
 end
 
 ---------------------------------------------------------
@@ -220,10 +220,10 @@ end
 ---------------------------------------------------------
 
 AddCommand("ping", function(sock, ip, port, data, errorCode)
-	-- local server = socketData.servers[ip][port]
+	local server = socketData.servers[ip][port]
 
 	if (server) then
-		-- Send(ip, server.port, "pong")
+		Send(ip, server.port, "pong")
 	else
 		Log("GOT UNKNOWN PING FROM '" .. ip .. ":" .. port .. "'")
 	end
@@ -234,9 +234,9 @@ end)
 ---------------------------------------------------------
 
 AddCommand("pong", function(sock, ip, port, data, errorCode)
-	-- local server = socketData.servers[ip][port]
+	local server = socketData.servers[ip][port]
 
-	--[[if (server) then
+	if (server) then
 		local connected = math.Round(server.connected) >= math.Round(CurTime() -62)
 	
 		if (!connected) then
@@ -248,5 +248,5 @@ AddCommand("pong", function(sock, ip, port, data, errorCode)
 		server.connected = CurTime()
 	else
 		Log("GOT UNKNOWN PONG FROM '" .. ip .. ":" .. port .. "'")
-	end]]
+	end
 end)

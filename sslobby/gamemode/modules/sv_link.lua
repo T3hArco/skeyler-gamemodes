@@ -17,7 +17,7 @@ function SS.Lobby.Link.SetupServers()
 		local ip = data.ip
 		local port = data.dataPort
 		
-		-- socket.AddServer(ip, port)
+		socket.AddServer(ip, port)
 	end
 end
 
@@ -269,11 +269,11 @@ hook.Add("Tick", "SS.Lobby.Link", function()
 								end
 							end
 							
-							--[[socket.Send(data.ip, data.dataPort, "spl", function(data)
+							socket.Send(data.ip, data.dataPort, "spl", function(data)
 								authed = util.Compress(von.serialize(authed))
 								
 								return data .. authed
-							end)]]
+							end)
 							
 							timer.Simple(4.5, function()
 								if (data.sending) then
@@ -364,7 +364,7 @@ end)
 
 util.AddNetworkString("ss.lbgtssin")
 
---[[socket.AddCommand("sif", function(sock, ip, port, data)
+socket.AddCommand("sif", function(sock, ip, port, data)
 	data = von.deserialize(util.Decompress(data[1]))
 
 	local count = table.Count(data) -1
@@ -383,7 +383,7 @@ util.AddNetworkString("ss.lbgtssin")
 			end
 		end
 	net.Broadcast()
-end)]]
+end)
 
 ---------------------------------------------------------
 --
@@ -391,7 +391,7 @@ end)]]
 
 util.AddNetworkString("ss.gtminmp")
 
---[[socket.AddCommand("smp", function(sock, ip, port, data)
+socket.AddCommand("smp", function(sock, ip, port, data)
 	local server = tonumber(data[1])
 	local data = util.Decompress(data[2])
 	local exploded = string.Explode("id=", data)
@@ -471,7 +471,7 @@ util.AddNetworkString("ss.gtminmp")
 			end
 		end
 	net.Broadcast()
-end)]]
+end)
 
 ---------------------------------------------------------
 --
@@ -479,7 +479,7 @@ end)]]
 
 util.AddNetworkString("ss.lbgtsmap")
 
---[[socket.AddCommand("smap", function(sock, ip, port, data)
+socket.AddCommand("smap", function(sock, ip, port, data)
 	local id = tonumber(data[1])
 	local map = data[2]
 	local data = storedTriggers[id]
@@ -503,7 +503,7 @@ util.AddNetworkString("ss.lbgtsmap")
 	for i = 1, 5 do
 		sound.Play("vo/novaprospekt/kl_ready.wav", position, 100, pitch, 1)
 	end
-end)]]
+end)
 
 ---------------------------------------------------------
 --
@@ -523,7 +523,7 @@ function GM:SocketConnected(ip, port, data)
 			local status = screen:GetStatus()
 			
 			if (status == STATUS_LINK_UNAVAILABLE) then
-				-- socket.Send(ip, port, "lm")
+				socket.Send(ip, port, "lm")
 			end
 		end
 	end
