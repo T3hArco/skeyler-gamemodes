@@ -51,7 +51,7 @@ function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
 		end
 		return true
 	else
-		return false, "Please connect to the Lobby (208.115.236.184:27017) in order to play Sassilization."
+		return false, "Please connect to the Lobby (63.143.48.134:27017) in order to play Sassilization."
 	end
 end
 

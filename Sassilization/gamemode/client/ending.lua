@@ -94,5 +94,5 @@ end
 net.Receive("SetWinners", SetWinners)
 
 net.Receive("sa.connectlobby", function(bits)
-	LocalPlayer():ConCommand("connect 208.115.236.184:27017")
+	LocalPlayer():ConCommand("connect 63.143.48.134:27017")
 end)
