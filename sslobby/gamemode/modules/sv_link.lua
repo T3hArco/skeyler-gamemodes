@@ -32,7 +32,7 @@ function SS.Lobby.Link:AddServerTrigger(id)
 		queue = {},
 		sending = false,
 		map = nil,
-		ip = game.IsDedicated() and "208.115.236.184" or "192.168.1.152"
+		ip = game.IsDedicated() and "63.143.48.134" or "192.168.1.152"
 	}
 
 	if (id == 1) then
