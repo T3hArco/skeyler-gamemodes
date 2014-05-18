@@ -93,7 +93,12 @@ function PLAYER_META:ChatPrintAll(msg)
 	ChatPrintAll(msg)
  end 
  
-function GM:PlayerInitialSpawn(ply) 
+function GM:PlayerInitialSpawn(ply)
+	if ply:IsBanned() then
+		ply:Kick("You have been banned from this server for '"..Reason.."'. Check www.skeyler.com for more info")
+		return
+	end
+
 	ply:ProfileLoad() 
 	ply:CheckFake()
 
