@@ -81,7 +81,7 @@ function SS.Punishments:Load()
 					self.MySQLBans[data[k].steamid] = {
 						tableid = data[k].id,
 						name = data[k].name,
-						time = data[k].expiretime,
+						time = tonumber(data[k].expiretime),
 						reason = data[k].reason,
 						admin = data[k].admin
 					}
@@ -89,7 +89,7 @@ function SS.Punishments:Load()
 						self.MySQLMutes[data[k].steamid] = {
 						tableid = data[k].id,
 						name = data[k].name,
-						time = data[k].expiretime,
+						time = tonumber(data[k].expiretime),
 						reason = data[k].reason,
 						admin = data[k].admin
 					}
