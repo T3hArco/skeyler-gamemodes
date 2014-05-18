@@ -53,7 +53,7 @@ end
 
 include("shared.lua")
 include("sv_commands.lua")
--- include("sv_punishments.lua")
+include("sv_punishments.lua")
 include("sv_database.lua")
 include("sh_fakename.lua")
 include("sh_library.lua")  
@@ -249,11 +249,11 @@ function GM:PlayerSay( ply, text, public )
 		return ""
 	end
 
-	--[[if ply:IsMuted() then
-		local SteamID = ply:SteamID()
-		ply:ChatPrint(SS.Punishments:TimeRemaining(SteamID))
+	if ply:IsMuted() then
+		-- local SteamID = ply:SteamID()
+		-- ply:ChatPrint(SS.Punishments:TimeRemaining(SteamID))
 		return ""
-	end]]
+	end
 
 	return self.BaseClass:PlayerSay(ply,text,public)
 end 

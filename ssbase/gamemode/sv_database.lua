@@ -73,4 +73,4 @@ end
 
 if DB_DEVS then return end 
 DB:connect()
--- SS.Punishments:LoadPunishments()
+SS.Punishments:Load()

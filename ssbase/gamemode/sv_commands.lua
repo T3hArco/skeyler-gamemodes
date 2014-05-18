@@ -32,7 +32,7 @@ end )
 		Administration
 ----------------------------------------------]]
 
---[[concommand.Add("ss_ban", function(ply, cmd, args)
+concommand.Add("ss_ban", function(ply, cmd, args)
 	if !ply:IsAdmin() then 
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
@@ -82,7 +82,7 @@ end )
 			PLAYER_META:ChatPrintAll(msg)
 		end
 	end
-end)]]
+end)
 
 concommand.Add("ss_bring", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
@@ -251,7 +251,7 @@ concommand.Add("ss_map", function(ply, cmd, args)
 	-- end
 end)
 
---[[concommand.Add("ss_mute", function(ply, cmd, args)
+concommand.Add("ss_mute", function(ply, cmd, args)
 	if !ply:IsAdmin() then
 		ply:ChatPrint("You do not have access to this command.\n")
 		return
@@ -286,7 +286,7 @@ end)
 			PLAYER_META:ChatPrintAll("("..string.upper(ply:GetRankName())..") "..ply:Nick().." muted "..Target:Nick()..". Reason: '"..Reason.."'.")
 		end
 	end
-end)]]
+end)
 
 concommand.Add("ss_password", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
@@ -393,7 +393,7 @@ concommand.Add("ss_timeleft", function(ply)
 	ply:ChatPrint("Timeleft until votemap: "..votemap.GetTimeleft(true)) 
 end ) 
 
---[[concommand.Add("ss_unban", function(ply, cmd, args)
+concommand.Add("ss_unban", function(ply, cmd, args)
 	if !ply:IsSuperAdmin() then
 		ply:ChatPrint("You do not have access to this command.")
 		return
@@ -421,7 +421,7 @@ concommand.Add("ss_unmute", function(ply, cmd, args)
 
 	local SteamID = string.Implode("", args)
 	SS.Punishments:Unmute(SteamID, ply)
-end)]]
+end)
 
 --[[-------------------------------------------------
 		ChatCommands
@@ -441,8 +441,8 @@ SS.ChatCommands = {
 	["rtv"] = "ss_rtv",
 	["slay"] = "ss_slay", 
 	["timeleft"] = "ss_timeleft",
-	-- ["unban"] = "ss_unban",
-	-- ["unmute"] = "ss_unmute"
+	["unban"] = "ss_unban",
+	["unmute"] = "ss_unmute"
 }
 
 function SS.AddCommand(text,cmd) --for gamemodes to use to ensure they dont overwrite/get overwritten by the above table

@@ -23,7 +23,7 @@ function PLAYER_META:Punish(ply, target, time, Reason, id)
 	end
 
 	DB_Query(Query)
-	SS.Punishments:LoadPunishments()
+	SS.Punishments:Load()
 end
 
 function PLAYER_META:IsBanned(steamid)
@@ -70,7 +70,7 @@ function PLAYER_META:IsMuted(steamid)
 	return false
 end
 
-function SS.Punishments:LoadPunishments()
+function SS.Punishments:Load()
 	local Query = "SELECT * FROM punishments"
 	DB_Query(Query, function(data)
 		if data then
@@ -127,13 +127,13 @@ function SS.Punishments:RemoveFromMySQL(SteamID, ConsoleCheck, PunishmentID, pl)
 		end
 	)
 
-	self:LoadPunishments()
+	self:Load()
 end
 
 function SS.Punishments:TimeRemaining(SteamID)
 
 	local t = self.MySQLMutes[string.sub(SteamID, 7)]
-	local time = string.FormattedTime(t.time - os.time(), "%02i:%02i:%02i")
+	local time = string.FormattedTime(t.time - os.time(), "%02i:%02i:%02i")			-- Placeholder
 	local reason = t.reason
 	local admin = t.admin
 
