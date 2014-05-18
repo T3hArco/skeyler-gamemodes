@@ -78,7 +78,7 @@ concommand.Add("ss_ban", function(ply, cmd, args)
 			return
 		else
 			Target:Punish(ply, Target, Time * 3600, Reason, 1) 		-- Seconds 
-			Target:Kick(Reason)
+			Target:Kick("You have been banned from this server for '"..Reason.."'. Check www.skeyler.com for more info")
 			PLAYER_META:ChatPrintAll(msg)
 		end
 	end
