@@ -71,8 +71,14 @@ Vector& LUA_GetVector(lua_State* L, int stackPos)
 inline Border* NODE_GetBorder(Node *node)
 {
 	BorderData* data = static_cast<BorderData*>(node->customData);
-	if( data == NULL ) return NULL;
-	return data->border;
+	if( data == NULL )
+		return NULL;
+	if( data->border == NULL )
+		return NULL;
+	if( data->border->head == node || data->border->tail == node )
+		return data->border;
+	else
+		return NULL;
 }
 
 inline void NODE_SetBorder(Node *node, Border *b)

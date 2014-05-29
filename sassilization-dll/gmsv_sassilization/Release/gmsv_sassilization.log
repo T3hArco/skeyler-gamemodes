@@ -1,0 +1,42 @@
+﻿Build started 2014-05-29 04:15:06.
+     1>Project "F:\gmsv_sassilization\gmsv_sassilization\gmsv_sassilization\gmsv_sassilization.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "Release\gmsv_sassilization_win32.lastbuildstate".
+       InitializeBuildStatus:
+         Creating "Release\gmsv_sassilization_win32.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"F:\GMod SVN\navgiation spac" /I"F:/GitHub/source-sdk-2013/mp/src" /I"F:/GitHub/source-sdk-2013/mp/src/common" /I"F:/GitHub/source-sdk-2013/mp/src/common/xbox" /I"F:/GitHub/source-sdk-2013/mp/src/public" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier0" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier1" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier2" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier3" /I"F:/GitHub/source-sdk-2013/mp/src/game/client" /I"F:/GitHub/source-sdk-2013/mp/src/game/shared" /I"F:/GitHub/source-sdk-2013/mp/src/game/server" /I"F:/GitHub/source-sdk-2013/mp/src/utils/common" /I"F:/GitHub/source-sdk-2013/mp/src/public/vstdlib" /I"F:\GMod SVN\Blackawps Modules\backwards_headers" /IF:\boost_1_55_0_ /Zi /nologo /W3 /WX- /O2 /Oi /Os /Oy- /GL /D WIN32 /D LUA_SERVER /D GAME_DLL /D _WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D _CRT_SECURE_NO_WARNINGS /D GMMODULE /D USE_BOOST_THREADS /D _WINDLL /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\GMod SVN\Blackawps Modules\backwards_headers\ILuaInterface.cpp" "..\..\..\GMod SVN\Blackawps Modules\backwards_headers\ILuaModuleManager.cpp" "..\..\..\GMod SVN\Blackawps Modules\backwards_headers\ILuaObject.cpp" "..\..\..\GMod SVN\navgiation spac\gm_navigation\nav.cpp" "..\..\..\GMod SVN\navgiation spac\gm_navigation\node.cpp" main.cpp
+         ILuaInterface.cpp
+         ILuaModuleManager.cpp
+         ILuaObject.cpp
+         nav.cpp
+         node.cpp
+         main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"F:\GMod SVN\navgiation spac" /I"F:/GitHub/source-sdk-2013/mp/src" /I"F:/GitHub/source-sdk-2013/mp/src/common" /I"F:/GitHub/source-sdk-2013/mp/src/common/xbox" /I"F:/GitHub/source-sdk-2013/mp/src/public" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier0" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier1" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier2" /I"F:/GitHub/source-sdk-2013/mp/src/public/tier3" /I"F:/GitHub/source-sdk-2013/mp/src/game/client" /I"F:/GitHub/source-sdk-2013/mp/src/game/shared" /I"F:/GitHub/source-sdk-2013/mp/src/game/server" /I"F:/GitHub/source-sdk-2013/mp/src/utils/common" /I"F:/GitHub/source-sdk-2013/mp/src/public/vstdlib" /I"F:\GMod SVN\Blackawps Modules\backwards_headers" /IF:\boost_1_55_0_ /Zi /nologo /W3 /WX- /O2 /Oi /Os /Oy- /GL /D WIN32 /D LUA_SERVER /D GAME_DLL /D _WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D _CRT_SECURE_NO_WARNINGS /D GMMODULE /D USE_BOOST_THREADS /D _WINDLL /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt "..\..\..\GMod SVN\navgiation spac\gm_navigation\kdtree.c"
+         kdtree.c
+     1>..\..\..\GMod SVN\navgiation spac\gm_navigation\kdtree.c(653): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>..\..\..\GMod SVN\navgiation spac\gm_navigation\kdtree.c(674): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>..\..\..\GMod SVN\navgiation spac\gm_navigation\kdtree.c(675): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>..\..\..\GMod SVN\navgiation spac\gm_navigation\kdtree.c(676): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\gmsv_sassilization\gmsv_sassilization\Release\gmsv_sassilization_win32.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:"F:\boost_1_55_0_\lib32-msvc-10.0" /LIBPATH:"F:\GitHub\source-sdk-2013\mp\src\lib\public" mathlib.lib tier0.lib tier1.lib tier2.lib tier3.lib vstdlib.lib raytrace.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\gmsv_sassilization_win32.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"F:\gmsv_sassilization\gmsv_sassilization\Release\gmsv_sassilization_win32.pdb" /MAP /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /DLL Release\ILuaInterface.obj
+         Release\ILuaModuleManager.obj
+         Release\ILuaObject.obj
+         Release\kdtree.obj
+         Release\nav.obj
+         Release\node.obj
+         Release\main.obj
+            Creating library F:\gmsv_sassilization\gmsv_sassilization\Release\gmsv_sassilization_win32.lib and object F:\gmsv_sassilization\gmsv_sassilization\Release\gmsv_sassilization_win32.exp
+         Generating code
+         Finished generating code
+         gmsv_sassilization.vcxproj -> F:\gmsv_sassilization\gmsv_sassilization\Release\gmsv_sassilization_win32.dll
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"F:\gmsv_sassilization\gmsv_sassilization\Release\gmsv_sassilization_win32.dll;#2" /manifest Release\gmsv_sassilization_win32.dll.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\gmsv_sassilization_win32.unsuccessfulbuild".
+         Touching "Release\gmsv_sassilization_win32.lastbuildstate".
+     1>Done Building Project "F:\gmsv_sassilization\gmsv_sassilization\gmsv_sassilization\gmsv_sassilization.vcxproj" (rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.90

@@ -4,5 +4,5 @@
 *.sdf
 *.vcxproj*
 *.opensdf
-Release/*
 ipch
+Debug
