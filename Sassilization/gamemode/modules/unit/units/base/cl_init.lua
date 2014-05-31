@@ -233,9 +233,9 @@ end
 
 -- Draw a circle around the unit
 function UNIT:DrawSelectedCircle( pos )
-	--render.SetMaterial(UnitSelected)
-	render.SetMaterial(UnitCircle)
-	render.DrawQuadEasy(pos + VECTOR_UP * 0.1, self:GetGroundNormal(), self.SelectedSize, self.SelectedSize, color_white)
+	render.SetMaterial(UnitSelected)
+	--render.SetMaterial(UnitCircle)
+	render.DrawQuadEasy(pos + VECTOR_UP * 0.1, self:GetGroundNormal(), self.SelectedSize, self.SelectedSize, color_white, 0)
 end
 
 -- Draws a team-colored circle under the unit

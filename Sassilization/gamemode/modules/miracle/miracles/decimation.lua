@@ -14,7 +14,29 @@ if (SERVER) then
 		
 		local entities = ents.FindInSphere(hitPos, 20 +8 *level /3)
 
+		local entities2 = ents.FindInSphere(hitPos + Vector(0,0,50), 20 +8 *level /3)
+
 		for k, entity in pairs(entities) do
+			if (entity:IsUnit() and entity.Unit:GetEmpire() != empire and !Allied(empire, entity.Unit:GetEmpire())) then -- check ally
+				entity.Unit.Decimated = true
+				
+				timer.Simple(0.1, function()
+					if (IsValid(entity)) then
+						entity.Unit.OnFire = true
+						entity.Unit:Burn(3 +level)
+					end
+				end)
+				
+				timer.Simple(3 +level, function()
+					if (IsValid(entity)) then
+						entity.Unit.Decimated = false
+						entity.Unit.OnFire = false
+					end
+				end)
+			end
+		end
+
+		for k, entity in pairs(entities2) do
 			if (entity:IsUnit() and entity.Unit:GetEmpire() != empire and !Allied(empire, entity.Unit:GetEmpire())) then -- check ally
 				entity.Unit.Decimated = true
 				

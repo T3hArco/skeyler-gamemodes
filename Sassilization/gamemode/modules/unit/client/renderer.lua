@@ -155,7 +155,7 @@ function DrawUnitCircles( units )
 	
 	render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
 	render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
-	render.SetStencilReferenceValue( 0 )
+	render.SetStencilReferenceValue( 4 )
 	render.SetStencilTestMask( 4 )
 	
 	for i = 1, count do

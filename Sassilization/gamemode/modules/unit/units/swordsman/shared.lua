@@ -13,7 +13,7 @@ UNIT.Supply = 1
 UNIT.AttackDelay = 1.2
 UNIT.AttackMoveDelay = 1
 UNIT.Range = 6
-UNIT.SightRange = 32
+UNIT.SightRange = 50
 UNIT.Speed = 15 -- 25
 UNIT.Require = {city = 0}
 UNIT.Spawnable = true

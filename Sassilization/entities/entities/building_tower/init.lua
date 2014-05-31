@@ -60,18 +60,29 @@ function ENT:CanAttack()
 	
 end
 
+local targetTrace = {}
+targetTrace.mask = MASK_SOLID_BRUSHONLY
+local targetTraceRes
+
 function ENT:UpdateView()
 	
 	self.View = {}
 	
 	for _, ent in pairs( ents.FindInSphere( self:GetPos(), self.AttackRange ) ) do
 		if( ent.Attackable ) then
-			if( ent.Unit ) then
-				if( ent.Unit:GetEmpire() ~= self:GetEmpire() and !Allied(self:GetEmpire(), ent.Unit:GetEmpire())) then
-					table.insert( self.View, ent.Unit )
+			targetTrace.start = self.UpPos
+			targetTrace.endpos = ent:GetPos()
+			targetTraceRes = util.TraceLine(targetTrace)
+
+			--Only allow targetting this unit if it's actually visible through a direct line of sight
+			if targetTraceRes.Fraction == 1 then
+				if( ent.Unit ) then
+					if( ent.Unit:GetEmpire() ~= self:GetEmpire() and !Allied(self:GetEmpire(), ent.Unit:GetEmpire())) then
+						table.insert( self.View, ent.Unit )
+					end
+				elseif( ent.Building and ent:GetEmpire() ~= self:GetEmpire() and !Allied(self:GetEmpire(), ent:GetEmpire())) then
+					table.insert( self.View, ent )
 				end
-			elseif( ent.Building and ent:GetEmpire() ~= self:GetEmpire() and !Allied(self:GetEmpire(), ent:GetEmpire())) then
-				table.insert( self.View, ent )
 			end
 		end
 	end

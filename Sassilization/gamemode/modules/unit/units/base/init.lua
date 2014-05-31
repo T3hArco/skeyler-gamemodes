@@ -433,12 +433,40 @@ function UNIT:NearestAttackPoint( pos )
 	
 end
 
+local targetTrace = {}
+	targetTrace.mask = MASK_SOLID_BRUSHONLY
+
 function UNIT:CanTarget( target )
 	
 	if( not target ) then return false end
 	
 	if( target.Unit ) then
 		target = target.Unit
+	end
+
+	if self:GetClass() == "archer" or self:GetClass() == "ballista" then
+
+		targetTrace.start = self:GetPos()
+		targetTrace.endpos = target:GetPos()
+		targetTraceRes = util.TraceLine(targetTrace)
+
+		if targetTraceRes.Fraction < 1 then
+			if !(target:GetClass() == "building_wall" or target:GetClass() == "building_walltower") then
+				return false
+			end
+		end
+
+		--Only stop units from targetting this if there's a wall blocking it
+		--This is kind of a shitty way to handle checking to see if there's a wall blocking vision
+		local box = ents.FindInBox( self:GetPos() + VECTOR_UP * 0.1 - (self.NWEnt:GetRight() * 0.1), target:GetPos() + (self.NWEnt:GetRight() * 0.1) )
+		if target:GetClass() != "building_wall" && target:GetClass() != "building_walltower" then
+			for k,v in pairs(box) do
+				if v:GetClass() == "building_wall" or v:GetClass() == "building_walltower" then
+					return false
+				end
+			end
+		end
+		
 	end
 
 	
