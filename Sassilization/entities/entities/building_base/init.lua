@@ -126,7 +126,7 @@ function ENT:StartSpawn( duration )
 	
     local Effect = EffectData()
     Effect:SetEntity(self)
-	Effect:SetMagnitude(self.BuiltTime)
+	Effect:SetMagnitude(duration)
     Effect:SetOrigin(self:GetPos())
     util.Effect("rivera", Effect, true, true)
 	

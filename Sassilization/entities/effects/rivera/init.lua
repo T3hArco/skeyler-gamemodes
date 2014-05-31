@@ -13,7 +13,7 @@ function EFFECT:Init(data)
 	
 	local Pos = data:GetOrigin() + Vector( 0, 0, 8 )
 	local Norm = data:GetNormal()
-	local DieTime = data:GetMagnitude()
+	local DieTime = data:GetMagnitude() + CurTime()
 	
 	self.LifeTime = DieTime
 	self.Time = DieTime - ent.StartBuildTime

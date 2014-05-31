@@ -18,8 +18,12 @@ local RTTexture = GetRenderTarget("SassWristColor", 128, 128)
 local UpdateTeamColor = true
 local DrawnViewModel = false
 
+local nextFire = CurTime()
 function SWEP:PrimaryAttack()
-	self:SetNextPrimaryFire(CurTime() +0.2)
+
+	if CurTime() < nextFire then return end
+	
+	nextFire = CurTime() + 0.1
 	
 	if( GAMEMODE.REFUNDMODE and SA.Refundables ) then
 		if( table.Count(SA.Refundables) > 0 ) then
