@@ -17,6 +17,8 @@ surface.CreateFont("font_rules", {
 local newsTexture = surface.GetTextureID("skeyler/graphics/info_news")
 local rulesTexture = surface.GetTextureID("skeyler/graphics/info_rules")
 
+local info = {}
+
 --[[
 local function newsToStr( news )
 	local str = ""
@@ -109,28 +111,88 @@ function ENT:Draw()
 	if (dot <= 0) then
 		cam.Start3D2D(self.newsPosition, self.newsAngle, 0.05)
 			draw.Texture(0, 0, 1280, 1280, color_white, newsTexture)
-			
-			--[[if info.news then
-				surface.SetFont( "font_news" )
-				local w, h = surface.GetTextSize("")
-				for i, line in pairs( info.news ) do
-					DrawText( line, 175, 380 + i*h*1.05 )
-				end
-			end]]
+
+			draw.DrawText(info.news, "font_news", 195, 360, Color(0,0,0,255), TEXT_ALIGN_LEFT)
 			
 		cam.End3D2D()
 	else
 		cam.Start3D2D(self.rulesPosition, self.rulesAngle, 0.05)
 			draw.Texture(0, 0, 1280, 1280, color_white, rulesTexture)
 
-			--[[if info.rules then
-				surface.SetFont( "font_rules" )
-				local w, h = surface.GetTextSize("")
-				for i, line in pairs( info.rules ) do
-					DrawText( line, 175, 300 + i*h*1.05 )
-				end
-			end]]
+			draw.DrawText(info.rules, "font_rules", 195, 360, Color(0,0,0,255), TEXT_ALIGN_LEFT)
 			
 		cam.End3D2D()
 	end
 end
+
+local NewsMenu = {}
+
+function NewsMenu.Open(news, rules)
+	if NewsMenu.DermaFrame then
+		NewsMenu.Close()
+	end
+	NewsMenu.DermaFrame = vgui.Create( "DFrame" )
+	NewsMenu.DermaFrame:SetSize( ScrW()*0.4, ScrH()*0.5 )
+	NewsMenu.DermaFrame:Center()
+	NewsMenu.DermaFrame:SetVisible( true )
+	NewsMenu.DermaFrame:MakePopup()
+	NewsMenu.DermaFrame:SetDraggable( false )
+	NewsMenu.DermaFrame:ShowCloseButton( true )
+	NewsMenu.DermaFrame:SetTitle("THERE'S NO WORD WRAP, BE CAREFUL ABOUT HOW LONG EACH LINE IS")
+
+	local TextEntry = vgui.Create( "DTextEntry", NewsMenu.DermaFrame )	-- create the form as a child of frame
+		TextEntry:SetPos( NewsMenu.DermaFrame:GetWide()*0.025, NewsMenu.DermaFrame:GetTall()*0.1 )
+		TextEntry:SetSize( NewsMenu.DermaFrame:GetWide()*0.45, NewsMenu.DermaFrame:GetTall()*0.7 )
+		TextEntry:SetText( info.news )
+		TextEntry:SetMultiline(true)
+		TextEntry.OnEnter = function( self )
+			TextEntry:SetText( self:GetValue() )	-- print the form's text as server text
+		end
+
+	local TextEntry2 = vgui.Create( "DTextEntry", NewsMenu.DermaFrame )	-- create the form as a child of frame
+		TextEntry2:SetPos( NewsMenu.DermaFrame:GetWide()*0.525, NewsMenu.DermaFrame:GetTall()*0.1 )
+		TextEntry2:SetSize( NewsMenu.DermaFrame:GetWide()*0.45, NewsMenu.DermaFrame:GetTall()*0.7 )
+		TextEntry2:SetText( info.rules )
+		TextEntry2:SetMultiline(true)
+
+	local button = vgui.Create( "DButton", NewsMenu.DermaFrame )
+		button:SetSize( NewsMenu.DermaFrame:GetWide()*0.45, NewsMenu.DermaFrame:GetTall()*0.1 )
+		button:SetPos( NewsMenu.DermaFrame:GetWide()*0.025, NewsMenu.DermaFrame:GetTall()*0.85 )
+		button:SetText( "Save News" )
+		button:SetToolTip( "Saves the current text to the server." )
+		button.DoClick = function( button )
+			net.Start( "updateNews" )
+				net.WriteString("news")
+				net.WriteString(TextEntry:GetValue())
+			net.SendToServer()
+		end
+
+	local button = vgui.Create( "DButton", NewsMenu.DermaFrame )
+		button:SetSize( NewsMenu.DermaFrame:GetWide()*0.45, NewsMenu.DermaFrame:GetTall()*0.1 )
+		button:SetPos( NewsMenu.DermaFrame:GetWide()*0.525, NewsMenu.DermaFrame:GetTall()*0.85 )
+		button:SetText( "Save Rules" )
+		button:SetToolTip( "Saves the current text to the server." )
+		button.DoClick = function( button )
+			net.Start( "updateNews" )
+				net.WriteString("rules")
+				net.WriteString(TextEntry2:GetValue())
+			net.SendToServer()
+		end
+
+end
+
+function NewsMenu.Close()
+	NewsMenu.DermaFrame:Remove()
+end
+
+
+net.Receive("rulesNewsEdit", function(len)
+	NewsMenu.Open()
+end)
+
+net.Receive("setNewsRules", function(len)
+	local news = net.ReadString()
+	local rules = net.ReadString()
+	info.news = news
+	info.rules = rules
+end)

@@ -99,6 +99,11 @@ function GM:PlayerInitialSpawn(player)
 		end
 		
 		SS.Lobby.Minigame:UpdateScreen(player)
+
+		net.Start("setNewsRules")
+			net.WriteString(file.Read( "SSLobby/news.txt", "DATA" ))
+			net.WriteString(file.Read( "SSLobby/rules.txt", "DATA" ))
+		net.Send(player)
 	end)
 end
 
