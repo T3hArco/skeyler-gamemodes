@@ -96,6 +96,10 @@ function SS.Punishments:Load()
 				end
 			end
 		end
+
+		if !self.MySQLBans then self.MySQLBans = {} end
+		if !self.MySQLMutes then self.MySQLMutes = {} end
+		
 		MsgN("[PUNISHMENTS] Loaded succesfully!")
 	end)
 end

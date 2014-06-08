@@ -67,7 +67,7 @@ include("sv_timer.lua")
 include("sv_vote.lua") 
 include("sv_votemap.lua") 
 
-if (!game.IsDedicated()) then
+if (game.IsDedicated()) then
 	include("sv_gatekeeper.lua") 
 end
 
@@ -94,11 +94,6 @@ function PLAYER_META:ChatPrintAll(msg)
  end 
  
 function GM:PlayerInitialSpawn(ply)
-	if ply:IsBanned() then
-		ply:Kick("You have been banned from this server. Check www.skeyler.com for more info")
-		return
-	end
-
 	ply:ProfileLoad() 
 	ply:CheckFake()
 
