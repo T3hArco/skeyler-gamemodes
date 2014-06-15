@@ -27,7 +27,8 @@ function PLAYER_META:Punish(ply, target, time, Reason, id)
 end
 
 function PLAYER_META:IsBanned(steamid)
-
+	if (!game.IsDedicated()) then return false end
+	
 	local SteamID
 	if steamid and steamid != "BOT" then
 		SteamID = string.sub(steamid, 7)
@@ -49,6 +50,7 @@ function PLAYER_META:IsBanned(steamid)
 end
 
 function PLAYER_META:IsMuted(steamid)
+	if (!game.IsDedicated()) then return false end
 
 	local SteamID
 	if steamid and steamid != "BOT" then

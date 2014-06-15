@@ -19,6 +19,18 @@ PLAYER_META = FindMetaTable("Player")
 ENTITY_META = FindMetaTable("Entity")
 TEAM_SPEC = TEAM_SPECTATOR
 
+SS.DefaultModels = {
+	"models/player/group01/male_01.mdl",
+	"models/player/group01/male_02.mdl",
+	"models/player/group01/male_03.mdl",
+	"models/player/group01/male_04.mdl",
+	"models/player/group01/male_05.mdl",
+	"models/player/group01/male_06.mdl",
+	"models/player/group01/male_07.mdl",
+	"models/player/group01/male_08.mdl",
+	"models/player/group01/male_09.mdl"
+}
+
 team.SetUp(TEAM_SPEC, "Spectator", Color(150, 150, 150), false) 
 
 PLAYER_META.Alive2 = PLAYER_META.Alive2 or PLAYER_META.Alive 

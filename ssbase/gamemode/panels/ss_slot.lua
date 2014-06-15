@@ -269,14 +269,16 @@ function panel:Think()
 		
 		local inventory = SS.Hub:GetCategory(3)
 		
-		inventory.preview:RemoveHat(self.m_iSlot)
-		
-		if (ValidPanel(self.icon)) then
-			self.icon:Remove()
-		end
-		
-		if (ValidPanel(self.toolTip)) then
-			self.toolTip:Remove()
+		if (inventory) then
+			inventory.preview:RemoveHat(self.m_iSlot)
+			
+			if (ValidPanel(self.icon)) then
+				self.icon:Remove()
+			end
+			
+			if (ValidPanel(self.toolTip)) then
+				self.toolTip:Remove()
+			end
 		end
 	end
 end

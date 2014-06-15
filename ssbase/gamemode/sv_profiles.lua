@@ -3,7 +3,7 @@
 -- Created by Skeyler.com -- 
 ---------------------------- 
 
-local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "store", "equipped", "avatarUrl", "fakename"} 
+local selects = {"exp", "id", "steamId64", "lastLoginIp", "playtime", "lastLoginTimestamp", "steamId", "rank", "name", "money", "avatarUrl", "fakename"} 
 local update_filter = {"id", "steamId", "rank", "avatarUrl"}
 
 SS.Profiles = {} 
@@ -59,6 +59,12 @@ function PLAYER_META:ProfileLoad()
 		end)
 end 
 
+function test()
+local query = "INSERT INTO users_items(id, users_id, steamID, item, color, skin, bodygroup, bodygroup_value) VALUES(NULL, 127, " .. sql.SQLStr(Entity(1):SteamID()) .. ", 'cowboyhat', " .. sql.SQLStr("255,255,255") .. ", 0, 0, 0)"
+
+DB_Query(query)
+end
+
 function PLAYER_META:ProfileLoaded(res) 
 	local steamid = self:SteamID() 
 	local ip = string.Replace(self:IPAddress() != "loopback" and self:IPAddress() or "127.0.0.1", ".", "")
@@ -72,6 +78,13 @@ function PLAYER_META:ProfileLoaded(res)
 		self:SetRank(self.profile.rank) 
 		self:SetMoney(self.profile.money) 
 		self:SetExp(self.profile.exp)
+		
+		DB_Query("SELECT * FROM users_items WHERE steamID = " .. sql.SQLStr(steamid), function(data)
+			if (data) then
+				PrintTable(data)
+			end
+		end)
+		
 		self:SetStoreItems(self.profile.store)
 		self:SetEquipped(self.profile.equipped)
 		
@@ -131,9 +144,11 @@ function PLAYER_META:ProfileSave()
 	profile.exp = self.exp 
 	profile.playtime = profile.playtime+(os.time()-self.playtimeStart)
 	profile.fakename = util.TableToJSON(self.fakename)
-	profile.store = util.TableToJSON(self.storeItems)
-	profile.equipped = util.TableToJSON(self.storeEquipped)
+	--profile.store = util.TableToJSON(self.storeItems)
+	--profile.equipped = util.TableToJSON(self.storeEquipped)
 	self.playtimeStart = os.time() 
+
+	local success = true
 
 	local Query = "UPDATE users SET " 
 	local first = true 
@@ -146,8 +161,12 @@ function PLAYER_META:ProfileSave()
 			Query = Query..", "..k.."='"..v.."'" 
 		end 
 	end 
-	Query = Query.." WHERE steamid='"..string.sub(self:SteamID(), 7).."'"
-	DB_Query(Query) 
+	Query = Query.." WHERE steamid='"..string.sub(self:SteamID(), 7).."';"
+	DB_Query(Query, function() end, function() success = false end)
+	
+	local query = "UPDATE users_items SET "
+	
+	DB_Query(query, function() end, function() success = false end)
 end 
 
 function PLAYER_META:ProfileUpdate(col, val) -- Don't be an idiot with this

@@ -120,7 +120,15 @@ function GM:PlayerSetModel(player)
 			
 			if (model) then
 				player:SetModel(model.Model)
+			else
+				local random = SS.DefaultModels[math.random(1, #SS.DefaultModels)]
+				
+				player:SetModel(random)
 			end
+		else
+			local random = SS.DefaultModels[math.random(1, #SS.DefaultModels)]
+			
+			player:SetModel(random)
 		end
 	end
 end 

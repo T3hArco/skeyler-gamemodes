@@ -134,10 +134,9 @@ function SS.STORE:Unequip(player, id)
 		
 			-- It's a player model.
 			if (item.Model and !item.Bone) then
-				local cl_playermodel = player:GetInfo("cl_playermodel")
-				local model = player_manager.TranslatePlayerModel(cl_playermodel)
-				
-				player:SetModel(model)
+				local random = SS.DefaultModels[math.random(1, #SS.DefaultModels)]
+			
+				player:SetModel(random)
 			end
 		end
 	end

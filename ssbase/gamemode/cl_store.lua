@@ -454,7 +454,7 @@ function PANEL:Init()
 		for k2, v2 in pairs(SS.STORE.Items) do 
 			if v2.Category == k then 
 				local Panel = t.List:Add("ss_hub_store_icon") 
-				Panel:SetSize(150, 150) 
+				Panel:SetSize(84, 84) 
 				Panel:SetModel(v2.Model) 
 				Panel:SetCamPos(v2.CamPos) 
 				Panel:SetLookAt(v2.LookAt) 
@@ -1282,9 +1282,9 @@ function panel:Update()
 		for id, data in pairs(SS.STORE.INVENTORY) do
 			local item = SS.STORE.Items[id]
 			
-			if (!LocalPlayer():HasEquipped(item.ID) and item.Category == active.button.category) then 
+			if (item and !LocalPlayer():HasEquipped(item.ID) and item.Category == active.button.category) then 
 				local icon = active.iconLayout:Add("ss_hub_store_icon")
-				icon:SetSize(150, 150)
+				icon:SetSize(84, 84)
 				icon:SetModel(item.Model)
 				icon:SetCamPos(item.CamPos)
 				icon:SetLookAt(item.LookAt)

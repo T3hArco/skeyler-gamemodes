@@ -1,1 +1,13 @@
 *.db
+*.obj
+*.tlog
+sassilization-dll/gmsv_sassilization/gmsv_sassilization/Release/gmsv_sassilization_win32.Build.CppClean.log
+*.manifest
+*.lastbuildstate
+*.pdb
+*.vsp
+sassilization-dll/gmsv_sassilization/gmsv_sassilization/Release/gmsv_sassilization.log
+sassilization-dll/gmsv_sassilization/Release/gmsv_sassilization_win32.map
+sassilization-dll/gmsv_sassilization/Release/gmsv_sassilization_win32.lib
+sassilization-dll/gmsv_sassilization/Release/gmsv_sassilization_win32.pdb
+sassilization-dll/gmsv_sassilization/Release/gmsv_sassilization_win32.map
