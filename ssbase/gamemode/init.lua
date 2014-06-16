@@ -94,6 +94,8 @@ function PLAYER_META:ChatPrintAll(msg)
  end 
  
 function GM:PlayerInitialSpawn(ply)
+	ply.spamTime = 0
+	
 	ply:ProfileLoad() 
 	ply:CheckFake()
 

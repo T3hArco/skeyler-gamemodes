@@ -93,7 +93,7 @@ function GM:PlayerInitialSpawn(player)
 	
 	player:SetTeam(TEAM_READY)
 	
-	timer.Simple(0.4,function()
+	timer.Simple(0.4, function()
 		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
 			SS.Lobby.LeaderBoard.Network(i, player)
 		end

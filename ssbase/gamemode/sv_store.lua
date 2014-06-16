@@ -53,6 +53,10 @@ end
 ---------------------------------------------------------
 
 function SS.STORE:Equip(player, id)
+	if (CurTime() -player.spamTime <= 0.35) then return end
+
+	player.spamTime = CurTime()
+	
 	local item = self.Items[id]
 	
 	if (item) then
@@ -93,13 +97,22 @@ function SS.STORE:Equip(player, id)
 			
 			-- It's a player model. (We set the color of an item clientside.)
 			if (color and item.Model and !item.Bone) then
-				player:SetPlayerColor(color)
+				player:SetPlayerColor(Vector(color.x /255, color.y /255, color.z /255))
 			end
 		end
 		
 		if (item.Functions.Equip) then
 			item.Functions.Equip(player)
 		end
+		
+		-- Add the item to the database. (Is it a good idea to do it here?)
+		DB_Query("UPDATE users_equipped SET item = " .. sql.SQLStr(item.ID) .. " WHERE steamID = " .. sql.SQLStr(steamID) .. " AND slot = " .. item.Slot, function(data, query)
+			if (query:affectedRows() == 0) then
+				local users_id = player:GetProfileData("id")
+				
+				DB_Query("INSERT INTO users_equipped(id, users_id, steamID, item, slot) VALUES(NULL, " .. users_id .. ", " .. sql.SQLStr(steamID) .. ", " .. sql.SQLStr(item.ID) .. ", " .. item.Slot .. ")")
+			end
+		end)
 	end
 end
 
@@ -108,6 +121,10 @@ end
 ---------------------------------------------------------
 
 function SS.STORE:Unequip(player, id)
+	if (CurTime() -player.spamTime <= 0.35) then return end
+
+	player.spamTime = CurTime()
+	
 	local item = self.Items[id]
 	
 	if (item) then
@@ -138,6 +155,8 @@ function SS.STORE:Unequip(player, id)
 			
 				player:SetModel(random)
 			end
+			
+			DB_Query("UPDATE users_equipped SET item = NULL WHERE steamID = " .. sql.SQLStr(steamID) .. " AND slot = " .. item.Slot)
 		end
 	end
 end
@@ -299,7 +318,7 @@ net.Receive("ss.store.stcstm",function(bits, player)
 			
 				-- It's a player model. (We set the color of an item clientside.)
 				if (item.Model and !item.Bone) then
-					player:SetPlayerColor(color)
+					player:SetPlayerColor(Vector(color.x /255, color.y /255, color.z /255))
 				end
 			end
 		end
@@ -349,6 +368,16 @@ function PLAYER_META:AddStoreItem(id)
 	self.storeItems[id] = {}
 	
 	self:NetworkOwnedItem(id)
+	
+	local color 	= sql.SQLStr(string.format("#%02X%02X%02X", 255, 255, 255))
+	local steamID 	= sql.SQLStr(self:SteamID())
+	local bodygroup = sql.SQLStr(util.TableToJSON({}))
+	local users_id 	= self:GetProfileData("id")
+	
+	-- Add the item to the database. (Is it a good idea to do it here?)
+	local query = DB_Query("INSERT INTO users_items(id, users_id, steamID, item, color, skin, bodygroup) VALUES(NULL, " .. users_id .. ", " .. steamID .. ", " .. sql.SQLStr(id) .. ", " .. color .. ", 0, " .. bodygroup ..")", function(data, query)
+		self.storeItems[id].__id = query:lastInsert()
+	end)
 end
 
 ---------------------------------------------------------

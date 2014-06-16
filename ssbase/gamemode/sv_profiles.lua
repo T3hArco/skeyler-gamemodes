@@ -57,38 +57,73 @@ function PLAYER_META:ProfileLoad()
 				end ) 
 			end 
 		end)
-end 
-
-function test()
-local query = "INSERT INTO users_items(id, users_id, steamID, item, color, skin, bodygroup, bodygroup_value) VALUES(NULL, 127, " .. sql.SQLStr(Entity(1):SteamID()) .. ", 'cowboyhat', " .. sql.SQLStr("255,255,255") .. ", 0, 0, 0)"
-
-DB_Query(query)
 end
 
 function PLAYER_META:ProfileLoaded(res) 
 	local steamid = self:SteamID() 
 	local ip = string.Replace(self:IPAddress() != "loopback" and self:IPAddress() or "127.0.0.1", ".", "")
 	
+	self.storeItems = {}
+	self.storeEquipped = {}
+	
+	for i = 1, SS.STORE.SLOT.MAXIMUM do
+		self.storeEquipped[i] = {}
+	end
+	
 	if res and res[1] then 
-		if res[2] then Error("Duplicate profile! Contact a developer! ("..steam..")") return end 
+		if res[2] then Error("Duplicate profile! Contact a developer! ("..steamid..")") return end 
 		self.profile = res[1] 
 
 		MsgN("[PROFILE] Loaded ", self) 
-
+		
 		self:SetRank(self.profile.rank) 
 		self:SetMoney(self.profile.money) 
 		self:SetExp(self.profile.exp)
 		
+		-- Find all the owned items in the database.
 		DB_Query("SELECT * FROM users_items WHERE steamID = " .. sql.SQLStr(steamid), function(data)
 			if (data) then
-				PrintTable(data)
+				for i = 1, #data do
+					local item = data[i]
+					local color = color_white
+					
+					if (item.color) then
+						color = string.gsub(item.color, "#", "")
+						color = Vector(tonumber("0x" .. string.sub(color, 1, 2)), tonumber("0x" .. string.sub(color, 3, 4)), tonumber("0x" .. string.sub(color, 5, 6)))
+					end
+					
+					self.storeItems[item.item] = {
+						__id = item.id,
+						
+						[SS.STORE.CUSTOM.SKIN] = item.skin != NULL and item.skin or 0,
+						[SS.STORE.CUSTOM.COLOR] = color,
+						[SS.STORE.CUSTOM.BODYGROUP] = item.bodygroup != NULL and util.JSONToTable(item.bodygroup) or {}
+					}
+				end
 			end
+			
+			-- Let the player know what they own.
+			self:NetworkOwnedItem()
 		end)
 		
-		self:SetStoreItems(self.profile.store)
-		self:SetEquipped(self.profile.equipped)
-		
-		self:NetworkOwnedItem()
+		-- Find all the equipped items in the database.
+		DB_Query("SELECT * FROM users_equipped WHERE steamID = " .. sql.SQLStr(steamid), function(data)
+			if (data) then
+				for i = 1, #data do
+					local info = data[i]
+
+					if (info.item) then
+						local item = SS.STORE.Items[info.item]
+						
+						if (item) then
+							self.storeEquipped[item.Slot] = {unique = item.ID, __id = info.id}
+						else
+							ErrorNoHalt("[STORE] Failed to load equipped item '" .. info.item .. "' (does not exist?) (" .. tostring(self:SteamID()) .. ")\n")
+						end
+					end
+				end
+			end
+		end)
 		
 		if !self:HasMoney(0) then 
 			self:SetMoney(0) 
@@ -106,8 +141,7 @@ function PLAYER_META:ProfileLoaded(res)
 		self:SetRank(DB_DEVS and 100 or 0)
 		self:SetMoney(100) 
 		self:SetExp(1)
-		self:SetStoreItems("")
-		self:SetEquipped("")
+		
 		self:ChatPrint("We had problems loading your profile and have created a temporary one for you.") 
 	end 
 
@@ -136,19 +170,18 @@ function PLAYER_META:ProfileLoaded(res)
 	self:SetNetworkedBool("ss_profileloaded", true) 
 end 
 
-/* Sync Profile with database */
+-- Sync Profile with database.
 function PLAYER_META:ProfileSave() 
 	if(self:IsBot()) then return end
-	local profile = SS.Profiles[self:SteamID()]
+	
+	local steamID = self:SteamID()
+	
+	local profile = SS.Profiles[steamID]
 	profile.money = self.money 
 	profile.exp = self.exp 
 	profile.playtime = profile.playtime+(os.time()-self.playtimeStart)
 	profile.fakename = util.TableToJSON(self.fakename)
-	--profile.store = util.TableToJSON(self.storeItems)
-	--profile.equipped = util.TableToJSON(self.storeEquipped)
 	self.playtimeStart = os.time() 
-
-	local success = true
 
 	local Query = "UPDATE users SET " 
 	local first = true 
@@ -161,44 +194,38 @@ function PLAYER_META:ProfileSave()
 			Query = Query..", "..k.."='"..v.."'" 
 		end 
 	end 
-	Query = Query.." WHERE steamid='"..string.sub(self:SteamID(), 7).."';"
-	DB_Query(Query, function() end, function() success = false end)
 	
-	local query = "UPDATE users_items SET "
+	Query = Query.." WHERE steamid='"..string.sub(steamID, 7).."';"
 	
-	DB_Query(query, function() end, function() success = false end)
+	DB_Query(Query)
+	
+	local query = "UPDATE `users_items` SET"
+	local where = ""
+	
+	for unique, data in pairs(self.storeItems) do
+		local skin = data[SS.STORE.CUSTOM.SKIN] or 0
+		local color = data[SS.STORE.CUSTOM.COLOR] or color_white
+		local bodygroup = sql.SQLStr(util.TableToJSON(data[SS.STORE.CUSTOM.BODYGROUP] or {}))
+		
+		query = query .. " `color` = CASE WHEN `id` = '" .. data.__id .. "' THEN " .. sql.SQLStr(string.format("#%02X%02X%02X", color.r, color.g, color.b)) .. " ELSE `color` END,"
+		query = query .. " `skin` = CASE WHEN `id` = '" .. data.__id .. "' THEN " .. skin .. " ELSE `skin` END,"
+		query = query .. " `bodygroup` = CASE WHEN `id` = '" .. data.__id .. "' THEN " .. bodygroup .. " ELSE `bodygroup` END,"
+		
+		where = where .. data.__id .. ", "
+	end
+	
+	query, where = string.sub(query, 0, string.len(query) -1), string.sub(where, 0, string.len(where) -2)
+	query = query .. " WHERE id IN (" .. where .. ") AND steamID = " .. sql.SQLStr(steamID)
+	
+	DB_Query(query)
 end 
 
 function PLAYER_META:ProfileUpdate(col, val) -- Don't be an idiot with this
 	if(self:IsBot()) then return end
 	if !SERVER then return end 
 	DB_Query("UPDATE users SET "..tostring(col).."='"..tostring(val).."' WHERE steamid='"..string.sub(self:SteamID(), 7).."'" ) 
-end 
-
---------------------------------------------------
---
---------------------------------------------------
-
-function PLAYER_META:SetStoreItems(data)
-	if (!data or data == "" or data == "[]") then
-		self.storeItems = {}
-	else
-		self.storeItems = util.JSONToTable(data)
-	end
 end
 
---------------------------------------------------
---
---------------------------------------------------
-
-function PLAYER_META:SetEquipped(data)
-	if (!data or data == "" or data == "[]") then
-		self.storeEquipped = {}
-		
-		for i = 1, SS.STORE.SLOT.MAXIMUM do
-			self.storeEquipped[i] = {}
-		end
-	else
-		self.storeEquipped = util.JSONToTable(data) 
-	end
+function PLAYER_META:GetProfileData(field)
+	return self.profile[field]
 end

@@ -52,7 +52,7 @@ function DB_Query(query, SuccessFunc, FailFunc)
 	local Query = DB:query(query) 
 
 	function Query:onSuccess(q, data) 
-		if SuccessFunc then SuccessFunc(q) end 
+		if SuccessFunc then SuccessFunc(q, self) end 
 	end 
 
 	function Query:onError(err, sql) 
@@ -69,6 +69,8 @@ function DB_Query(query, SuccessFunc, FailFunc)
 	end 
 
 	Query:start()
+	
+	return Query
 end 
 
 if DB_DEVS then return end 

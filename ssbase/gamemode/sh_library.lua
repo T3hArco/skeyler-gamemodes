@@ -76,8 +76,7 @@ function FormatNum(n)
 	return n
 end
 
-
-
+function NEXT_FRAME(callback) timer.Simple(FrameTime() *2, function() callback() end) end
 
 
 
