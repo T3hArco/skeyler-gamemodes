@@ -38,7 +38,6 @@ HUD_AMMO = Material("skeyler/vgui/hud/hud_bar_ammo.png", "noclamp smooth")
 HUD_BAR_CENTER = Material("skeyler/vgui/hud/hud_bar_center.png", "noclamp smooth") 
 HUD_COIN = Material("skeyler/vgui/skeyler_coin02.png", "noclamp smooth") 
 
-
 GM.HudAlpha = 0 
 GM.HUDHPSmooth = 0 
 GM.HUDHP = 0
@@ -159,18 +158,14 @@ function GM:HUDPaint()
 
 	--surface.SetMaterial(HUD_COIN) 
 	--surface.SetDrawColor(255, 255, 255, self.HudAlpha) 
-	--surface.DrawTexturedRect(187, h-82, 12, 17) 
+	--surface.DrawTexturedRect(187, h-82, 12, 17)
+	
 	draw.SimpleRect(187, h -72, 5, 5, Color(69, 192, 255, 255))
 	draw.SimpleRect(187 +5, h -77, 5, 5, Color(69, 192, 255, 220))
 	draw.SimpleRect(187, h -82, 5, 5, Color(69, 192, 255, 140))
 
-	Text = FormatNum(pl:GetMoney())
-	surface.SetFont("HUD_Money") 
-	tw, th = surface.GetTextSize(Text) 
-	surface.SetTextPos(205, h-73-th/2)
-	surface.SetTextColor(110, 110, 110, self.HudAlpha) 
-	surface.DrawText(Text) 
-
+	self:PaintPixels()
+	
 	--surface.SetFont("HUD_Level_Blue") 
 	--surface.SetTextColor(102, 167, 201, self.HudAlpha) 
 	--tw, th = surface.GetTextSize(" "..tostring(pl:GetLevel())) 

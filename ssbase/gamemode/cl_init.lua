@@ -13,6 +13,7 @@ include("sh_store.lua")
 include("cl_scoreboard.lua")
 include("cl_store.lua") 
 include("cl_chatbox.lua") 
+include("cl_pixels.lua")
 include("cl_hud.lua") 
 include("cl_vote.lua") 
 

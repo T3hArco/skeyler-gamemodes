@@ -27,12 +27,12 @@ local sheetTexture = CreateMaterial("ss_slot_machine_sheet", "UnlitGeneric", {
 
 local sheet = {}
 
-sheet[1] = {startU = 0.4, startV = 0.68, endU = 0.8, endV = 0.99} -- Clock.
-sheet[2] = {startU = 0, startV = 0, endU = 0.38, endV = 0.3} -- Sassilization.
-sheet[3] = {startU = 0.79, startV = 0, endU = 0.39, endV = 0.32} -- Lemon.
-sheet[4] = {startU = 0, startV = 0.3, endU = 0.4, endV = 0.68} -- Strawberry.
-sheet[5] = {startU = 0, startV = 0.68, endU = 0.4, endV = 0.99} -- Melon.
-sheet[6] = {startU = 0.4, startV = 0.3, endU = 0.77, endV = 0.68} -- Cherry.
+sheet[1] = {startU = 0.4, 	startV = 0.68, 	endU = 0.8, 	endV = 0.99} 	-- Clock.
+sheet[2] = {startU = 0, 	startV = 0, 	endU = 0.38, 	endV = 0.3} 	-- Sassilization.
+sheet[3] = {startU = 0.79, 	startV = 0, 	endU = 0.39, 	endV = 0.32} 	-- Lemon.
+sheet[4] = {startU = 0, 	startV = 0.3, 	endU = 0.4, 	endV = 0.68} 	-- Strawberry.
+sheet[5] = {startU = 0, 	startV = 0.68, 	endU = 0.4, 	endV = 0.99} 	-- Melon.
+sheet[6] = {startU = 0.4, 	startV = 0.3, 	endU = 0.77, 	endV = 0.68} 	-- Cherry.
 
 function ENT:Draw()
 	self:DrawModel()
@@ -80,6 +80,7 @@ function ENT:Draw()
 			end
 
 			x = x +18
+			
 			if (x >= 110) then
 				y = y +18
 				x = 0
@@ -110,7 +111,7 @@ function ENT:Draw()
 			
 			draw.SimpleText("= " .. slots.win, "ss.slot.machine", x+2, y +12, color_black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			draw.SimpleText("= " .. slots.win, "ss.slot.machine", x, y +8, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-			--x = x +118
+			
 			if (x >= 1010) then
 				y = y +180
 				x = -160

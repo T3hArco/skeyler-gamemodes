@@ -78,8 +78,6 @@ end
 
 function NEXT_FRAME(callback) timer.Simple(FrameTime() *2, function() callback() end) end
 
-
-
 local notifications = {}
 
 ---------------------------------------------------------
@@ -93,10 +91,10 @@ end
 local color_notify_green = Color(186, 255, 86)
 local color_notify_yellow = Color(255, 226, 86)
 
-NOTIFY_STORE_OWNED = SS.RegisterNotify("YOU ALREADY OWN THAT ITEM", color_notify_yellow, 6)
-NOTIFY_STORE_AFFORD = SS.RegisterNotify("YOU CANNOT AFFORD THAT ITEM", color_notify_yellow, 6)
-NOTIFY_STORE_PURCHASED = SS.RegisterNotify("YOU HAVE SUCCESSFULLY PURCHASED THE ITEM", color_notify_green, 6)
-NOTIFY_STORE_NOTOWNED = SS.RegisterNotify("YOU DO NOT OWN THAT ITEM", color_notify_yellow, 6)
+NOTIFY_STORE_OWNED 		= SS.RegisterNotify("YOU ALREADY OWN THAT ITEM", color_notify_yellow, 6)
+NOTIFY_STORE_AFFORD 	= SS.RegisterNotify("YOU CANNOT AFFORD THAT ITEM", color_notify_yellow, 6)
+NOTIFY_STORE_PURCHASED 	= SS.RegisterNotify("YOU HAVE SUCCESSFULLY PURCHASED THE ITEM", color_notify_green, 6)
+NOTIFY_STORE_NOTOWNED 	= SS.RegisterNotify("YOU DO NOT OWN THAT ITEM", color_notify_yellow, 6)
 
 if (SERVER) then
 	---------------------------------------------------------
