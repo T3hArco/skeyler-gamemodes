@@ -2,6 +2,7 @@ miracle.unique = "gravitate"
 
 miracle.cost = 3
 miracle.delay = 8
+miracle.id = 19
 miracle.sound = Sound("sassilization/spells/gravitatecast.wav")
 
 if (SERVER) then

@@ -2,6 +2,7 @@ miracle.unique = "heal"
 
 miracle.cost = 2
 miracle.delay = 12
+miracle.id = 20
 miracle.sound = Sound("sassilization/spells/healcast.wav")
 
 if (SERVER) then

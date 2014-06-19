@@ -3,7 +3,7 @@
 --	http://sassilization.com
 --	By Sassafrass / Spacetech / LuaPineapple
 ----------------------------------------
-
+local structID
 function GM:SpawnUnit(Name, Pos, Ang, Empire, NoTable)
 	local Unit = unit.Create(string.lower(Name))
 	Unit:SetPos(Pos + Vector( 0, 0, Unit.Size * 0.5 ))
@@ -16,6 +16,25 @@ function GM:SpawnUnit(Name, Pos, Ang, Empire, NoTable)
 		--TODO: Fix this mess
 		table.insert(Empire:GetUnits(), Unit)
 	end
+	--This is for saving information to the database
+	if string.lower(Name) == "swordsman" then
+		structID = 1
+	elseif string.lower(Name) == "archer" then
+		structID = 2
+	elseif string.lower(Name) == "scallywag" then
+		structID = 3
+	elseif string.lower(Name) == "catapult" then
+		structID = 4
+	elseif string.lower(Name) == "ballista" then
+		structID = 5
+	end
+
+	if Empire.spawns[structID] != nil then
+		Empire.spawns[structID] = Empire.spawns[structID] + 1
+	else
+		Empire.spawns[structID] = 1
+	end
+
 	return Unit
 end
 

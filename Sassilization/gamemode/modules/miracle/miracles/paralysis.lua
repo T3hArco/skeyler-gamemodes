@@ -2,6 +2,7 @@ miracle.unique = "paralyze"
 
 miracle.cost = 3
 miracle.delay = 8
+miracle.id = 21
 miracle.sound = Sound("sassilization/spells/paralysiscast.wav")
 
 if (SERVER) then

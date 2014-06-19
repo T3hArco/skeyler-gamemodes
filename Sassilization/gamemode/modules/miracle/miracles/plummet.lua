@@ -2,6 +2,7 @@ miracle.unique = "plummet"
 
 miracle.cost = 10
 miracle.delay = 25
+miracle.id = 22
 miracle.sound = Sound("sassilization/spells/plummetcast.wav")
 
 if (SERVER) then

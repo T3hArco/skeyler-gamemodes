@@ -74,6 +74,7 @@ function Create(pl, id, sid)
 
 	empire.structures = {}
 	empire.units = {}
+	empire.spawns = {}
 	empire.selected = {}
 	empire.selected.units = {}
 	empire.selected.unitcount = 0

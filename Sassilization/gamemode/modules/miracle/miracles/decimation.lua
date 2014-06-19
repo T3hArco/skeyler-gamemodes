@@ -2,6 +2,7 @@ miracle.unique = "decimate"
 
 miracle.cost = 5
 miracle.delay = 8
+miracle.id = 18
 miracle.sound = Sound("sassilization/spells/decimationcast.wav")
 
 if (SERVER) then

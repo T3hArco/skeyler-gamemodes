@@ -181,6 +181,12 @@ concommand.Add("sa_buildwall", function(ply, cmd, args)
 				Empire:GetIron() >= Building.Iron*Cost and
 				Empire:GetGold() >= Building.Gold*Cost ) then
 				
+
+				if Empire.spawns[Building.id] != nil then
+					Empire.spawns[Building.id] = Empire.spawns[Building.id] + 1
+				else
+					Empire.spawns[Building.id] = 1
+				end
 				Empire:AddFood(-Building.Food*Cost or 0)
 				Empire:AddIron(-Building.Iron*Cost or 0)
 				Empire:AddGold(-Building.Gold*Cost or 0)
@@ -342,6 +348,12 @@ concommand.Add("sa_buildbuilding", function(ply, cmd, args)
 					end
 				end
 
+				if Empire.spawns[Building.id] != nil then
+					Empire.spawns[Building.id] = Empire.spawns[Building.id] + 1
+				else
+					Empire.spawns[Building.id] = 1
+				end
+
 				return
 			end
 		else
@@ -358,6 +370,19 @@ concommand.Add("sa_buildbuilding", function(ply, cmd, args)
 		end
 	end
 	
+	if Name != "tower" && Name != "workshop" then
+		if Empire.spawns[Building.id] != nil then
+			Empire.spawns[Building.id] = Empire.spawns[Building.id] + 1
+		else
+			Empire.spawns[Building.id] = 1
+		end
+	else
+		if Empire.spawns[Building.id[1]] != nil then
+			Empire.spawns[Building.id[1]] = Empire.spawns[Building.id[1]] + 1
+		else
+			Empire.spawns[Building.id[1]] = 1
+		end
+	end
 	Empire:AddFood(-Building.Food or 0)
 	Empire:AddIron(-Building.Iron or 0)
 	Empire:AddGold(-Building.Gold or 0)
@@ -398,6 +423,11 @@ concommand.Add("sa_upgradebuilding", function(ply, cmd, args)
 		return
 	end
 	
+	if Empire.spawns[Building.id[Ent:GetLevel() + 1]] != nil then
+		Empire.spawns[Building.id[Ent:GetLevel() + 1]] = Empire.spawns[Building.id[Ent:GetLevel() + 1]] + 1
+	else
+		Empire.spawns[Building.id[Ent:GetLevel() + 1]] = 1
+	end
 	Empire:AddFood(-Building.Food or 0)
 	Empire:AddIron(-Building.Iron or 0)
 	Empire:AddGold(-Building.Gold or 0)

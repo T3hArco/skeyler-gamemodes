@@ -395,7 +395,8 @@ AddBuilding("city", {
     Foundation = true,
 	camPos = Vector(-392.774292, -330.134674, 259.718689),
 	angle = Angle(25.065, 39.902, 0.000),
-	fov = 5.89
+	fov = 5.89,
+    id = 6
 })
 
 AddBuilding("house", {
@@ -437,7 +438,8 @@ AddBuilding("walltower", {
     DestroyBonus = 2,
 	camPos = Vector(-45.385292, -31.899818, 36.990265),
 	angle = Angle(18.875, 34.500, 0),
-	fov = 45
+	fov = 45,
+    id = 12
 })
 
 AddBuilding("gate", {
@@ -453,7 +455,8 @@ AddBuilding("gate", {
     DestroyBonus = 3,
 	camPos = Vector(-424.698181, -356.201508, 259.357513),
 	angle = Angle(25.000, 40.000, 0.000),
-	fov = 5.76
+	fov = 5.76,
+    id = 13
 })
 
 AddBuilding("tower", {
@@ -485,7 +488,8 @@ AddBuilding("tower", {
     Foundation = true,
 	camPos = Vector(-45.385292, -31.899818, 36.990265),
 	angle = Angle(18.875, 34.500, 0),
-	fov = 45
+	fov = 45,
+    id = {7, 8, 9}
 })
 
 AddBuilding("workshop", {
@@ -511,7 +515,8 @@ AddBuilding("workshop", {
     Foundation = true,
 	camPos = Vector(-37.039215, -28.321854, 20.390173),
 	angle = Angle(15.973, 45.519, 0),
-	fov = 60.7
+	fov = 60.7,
+    id = {10, 11}
 })
 
 AddBuilding("shieldmono", {
@@ -526,7 +531,8 @@ AddBuilding("shieldmono", {
     DestroyBonus = 4,
 	camPos = Vector(-251.917358, -211.387085, 163.293045),
 	angle = Angle(25.196, 39.972, 0.000),
-	fov = 5
+	fov = 5,
+    id = 14
 })
 
 AddBuilding("shrine", {
@@ -544,5 +550,6 @@ AddBuilding("shrine", {
     Foundation = true,
 	camPos = Vector(20.847956, 25.790237, 16.139711),
 	angle = Angle(24.000, 231.125, 0),
-	fov = 45
+	fov = 45,
+    id = 15
 })

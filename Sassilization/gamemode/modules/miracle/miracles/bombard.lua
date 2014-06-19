@@ -2,6 +2,7 @@ miracle.unique = "bombard"
 
 miracle.cost = 6
 miracle.delay = 12
+miracle.id = 17
 miracle.sound = Sound("sassilization/spells/bombardcast.wav")
 
 if (SERVER) then

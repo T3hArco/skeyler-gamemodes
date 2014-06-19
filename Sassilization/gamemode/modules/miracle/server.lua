@@ -174,6 +174,12 @@ function miracles.Start(unique, player)
 						empire:SetCreed(empire:GetCreed() -creedCost)
 
 						player.miracles[unique].delay = CurTime() +data.delay
+
+						if empire.spawns[data.id] != nil then
+							empire.spawns[data.id] = empire.spawns[data.id] + 1
+						else
+							empire.spawns[data.id] = 1
+						end
 						
 						net.Start("sa.GetMiracleCooldown")
 							net.WriteString(unique)
@@ -205,6 +211,12 @@ function miracles.Start(unique, player)
 							if (Shrine and level and hitPos) then
 								player:EmitSound(data.sound)
 								
+								if empire.spawns[data.id] != nil then
+									empire.spawns[data.id] = empire.spawns[data.id] + 1
+								else
+									empire.spawns[data.id] = 1
+								end
+
 								empire:SetCreed(empire:GetCreed() -creedCost)
 							
 								--level = level == true and 3 or level

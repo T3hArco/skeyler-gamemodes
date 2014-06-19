@@ -2,6 +2,7 @@ miracle.unique = "blast"
 
 miracle.cost = 2
 miracle.delay = 3
+miracle.id = 16
 miracle.sound = Sound("sassilization/spells/blastcast.wav")
 
 if (SERVER) then
