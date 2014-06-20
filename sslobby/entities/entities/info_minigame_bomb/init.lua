@@ -42,6 +42,6 @@ function ENT:PhysicsCollide(data, physicsObject)
 			end
 		end
 		
-		NEXT_FRAME(function() self:Remove() end)
+		NEXT_FRAME(function() if (IsValid(self)) then self:Remove() end end)
 	end
 end

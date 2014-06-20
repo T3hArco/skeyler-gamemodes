@@ -76,7 +76,7 @@ function FormatNum(n)
 	return n
 end
 
-function NEXT_FRAME(callback) timer.Simple(FrameTime() *2, function() callback() end) end
+function NEXT_FRAME(callback) timer.Simple(SERVER and 0.08 or CLIENT and FrameTime() *2, function() callback() end) end
 
 local notifications = {}
 
