@@ -44,19 +44,24 @@ if (SERVER) then
 
 		for k, entity in pairs(entities2) do
 			if (entity:IsUnit() and entity.Unit:GetEmpire() != empire and !Allied(empire, entity.Unit:GetEmpire())) then -- check ally
-				entity.Unit.Decimated = true
+				entity.Unit.Paralyzed = true
+				entity:SetNWBool( "paralyzed", true )
+				entity:SetAnimation("idle")
+
+				local physObject = entity:GetPhysicsObject()
+						entity.Unit.Hull:SetMoving( false )
+						entity.Unit.Hull:GetPhysicsObject():Sleep()
+						entity.Unit:GetCommandQueue():Pop()
+						entity.Unit:SetCommand( nil )
 				
-				timer.Simple(0.1, function()
-					if (IsValid(entity)) then
-						entity.Unit.OnFire = true
-						entity.Unit:Burn(3 +level)
-					end
-				end)
+				local effect = EffectData()
+					effect:SetScale(entity:GetUnit():UnitIndex())
+					effect:SetMagnitude( 3 +3 *level /3)
+				util.Effect("paralyze", effect, 1, 1)
 				
-				timer.Simple(3 +level, function()
+				timer.Simple(3 +3 *level /3, function()
 					if (IsValid(entity)) then
-						entity.Unit.Decimated = false
-						entity.Unit.OnFire = false
+						entity.Unit.Paralyzed = false
 					end
 				end)
 			end

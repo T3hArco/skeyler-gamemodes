@@ -16,7 +16,13 @@ util.AddNetworkString( "PlayerLoadingList" )
 util.AddNetworkString( "PlayerLoadingFinish" )
 
 function GM:CheckPassword( sid, ip, serverPass, clientPass, username )
-	if SA.DEV then return true end
+	if SA.DEV then
+		if clientPass == serverPass then
+			return true
+		else
+			return false, "Bad Password"
+		end
+	end
 
 	local steamID = util.SteamIDFrom64(sid)
 	
