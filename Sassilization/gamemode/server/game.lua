@@ -132,6 +132,30 @@ function GM:EndGame( empire )
 		end
 		gameOver = true
 		self.EndTime = tostring(os.time())
+
+		DB_Query("INSERT INTO rts_matches (playerCount, startTimestamp, endTimestamp) VALUES ('"..tostring(#empire.GetAll()).."','"..self.StartTime.."','"..self.EndTime.."')", 
+			function(data)
+				DB_Query("SELECT ID FROM rts_matches WHERE endTimestamp='"..self.EndTime.."'",
+					function(data)
+						local gameID = data[1].ID
+						for k,v in pairs(empire.GetAll()) do
+							DB_Query("SELECT ID FROM users WHERE steamId='"..string.sub(v.SteamID, 7).."'",
+								function(data)
+									local playerID = data[1].ID
+									if v.win then
+										DB_Query("INSERT INTO rts_match_players (rtsMatchId, userId, wonMatch) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(1).."')")
+									else
+										DB_Query("INSERT INTO rts_match_players (rtsMatchId, userId, wonMatch) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(0).."')")
+									end
+
+									for i,d in pairs(v.spawns) do
+										DB_Query("INSERT INTO rts_constructions (rtsMatchId, rtsMatchPlayerId, constructionTypeId, amountBuilt) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(i).."','"..tostring(d).."')")
+									end
+								end)
+						end
+					end)
+			end)
+
 		timer.Simple(SA.INTERMISSION, function()
 			self:RestartGame(MAPS.GetNextMap())
 		end)
@@ -149,29 +173,6 @@ function GM:RestartGame(NextMap)
 		net.Start("sa.connectlobby")
 		net.Send(v)
 	end
-
-	DB_Query("INSERT INTO rts_matches (playerCount, startTimestamp, endTimestamp) VALUES ('"..tostring(#empire.GetAll()).."','"..self.StartTime.."','"..self.EndTime.."')", 
-		function(data)
-			DB_Query("SELECT ID FROM rts_matches WHERE endTimestamp='"..self.EndTime.."'",
-				function(data)
-					local gameID = data[1].ID
-					for k,v in pairs(empire.GetAll()) do
-						DB_Query("SELECT ID FROM users WHERE steamId='"..string.sub(v.SteamID, 7).."'",
-							function(data)
-								local playerID = data[1].ID
-								if v.win then
-									DB_Query("INSERT INTO rts_match_players (rtsMatchId, userId, wonMatch) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(1).."')")
-								else
-									DB_Query("INSERT INTO rts_match_players (rtsMatchId, userId, wonMatch) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(0).."')")
-								end
-
-								for i,d in pairs(v.spawns) do
-									DB_Query("INSERT INTO rts_constructions (rtsMatchId, rtsMatchPlayerId, constructionTypeId, amountBuilt) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(i).."','"..tostring(d).."')")
-								end
-							end)
-					end
-				end)
-		end)
 	
 	timer.Simple(5, function()
 		game.ConsoleCommand( "changelevel "..NextMap.."\n" )
