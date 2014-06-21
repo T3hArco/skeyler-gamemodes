@@ -100,10 +100,12 @@ function GM:PlayerInitialSpawn(player)
 		
 		SS.Lobby.Minigame:UpdateScreen(player)
 
-		net.Start("setNewsRules")
-			net.WriteString(file.Read( "SSLobby/news.txt", "DATA" ))
-			net.WriteString(file.Read( "SSLobby/rules.txt", "DATA" ))
-		net.Send(player)
+		DB_Query("SELECT * FROM lobby_news", function(data)
+			net.Start("setNewsRules")
+				net.WriteString(data[1].news)
+				net.WriteString(data[1].rules)
+			net.Send(player)
+		end)
 	end)
 end
 

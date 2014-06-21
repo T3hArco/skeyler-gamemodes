@@ -12,12 +12,6 @@ util.AddNetworkString( "setNewsRules" )
 util.AddNetworkString( "updateNews" )
 
 function ENT:Initialize()
-	if !file.Exists( "SSLobby/news.txt", "DATA" ) then
-		file.CreateDir( "SSLobby" )
-		file.Write( "SSLobby/news.txt", "News" )
-		file.Write( "SSLobby/rules.txt", "Rules" )
-	end
-
 	self.width = 64
 	self.height = 64
 
@@ -46,16 +40,18 @@ net.Receive("updateNews", function(len, ply)
 		local updateType = net.ReadString()
 		local text = net.ReadString()
 		if updateType == "news" then
-			file.Write( "SSLobby/news.txt", text )
+			DB_Query("UPDATE lobby_news SET news='".. text .."'")
 		else
-			file.Write( "SSLobby/rules.txt", text )
+			DB_Query("UPDATE lobby_news SET rules='".. text .."'")
 		end
 
-		for k,v in pairs(player.GetAll()) do
-			net.Start("setNewsRules")
-				net.WriteString(file.Read( "SSLobby/news.txt", "DATA" ))
-				net.WriteString(file.Read( "SSLobby/rules.txt", "DATA" ))
-			net.Send(v)
-		end
+		DB_Query("SELECT * FROM lobby_news", function(data)
+			for k,v in pairs(player.GetAll()) do
+				net.Start("setNewsRules")
+					net.WriteString(data[1].news)
+					net.WriteString(data[1].rules)
+				net.Send(v)
+			end
+		end)
 	end
 end)

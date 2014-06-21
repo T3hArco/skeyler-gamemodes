@@ -112,14 +112,18 @@ function ENT:Draw()
 		cam.Start3D2D(self.newsPosition, self.newsAngle, 0.05)
 			draw.Texture(0, 0, 1280, 1280, color_white, newsTexture)
 
-			--draw.DrawText(info.news, "font_news", 195, 360, Color(0,0,0,255), TEXT_ALIGN_LEFT)
+			if info.news then
+				draw.DrawText(info.news, "font_news", 195, 360, Color(0,0,0,255), TEXT_ALIGN_LEFT)
+			end
 			
 		cam.End3D2D()
 	else
 		cam.Start3D2D(self.rulesPosition, self.rulesAngle, 0.05)
 			draw.Texture(0, 0, 1280, 1280, color_white, rulesTexture)
 
-		--	draw.DrawText(info.rules, "font_rules", 195, 360, Color(0,0,0,255), TEXT_ALIGN_LEFT)
+			if info.rules then
+				draw.DrawText(info.rules, "font_rules", 195, 360, Color(0,0,0,255), TEXT_ALIGN_LEFT)
+			end
 			
 		cam.End3D2D()
 	end
