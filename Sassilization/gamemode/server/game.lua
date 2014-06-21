@@ -79,13 +79,13 @@ function GM:CheckGame()
 	end
 end
 
-function GM:EndGame( empire )
+function GM:EndGame( empireWin )
 	if !gameOver then
 		local randTitle = math.random(1, #Titles)
 		for k,v in pairs(Titles) do
 			if k == randTitle then
-				if empire:GetPlayer() and empire:GetPlayer().Alliance then
-					if #empire:GetPlayer().Alliance == 0 then
+				if empireWin:GetPlayer() and empireWin:GetPlayer().Alliance then
+					if #empireWin:GetPlayer().Alliance == 0 then
 						randTitle = v[1]
 					else
 						randTitle = v[2]
@@ -99,8 +99,8 @@ function GM:EndGame( empire )
 		local randDesc = math.random(1, #Description)
 		for k,v in pairs(Description) do
 			if k == randDesc then
-				if empire:GetPlayer() and empire:GetPlayer().Alliance then
-					if #empire:GetPlayer().Alliance == 0 then
+				if empireWin:GetPlayer() and empireWin:GetPlayer().Alliance then
+					if #empireWin:GetPlayer().Alliance == 0 then
 						randDesc = v[1]
 					else
 						randDesc = v[2]
@@ -112,15 +112,15 @@ function GM:EndGame( empire )
 		end
 
 		local allyTable = {}
-		empire.win = true
-		if empire:GetPlayer() then
-			if empire:GetPlayer().Alliance then
-				allyTable = empire:GetPlayer().Alliance
+		empireWin.win = true
+		if empireWin:GetPlayer() then
+			if empireWin:GetPlayer().Alliance then
+				allyTable = empireWin:GetPlayer().Alliance
 			end
 		end
 		for _, pl in pairs( player.GetAll() ) do
 			net.Start("SetWinners")
-				net.WriteString(empire:Nick())
+				net.WriteString(empireWin:Nick())
 				net.WriteTable(allyTable)
 				net.WriteString(randTitle)
 				net.WriteString(randDesc)
