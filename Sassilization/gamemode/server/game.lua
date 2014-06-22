@@ -142,6 +142,26 @@ function GM:EndGame( empireWin )
 							DB_Query("SELECT ID FROM users WHERE steamId='"..string.sub(v.SteamID, 7).."'",
 								function(data)
 									local playerID = data[1].ID
+									DB_Query("SELECT ID FROM rts_leaderboards WHERE userId='"..playerID.."'",
+										function(data)
+											if data[1].games != nil then
+												DB_Query("SELECT games, wins, gamesMonthly, winsMonthly, gamesWeekly, winsWeekly, gamesDaily, winsDaily FROM rts_leaderboards WHERE userId='"..playerID.."'",
+													function(data)
+														if v.win then
+															DB_Query("UPDATE rts_leaderboards SET games=".. data[1].games + 1 ..", wins=".. data[1].wins + 1 ..", gamesMonthly=".. data[1].gamesMonthly + 1 ..", winsMonthly=".. data[1].winsMonthly + 1 ..", gamesWeekly=".. data[1].gamesWeekly + 1 ..", winsWeekly=".. data[1].winsWeekly + 1 ..", gamesDaily=".. data[1].gamesDaily + 1 ..", winsDaily=".. data[1].winsDaily + 1 .." WHERE userId='"..playerID.."'")
+														else
+															DB_Query("UPDATE rts_leaderboards SET games=".. data[1].games + 1 ..", gamesMonthly=".. data[1].gamesMonthly + 1 ..", gamesWeekly=".. data[1].gamesWeekly + 1 ..", gamesDaily=".. data[1].gamesDaily + 1 .." WHERE userId='"..playerID.."'")
+														end
+													end)
+											else
+												if v.win then
+													DB_Query("INSERT INTO rts_leaderboards VALUES ('"..playerID.."','1','1','1','1','1','1','1','1')")
+												else
+													DB_Query("INSERT INTO rts_leaderboards VALUES ('"..playerID.."','1','0','1','0','1','0','1','0')")
+												end
+											end
+										end)
+
 									if v.win then
 										DB_Query("INSERT INTO rts_match_players (rtsMatchId, userId, wonMatch) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(1).."')")
 									else

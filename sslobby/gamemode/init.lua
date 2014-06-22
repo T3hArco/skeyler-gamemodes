@@ -41,6 +41,8 @@ include("modules/sh_sound.lua")
 
 function GM:InitPostEntity()
 	self.spawnPoints = {lounge = {}}
+
+	RunConsoleCommand("bot")
 	
 	local spawns = ents.FindByClass("info_player_spawn")
 	
@@ -88,23 +90,33 @@ end
 --
 --------------------------------------------------
 
-function GM:PlayerInitialSpawn(player)
-	self.BaseClass:PlayerInitialSpawn(player)
+function GM:PlayerInitialSpawn(ply)
+	self.BaseClass:PlayerInitialSpawn(ply)
 	
-	player:SetTeam(TEAM_READY)
+	ply:SetTeam(TEAM_READY)
 	
+	SS.Lobby.LeaderBoard.Update()
+
 	timer.Simple(0.4, function()
-		for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
-			SS.Lobby.LeaderBoard.Network(i, player)
+		--Send leaderboard info to all players so that everyone sees the same thing
+		--The sql queries ran on the update function should be done after 0.4 seconds, if not there'll be a problem with missing data
+		for k,v in pairs(player.GetAll()) do
+			for i = LEADERBOARD_DAILY, LEADERBOARD_ALLTIME_10 do
+				SS.Lobby.LeaderBoard.Network(i, v)
+			end
+		end
+
+		for k,v in pairs(player.GetBots()) do
+			v:Kick("")
 		end
 		
-		SS.Lobby.Minigame:UpdateScreen(player)
+		SS.Lobby.Minigame:UpdateScreen(ply)
 
 		DB_Query("SELECT * FROM lobby_news", function(data)
 			net.Start("setNewsRules")
 				net.WriteString(data[1].news)
 				net.WriteString(data[1].rules)
-			net.Send(player)
+			net.Send(ply)
 		end)
 	end)
 end
@@ -273,13 +285,18 @@ end
 --
 --------------------------------------------------
 
-function GM:PlayerDisconnected(player)
-	self.BaseClass:PlayerDisconnected(player)
+function GM:PlayerDisconnected(ply)
+	self.BaseClass:PlayerDisconnected(ply)
+
 	
 	local storedTriggers = SS.Lobby.Link.GetStored()
 	
 	for id, data in pairs(storedTriggers) do
-		SS.Lobby.Link:RemoveQueue(id, player)
+		SS.Lobby.Link:RemoveQueue(id, ply)
+	end
+
+	if #player.GetAll()-1 == 0 then
+		RunConsoleCommand("bot")
 	end
 end
 

@@ -12,6 +12,77 @@ function SS.Lobby.LeaderBoard.Add(id, data)
 	table.sort(stored[id], function(a, b) return a.wins > b.wins end)
 end
 
+
+function SS.Lobby.LeaderBoard.Update()
+	--Clear the table before inserting new values
+	stored = {}
+
+	DB_Query("SELECT userId, gamesWeekly, winsWeekly FROM rts_leaderboards WHERE gamesWeekly>0 ORDER BY winsWeekly DESC LIMIT 5", function(data)
+		for k,v in pairs(data) do
+			DB_Query("SELECT name FROM users WHERE id='".. data[k].userId .."'", function(data2)
+				local info = {
+					name = data2[1].name,
+					empires = 0,
+					hours = 0,
+					games = data[k].gamesWeekly,
+					wins = data[k].winsWeekly
+				}
+				
+				SS.Lobby.LeaderBoard.Add(LEADERBOARD_WEEKLY, info)
+			end)
+		end
+	end)
+
+	DB_Query("SELECT userId, gamesMonthly, winsMonthly FROM rts_leaderboards WHERE gamesMonthly>0 ORDER BY winsMonthly DESC LIMIT 10", function(data)
+		for k,v in pairs(data) do
+			DB_Query("SELECT name FROM users WHERE id='".. data[k].userId .."'", function(data2)
+				local info = {
+					name = data2[1].name,
+					empires = 0,
+					hours = 0,
+					games = data[k].gamesMonthly,
+					wins = data[k].winsMonthly
+				}
+				
+				SS.Lobby.LeaderBoard.Add(LEADERBOARD_MONTHLY, info)
+			end)
+		end
+	end)
+
+	DB_Query("SELECT userId, gamesDaily, winsDaily FROM rts_leaderboards WHERE gamesDaily>0 ORDER BY winsDaily DESC LIMIT 3", function(data)
+		for k,v in pairs(data) do
+			DB_Query("SELECT name FROM users WHERE id='".. data[k].userId .."'", function(data2)
+				local info = {
+					name = data2[1].name,
+					empires = 0,
+					hours = 0,
+					games = data[k].gamesDaily,
+					wins = data[k].winsDaily
+				}
+				
+				SS.Lobby.LeaderBoard.Add(LEADERBOARD_DAILY, info)
+			end)
+		end
+	end)
+
+	DB_Query("SELECT userId, games, wins FROM rts_leaderboards WHERE games>0 ORDER BY wins DESC LIMIT 10", function(data)
+		for k,v in pairs(data) do
+			DB_Query("SELECT name FROM users WHERE id='".. data[k].userId .."'", function(data2)
+				local info = {
+					name = data2[1].name,
+					empires = 0,
+					hours = 0,
+					games = data[k].games,
+					wins = data[k].wins
+				}
+				
+				SS.Lobby.LeaderBoard.Add(LEADERBOARD_ALLTIME_10, info)
+			end)
+		end
+	end)
+	
+end
+
 ---------------------------------------------------------
 --
 ---------------------------------------------------------
@@ -37,55 +108,4 @@ function SS.Lobby.LeaderBoard.Network(id, player)
 			end
 		if (IsValid(player)) then net.Send(player) else net.Broadcast() end
 	end
-end
-
-local names = {"Bentech", "Smitty", "GodKnows", "Chewgum", "FireKnight", "Snoipa", "Dick", "Sassafrass", "Dick ranger", "Evil Cyb0rg"}
-
-for i = 1, 5 do
-	local data = {
-		name = names[i],
-		empires = math.random(1, 1024),
-		hours = math.random(1, 1024),
-		games = math.random(1, 1024),
-		wins = math.random(1, 1024)
-	}
-	
-	SS.Lobby.LeaderBoard.Add(LEADERBOARD_WEEKLY, data)
-end
-
-for i = 1, 10 do
-	local data = {
-		name = names[i],
-		empires = math.random(1, 1024),
-		hours = math.random(1, 1024),
-		games = math.random(1, 1024),
-		wins = math.random(1, 1024)
-	}
-	
-	SS.Lobby.LeaderBoard.Add(LEADERBOARD_MONTHLY, data)
-end
-
-for i = 1, 3 do
-	local data = {
-		name = names[i],
-		empires = math.random(1, 1024),
-		hours = math.random(1, 1024),
-		games = math.random(1, 1024),
-		wins = math.random(1, 1024)
-	}
-	
-	SS.Lobby.LeaderBoard.Add(LEADERBOARD_DAILY, data)
-end
-
-
-for i = 1, 10 do
-	local data = {
-		name = names[i],
-		empires = math.random(1, 1024),
-		hours = math.random(1, 1024),
-		games = math.random(1, 1024),
-		wins = math.random(1, 1024)
-	}
-	
-	SS.Lobby.LeaderBoard.Add(LEADERBOARD_ALLTIME_10, data)
 end

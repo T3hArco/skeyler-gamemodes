@@ -25,6 +25,9 @@ end
 net.Receive("ss.lblbnw", function(bits)
 	local id = net.ReadUInt(8)
 	local length = net.ReadUInt(8)
+
+	--Clear the table for this type when networking everything new in
+	stored[id] = {}
 	
 	for i = 1, length do
 		local name = net.ReadString()
