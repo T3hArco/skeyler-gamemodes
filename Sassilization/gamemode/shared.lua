@@ -40,15 +40,14 @@ MsgN("# Sassilization by Sassafrass #")
 if (SERVER and !game.SinglePlayer()) then
 	MsgN("# Start: Sending Resources to Client")
 	
-
---[[	function AddDirectoryDownload(directory)
+	function AddDirectoryDownload(directory)
 		local files, directories = file.Find(directory, "GAME")
 		for k,v in pairs(files) do
 			local addDirect = string.gsub(directory, "*", v)
 			resource.AddFile(addDirect)
 		end
 	end
-]]
+	
 	function AddCSLuaDirectory(directory)
 		local files, directories = file.Find(directory, "LUA")
 		for k,v in pairs(files) do
@@ -62,7 +61,7 @@ if (SERVER and !game.SinglePlayer()) then
 	end
 
 	AddDirectoryDownload("resource/fonts/*")
-	
+
 	--[[AddDirectoryDownload("sound/*")
 	AddDirectoryDownload("sound/sassilization/*")
 	AddDirectoryDownload("sound/sassilization/units/*")
