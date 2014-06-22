@@ -144,7 +144,7 @@ function GM:EndGame( empireWin )
 									local playerID = data[1].ID
 									DB_Query("SELECT userId FROM rts_leaderboards WHERE userId='"..playerID.."'",
 										function(data)
-											if data[1].games != nil then
+											if data && data[1] && data[1].games != nil then
 												DB_Query("SELECT games, wins, gamesMonthly, winsMonthly, gamesWeekly, winsWeekly, gamesDaily, winsDaily FROM rts_leaderboards WHERE userId='"..playerID.."'",
 													function(data)
 														if v.win then

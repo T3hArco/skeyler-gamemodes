@@ -61,11 +61,12 @@ if (SERVER and !game.SinglePlayer()) then
 		end
 	end
 
+	AddDirectoryDownload("resource/fonts/*")
+	
 	--[[AddDirectoryDownload("sound/*")
 	AddDirectoryDownload("sound/sassilization/*")
 	AddDirectoryDownload("sound/sassilization/units/*")
 	AddDirectoryDownload("sound/sassilization/spells/*")
-	AddDirectoryDownload("resource/fonts/*")
 	AddDirectoryDownload("models/sassilization/*")
 	AddDirectoryDownload("models/sassilization/viewtools/*")
 	AddDirectoryDownload("models/sassilization/mrgiggles/pvk/*")
