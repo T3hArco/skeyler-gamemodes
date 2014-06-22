@@ -106,7 +106,7 @@ function GM:PlayerInitialSpawn(ply)
 			end
 		end
 
-		if ply:IsPlayer() then
+		if !(IsValid( ply ) and ply:IsBot()) then
 			for k,v in pairs(player.GetBots()) do
 				v:Kick("")
 			end
