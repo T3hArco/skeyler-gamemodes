@@ -106,8 +106,10 @@ function GM:PlayerInitialSpawn(ply)
 			end
 		end
 
-		for k,v in pairs(player.GetBots()) do
-			v:Kick("")
+		if ply:IsPlayer() then
+			for k,v in pairs(player.GetBots()) do
+				v:Kick("")
+			end
 		end
 		
 		SS.Lobby.Minigame:UpdateScreen(ply)
