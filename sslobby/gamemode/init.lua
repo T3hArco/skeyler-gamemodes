@@ -286,8 +286,8 @@ end
 --------------------------------------------------
 
 function GM:PlayerDisconnected(ply)
+	if not (IsValid( ply ) and ply:IsPlayer()) then return end
 	self.BaseClass:PlayerDisconnected(ply)
-
 	
 	local storedTriggers = SS.Lobby.Link.GetStored()
 	
