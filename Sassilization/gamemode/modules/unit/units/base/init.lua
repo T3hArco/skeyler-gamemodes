@@ -446,22 +446,17 @@ function UNIT:CanTarget( target )
 
 	if self:GetClass() == "archer" or self:GetClass() == "ballista" then
 
-		targetTrace.start = self:GetPos()
-		targetTrace.endpos = target:GetPos()
-		targetTraceRes = util.TraceLine(targetTrace)
-
-		if targetTraceRes.Fraction < 1 then
-			if !(target:GetClass() == "building_wall" or target:GetClass() == "building_walltower") then
-				return false
-			end
-		end
-
 		--Only stop units from targetting this if there's a wall blocking it
 		--This is kind of a shitty way to handle checking to see if there's a wall blocking vision
-		local box = ents.FindInBox( self:GetPos() + VECTOR_UP * 0.1 - (self.NWEnt:GetRight() * 0.1), target:GetPos() + (self.NWEnt:GetRight() * 0.1) )
+		--2 units is roughly the units head and where they can see to/from
+		local box = ents.FindInBox( self:GetPos() + VECTOR_UP * 2 - (self.NWEnt:GetRight() * 0.1), target:GetPos() + VECTOR_UP * 1.9 + (self.NWEnt:GetRight() * 0.1) )
 		if target:GetClass() != "building_wall" && target:GetClass() != "building_walltower" then
 			for k,v in pairs(box) do
-				if v:GetClass() == "building_wall" or v:GetClass() == "building_walltower" then
+				if v:GetClass() == "building_wall" then
+					if !v:GetNearestSegment(v:NearestAttackPoint(self:GetPos())).Destroyed && !v:GetNearestSegment(v:NearestAttackPoint(self:GetPos())).Hidden then
+						return false
+					end
+				elseif v:GetClass() == "building_walltower" then
 					return false
 				end
 			end

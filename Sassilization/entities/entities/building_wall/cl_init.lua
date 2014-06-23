@@ -70,7 +70,10 @@ function ENT:Think()
 					
                     if ((bit.band(iMaskVal, iMask)) == iMask) and
                        ((bit.band(iMaskValOld, iMask)) ~= iMask) then
-                        assert(self.Walls[iSegmentPos])
+                        if !self.Walls[iSegmentPos] then
+                            bBailout = true
+                            break
+                        end
 
 						self.Walls[iSegmentPos]:Destroy(building.BUILDING_DESTROY)
 

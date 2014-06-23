@@ -10,8 +10,8 @@ if CLIENT then
 	function PlayGateAnim(len)  
 		local ent = net.ReadEntity()  
 		local string = net.ReadString()  
-		if string then  
-			local Sequence = ent:LookupSequence(string)  
+		if string && ent:IsValid() then 
+			local Sequence = ent:LookupSequence(string)
 			ent.Model:ResetSequence( Sequence )
 		end  
 	end  
