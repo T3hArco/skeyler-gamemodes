@@ -64,6 +64,10 @@ function VEC_META:MidPoint( vec_other )
 	return (self + vec_other) * 0.5;
 end
 
+function VEC_META:Copy()
+	return Vector(self.x, self.y, self.z)
+end
+
 VEC_META = nil
 
 

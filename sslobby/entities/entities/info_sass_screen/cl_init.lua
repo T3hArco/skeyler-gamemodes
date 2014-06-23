@@ -355,9 +355,9 @@ function ENT:PaintMap(x, y)
 			if (object.unit) then
 				local target = Vector(object.dirx, object.diry, 0)
 				local position = Vector(object.x, object.y, 0)
-	
+		
 				local direction = (target -position):GetNormal()
-				local distance = position:Distance(target)
+				local distance = (position -target):Length2D()
 				
 				if (distance <= 0.2) then
 					object.x = object.dirx
@@ -367,11 +367,9 @@ function ENT:PaintMap(x, y)
 					object.y = object.y +direction.y *0.04
 				end
 			end
-			
-			local offset = offsets[data.mapName] or offsets["1"]
-			
-			local objectX = offset[1] +x +((object.x /width) *(width -offset[2])) -object.width /2
-			local objectY = offset[3] +y +((object.y /height) *(height -offset[4])) -object.height /2
+		
+			local objectX = x +object.x -object.width /2
+			local objectY = y +object.y -object.height /2
 			
 			surface.SetDrawColor(object.color or color_white)
 			surface.DrawRect(objectX, objectY, object.width, object.height)

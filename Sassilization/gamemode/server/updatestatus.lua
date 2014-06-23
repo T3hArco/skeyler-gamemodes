@@ -52,17 +52,18 @@ end)
 --
 ---------------------------------------------------------
 
+local maps = {}
+
+maps["sa_exodus"] = 	{origin = Vector(1301, 1301, 0), 	rotation = Angle(0, -90, 0), 	scale_x = 0.134, 	scale_y = 0.135}
+maps["sa_stronghold"] = {origin = vector_origin, 			rotation = Angle(0, -90, 0), 	scale_x = -0.33, 	scale_y = -0.164}
+maps["sa_orbit"] = 		{origin = Vector(-90, 100, 0), 		rotation = Angle(0, 180, 0), 	scale_x = -0.201, 	scale_y = -0.206}
+maps["sa_olympia"] = 	{origin = Vector(774, 1484, 0), 	rotation = Angle(0, -90, 0), 	scale_x = 0.141, 	scale_y = 0.141}
+
 function GM:UpdateMinimap()
 	local info = ""
 	local empires = empire.GetAll()
+	local map = maps[game.GetMap()]
 	
-	local world = game.GetWorld()
-	local saveTable = world:GetSaveTable()
-	local mins, maxs = saveTable.m_WorldMins, saveTable.m_WorldMaxs
-	
-	local x = math.abs(maxs.x)
-	local y = math.abs(mins.y)
-
 	for k, empire in pairs(empires) do
 		if (ValidEmpire(empire)) then
 			info = info .. "id=" .. empire:GetColorID() .. "u{"
@@ -72,17 +73,24 @@ function GM:UpdateMinimap()
 
 			for k, unit in pairs(units) do
 				if (unit and unit:IsValid()) then
-					local position = unit:GetPos()
-					local direction = unit.targetPosition or position
+					local origin = unit:GetPos()
 					
-					local positionX = math.Round((math.abs(position.x) /x) *356)
-					local positionY = math.Round((math.abs(position.y) /y) *356)
+					local position = Vector(origin.x -map.origin.x, map.origin.y -origin.y, origin.z)
+					local direction = unit.targetPosition and unit.targetPosition:Copy() or position:Copy()
 					
+					if (unit.targetPosition) then
+						direction.x = direction.x -map.origin.x
+						direction.y = map.origin.y -direction.y
+					end
+					
+					position:Rotate(map.rotation)
+					direction:Rotate(map.rotation)
+					
+					local x, y = position.x *map.scale_x, position.y *map.scale_y
 					local size = math.Round(math.ceil(unit.OBBMaxs.x *0.8))
-					local directionX = math.Round((math.abs(direction.x) /x) *356)
-					local directionY = math.Round((math.abs(direction.y) /y) *356)
-
-					info = info .. "|x=" .. positionX .. ",y=" .. positionY .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
+					local directionX, directionY = direction.x *map.scale_x, direction.y *map.scale_y
+					
+					info = info .. "|x=" .. x .. ",y=" .. y .. ",dx=" .. directionX .. ",dy=" .. directionY .. ",s=" .. size
 				end
 			end
 			
@@ -90,14 +98,15 @@ function GM:UpdateMinimap()
 			
 			for k, building in pairs(buildings) do
 				if (building and building:IsValid()) then
-					local position = building:GetPos()
+					local origin = building:GetPos()
 					
-					local positionX = math.Round((math.abs(position.x) /x) *356)
-					local positionY = math.Round((math.abs(position.y) /y) *356)
-					
+					local position = Vector(origin.x -map.origin.x, map.origin.y -origin.y, origin.z)
+					position:Rotate(map.rotation)
+
+					local x, y = position.x *map.scale_x, position.y *map.scale_y
 					local size = math.Round(math.ceil(building:OBBMaxs().x *0.4))
 					
-					info = info .. "|x=" .. positionX .. ",y=" .. positionY .. ",s=" .. size
+					info = info .. "|x=" .. x .. ",y=" .. y .. ",s=" .. size
 				end
 			end
 		end
