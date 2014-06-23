@@ -134,6 +134,19 @@ end
 
 function SS.Lobby.Minigame:AddScore(teamID, amount)
 	self.Scores[teamID] = self.Scores[teamID] +amount
+
+	if self.Scores[teamID] == 10 then
+		local teamName = team.GetName(teamID)
+		util.PrintAll("[MINIGAME] The " .. teamName .. " team has won the minigame game! All members awarded 50 pixels!")
+		for k,v in pairs(player.GetAll()) do
+			if v:Team() == teamID then
+				v:GiveMoney(50)
+			end
+		end
+		for i=2,5 do
+			SS.Lobby.Minigame:SetScore(i, 0)
+		end
+	end
 	
 	self:UpdateScreen()
 end
