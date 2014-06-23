@@ -17,7 +17,7 @@ surface.CreateFont("font_rules", {
 local newsTexture = surface.GetTextureID("skeyler/graphics/info_news")
 local rulesTexture = surface.GetTextureID("skeyler/graphics/info_rules")
 
-local info = {}
+local info = {news = "", rules = ""}
 
 --[[
 local function newsToStr( news )

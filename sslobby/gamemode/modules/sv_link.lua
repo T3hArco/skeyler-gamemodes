@@ -96,7 +96,7 @@ function SS.Lobby.Link:AddQueue(id, player)
 					net.WriteString(steamID)
 				net.Broadcast()
 				
-				print("Added player '" .. tostring(player) .. "' from trigger: " .. id .. ".")
+				print("Added player '" .. tostring(player) .. "' to trigger: " .. id .. ".")
 			end
 		else
 			print("Missing server trigger: " .. id .. "??")
