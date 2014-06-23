@@ -453,7 +453,7 @@ function UNIT:CanTarget( target )
 		if target:GetClass() != "building_wall" && target:GetClass() != "building_walltower" then
 			for k,v in pairs(box) do
 				if v:GetClass() == "building_wall" then
-					if !v:GetNearestSegment(v:NearestAttackPoint(self:GetPos())).Destroyed && !v:GetNearestSegment(v:NearestAttackPoint(self:GetPos())).Hidden then
+					if !v:GetNearestSegment(self:GetPos(), true).Destroyed && !v:GetNearestSegment(self:GetPos(), true).Hidden then
 						return false
 					end
 				elseif v:GetClass() == "building_walltower" then
@@ -466,7 +466,7 @@ function UNIT:CanTarget( target )
 
 	
 	if( Unit:ValidUnit( target ) and target:IsAlive() and !Allied(self:GetEmpire(), target:GetEmpire())) then
-		if self:GetClass() == "ballista" and target:GetClass() == "scallywag" or self:GetClass() == "catapult" and target:GetClass() == "scallywag" or self:GetClass() == "swordsman" and target:GetClass() == "scallywag" or self:GetClass() == "peasant" and target:GetClass() == "scallywag" then
+		if self:GetClass() != "archer" and self:GetClass() != "scallywag" and target:GetClass() == "scallywag" then
 			return false
 		else
 			return true

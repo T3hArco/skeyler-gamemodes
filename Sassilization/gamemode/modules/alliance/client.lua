@@ -48,6 +48,7 @@ net.Receive("SetAlliance", SetAlliance)
 function SetPublicAlliance(len)
 	ply1 = net.ReadEntity()
 	ply1.allies = net.ReadTable()
+	ply1.allianceCount = net.ReatInt(8)
 end
 net.Receive("SetPublicAlliance", SetPublicAlliance)
 

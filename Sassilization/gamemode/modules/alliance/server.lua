@@ -231,6 +231,8 @@ util.AddNetworkString( "SetAllianceRequest" )
 util.AddNetworkString( "SetAlliance" )
 util.AddNetworkString( "SetPublicAlliance" )
 
+local allianceCount = 0
+
 concommand.Add("sa_requestalliance", function( ply,command,args )
 	if !SA.ALLIANCES then return end
 	
@@ -359,6 +361,13 @@ function breakAlly(ply1, ply2)
 		end
 	end
 
+	ply1.allianceCount = nil
+
+	if #ply2.Alliance == 0 then
+		allianceCount = allianceCount - 1
+		ply2.allianceCount = nil
+	end
+
 	timer.Simple(0.5, function()
 		setPublicAllies()
 	end)
@@ -384,6 +393,17 @@ function setAlly(ply1, ply2, string)
 		ply2:PrintMessage(HUD_PRINTTALK, ply1:Nick() .. " has allied with you.")
 	end
 
+	if #ply1.Alliance > 0 then
+		ply2.allianceCount = ply1.allianceCount
+	elseif #ply2.Alliance > 0 then
+		ply1.allianceCount = ply2.allianceCount
+	else
+		allianceCount = allianceCount + 1
+
+		ply1.allianceCount = allianceCount
+		ply2.allianceCount = allianceCount
+	end
+
 	net.Start("SetAlliance")
 		net.WriteEntity(ply2)
 		net.WriteString(string)
@@ -407,6 +427,7 @@ function setPublicAllies()
 			net.Start("SetPublicAlliance")
 				net.WriteEntity(v)
 				net.WriteTable(v.Alliance)
+				net.WriteInt(v.allianceCount, 8)
 			net.Send(d)
 		end
 	end

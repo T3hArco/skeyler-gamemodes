@@ -26,7 +26,8 @@ function ENT:Initialize()
 			timer.Destroy(tostring(self))
 		end
 		self.Allies = nil
-		for i, v in ipairs(ents.FindInSphere(self:GetPos(), 15)) do
+		--If a unit collides with the gate while it's still open, they won't be able to move through it until they move back/forward first.
+		for i, v in ipairs(ents.FindInSphere(self:GetPos(), 30)) do
 			if(v:IsUnit() and (v:GetEmpire() == self:GetEmpire() or Allied(self:GetEmpire(), v:GetEmpire()))) then
 				self.Allies = true
 			end

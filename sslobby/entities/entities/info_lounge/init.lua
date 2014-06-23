@@ -41,17 +41,17 @@ net.Receive("updateNews", function(len, ply)
 		local text = net.ReadString()
 		if updateType == "news" then
 			DB_Query("UPDATE lobby_news SET news='".. text .."'")
+			LOBBY_NEWS = text
 		else
 			DB_Query("UPDATE lobby_news SET rules='".. text .."'")
+			LOBBY_RULES = text
 		end
 
-		DB_Query("SELECT * FROM lobby_news", function(data)
-			for k,v in pairs(player.GetAll()) do
-				net.Start("setNewsRules")
-					net.WriteString(data[1].news)
-					net.WriteString(data[1].rules)
-				net.Send(v)
-			end
-		end)
+		for k,v in pairs(player.GetAll()) do
+			net.Start("setNewsRules")
+				net.WriteString(LOBBY_NEWS)
+				net.WriteString(LOBBY_RULES)
+			net.Send(v)
+		end
 	end
 end)

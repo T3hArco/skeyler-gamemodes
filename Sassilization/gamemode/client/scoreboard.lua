@@ -365,10 +365,6 @@ function GM:ScoreboardShow()
 				surface.DrawText( v:Ping() )
 
 				if v.allies then
-					if !v.allyNum then
-						allianceCount = allianceCount + 1
-						v.allyNum = allianceCount
-					end
 					v.highestGold = v:GetEmpire():GetGold()
 					v.drawColor = v:GetEmpire():GetColor()
 					for i,d in pairs(v.allies) do
@@ -378,7 +374,6 @@ function GM:ScoreboardShow()
 						end
 					end
 					for i,d in pairs(v.allies) do
-						d.allyNum = v.allyNum
 						if d != v then
 							if IsValid(d) then
 								surface.SetFont("ScoreboardList")
@@ -392,9 +387,9 @@ function GM:ScoreboardShow()
 								surface.DrawOutlinedRect(self:GetWide()*0.05 + 15/2, d.predictedHeight + disth2 - 5, v.allyNum*(self:GetWide()*0.015), 10)
 								*/
 								surface.SetDrawColor( 255,255,255,255 )
-								surface.DrawLine( (self:GetWide()*0.05 + 15/2) - v.allyNum*(self:GetWide()*0.015), curheight + disth2, (self:GetWide()*0.05 + 15/2), curheight + disth2 )
-								surface.DrawLine( (self:GetWide()*0.05 + 15/2) - v.allyNum*(self:GetWide()*0.015), curheight + disth2, (self:GetWide()*0.05 + 15/2) - v.allyNum*(self:GetWide()*0.015), d.predictedHeight + disth2 )
-								surface.DrawLine( (self:GetWide()*0.05 + 15/2) - v.allyNum*(self:GetWide()*0.015), d.predictedHeight + disth2, (self:GetWide()*0.05 + 15/2), d.predictedHeight + disth2 )
+								surface.DrawLine( (self:GetWide()*0.05 + 15/2) - v.allianceCount*(self:GetWide()*0.015), curheight + disth2, (self:GetWide()*0.05 + 15/2), curheight + disth2 )
+								surface.DrawLine( (self:GetWide()*0.05 + 15/2) - v.allianceCount*(self:GetWide()*0.015), curheight + disth2, (self:GetWide()*0.05 + 15/2) - v.allianceCount*(self:GetWide()*0.015), d.predictedHeight + disth2 )
+								surface.DrawLine( (self:GetWide()*0.05 + 15/2) - v.allianceCount*(self:GetWide()*0.015), d.predictedHeight + disth2, (self:GetWide()*0.05 + 15/2), d.predictedHeight + disth2 )
 								
 							end
 						end

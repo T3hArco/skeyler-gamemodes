@@ -30,7 +30,7 @@ end
 
 local vecZero = VECTOR_ZERO
 local nSegmentSize  = SA.WallSpacing
-function ENT:GetNearestSegment( vecPos )
+function ENT:GetNearestSegment( vecPos, des )
     
 	if( not self.Walls ) then return end
 	
@@ -49,10 +49,17 @@ function ENT:GetNearestSegment( vecPos )
 	for i=1, self.WallCount do
 		local seg = self.Walls[ i ]
 		local tempDis = math.abs(i - index)
-		if( seg and not seg.Destroyed and (not dis or tempDis < dis) ) then
-			dis = tempDis
-			nearest = seg
-		end
+        if des then
+    		if( seg and (not dis or tempDis < dis) ) then
+                dis = tempDis
+                nearest = seg
+            end
+        else
+            if( seg and not seg.Destroyed and (not dis or tempDis < dis) ) then
+                dis = tempDis
+                nearest = seg
+            end
+        end
 	end
 	
 	return nearest

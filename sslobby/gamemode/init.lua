@@ -43,6 +43,11 @@ function GM:InitPostEntity()
 	self.spawnPoints = {lounge = {}}
 
 	RunConsoleCommand("bot")
+
+	DB_Query("SELECT * FROM lobby_news", function(data)
+		LOBBY_NEWS = data[1].news
+		LOBBY_RULES = data[1].rules
+	end)
 	
 	local spawns = ents.FindByClass("info_player_spawn")
 	
@@ -106,7 +111,7 @@ function GM:PlayerInitialSpawn(ply)
 			end
 		end
 
-		if !(IsValid( ply ) and ply:IsBot()) then
+		if IsValid( ply ) and !ply:IsBot() then
 			for k,v in pairs(player.GetBots()) do
 				v:Kick("")
 			end
@@ -114,12 +119,10 @@ function GM:PlayerInitialSpawn(ply)
 		
 		SS.Lobby.Minigame:UpdateScreen(ply)
 
-		DB_Query("SELECT * FROM lobby_news", function(data)
-			net.Start("setNewsRules")
-				net.WriteString(data[1].news)
-				net.WriteString(data[1].rules)
-			net.Send(ply)
-		end)
+		net.Start("setNewsRules")
+			net.WriteString(LOBBY_NEWS)
+			net.WriteString(LOBBY_RULES)
+		net.Send(ply)
 	end)
 end
 

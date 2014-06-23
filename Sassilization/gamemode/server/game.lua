@@ -133,15 +133,28 @@ function GM:EndGame( empireWin )
 		gameOver = true
 		self.EndTime = tostring(os.time())
 
+		local teamMoney = 0
+
+		for k,v in pairs(empire.GetAll()) do
+			v.winGold = v:GetGold()
+			if v:GetPlayer() && v:GetPlayer().Alliance then
+				for i,d in pairs(v.Alliance) do
+					v.winGold = v.winGold + d:GetGold()
+				end
+				v.winGold = math.Round(v.winGold/(#v.Alliance + 1))
+			end
+		end
+
 		DB_Query("INSERT INTO rts_matches (playerCount, startTimestamp, endTimestamp) VALUES ('"..tostring(#empire.GetAll()).."','"..self.StartTime.."','"..self.EndTime.."')", 
 			function(data)
 				DB_Query("SELECT ID FROM rts_matches WHERE endTimestamp='"..self.EndTime.."'",
 					function(data)
 						local gameID = data[1].ID
 						for k,v in pairs(empire.GetAll()) do
-							DB_Query("SELECT ID FROM users WHERE steamId='"..string.sub(v.SteamID, 7).."'",
+							DB_Query("SELECT ID, money FROM users WHERE steamId='"..string.sub(v.SteamID, 7).."'",
 								function(data)
 									local playerID = data[1].ID
+									local money = data[1].money
 									DB_Query("SELECT userId FROM rts_leaderboards WHERE userId='"..playerID.."'",
 										function(data)
 											if data && data[1] then
@@ -161,6 +174,10 @@ function GM:EndGame( empireWin )
 												end
 											end
 										end)
+
+									money = money + v.winGold
+
+									DB_Query("UPDATE users SET money='".. money .."' WHERE ID='".. playerID .."'")
 
 									if v.win then
 										DB_Query("INSERT INTO rts_match_players (rtsMatchId, userId, wonMatch) VALUES ('"..tostring(gameID).."','"..tostring(playerID).."','"..tostring(1).."')")

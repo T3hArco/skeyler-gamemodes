@@ -5,7 +5,7 @@ function EFFECT:Init( data )
 	local ArrowScale = 1.5
 	
 	self.vStart = data:GetOrigin()
-	local timeEnd = data:GetScale()
+	local timeEnd = data:GetScale() + CurTime()
 	local target = data:GetEntity()
 	local targetOffset = data:GetStart()
 	

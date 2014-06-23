@@ -149,7 +149,7 @@ function ENT:ShootArrow( target )
 
 	local ed = EffectData()
 		ed:SetOrigin( self.UpPos )
-		ed:SetScale( CurTime() + arrowTime )
+		ed:SetScale( arrowTime )
 		ed:SetEntity( targetEnt )
 		ed:SetStart( dmginfo.dmgpos )
 	util.Effect( "arrow", ed, true, true )

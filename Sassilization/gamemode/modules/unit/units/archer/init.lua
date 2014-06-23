@@ -13,7 +13,7 @@ function UNIT:DoAttack( enemy, dmginfo )
 	
 	local ed = EffectData()
 		ed:SetOrigin( self:GetPos() + VECTOR_UP * 1.8 )
-		ed:SetScale( CurTime() + arrowTime )
+		ed:SetScale( arrowTime )
 		ed:SetEntity( enemy.NWEnt and enemy.NWEnt or enemy )
 		ed:SetStart( dmginfo.dmgpos )
 	util.Effect( "arrow", ed, true, true )
