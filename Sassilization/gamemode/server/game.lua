@@ -138,10 +138,10 @@ function GM:EndGame( empireWin )
 		for k,v in pairs(empire.GetAll()) do
 			v.winGold = v:GetGold()
 			if v:GetPlayer() && v:GetPlayer().Alliance then
-				for i,d in pairs(v.Alliance) do
+				for i,d in pairs(v:GetPlayer().Alliance) do
 					v.winGold = v.winGold + d:GetGold()
 				end
-				v.winGold = math.Round(v.winGold/(#v.Alliance + 1))
+				v.winGold = math.Round(v.winGold/(#v:GetPlayer().Alliance + 1))
 			end
 		end
 
