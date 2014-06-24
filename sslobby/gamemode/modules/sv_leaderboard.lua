@@ -107,5 +107,10 @@ function SS.Lobby.LeaderBoard.Network(id, player)
 				net.WriteUInt(info.wins, 16)
 			end
 		if (IsValid(player)) then net.Send(player) else net.Broadcast() end
+	else
+		net.Start("ss.lblbnw")
+			net.WriteUInt(id, 8)
+			net.WriteUInt(0, 8)
+		if (IsValid(player)) then net.Send(player) else net.Broadcast() end
 	end
 end

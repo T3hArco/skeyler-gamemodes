@@ -29,21 +29,23 @@ net.Receive("ss.lblbnw", function(bits)
 	--Clear the table for this type when networking everything new in
 	stored[id] = {}
 	
-	for i = 1, length do
-		local name = net.ReadString()
-		local empires = net.ReadUInt(16)
-		local hours = net.ReadUInt(16)
-		local games = net.ReadUInt(16)
-		local wins = net.ReadUInt(16)
-		
-		local data = {
-			name = name,
-			empires = empires,
-			hours = hours,
-			games = games,
-			wins = wins
-		}
-		
-		SS.Lobby.LeaderBoard.Add(id, data)
+	if length > 0 then
+		for i = 1, length do
+			local name = net.ReadString()
+			local empires = net.ReadUInt(16)
+			local hours = net.ReadUInt(16)
+			local games = net.ReadUInt(16)
+			local wins = net.ReadUInt(16)
+			
+			local data = {
+				name = name,
+				empires = empires,
+				hours = hours,
+				games = games,
+				wins = wins
+			}
+			
+			SS.Lobby.LeaderBoard.Add(id, data)
+		end
 	end
 end)
