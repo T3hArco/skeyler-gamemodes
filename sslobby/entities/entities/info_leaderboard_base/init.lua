@@ -24,7 +24,10 @@ function ENT:Think()
 		Msg("[LEADERBOARD] Resetting weekly leaderboards...\n")
 		DB_Query("UPDATE rts_leaderboards SET gamesWeekly=0, winsWeekly=0 WHERE gamesWeekly>0", function(data)
 			Msg("[LEADERBOARD] Weekly leaderboards reset.\n")
-			SS.Lobby.LeaderBoard.Network(2)
+			SS.Lobby.LeaderBoard.Update()
+			timer.Simple(1, function()
+				SS.Lobby.LeaderBoard.Network(2)
+			end)
 		end)
 	end
 
@@ -32,7 +35,9 @@ function ENT:Think()
 		Msg("[LEADERBOARD] Resetting monthly leaderboards...\n")
 		DB_Query("UPDATE rts_leaderboards SET gamesMonthly=0, winsMonthly=0 WHERE gamesMonthly>0", function(data)
 			Msg("[LEADERBOARD] Monthly leaderboards reset.\n")
-			SS.Lobby.LeaderBoard.Network(3)
+			timer.Simple(1, function()
+				SS.Lobby.LeaderBoard.Network(3)
+			end)
 		end)
 	end
 
@@ -40,7 +45,9 @@ function ENT:Think()
 		Msg("[LEADERBOARD] Resetting daily leaderboards...\n")
 		DB_Query("UPDATE rts_leaderboards SET gamesDaily=0, winsDaily=0 WHERE gamesDaily>0", function(data)
 			Msg("[LEADERBOARD] Daily leaderboards reset.\n")
-			SS.Lobby.LeaderBoard.Network(1)
+			timer.Simple(1, function()
+				SS.Lobby.LeaderBoard.Network(1)
+			end)
 		end)
 	end
 
