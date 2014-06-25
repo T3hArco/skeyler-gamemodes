@@ -208,12 +208,9 @@ end
 function ENT:Initialize()
 	local position = self:GetPos()
 	local angles = self:GetAngles()
-	local bounds = Vector(1024, 1024, 1024)
 	
 	self.cameraAngles = Angle(0, angles.y +90, angles.p +90)
 	self.cameraPosition = position +(self:GetRight() *screenWidth) +(self:GetUp() *screenHeight) +(self:GetForward() *0.2)
-	
-	self:SetRenderBounds(bounds *-1, bounds)
 
 	self.mousePosition = Vector(0, 0, 0)
 	self.projectionPos = self:LocalToWorld(cameraOffset)
@@ -227,6 +224,14 @@ end
 local DrawPanels = SS.WorldPanel.DrawPanels
 
 function ENT:Draw()
+	if (!self.setup) then
+		local boundsMin, boundsMax = self:WorldToLocal(self.cameraPosition), self:WorldToLocal(self.cameraPosition + self.cameraAngles:Forward()*(screenWidth*2) + self.cameraAngles:Right()*(screenHeight*2) + self.cameraAngles:Up())
+
+		self:SetRenderBounds(boundsMin, boundsMax)
+	
+		self.setup = true
+	end
+
 	if (!self.registered) then
 	 	local id = self:GetTriggerID()
 

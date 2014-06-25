@@ -156,16 +156,14 @@ function labelsPanel:Paint(screen, x, y, w, h)
 	
 	draw.SimpleText("JOIN SERVER", "ss.sass.screen.button", x +w -800, y +h /2 +400, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 end
+
+local screenWidth, screenHeight = 64, 32
 	
 function ENT:Initialize()
 	--self:SetStatus(CommLink.Status.CLOSED)
 	
-	local Width, Height = 64, 32
-	
-	self.Bounds = Vector(1, 1, 1) * Width
-	
 	local cam_rot = Vector(0, 90, 90)
-	local cam_offset = Vector(0.1, -Width, Height)
+	local cam_offset = Vector(0.1, -screenWidth, screenHeight)
 
 	self.CamPos = self:LocalToWorld(cam_offset)
 	
@@ -178,8 +176,6 @@ function ENT:Initialize()
 	
 	self.PlayerListPos = 0
 	self.NextPlayerListUpdate = CurTime()
-	
-	self:SetRenderBounds(self.Bounds * -1, self.Bounds)
 end
 
 function ENT:SetStatus(Status)
@@ -214,6 +210,14 @@ end
 
 
 function ENT:Draw()
+	if (!self.setup) then
+		local boundsMin, boundsMax = self:WorldToLocal(self.CamPos), self:WorldToLocal(self.CamPos + self.CamAng:Forward()*(screenWidth*2) + self.CamAng:Right()*(screenHeight*2) + self.CamAng:Up())
+
+		self:SetRenderBounds(boundsMin, boundsMax)
+	
+		self.setup = true
+	end
+
 	cam.Start3D2D(self.CamPos, self.CamAng, 0.1)
 		render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 		render.PushFilterMag(TEXFILTER.ANISOTROPIC)

@@ -84,7 +84,8 @@ end
 ---------------------------------------------------------
 
 function ENT:Initialize()
-	local bounds = Vector(128, 128, 128)
+	self.width = 64
+	self.height = 64
 	local angles = self:GetAngles()
 	local position = self:GetPos()
 	
@@ -93,8 +94,6 @@ function ENT:Initialize()
 	
 	self.rulesAngle = Angle(0, angles.y -90, angles.p +90)
 	self.rulesPosition = position+ self:GetForward() *-0.1 -self:GetRight() *32 +self:GetUp() *32
-	
-	self:SetRenderBounds(bounds *-1, bounds)
 	
 --	http.Fetch("http://skeyler.com/blog.php", function(body, length, headers, code)
 
@@ -107,7 +106,15 @@ end
 
 function ENT:Draw()
 	local dot = self:GetForward():Dot((self:GetPos() -EyePos()):GetNormal())
+
+	if (!self.setup) then		
+		local boundsMin, boundsMax = self:WorldToLocal(self.newsPosition), self:WorldToLocal(self.rulesPosition + self.newsAngle:Right()*(self.height))
+
+		self:SetRenderBounds(boundsMin, boundsMax)
 	
+		self.setup = true
+	end
+
 	if (dot <= 0) then
 		cam.Start3D2D(self.newsPosition, self.newsAngle, 0.05)
 			draw.Texture(0, 0, 1280, 1280, color_white, newsTexture)

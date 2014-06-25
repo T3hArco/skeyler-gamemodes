@@ -11,14 +11,12 @@ surface.CreateFont("ss.leaderboard.shadow", {font = "Arvil Sans", size = 152, we
 
 function ENT:Initialize()
 	local angles = self:GetAngles()
-	local bounds = Vector(1024, 1024, 1024)
-	local width, height = 128, 64
+	self.width = 128
+	self.height = 64
 
 	self.weekly = self:GetClass() == "info_weeklyleaderboard"
 	self.cameraAngle = Angle(0, angles.y +90, angles.p +90)
-	self.cameraPosition = self:GetPos() +self:GetForward() *0.1 +self:GetRight() *width *0.5 +self:GetUp() *height *0.5
-
-	self:SetRenderBounds(bounds *-1, bounds)
+	self.cameraPosition = self:GetPos() +self:GetForward() *0.1 +self:GetRight() *self.width *0.5 +self:GetUp() *self.height *0.5
 end
 
 ---------------------------------------------------------
@@ -33,15 +31,23 @@ function ENT:Draw()
 	local maxDistance = SS.Lobby.ScreenDistance:GetInt()
 	
 	if (distance <= maxDistance) then
-		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
-			if (self.texture) then
-				draw.Texture(0, 0, 1280, 640, color_white, self.texture)
-			end
-		cam.End3D2D()
+		if (!self.setup) then
+			local boundsMin, boundsMax = self:WorldToLocal(self.cameraPosition), self:WorldToLocal(self.cameraPosition + self.cameraAngle:Forward()*(self.width) + self.cameraAngle:Right()*(self.height) + self.cameraAngle:Up())
+
+			self:SetRenderBounds(boundsMin, boundsMax)
 		
-		cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.02)
-			self:PaintLeaderboard()
-		cam.End3D2D()
+			self.setup = true
+		else
+			cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.1)
+				if (self.texture) then
+					draw.Texture(0, 0, 1280, 640, color_white, self.texture)
+				end
+			cam.End3D2D()
+			
+			cam.Start3D2D(self.cameraPosition, self.cameraAngle, 0.02)
+				self:PaintLeaderboard()
+			cam.End3D2D()
+		end
 	end
 end
 

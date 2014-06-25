@@ -32,10 +32,10 @@ function ENT:Draw()
 			if (width) then
 				self.texture = width > 64 and textureWide or texture
 			end
-			
-			local bounds = Vector(1, 1, 1) *math.Max(width, height) *0.36
-			
-			self:SetRenderBounds(bounds *-1, bounds)
+
+			local boundsMin, boundsMax = self:WorldToLocal(self.cameraPosition), self:WorldToLocal(self.cameraPosition + self.cameraAngle:Forward()*(width) + self.cameraAngle:Right()*(height) + self.cameraAngle:Up())
+
+			self:SetRenderBounds(boundsMin, boundsMax)
 		
 			self.setup = true
 		else

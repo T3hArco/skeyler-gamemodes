@@ -62,8 +62,6 @@ function ENT:Initialize()
 	self.cameraAngle = Angle(0, angles.y +90, angles.p +90)
 	self.cameraPosition = self:GetPos() +self:GetForward() *0.1 +self:GetRight() *screenWidth +self:GetUp() *screenHeight
 	
-	self:SetRenderBounds(Vector(-64, -64, -64), Vector(64, 64, 64))
-	
 	self.mousePosition = Vector(0, 0, 0)
 	self.projectionPos = self:LocalToWorld(cameraOffset)
 	self.intersectPoint = Vector(0, 0, 0)
@@ -118,6 +116,15 @@ local DrawPanels = SS.WorldPanel.DrawPanels
 function ENT:Draw()
 	local distance = LocalPlayer():EyePos():Distance(self.cameraPosition)
 	local maxDistance = SS.Lobby.ScreenDistance:GetInt()
+
+	if (!self.setup) then
+		self.width, self.height = 64, 64
+		local boundsMin, boundsMax = self:WorldToLocal(self.cameraPosition), self:WorldToLocal(self.cameraPosition + self.cameraAngle:Forward()*(self.width) + self.cameraAngle:Right()*(self.height) + self.cameraAngle:Up())
+
+		self:SetRenderBounds(boundsMin, boundsMax)
+	
+		self.setup = true
+	end
 	
 	if (distance <= maxDistance) then
 		self:UpdateMouse()
