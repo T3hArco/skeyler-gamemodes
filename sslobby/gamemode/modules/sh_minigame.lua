@@ -122,7 +122,7 @@ local function derive(unique, from)
 end
 
 -- Split up the description text.
-local maxLength = 36
+local maxLength = 66
 
 for unique, data in pairs(stored) do
 	if (data.Base) then
@@ -130,13 +130,13 @@ for unique, data in pairs(stored) do
 		
 		local length = string.len(data.Description)
 		
-		if (length > 66) then
+		if (length > maxLength) then
 			local exploded, current, final = string.Explode(" ", data.Description), 1, ""
 			
 			for i = 1, #exploded do
 				local text = table.concat(exploded, " ", current, i)
 				
-				if (string.len(text) > 66) then
+				if (string.len(text) > maxLength) then
 					final = final .. table.concat(exploded, " ", current, i -1) .. "\n"
 					
 					current = i
