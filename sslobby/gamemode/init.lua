@@ -35,6 +35,9 @@ include("modules/sv_leaderboard.lua")
 include("modules/sv_elevator.lua")
 include("modules/sh_sound.lua")
 
+LOBBY_NEWS = ""
+LOBBY_RULES = ""
+
 --------------------------------------------------
 --
 --------------------------------------------------
