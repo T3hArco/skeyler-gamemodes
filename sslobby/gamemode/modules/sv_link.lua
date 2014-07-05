@@ -550,10 +550,16 @@ function GM:SocketLostConnection(ip, port)
 			
 			screen:SetStatus(STATUS_LINK_UNAVAILABLE)
 			
-			local pitch, position = math.random(85, 110), screen:GetPos()
+			screen.nextFiddle = screen.nextFiddle or 0
 			
-			for i = 1, 5 do
-				sound.Play("vo/k_lab/kl_fiddlesticks.wav", position, 85, pitch, 1)
+			if (screen.nextFiddle <= CurTime()) then
+				local pitch, position = math.random(85, 110), screen:GetPos()
+				
+				for i = 1, 5 do
+					sound.Play("vo/k_lab/kl_fiddlesticks.wav", position, 85, pitch, 1)
+				end
+				
+				screen.nextFiddle = CurTime() +30
 			end
 		end
 	end
